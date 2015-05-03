@@ -1,7 +1,30 @@
 package maps;
 
+import creeps.Creep;
+
+/*
+ * Collection of Creep and their relative spawn times
+ * Methods to grab next creep(s), and get time for creep after
+ */
 public class Wave {
-	//if we want to have something call a method in the wave to get the next minion to spawn, we might need to either:
-		//have a separate thread keeping track of when to spawn things
-		//use a "wave counter" variable that increments during each movement phase of the creep, and when the counter reaches a certain number we spawn the next thing
+	
+	Creep[] creeps;
+	int[] timings;
+	int size;
+	int counter = 0;
+	
+	public Creep[] getNextCreeps(){
+		//TODO
+		//Check how many creep come in this game tick (in case timings are set to zero and multiple spawn)
+		//Increment counter accordingly
+		//Return creep(s)
+		return null;
+	}
+	
+	public int getTicksForNextCreep(){
+		if(size > counter){
+			return -1;
+		}
+		return timings[counter];
+	}
 }
