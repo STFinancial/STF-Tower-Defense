@@ -21,11 +21,11 @@ public class PlayerProgress {
 		}
 	}
 	
-	public void updateStars(int world, int level, int numStars) {
-		progress[world][level].updateStars(numStars);
+	public boolean updateStars(int world, int level, int numStars) {
+		return progress[world][level].updateStars(numStars);
 	}
 	
-	public void updateScore(int world, int level, int score) {
-		//TODO
+	public boolean updateScore(int world, int level, int score) {
+		return progress[world][level].updateScore(score);
 	}
 }
