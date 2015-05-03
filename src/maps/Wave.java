@@ -22,7 +22,7 @@ public class Wave {
 	}
 	
 	public int getTicksForNextCreep(){
-		if(size > counter){
+		if (size > counter) {
 			return -1;
 		}
 		return timings[counter];
