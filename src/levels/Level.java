@@ -1,5 +1,7 @@
 package levels;
 
-public class Level {
+import maps.Map;
 
+public class Level {
+	public Map map;
 }

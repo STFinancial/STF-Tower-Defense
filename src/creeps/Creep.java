@@ -5,7 +5,7 @@ public class Creep {
 	public int speed;
 	public int health;
 	public int armor;
-	public int magicResist;
+	public int earthResist, fireResist, windResist, waterResist;
 	public int slowResist;
 	
 }
