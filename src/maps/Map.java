@@ -4,4 +4,6 @@ package maps;
  */
 public class Map {
 	public MapType type;
+	
+	public Tile[][] map;
 }

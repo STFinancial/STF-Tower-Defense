@@ -20,4 +20,6 @@ public final class Constants {
 	public final int WIND_BASE_COST = 0;
 	public final int WIND_BASE_ATTACK_SPEED = 0;
 	public final int WIND_BASE_ATTACK_DAMAGE = 0;
+	
+	public final int BASE_INTEREST_RATE = 3;
 }
