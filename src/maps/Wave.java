@@ -21,7 +21,7 @@ public class Wave {
 		do {
 			toReturn.add(creeps[counter]);
 			counter++;
-		} while (counter >= size && timings[counter] == 0);
+		} while (counter < size && timings[counter] == 0);
 
 		return toReturn;
 	}
