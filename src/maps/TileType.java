@@ -13,9 +13,9 @@ public enum TileType {
 	FINISH (true, true, false);
 	
 	//Can shorten these names if they are too wordy
-	boolean groundTraversable;
-	boolean airTraversable;
-	boolean buildable;
+	public boolean groundTraversable;
+	public boolean airTraversable;
+	public boolean buildable;
 	
 	private TileType (boolean GT, boolean AT, boolean B) {
 		groundTraversable = GT;

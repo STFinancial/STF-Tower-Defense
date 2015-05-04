@@ -6,5 +6,5 @@ public class Tile {
 	public Map map; //the map to which the tile belongs
 	
 	int x, y;
-	TileType type;
+	public TileType type; //going to make this public for now
 }
