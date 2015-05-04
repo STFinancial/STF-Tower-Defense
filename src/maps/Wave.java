@@ -21,13 +21,13 @@ public class Wave {
 		do {
 			toReturn.add(creeps[counter]);
 			counter++;
-		} while (timings[counter] == 0);
+		} while (counter >= size && timings[counter] == 0);
 
 		return toReturn;
 	}
 
 	public int getDelayForNextCreep() {
-		if (size > counter) {
+		if (counter >= size) {
 			return -1;
 		}
 		return timings[counter];
