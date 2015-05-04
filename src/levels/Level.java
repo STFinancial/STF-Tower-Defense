@@ -1,6 +1,8 @@
 package levels;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import maps.Map;
 import maps.Wave;
@@ -54,7 +56,7 @@ public class Level {
 		//Check for new spawns from creep wave;
 		if(tick == nextSpawnTick){
 			spawnCreeps(currentWave.getNextCreeps());
-			nextSpawnTick = tick + currentWave.getTicksForNextCreep();
+			nextSpawnTick = tick + currentWave.getDelayForNextCreep();
 		}
 		
 		
@@ -73,7 +75,7 @@ public class Level {
 		//Check if round has finished from all creep being dead
 	}
 	
-	private void spawnCreeps(Creep[] nextCreeps) {
+	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		// TODO Auto-generated method stub
 		
 	}

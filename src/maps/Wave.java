@@ -1,5 +1,7 @@
 package maps;
 
+import java.util.HashSet;
+
 import creeps.Creep;
 
 /*
@@ -7,21 +9,24 @@ import creeps.Creep;
  * Methods to grab next creep(s), and get time for creep after
  */
 public class Wave {
-	
-	Creep[] creeps;
-	int[] timings;
+
+	Creep[] creeps; // List of creeps that we will spawn
+	int[] timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
 	int size;
 	int counter = 0;
-	
-	public Creep[] getNextCreeps(){
-		//TODO
-		//Check how many creep come in this game tick (in case timings are set to zero and multiple spawn)
-		//Increment counter accordingly
-		//Return creep(s)
-		return null;
+
+	public HashSet<Creep> getNextCreeps() {
+		HashSet<Creep> toReturn = new HashSet<Creep>(); // What do i call this in standard conventions?
+
+		do {
+			toReturn.add(creeps[counter]);
+			counter++;
+		} while (timings[counter] == 0);
+
+		return toReturn;
 	}
-	
-	public int getTicksForNextCreep(){
+
+	public int getDelayForNextCreep() {
 		if (size > counter) {
 			return -1;
 		}
