@@ -82,9 +82,9 @@ public class Level {
 	
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		for(Creep c: creepsToSpawn){
-			if(c.isFlying()){
+			if (c.isFlying()) {
 				c.setPath(airPath);
-			}else{
+			} else {
 				c.setPath(groundPath);
 			}
 			creeps.add(c);
