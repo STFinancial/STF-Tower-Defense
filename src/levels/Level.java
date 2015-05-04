@@ -58,7 +58,6 @@ public class Level {
 			nextSpawnTick = tick + currentWave.getDelayForNextCreep();
 		}
 		
-		
 		for(Creep c: creeps){
 			//Update movement, direction faceing
 		}
