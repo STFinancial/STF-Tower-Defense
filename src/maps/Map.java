@@ -6,6 +6,8 @@ public class Map {
 	public MapType type;
 	
 	public Tile[][] map;
+	public int width;
+	public int height;
 	
 	public boolean canBuild(int y, int x) {
 		return map[y][x].type.buildable;

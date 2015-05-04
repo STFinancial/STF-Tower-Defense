@@ -12,4 +12,6 @@ public class Creep {
 	
 	public ElementType elementType;
 	HashSet<CreepType> creepTypes = new HashSet<CreepType>();
+	
+	
 }
