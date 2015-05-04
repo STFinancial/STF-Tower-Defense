@@ -63,7 +63,7 @@ public class Level {
 		}
 		
 		for(Creep c: creeps){
-			//Update movement, direction faceing
+			c.updateMovement();
 		}
 		
 		for(Projectile p: projectiles){
