@@ -42,17 +42,16 @@ public class Level {
 		this.creepWaves = creepWaves;
 	}
 	
+	//Can be called from App
 	public void startRound(){
 		roundInProgress = true;
 		currentWave = creepWaves.get(round);
 		round++;
 		tick = 0;
-		nextSpawnTick = 1;
+		nextSpawnTick = currentWave.getDelayForNextCreep();
 	}
 	
 	public void gameTick(){
-		tick++;
-		
 		//Check for new spawns from creep wave;
 		if(tick == nextSpawnTick){
 			spawnCreeps(currentWave.getNextCreeps());
@@ -73,21 +72,33 @@ public class Level {
 		}
 		
 		//Check if round has finished from all creep being dead
+		
+		
+		tick++;
 	}
 	
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		// TODO Auto-generated method stub
-		
+		//Grab all the creeps
+		//Set their location to the appropriate starting spot
+		//Give them path info?
+		//Turn them facing the correct direction
+		//Let them know they are now alive
+		//Add them to creeps collection
+		//add GameEvent
 	}
 
+	//Can be called from App
 	public void buildTower(ElementType type, Tile location){
 		//@TODO
 	}
 	
+	//Can be called from App
 	public void upgradeTower(Tower t, int index){
 		//@TODO
 	}
 	
+	//Can be called from App
 	public void razeTower(Tower t){
 		//@TODO
 	}
