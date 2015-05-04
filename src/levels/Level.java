@@ -24,6 +24,9 @@ public class Level {
 	public int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
 	
 	int gold, health;
+	int nextSpawnTick = -1;
+	Wave currentWave;
+	boolean roundInProgress = false;
 	
 	//Currently loaded/active units
 	ArrayList<Tower> towers = new ArrayList<Tower>();
@@ -37,11 +40,23 @@ public class Level {
 		this.creepWaves = creepWaves;
 	}
 	
-	//Essentially ticks
+	public void startRound(){
+		roundInProgress = true;
+		currentWave = creepWaves.get(round);
+		round++;
+		tick = 0;
+		nextSpawnTick = 1;
+	}
+	
 	public void gameTick(){
 		tick++;
 		
 		//Check for new spawns from creep wave;
+		if(tick == nextSpawnTick){
+			spawnCreeps(currentWave.getNextCreeps());
+			nextSpawnTick = tick + currentWave.getTicksForNextCreep();
+		}
+		
 		
 		for(Creep c: creeps){
 			//Update movement, direction faceing
@@ -58,6 +73,11 @@ public class Level {
 		//Check if round has finished from all creep being dead
 	}
 	
+	private void spawnCreeps(Creep[] nextCreeps) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void buildTower(ElementType type, Tile location){
 		//@TODO
 	}
