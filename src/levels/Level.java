@@ -2,9 +2,11 @@ package levels;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import maps.Map;
+import maps.Vertex;
 import maps.Wave;
 import creeps.Creep;
 import creeps.ElementType;
@@ -21,7 +23,7 @@ public class Level {
 	private final Map map;
 	private final Player player;
 	private final ArrayList<Wave> creepWaves;
-
+	
 	public int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	public int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
 	
@@ -34,6 +36,8 @@ public class Level {
 	ArrayList<Tower> towers = new ArrayList<Tower>();
 	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	ArrayList<Creep> creeps = new ArrayList<Creep>();
+
+	Path path;
 	
 	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves){
@@ -80,6 +84,9 @@ public class Level {
 		// TODO Auto-generated method stub
 		//Grab all the creeps
 		//Set their location to the appropriate starting spot
+		for(Creep c: creepsToSpawn){
+			c.setPath(path);
+		}
 		//Give them path info?
 		//Turn them facing the correct direction
 		//Let them know they are now alive

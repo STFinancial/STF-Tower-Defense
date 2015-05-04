@@ -22,4 +22,6 @@ public final class Constants {
 	public final int WIND_BASE_ATTACK_DAMAGE = 0;
 	
 	public final int BASE_INTEREST_RATE = 3;
+	
+	public final static float SQRT_2_OVER_2 = 0.7071f;
 }
