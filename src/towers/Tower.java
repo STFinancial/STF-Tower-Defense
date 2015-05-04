@@ -9,4 +9,5 @@ public abstract class Tower {
 
 	public int width;
 	public int height;
+	public int cost;
 }
