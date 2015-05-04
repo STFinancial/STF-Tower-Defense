@@ -38,11 +38,25 @@ public class Creep {
 	public void updateMovement(){
 		xOff = direction.x * speed;
 		yOff = direction.y * speed;
-		if(xOff > 1 || yOff > 1){
+		if(xOff >= 1 || yOff >= 1 || xOff <= -1 || yOff <= -1){
 			//Back step, figure out how much speed was spent for movement
-			float speedRemaining = 0f;
+			float speedRemaining;
 			
+			if(xOff >= 1 || xOff <= -1){
+				if(xOff <= -1){
+					xOff = -xOff;
+				}
+				speedRemaining = (xOff - 1) / direction.x;
+			}else{
+				if(yOff <= -1){
+					yOff = -yOff;
+				}
+				speedRemaining = (yOff - 1) / direction.y;
+			}
+			
+			//Move to the new vertex, then adjust our offset with the remaining speed
 			currentVertex = nextVertex;
+			pathIndex++;
 			setDestination(pathIndex);
 
 			xOff = direction.x * speedRemaining;
@@ -56,5 +70,8 @@ public class Creep {
 		setDestination(1);
 	}
 	
+	public boolean isFlying(){
+		return creepTypes.contains(CreepType.FLYING);
+	}
 	
 }

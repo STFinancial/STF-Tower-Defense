@@ -37,7 +37,7 @@ public class Level {
 	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	ArrayList<Creep> creeps = new ArrayList<Creep>();
 
-	Path path;
+	Path groundPath, airPath;
 	
 	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves){
@@ -81,17 +81,15 @@ public class Level {
 	}
 	
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
-		// TODO Auto-generated method stub
-		//Grab all the creeps
-		//Set their location to the appropriate starting spot
 		for(Creep c: creepsToSpawn){
-			c.setPath(path);
+			if(c.isFlying()){
+				c.setPath(airPath);
+			}else{
+				c.setPath(groundPath);
+			}
+			creeps.add(c);
+			//Game Spawn Event
 		}
-		//Give them path info?
-		//Turn them facing the correct direction
-		//Let them know they are now alive
-		//Add them to creeps collection
-		//add GameEvent
 	}
 
 	//Can be called from App

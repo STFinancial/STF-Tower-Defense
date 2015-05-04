@@ -1,5 +1,7 @@
 package levels;
 
+import java.util.LinkedList;
+
 import maps.DirectionType;
 import maps.Vertex;
 
@@ -8,14 +10,29 @@ import maps.Vertex;
  */
 public class Path {
 
+	LinkedList<Vertex> path;
+	LinkedList<DirectionType> directions;
+	int size;
+	
 	public Vertex getVertex(int pathIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		if(pathIndex >= size){
+			if(size == 0){
+				//Do we need to check for this?
+				return null;
+			}else{
+				return path.getLast();
+			}
+		}else{
+			return path.get(pathIndex);
+		}
 	}
 
 	public DirectionType getDirection(int pathIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		if(pathIndex >= size){
+			return DirectionType.NONE;
+		}else{
+			return directions.get(pathIndex);
+		}
 	}
 
 }
