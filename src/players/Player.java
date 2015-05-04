@@ -6,4 +6,8 @@ public class Player {
 	TalentTree talentTree;
 	PlayerProgress playerProgress;
 	String displayName;
+	
+	public Player() {
+		playerProgress = new PlayerProgress();
+	}
 }
