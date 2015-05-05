@@ -10,10 +10,16 @@ import creeps.Creep;
  */
 public class Wave {
 
-	Creep[] creeps; // List of creeps that we will spawn
-	int[] timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
-	int size;
-	int counter = 0;
+	public Creep[] creeps; // List of creeps that we will spawn
+	public int[] timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
+	public int size;
+	public int counter = 0;
+
+	public Wave(int size) {
+		this.size = size;
+		creeps = new Creep[size];
+		timings = new int[size];
+	}
 
 	public HashSet<Creep> getNextCreeps() {
 		HashSet<Creep> toReturn = new HashSet<Creep>(); // What do i call this in standard conventions?

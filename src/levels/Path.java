@@ -35,4 +35,8 @@ public class Path {
 		}
 	}
 
+	public Vertex getFinish() {
+		return path.getLast();
+	}
+
 }

@@ -45,6 +45,7 @@ public class Creep {
 		this.path = path;
 		setLocation(0);
 		setDestination(1);
+		pathIndex = 1;
 	}
 
 	public void updateMovement(){

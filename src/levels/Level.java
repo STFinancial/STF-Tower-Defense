@@ -35,9 +35,10 @@ public class Level {
 	//Currently loaded/active units
 	ArrayList<Tower> towers = new ArrayList<Tower>();
 	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-	ArrayList<Creep> creeps = new ArrayList<Creep>();
+	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
-	Path groundPath, airPath;
+	public Path groundPath;
+	Path airPath;
 	
 	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves){
@@ -62,8 +63,14 @@ public class Level {
 			nextSpawnTick = tick + currentWave.getDelayForNextCreep();
 		}
 		
-		for(Creep c: creeps){
+		for(int i = 0; i < creeps.size(); i ++){
+			Creep c = creeps.get(i);
 			c.updateMovement();
+			if(c.currentVertex.equals(groundPath.getFinish())){
+				escapeCreep(c);
+				creeps.remove(i);
+				i--;
+			}
 		}
 		
 		for(Projectile p: projectiles){
@@ -82,6 +89,7 @@ public class Level {
 	
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		for(Creep c: creepsToSpawn){
+			
 			if (c.isFlying()) {
 				c.setPath(airPath);
 			} else {
@@ -90,6 +98,12 @@ public class Level {
 			creeps.add(c);
 			//Game Spawn Event
 		}
+	}
+
+	private void escapeCreep(Creep c) {
+		
+		//Game Escape Event
+		
 	}
 
 	//Can be called from App
