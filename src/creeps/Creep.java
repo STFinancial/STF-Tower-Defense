@@ -20,7 +20,7 @@ public class Creep {
 	public Vertex nextVertex;
 	public DirectionType direction;
 	public float xOff, yOff;
-	public float speed; //In Tiles per Tick (Imagining 30 - 50 being a normal speed)
+	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public Path path;
 	public int pathIndex;
 	
@@ -36,8 +36,8 @@ public class Creep {
 	}
 	
 	public void updateMovement(){
-		xOff = direction.x * speed;
-		yOff = direction.y * speed;
+		xOff += direction.x * speed;
+		yOff += direction.y * speed;
 		if(xOff >= 1 || yOff >= 1 || xOff <= -1 || yOff <= -1){
 			//Back step, figure out how much speed was spent for movement
 			float speedRemaining;

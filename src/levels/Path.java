@@ -11,7 +11,7 @@ import maps.Vertex;
 public class Path {
 
 	LinkedList<Vertex> path;
-	LinkedList<DirectionType> directions;
+	LinkedList<DirectionType> directions; //Direction to vertex
 	int size;
 	
 	public Vertex getVertex(int pathIndex) {
