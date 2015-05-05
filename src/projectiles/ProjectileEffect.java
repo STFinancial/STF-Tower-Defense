@@ -1,12 +1,13 @@
-package towers;
+package projectiles;
 
 import creeps.Creep;
+
 
 /*
  * An on hit effect that can be applied from a projectile
  * information such as chance to hit, duration and effect are included
  */
-public class ProjectileEffect {
+public abstract class ProjectileEffect {
 	public ProjectileEffectType effectType;
 	public float modifier;
 
@@ -14,8 +15,7 @@ public class ProjectileEffect {
 		effectType = type;
 	}
 
-	public void applyEffect(Creep creep) {
-	}
+	public abstract void applyEffect(Creep creep);
 
 	public void setModifier(float modifier) {
 		this.modifier = modifier;
