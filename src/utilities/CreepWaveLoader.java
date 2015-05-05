@@ -45,25 +45,24 @@ public class CreepWaveLoader {
 				healthCost = Integer.parseInt(waveSegment[7]);
 				goldValue = Integer.parseInt(waveSegment[8]);
 				elementType = ElementType.fromString(waveSegment[9]);
-				
-				if(waveNumber != currentWave){
+
+				if (waveNumber != currentWave) {
 					currentWave = waveNumber;
 					toReturn.add(new Wave());
 				}
-				
-				for(int i = 0; i < numberOfCreep; i++){
+
+				for (int i = 0; i < numberOfCreep; i++) {
 					Creep c = new Creep(health, armor, speed, healthCost, goldValue, elementType);
-					for(int j = 10 ; j < waveSegment.length; j++){
+					for (int j = 10; j < waveSegment.length; j++) {
 						System.out.println(waveSegment[j]);
 						c.addAffix(CreepType.fromString(waveSegment[j]));
 					}
-					if(i == 0){
+					if (i == 0) {
 						toReturn.get(waveNumber - 1).addCreep(c, delayBefore);
-					}else{
+					} else {
 						toReturn.get(waveNumber - 1).addCreep(c, delayInterior);
 					}
 				}
-				
 
 			}
 

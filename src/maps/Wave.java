@@ -23,12 +23,12 @@ public class Wave {
 		timings = new ArrayList<Integer>();
 	}
 
-	public void addCreep(Creep c, int timing){
+	public void addCreep(Creep c, int timing) {
 		creeps.add(c);
 		timings.add(timing);
 		size++;
 	}
-	
+
 	public HashSet<Creep> getNextCreeps() {
 		HashSet<Creep> toReturn = new HashSet<Creep>(); // What do i call this in standard conventions?
 
