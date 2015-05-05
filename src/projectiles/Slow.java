@@ -6,7 +6,6 @@ public class Slow extends ProjectileEffect {
 	/*
 	 * Slow effect
 	 */
-	private float creepSpeed = 0;
 
 	public Slow(int lifetime, float modifier) {
 		super(lifetime, modifier);
@@ -14,12 +13,11 @@ public class Slow extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
-		if (creepSpeed == 0) {
-			creepSpeed = creep.speed;
-		}
-		else if (creep.speed == creepSpeed) {
-			creep.speed = creep.speed * modifier;
-		}
-		lifetime--;
+		//TODO, figure diminishing returns idea for multiple slows
+		creep.currentSpeed = creep.speed * modifier;
+	}
+
+	@Override
+	public void onExpire(Creep creep) {
 	}
 }

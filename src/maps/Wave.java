@@ -1,5 +1,6 @@
 package maps;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import creeps.Creep;
@@ -10,24 +11,31 @@ import creeps.Creep;
  */
 public class Wave {
 
-	public Creep[] creeps; // List of creeps that we will spawn
-	public int[] timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
+	public ArrayList<Creep> creeps; // List of creeps that we will spawn
+	public ArrayList<Integer> timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
 	public int size;
-	public int counter = 0;
+	public int counter;
 
-	public Wave(int size) {
-		this.size = size;
-		creeps = new Creep[size];
-		timings = new int[size];
+	public Wave() {
+		size = 0;
+		counter = 0;
+		creeps = new ArrayList<Creep>();
+		timings = new ArrayList<Integer>();
+	}
+
+	public void addCreep(Creep c, int timing) {
+		creeps.add(c);
+		timings.add(timing);
+		size++;
 	}
 
 	public HashSet<Creep> getNextCreeps() {
 		HashSet<Creep> toReturn = new HashSet<Creep>(); // What do i call this in standard conventions?
 
 		do {
-			toReturn.add(creeps[counter]);
+			toReturn.add(creeps.get(counter));
 			counter++;
-		} while (counter < size && timings[counter] == 0);
+		} while (counter < size && timings.get(counter) == 0);
 
 		return toReturn;
 	}
@@ -36,6 +44,10 @@ public class Wave {
 		if (counter >= size) {
 			return -1;
 		}
-		return timings[counter];
+		return timings.get(counter);
+	}
+
+	public boolean stillSpawning() {
+		return (counter < size);
 	}
 }

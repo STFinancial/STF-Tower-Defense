@@ -1,7 +1,10 @@
 package projectiles;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
+import towers.Tower;
+import utilities.Circle;
+import utilities.TrigHelper;
 import creeps.Creep;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
@@ -10,14 +13,31 @@ import creeps.Creep;
  * Also possibly a second class for passive boost from towers like attack speed in radius
  */
 public class Projectile {
-	public int x, y;
-	public int v;
-	public Object graphic;
+	public Tower parent;
+	public float x, y;
+	public float currentSpeed, speed;
+	public float size = .05f;
+	public Circle hitBox;
+	
+	public boolean dud = false; //When creep is killed by something else or escapes before contact;
+	public boolean targetsCreep; //False for targeting a ground spot;
+	float targetX, targetY; //For ground spot target towers, in Tile coordinates
+	public Creep targetCreep;
+	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
 
-	public HashSet<ProjectileEffect> effects;
+	public ArrayList<ProjectileEffect> effects;
 
-	public Projectile() {
-		effects = new HashSet<ProjectileEffect>();
+	public Projectile(Tower parent) {
+		this.parent = parent;
+		this.x = parent.centerX;
+		this.y = parent.centerY;
+		targetsCreep = parent.targetsCreep;
+		targetX = parent.targetX;
+		targetY = parent.targetY;
+		targetCreep = parent.targetCreep;
+		targetAngle = parent.targetAngle;
+		effects = new ArrayList<ProjectileEffect>();
+		hitBox = new Circle(x, y, size);
 	}
 
 	public void addEffect(ProjectileEffect effect) {
@@ -25,10 +45,38 @@ public class Projectile {
 	}
 
 	public void applyEffect(Creep creep) {
-		creep.effects = this.effects;
+		creep.effects.addAll(effects);
+	}
+	
+	public void update(){
+		if(targetsCreep){
+			if(targetCreep != null){
+				if(targetCreep.isDead()){
+					dud = true;
+					return;
+				}else{
+					targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+				}
+			}else{
+				dud = true;
+				return;
+			}
+		}
+		x -= Math.cos(targetAngle) * currentSpeed;
+		y -= Math.sin(targetAngle) * currentSpeed;
+		hitBox.x = x;
+		hitBox.y = y;
+	}
+	
+	public boolean isDone(){
+		if(dud){
+			return true;
+		}
+		if(targetsCreep){
+			return hitBox.intersects(targetCreep.hitBox);
+		}
+		//TODO add area target part
+		return false;
 	}
 
-	public void setGraphic(Object o) {
-		graphic = o;
-	}
 }
