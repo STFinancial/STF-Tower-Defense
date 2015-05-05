@@ -21,7 +21,7 @@ public class PathFinder {
 	public static Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
-			graph[i].gScore = 10000;
+			graph[i].gScore = 0;
 		}
 
 		LinkedList<Vertex> closedSet = new LinkedList<Vertex>(); //can switch to hashmap for constant time at some point
