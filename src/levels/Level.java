@@ -12,7 +12,7 @@ import creeps.Creep;
 import creeps.ElementType;
 import maps.Tile;
 import players.Player;
-import towers.Projectile;
+import projectiles.Projectile;
 import towers.Tower;
 
 /*

@@ -1,5 +1,6 @@
 package utilities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -116,6 +117,8 @@ public class PathFinder {
 		int effWidth = map.width - 1;
 		vg.effHeight = effHeight;
 		vg.effWidth = effWidth;
+		vg.endingVertices = new ArrayList<Vertex>();
+		vg.startingVertices = new ArrayList<Vertex>();
 		
 		Vertex[] graph = new Vertex[(effHeight) * (effWidth)];
 		
@@ -127,6 +130,7 @@ public class PathFinder {
 			vert = new Vertex();
 			graph[v] = vert;
 		}
+		boolean againstLeft, againstRight, againstTop, againstBot;
 		for (int v = 0; v < graph.length; v++) {
 			vert = graph[v];
 			TL_y = v / effWidth;
@@ -145,34 +149,41 @@ public class PathFinder {
 			assignType(vg, vert, TL, TR, BL, BR);
 			//this can be optimized by only passing the vertex and setting TR, TL, etc. directly with the getTile
 			
-			boolean left = true, right = true, top = true, bot = true;
+			againstLeft = false;
+			againstRight = false;
+			againstTop = false;
+			againstBot = false;
 			if (TL_x != 0) { //not against the left edge of the map
 				vert.neighbors.add(graph[v - 1]);
-				left = false;
+			} else {
+				againstLeft = true;
 			}
 			if (TL_x + 1 != effWidth) { //not against the right edge of the map
 				vert.neighbors.add(graph[v + 1]);
-				right = false;
+			} else {
+				againstRight = true;
 			}
 			if (TL_y != 0) { //not against the top
 				vert.neighbors.add(graph[v - effWidth]);
-				top = false;
+			} else {
+				againstTop = true;
 			}
-			if (TL_y != effHeight) {
+			if (TL_y + 1 != effHeight) { //not against bottom
 				vert.neighbors.add(graph[v + effWidth]);
-				bot = false;
+			} else {
+				againstBot = true;
 			}
-			if (!right || !top) {
+			if (!againstRight || !againstTop) {
 				vert.neighbors.add(graph[v - effWidth + 1]);
 			}
-			if (!right || !bot) {
+			if (!againstRight || !againstBot) {
 				vert.neighbors.add(graph[v + effWidth + 1]);
 			}
-			if (!left || !top) {
+			if (!againstLeft || !againstTop) {
 				vert.neighbors.add(graph[v - effWidth - 1]);
 			}
-			if (!left || !bot) {
-				vert.neighbors.add(graph[v + effWidth + 1]);
+			if (!againstLeft || !againstBot) {
+				vert.neighbors.add(graph[v + effWidth - 1]);
 			}
 			//there will be additional logic once teleporters are added
 		}
