@@ -36,8 +36,8 @@ public class Creep {
 	}
 	
 	public void updateMovement(){
-		xOff = direction.x * speed;
-		yOff = direction.y * speed;
+		xOff += direction.x * speed;
+		yOff += direction.y * speed;
 		if(xOff >= 1 || yOff >= 1 || xOff <= -1 || yOff <= -1){
 			//Back step, figure out how much speed was spent for movement
 			float speedRemaining;
