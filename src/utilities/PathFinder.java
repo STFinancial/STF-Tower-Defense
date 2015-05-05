@@ -19,7 +19,7 @@ import maps.VertexGraph;
 public class PathFinder {
 	
 	
-	public Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
+	public static Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
 			graph[i].gScore = 0;
@@ -63,7 +63,7 @@ public class PathFinder {
 		return null;
 	}
 	
-	private float getEdgeCost(Vertex v1, Vertex v2) {
+	private static float getEdgeCost(Vertex v1, Vertex v2) {
 		if (v1.y != v2.y && v1.x != v2.x) {
 			return Constants.SQRT_2;
 		} else {
@@ -71,7 +71,7 @@ public class PathFinder {
 		}
 	}
 	
-	private Path reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
+	private static Path reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
 		LinkedList<Vertex> path = new LinkedList<Vertex>();
 		LinkedList<DirectionType> directions = new LinkedList<DirectionType>();
 		path.addFirst(current);
