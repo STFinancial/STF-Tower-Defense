@@ -7,10 +7,6 @@ import creeps.Creep;
  * information such as chance to hit, duration and effect are included
  */
 public class ProjectileEffect {
-	public enum ProjectileEffectType {
-		DAMAGE, SLOW, SNARE, STUN, DAMAGE_OVER_TIME, MORTAL_STRIKE, ;
-	}
-
 	public ProjectileEffectType effectType;
 	public float modifier;
 
