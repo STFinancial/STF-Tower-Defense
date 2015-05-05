@@ -3,7 +3,7 @@ package projectiles;
 import creeps.Creep;
 import creeps.ElementType;
 
-public class Damage extends ProjectileEffect {
+public class Damage extends DamageEffect {
 	/*
 	 * Plain damage
 	 */

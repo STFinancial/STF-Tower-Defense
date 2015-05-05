@@ -26,10 +26,6 @@ public abstract class ProjectileEffect {
 
 	public abstract void applyEffect(Creep creep);
 
-	public abstract boolean ignoresArmor();
-
-	public abstract boolean ignoresShield();
-
 	public boolean isExpired(){
 		return lifetime < 0;
 	}
@@ -44,13 +40,14 @@ public abstract class ProjectileEffect {
 		parentProjectile = projectile;
 	}
 
-	public void update(Creep creep) {
+	public boolean update(Creep creep) {
 		if (lifetime == 0) {
 			onExpire(creep);
 		}
-		else {
+		else if (lifetime > 0) {
 			applyEffect(creep);
 		}
 		lifetime--;
+		return lifetime < 0;
 	}
 }
