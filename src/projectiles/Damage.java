@@ -2,13 +2,13 @@ package projectiles;
 
 import creeps.Creep;
 
-public class TestBullet extends ProjectileEffect {
+public class Damage extends ProjectileEffect {
 	/*
-	 * Just an example of a very simple damage projectile
+	 * Plain damage
 	 */
 
-	public TestBullet() {
-		super(ProjectileEffectType.DAMAGE);
+	public Damage(float modifier) {
+		super(modifier);
 	}
 
 	@Override

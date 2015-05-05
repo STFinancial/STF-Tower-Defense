@@ -1,7 +1,6 @@
 package projectiles;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import creeps.Creep;
 /*
@@ -15,7 +14,7 @@ public class Projectile {
 	public int v;
 	public Object graphic;
 
-	public Set<ProjectileEffect> effects;
+	public HashSet<ProjectileEffect> effects;
 
 	public Projectile() {
 		effects = new HashSet<ProjectileEffect>();
@@ -26,9 +25,7 @@ public class Projectile {
 	}
 
 	public void applyEffect(Creep creep) {
-		for (ProjectileEffect effect : effects) {
-			effect.applyEffect(creep);
-		}
+		creep.effects = this.effects;
 	}
 
 	public void setGraphic(Object o) {

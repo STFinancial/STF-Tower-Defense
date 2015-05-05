@@ -8,11 +8,16 @@ import creeps.Creep;
  * information such as chance to hit, duration and effect are included
  */
 public abstract class ProjectileEffect {
-	public ProjectileEffectType effectType;
 	public float modifier;
+	public int lifetime = 0;
 
-	public ProjectileEffect(ProjectileEffectType type) {
-		effectType = type;
+	public ProjectileEffect(float modifier) {
+		this.modifier = modifier;
+	}
+
+	public ProjectileEffect(int lifetime, float modifier) {
+		this(modifier);
+		this.lifetime = lifetime;
 	}
 
 	public abstract void applyEffect(Creep creep);
