@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import levels.Path;
+import maps.DirectionType;
 import maps.Tile;
 import maps.TileType;
 import maps.Vertex;
@@ -16,7 +18,7 @@ import maps.VertexGraph;
 public class PathFinder {
 	
 	
-	public LinkedList<Vertex> AStar(Vertex start, Vertex finish, VertexGraph vg) {
+	public Path AStar(Vertex start, Vertex finish, VertexGraph vg) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
 			graph[i].gScore = 10000;
@@ -58,18 +60,55 @@ public class PathFinder {
 		return null;
 	}
 	
-	private LinkedList<Vertex> reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
+	private Path reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
 		LinkedList<Vertex> path = new LinkedList<Vertex>();
+		LinkedList<DirectionType> directions = new LinkedList<DirectionType>();
 		path.addFirst(current);
 		while (cameFrom.get(current) != null) {
+			directions.addFirst(getDirectionBetween(cameFrom.get(current), current));
 			current = cameFrom.get(current);
 			path.addFirst(current);
 		}
-		return path;
+		directions.addFirst(DirectionType.NONE);
+		Path totalPath = new Path();
+		totalPath.directions = directions;
+		totalPath.path = path;
+		totalPath.size = path.size();
+		return totalPath;
 	}
 	
 	private double heuristicCost(Vertex v, Vertex goal, VertexGraph vg) {
 		return Math.sqrt(Math.pow(v.x - goal.x, 2) + Math.pow(v.y - goal.y, 2));
+	}
+	
+	private DirectionType getDirectionBetween(Vertex from, Vertex to) {
+		int x = from.x;
+		int y = from.y;
+		if (to.x > x) { //if it's to the right
+			if (to.y > y) {
+				return DirectionType.DOWN_RIGHT;
+			} else if (to.y < y) {
+				return DirectionType.UP_RIGHT;
+			} else {
+				return DirectionType.RIGHT;
+			}
+		} else if (to.x < x) { //to the left
+			if (to.y > y) {
+				return DirectionType.DOWN_LEFT;
+			} else if (to.y < y) {
+				return DirectionType.UP_LEFT;
+			} else {
+				return DirectionType.LEFT;
+			}
+		} else {
+			if (to.y > y) {
+				return DirectionType.DOWN;
+			} else if (to.y < y) {
+				return DirectionType.UP;
+			} else {
+				return DirectionType.NONE;
+			}
+		}
 	}
 	
 	public static VertexGraph mapToVertexGraph(VertexGraph vg, Map map) {
@@ -104,6 +143,7 @@ public class PathFinder {
 			vert.BR = BR;
 			vert.index = v;
 			assignType(vg, vert, TL, TR, BL, BR);
+			//this can be optimized by only passing the vertex and setting TR, TL, etc. directly with the getTile
 			
 			boolean left = true, right = true, top = true, bot = true;
 			if (TL_x != 0) { //not against the left edge of the map

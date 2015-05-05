@@ -10,27 +10,27 @@ import maps.Vertex;
  */
 public class Path {
 
-	LinkedList<Vertex> path;
-	LinkedList<DirectionType> directions; //Direction to vertex
-	int size;
+	public LinkedList<Vertex> path;
+	public LinkedList<DirectionType> directions;
+	public int size;
 	
 	public Vertex getVertex(int pathIndex) {
-		if(pathIndex >= size){
-			if(size == 0){
+		if (pathIndex >= size) {
+			if (size == 0) {
 				//Do we need to check for this?
 				return null;
-			}else{
+			} else {
 				return path.getLast();
 			}
-		}else{
+		} else {
 			return path.get(pathIndex);
 		}
 	}
 
 	public DirectionType getDirection(int pathIndex) {
-		if(pathIndex >= size){
+		if (pathIndex >= size) {
 			return DirectionType.NONE;
-		}else{
+		} else {
 			return directions.get(pathIndex);
 		}
 	}
