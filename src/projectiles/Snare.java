@@ -3,7 +3,6 @@ package projectiles;
 import creeps.Creep;
 
 public class Snare extends ProjectileEffect {
-	private float speed;
 
 	public Snare(int lifetime, float modifier) {
 		super(lifetime, modifier);
@@ -11,10 +10,7 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
-		if (speed != 0) {
-			speed = creep.speed;
-		}
-		creep.speed = 0;
+		creep.currentSpeed = 0;
 	}
 
 	@Override

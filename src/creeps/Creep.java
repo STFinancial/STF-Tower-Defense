@@ -6,6 +6,7 @@ import java.util.HashSet;
 import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
+import projectiles.Damage;
 import projectiles.ProjectileEffect;
 import projectiles.Slow;
 import towers.Tower;
@@ -19,7 +20,7 @@ public class Creep {
 	public int goldValue; //Money player takes on kill
 
 	//Secondary Stats
-	public int earthResist, fireResist, windResist, waterResist;
+	public float[] resist; //percentage of damage taken from each element
 	public int slowResist;
 	public ElementType elementType;
 	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
@@ -48,6 +49,8 @@ public class Creep {
 		currentHealth = health;
 		currentArmor = armor;
 		currentSpeed = speed;
+		
+		resist = elementType.baseResist();
 	}
 
 	public void addAffix(CreepType type) {
@@ -134,11 +137,19 @@ public class Creep {
 		return currentHealth < 1;
 	}
 
-	public void damage() {
-		//TODO
-		//Calculate damage done from armor/resistance
-		//Figure out if any effect happens to attack
-		//Figure out if killed
+	public void damage(ProjectileEffect damager) {
+		float baseDamage = damager.modifier;
+		float damageToDo = baseDamage * resist[damager.elementType.ordinal()];
+		if(!damager.ignoresArmor()){
+			damageToDo -= armor;
+		}
+		int damage = (int) damageToDo;
+		if (damage < 0) {
+			damage = 0;
+		}
+		currentHealth -= damage;
+		System.out.println("Ouch i was just hit by " + baseDamage + " but i only took " + damage + ", " + currentHealth + " life remaining");
+		//TODO shield calculations
 	}
 
 	public void death() {

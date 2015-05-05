@@ -1,6 +1,7 @@
 package projectiles;
 
 import creeps.Creep;
+import creeps.ElementType;
 
 
 /*
@@ -12,6 +13,7 @@ public abstract class ProjectileEffect {
 	
 	public float modifier = 0;
 	public int lifetime = 0;
+	public ElementType elementType;
 
 	public ProjectileEffect(float modifier) {
 		this.modifier = modifier;
@@ -42,5 +44,12 @@ public abstract class ProjectileEffect {
 	
 	public boolean isExpired(){
 		return lifetime < 0;
+	}
+
+	public boolean ignoresArmor() {
+		return false;
+	}
+	public boolean ignoresShield() {
+		return false;
 	}
 }

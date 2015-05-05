@@ -1,6 +1,7 @@
 package projectiles;
 
 import creeps.Creep;
+import creeps.ElementType;
 
 public class Damage extends ProjectileEffect {
 	/*
@@ -9,6 +10,7 @@ public class Damage extends ProjectileEffect {
 
 	public Damage(float modifier) {
 		super(modifier);
+		elementType = ElementType.LIGHT;
 	}
 
 	@Override
@@ -17,6 +19,6 @@ public class Damage extends ProjectileEffect {
 
 	@Override
 	public void onExpire(Creep creep) {
-		creep.health = creep.health - (int) modifier;
+		creep.damage(this);
 	}
 }
