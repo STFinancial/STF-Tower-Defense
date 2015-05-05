@@ -8,24 +8,54 @@ import maps.Vertex;
 import projectiles.ProjectileEffect;
 
 public class Creep {
-	//we can decide how we want these stats to be
-	public int health;
-	public int armor;
+	//Primary Stats
+	public int health;		
+	public int armor;		//Flat damage reduction on hit
+	public float speed;		//In Tiles per Tick (Imagining .030 - .050 being a normal speed)
+	public int healthCost;	//Damage Player takes on escape
+	public int goldValue;	//
+	
+	//Secondary Stats
 	public int earthResist, fireResist, windResist, waterResist;
 	public int slowResist;
-
 	public ElementType elementType;
-	HashSet<CreepType> creepTypes = new HashSet<CreepType>();
+	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
+	
+	//Current Stats
+	public int currentArmor;
+	public int currentHealth;
+	public float currentSpeed;
 	public HashSet<ProjectileEffect> effects = new HashSet<ProjectileEffect>();
 
+	//Movement
 	public Vertex currentVertex;
 	public Vertex nextVertex;
 	public DirectionType direction;
 	public float xOff, yOff;
-	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public Path path;
 	public int pathIndex;
 
+	public Creep(int health, int armor, float speed, int healthCost, int goldValue, ElementType elementType) {
+		this.health = health;
+		this.armor = armor;
+		this.speed = speed;
+		this.healthCost = healthCost;
+		this.goldValue = goldValue;
+		this.elementType = elementType;
+	}
+	
+	public void addAffix(CreepType type){
+		creepTypes.add(type);
+	}
+
+	public boolean isGiant(){
+		return creepTypes.contains(CreepType.GIANT);
+	}
+	
+	public boolean isQuick(){
+		return creepTypes.contains(CreepType.QUICK);
+	}
+	
 	public boolean isFlying(){
 		return creepTypes.contains(CreepType.FLYING);
 	}

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import maps.Map;
 import maps.Vertex;
+import maps.VertexGraph;
 import maps.Wave;
 import creeps.Creep;
 import creeps.ElementType;
@@ -14,6 +15,7 @@ import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
 import towers.Tower;
+import utilities.PathFinder;
 
 /*
  * Executes main game logic loop
@@ -104,6 +106,10 @@ public class Level {
 		
 		//Game Escape Event
 		
+		//Take away health or gold or whatever
+		
+		//Check if we lose?
+		
 	}
 
 	//Can be called from App
@@ -121,6 +127,27 @@ public class Level {
 		//@TODO
 	}
 	
+	public void updatePath(){
+		VertexGraph vg = new VertexGraph();
+		vg = PathFinder.mapToVertexGraph(vg, map);
+		groundPath  = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
+		airPath  = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
+	}
 	
+	public boolean stillSpawning(){
+		return currentWave.stillSpawning();
+	}
+	
+	public boolean creepLeft(){
+		return !creeps.isEmpty();
+	}
+
+	public boolean isRoundOver(){
+		return !stillSpawning() && !creepLeft();
+	}
+	
+	public boolean isOver() {
+		return isRoundOver() && round == creepWaves.size() ;
+	}
 	
 }
