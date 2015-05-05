@@ -7,6 +7,7 @@ import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
 import projectiles.ProjectileEffect;
+import projectiles.Slow;
 import towers.Tower;
 
 public class Creep {
@@ -89,8 +90,8 @@ public class Creep {
 	}
 
 	private void updateMovement() {
-		xOff += direction.x * speed;
-		yOff += direction.y * speed;
+		xOff += direction.x * currentSpeed;
+		yOff += direction.y * currentSpeed;
 		if (xOff >= 1 || yOff >= 1 || xOff <= -1 || yOff <= -1) {
 			//Back step, figure out how much speed was spent for movement
 			float speedRemaining;
@@ -118,21 +119,15 @@ public class Creep {
 	}
 
 	private void updateEffects() {
-		/* My proposed format for code
+		currentSpeed = speed;
 		for(int i = 0; i < effects.size() ; i++){
 			ProjectileEffect e = effects.get(i);
-			e.decrementDuration();
-			if(e.expired()){
-				e.end(this);
+			e.update(this);
+			if(e.isExpired()){
 				effects.remove(e);
 				i--;
 			}
-			e.applyAffect(this);
 		}
-		
-		*/
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean isDead() {
@@ -149,5 +144,9 @@ public class Creep {
 	public void death() {
 		//TODO
 		//activate deathrattle and shit
+	}
+
+	public void addEffect(ProjectileEffect effect) {
+		effects.add(effect);
 	}
 }

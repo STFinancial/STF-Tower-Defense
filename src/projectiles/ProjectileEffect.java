@@ -8,6 +8,8 @@ import creeps.Creep;
  * information such as chance to hit, duration and effect are included
  */
 public abstract class ProjectileEffect {
+	Projectile parentProjectile;
+	
 	public float modifier = 0;
 	public int lifetime = 0;
 
@@ -36,5 +38,9 @@ public abstract class ProjectileEffect {
 			applyEffect(creep);
 		}
 		lifetime--;
+	}
+	
+	public boolean isExpired(){
+		return lifetime < 0;
 	}
 }
