@@ -33,6 +33,7 @@ public abstract class Tower {
 		this.level = level;
 		x = topLeftTile.x;
 		y = topLeftTile.y;
+		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 		centerX = x + width / 2f;
 		centerY = y + height / 2f;
 		this.width = width;
