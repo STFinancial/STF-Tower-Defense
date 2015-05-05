@@ -3,7 +3,7 @@ package projectiles;
 import creeps.Creep;
 import creeps.ElementType;
 
-public class Bleed extends ProjectileEffect {
+public class Bleed extends DamageEffect {
 
 	int timing;
 	int counter = 0;
@@ -22,7 +22,8 @@ public class Bleed extends ProjectileEffect {
 	}
 
 	@Override
-	public void onExpire(Creep creep) {
+	public boolean ignoresArmor() {
+		return true;
 	}
 
 	@Override
@@ -31,7 +32,6 @@ public class Bleed extends ProjectileEffect {
 	}
 
 	@Override
-	public boolean ignoresArmor() {
-		return true;
+	public void onExpire(Creep creep) {
 	}
 }

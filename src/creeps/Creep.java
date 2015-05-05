@@ -6,10 +6,8 @@ import java.util.HashSet;
 import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
-import projectiles.Damage;
+import projectiles.DamageEffect;
 import projectiles.ProjectileEffect;
-import projectiles.Slow;
-import towers.Tower;
 
 public class Creep {
 	//Primary Stats
@@ -49,12 +47,44 @@ public class Creep {
 		currentHealth = health;
 		currentArmor = armor;
 		currentSpeed = speed;
-		
+
 		resist = elementType.baseResist();
 	}
 
 	public void addAffix(CreepType type) {
 		creepTypes.add(type);
+	}
+
+	public void addEffect(ProjectileEffect effect) {
+		effects.add(effect);
+	}
+
+	public void damage(DamageEffect damager) {
+		float baseDamage = damager.modifier;
+		float damageToDo = baseDamage * resist[damager.elementType.ordinal()];
+		if(!damager.ignoresArmor()){
+			damageToDo -= armor;
+		}
+		int damage = (int) damageToDo;
+		if (damage < 0) {
+			damage = 0;
+		}
+		currentHealth -= damage;
+		System.out.println("Ouch i was just hit by " + baseDamage + " but i only took " + damage + ", " + currentHealth + " life remaining");
+		//TODO shield calculations
+	}
+
+	public void death() {
+		//TODO
+		//activate deathrattle and shit
+	}
+
+	public boolean isDead() {
+		return currentHealth < 1;
+	}
+
+	public boolean isFlying() {
+		return creepTypes.contains(CreepType.FLYING);
 	}
 
 	public boolean isGiant() {
@@ -63,10 +93,6 @@ public class Creep {
 
 	public boolean isQuick() {
 		return creepTypes.contains(CreepType.QUICK);
-	}
-
-	public boolean isFlying() {
-		return creepTypes.contains(CreepType.FLYING);
 	}
 
 	public void setDestination(int index) {
@@ -90,6 +116,18 @@ public class Creep {
 	public void update() {
 		updateMovement();
 		updateEffects();
+	}
+
+	private void updateEffects() {
+		currentSpeed = speed;
+		for(int i = 0; i < effects.size() ; i++){
+			ProjectileEffect e = effects.get(i);
+			e.update(this);
+			if(e.isExpired()){
+				effects.remove(e);
+				i--;
+			}
+		}
 	}
 
 	private void updateMovement() {
@@ -119,44 +157,5 @@ public class Creep {
 			xOff = direction.x * speedRemaining;
 			yOff = direction.y * speedRemaining;
 		}
-	}
-
-	private void updateEffects() {
-		currentSpeed = speed;
-		for(int i = 0; i < effects.size() ; i++){
-			ProjectileEffect e = effects.get(i);
-			e.update(this);
-			if(e.isExpired()){
-				effects.remove(e);
-				i--;
-			}
-		}
-	}
-
-	public boolean isDead() {
-		return currentHealth < 1;
-	}
-
-	public void damage(ProjectileEffect damager) {
-		float baseDamage = damager.modifier;
-		float damageToDo = baseDamage * resist[damager.elementType.ordinal()];
-		if(!damager.ignoresArmor()){
-			damageToDo -= armor;
-		}
-		int damage = (int) damageToDo;
-		if (damage < 0) {
-			damage = 0;
-		}
-		currentHealth -= damage;
-		//TODO shield calculations
-	}
-
-	public void death() {
-		//TODO
-		//activate deathrattle and shit
-	}
-
-	public void addEffect(ProjectileEffect effect) {
-		effects.add(effect);
 	}
 }

@@ -15,8 +15,6 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	public void onExpire(Creep creep) {
-		// TODO Auto-generated method stub
-
+		creep.currentSpeed = creep.speed;
 	}
-
 }

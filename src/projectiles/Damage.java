@@ -3,7 +3,7 @@ package projectiles;
 import creeps.Creep;
 import creeps.ElementType;
 
-public class Damage extends ProjectileEffect {
+public class Damage extends DamageEffect {
 	/*
 	 * Plain damage
 	 */
@@ -15,6 +15,18 @@ public class Damage extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
+	}
+
+	@Override
+	public boolean ignoresArmor() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean ignoresShield() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
