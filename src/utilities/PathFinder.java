@@ -1,5 +1,6 @@
 package utilities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -16,22 +17,21 @@ import maps.VertexGraph;
  * Tool to grab the path for a certain level, will need to be run anytime a tower is built
  */
 public class PathFinder {
-	
-	
-	public Path AStar(Vertex start, Vertex finish, VertexGraph vg) {
+
+	public static Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
-			graph[i].gScore = 10000;
+			graph[i].gScore = 0;
 		}
-		
+
 		LinkedList<Vertex> closedSet = new LinkedList<Vertex>(); //can switch to hashmap for constant time at some point
 		PriorityQueue<Vertex> openSet = new PriorityQueue<Vertex>();
 		openSet.add(start);
 		HashMap<Vertex, Vertex> cameFrom = new HashMap<Vertex, Vertex>();
-		
+
 		start.gScore = 0;
 		start.hScore = heuristicCost(start, finish, vg);
-		
+
 		Vertex current;
 		double tentativeGScore;
 		while (!openSet.isEmpty()) {
@@ -45,8 +45,11 @@ public class PathFinder {
 					continue;
 				}
 				tentativeGScore = current.gScore + 1;
+
 				
-				if (!openSet.contains(neighbor) || tentativeGScore < neighbor.gScore) {
+				
+				if ((!openSet.contains(neighbor) && ((groundType && neighbor.groundTraversable) || (!groundType && neighbor.airTraversable))) || 
+					     tentativeGScore < neighbor.gScore) {
 					cameFrom.put(neighbor, current);
 					neighbor.gScore = tentativeGScore;
 					neighbor.hScore = tentativeGScore + heuristicCost(neighbor, finish, vg);
@@ -56,11 +59,11 @@ public class PathFinder {
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
-	private Path reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
+
+	private static Path reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
 		LinkedList<Vertex> path = new LinkedList<Vertex>();
 		LinkedList<DirectionType> directions = new LinkedList<DirectionType>();
 		path.addFirst(current);
@@ -76,12 +79,12 @@ public class PathFinder {
 		totalPath.size = path.size();
 		return totalPath;
 	}
-	
-	private double heuristicCost(Vertex v, Vertex goal, VertexGraph vg) {
+
+	private static double heuristicCost(Vertex v, Vertex goal, VertexGraph vg) {
 		return Math.sqrt(Math.pow(v.x - goal.x, 2) + Math.pow(v.y - goal.y, 2));
 	}
-	
-	private DirectionType getDirectionBetween(Vertex from, Vertex to) {
+
+	private static DirectionType getDirectionBetween(Vertex from, Vertex to) {
 		int x = from.x;
 		int y = from.y;
 		if (to.x > x) { //if it's to the right
@@ -110,15 +113,17 @@ public class PathFinder {
 			}
 		}
 	}
-	
+
 	public static VertexGraph mapToVertexGraph(VertexGraph vg, Map map) {
 		int effHeight = map.height - 1;
 		int effWidth = map.width - 1;
 		vg.effHeight = effHeight;
 		vg.effWidth = effWidth;
-		
+		vg.endingVertices = new ArrayList<Vertex>();
+		vg.startingVertices = new ArrayList<Vertex>();
+
 		Vertex[] graph = new Vertex[(effHeight) * (effWidth)];
-		
+
 		//this can be optimized by caching two of the tiles for the next iteration instead of regrabbing them
 		Tile TL, TR, BL, BR; //topleft, topright, bottomleft, bottomright
 		int TL_x, TL_y;
@@ -127,6 +132,7 @@ public class PathFinder {
 			vert = new Vertex();
 			graph[v] = vert;
 		}
+		boolean againstLeft, againstRight, againstTop, againstBot;
 		for (int v = 0; v < graph.length; v++) {
 			vert = graph[v];
 			TL_y = v / effWidth;
@@ -144,69 +150,64 @@ public class PathFinder {
 			vert.index = v;
 			assignType(vg, vert, TL, TR, BL, BR);
 			//this can be optimized by only passing the vertex and setting TR, TL, etc. directly with the getTile
-			
-			boolean left = true, right = true, top = true, bot = true;
+
+			againstLeft = false;
+			againstRight = false;
+			againstTop = false;
+			againstBot = false;
 			if (TL_x != 0) { //not against the left edge of the map
 				vert.neighbors.add(graph[v - 1]);
-				left = false;
+			} else {
+				againstLeft = true;
 			}
 			if (TL_x + 1 != effWidth) { //not against the right edge of the map
 				vert.neighbors.add(graph[v + 1]);
-				right = false;
+			} else {
+				againstRight = true;
 			}
 			if (TL_y != 0) { //not against the top
 				vert.neighbors.add(graph[v - effWidth]);
-				top = false;
+			} else {
+				againstTop = true;
 			}
-			if (TL_y != effHeight) {
+			if (TL_y + 1 != effHeight) { //not against bottom
 				vert.neighbors.add(graph[v + effWidth]);
-				bot = false;
+			} else {
+				againstBot = true;
 			}
-			if (!right || !top) {
+			if (!(againstRight || againstTop)) {
 				vert.neighbors.add(graph[v - effWidth + 1]);
 			}
-			if (!right || !bot) {
+			if (!(againstRight || againstBot)) {
 				vert.neighbors.add(graph[v + effWidth + 1]);
 			}
-			if (!left || !top) {
+			if (!(againstLeft || againstTop)) {
 				vert.neighbors.add(graph[v - effWidth - 1]);
 			}
-			if (!left || !bot) {
-				vert.neighbors.add(graph[v + effWidth + 1]);
+			if (!(againstLeft || againstBot)) {
+				vert.neighbors.add(graph[v + effWidth - 1]);
 			}
 			//there will be additional logic once teleporters are added
 		}
-		
+
 		vg.graph = graph;
 		return vg;
 	}
-	
+
 	private static void assignType(VertexGraph vg, Vertex vert, Tile TL, Tile TR, Tile BL, Tile BR) {
-		if (TL.type.groundTraversable && 
-			TR.type.groundTraversable && 
-			BL.type.groundTraversable && 
-			BR.type.groundTraversable) {
+		if (TL.type.groundTraversable && TR.type.groundTraversable && BL.type.groundTraversable && BR.type.groundTraversable) {
 			vert.groundTraversable = true;
 		}
-		
-		if (TL.type.airTraversable &&
-			TR.type.airTraversable &&
-			BL.type.airTraversable &&
-			BR.type.airTraversable) {
+
+		if (TL.type.airTraversable && TR.type.airTraversable && BL.type.airTraversable && BR.type.airTraversable) {
 			vert.airTraversable = true;
 		}
-		
-		if (TL.type == TileType.START &&
-			TR.type == TileType.START &&
-			BL.type == TileType.START &&
-			BR.type == TileType.START) {
+
+		if (TL.type == TileType.START && TR.type == TileType.START && BL.type == TileType.START && BR.type == TileType.START) {
 			vg.startingVertices.add(vert);
 		}
-		
-		if (TL.type == TileType.FINISH &&
-			TR.type == TileType.FINISH &&
-			BL.type == TileType.FINISH &&
-			BR.type == TileType.FINISH) {
+
+		if (TL.type == TileType.FINISH && TR.type == TileType.FINISH && BL.type == TileType.FINISH && BR.type == TileType.FINISH) {
 			vg.endingVertices.add(vert);
 		}
 	}
