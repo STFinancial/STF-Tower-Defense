@@ -19,10 +19,10 @@ import maps.VertexGraph;
 public class PathFinder {
 	
 	
-	public Path AStar(Vertex start, Vertex finish, VertexGraph vg) {
+	public Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
-			graph[i].gScore = 10000;
+			graph[i].gScore = 0;
 		}
 		
 		LinkedList<Vertex> closedSet = new LinkedList<Vertex>(); //can switch to hashmap for constant time at some point
@@ -45,9 +45,11 @@ public class PathFinder {
 				if (closedSet.contains(neighbor)) {
 					continue;
 				}
-				tentativeGScore = current.gScore + 1;
+				tentativeGScore = current.gScore + getEdgeCost(current, neighbor);
 				
-				if (!openSet.contains(neighbor) || tentativeGScore < neighbor.gScore) {
+				if ((!openSet.contains(neighbor) && ((groundType && neighbor.groundTraversable) || (!groundType && neighbor.airTraversable))) || 
+					tentativeGScore < neighbor.gScore) {
+					
 					cameFrom.put(neighbor, current);
 					neighbor.gScore = tentativeGScore;
 					neighbor.hScore = tentativeGScore + heuristicCost(neighbor, finish, vg);
@@ -59,6 +61,14 @@ public class PathFinder {
 		}
 		
 		return null;
+	}
+	
+	private float getEdgeCost(Vertex v1, Vertex v2) {
+		if (v1.y != v2.y && v1.x != v2.x) {
+			return Constants.SQRT_2;
+		} else {
+			return 1f;
+		}
 	}
 	
 	private Path reconstructPath(HashMap<Vertex, Vertex> cameFrom, Vertex current) {
@@ -173,16 +183,16 @@ public class PathFinder {
 			} else {
 				againstBot = true;
 			}
-			if (!againstRight || !againstTop) {
+			if (!againstRight && !againstTop) {
 				vert.neighbors.add(graph[v - effWidth + 1]);
 			}
-			if (!againstRight || !againstBot) {
+			if (!againstRight && !againstBot) {
 				vert.neighbors.add(graph[v + effWidth + 1]);
 			}
-			if (!againstLeft || !againstTop) {
+			if (!againstLeft && !againstTop) {
 				vert.neighbors.add(graph[v - effWidth - 1]);
 			}
-			if (!againstLeft || !againstBot) {
+			if (!againstLeft && !againstBot) {
 				vert.neighbors.add(graph[v + effWidth - 1]);
 			}
 			//there will be additional logic once teleporters are added

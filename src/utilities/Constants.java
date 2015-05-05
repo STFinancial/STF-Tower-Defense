@@ -24,4 +24,5 @@ public final class Constants {
 	public final int BASE_INTEREST_RATE = 3;
 	
 	public final static float SQRT_2_OVER_2 = 0.7071f;
+	public final static float SQRT_2 = 1.414f;
 }
