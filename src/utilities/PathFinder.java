@@ -47,7 +47,7 @@ public class PathFinder {
 				}
 				tentativeGScore = current.gScore + getEdgeCost(current, neighbor);
 
-								if ((!openSet.contains(neighbor) && ((groundType && neighbor.groundTraversable) || (!groundType && neighbor.airTraversable))) || 
+				if ((!openSet.contains(neighbor) && ((groundType && neighbor.groundTraversable) || (!groundType && neighbor.airTraversable))) || 
 					     tentativeGScore < neighbor.gScore) {
 					
 					cameFrom.put(neighbor, current);
