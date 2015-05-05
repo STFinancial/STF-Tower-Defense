@@ -18,5 +18,7 @@ public class Projectile {
 		effects = new HashSet<ProjectileEffect>();
 	}
 
-
+	public void addEffect(ProjectileEffect effect) {
+		effects.add(effect);
+	}
 }
