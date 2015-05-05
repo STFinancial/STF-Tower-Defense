@@ -10,7 +10,7 @@ import creeps.ElementType;
  */
 public abstract class ProjectileEffect {
 	Projectile parentProjectile;
-	
+
 	public float modifier = 0;
 	public int lifetime = 0;
 	public ElementType elementType;
@@ -26,10 +26,22 @@ public abstract class ProjectileEffect {
 
 	public abstract void applyEffect(Creep creep);
 
+	public abstract boolean ignoresArmor();
+
+	public abstract boolean ignoresShield();
+
+	public boolean isExpired(){
+		return lifetime < 0;
+	}
+
 	public abstract void onExpire(Creep creep);
 
 	public void setModifier(float modifier) {
 		this.modifier = modifier;
+	}
+
+	public void setParent(Projectile projectile) {
+		parentProjectile = projectile;
 	}
 
 	public void update(Creep creep) {
@@ -40,16 +52,5 @@ public abstract class ProjectileEffect {
 			applyEffect(creep);
 		}
 		lifetime--;
-	}
-	
-	public boolean isExpired(){
-		return lifetime < 0;
-	}
-
-	public boolean ignoresArmor() {
-		return false;
-	}
-	public boolean ignoresShield() {
-		return false;
 	}
 }

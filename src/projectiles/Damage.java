@@ -18,6 +18,18 @@ public class Damage extends ProjectileEffect {
 	}
 
 	@Override
+	public boolean ignoresArmor() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean ignoresShield() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public void onExpire(Creep creep) {
 		creep.damage(this);
 	}
