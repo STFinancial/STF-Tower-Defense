@@ -9,6 +9,12 @@ public class Map {
 	public int width;
 	public int height;
 	
+	public Map(int width, int height){
+		map = new Tile[height][width];
+		this.width = width;
+		this.height = height;
+	}
+	
 	public boolean canBuild(int y, int x) {
 		return map[y][x].type.buildable;
 	}
@@ -19,5 +25,9 @@ public class Map {
 	
 	public Tile getTile(int y, int x) {
 		return map[y][x];
+	}
+	
+	public void setTile(int y, int x, TileType type){
+		map[y][x] = new Tile(y, x, type);
 	}
 }

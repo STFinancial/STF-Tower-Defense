@@ -24,15 +24,15 @@ public class PathFinder {
 		for (int i = 0; i < graph.length; i++) {
 			graph[i].gScore = 0;
 		}
-		
+
 		LinkedList<Vertex> closedSet = new LinkedList<Vertex>(); //can switch to hashmap for constant time at some point
 		PriorityQueue<Vertex> openSet = new PriorityQueue<Vertex>();
 		openSet.add(start);
 		HashMap<Vertex, Vertex> cameFrom = new HashMap<Vertex, Vertex>();
-		
+
 		start.gScore = 0;
 		start.hScore = heuristicCost(start, finish, vg);
-		
+
 		Vertex current;
 		double tentativeGScore;
 		while (!openSet.isEmpty()) {
@@ -46,9 +46,9 @@ public class PathFinder {
 					continue;
 				}
 				tentativeGScore = current.gScore + getEdgeCost(current, neighbor);
-				
-				if ((!openSet.contains(neighbor) && ((groundType && neighbor.groundTraversable) || (!groundType && neighbor.airTraversable))) || 
-					tentativeGScore < neighbor.gScore) {
+
+								if ((!openSet.contains(neighbor) && ((groundType && neighbor.groundTraversable) || (!groundType && neighbor.airTraversable))) || 
+					     tentativeGScore < neighbor.gScore) {
 					
 					cameFrom.put(neighbor, current);
 					neighbor.gScore = tentativeGScore;
@@ -59,7 +59,7 @@ public class PathFinder {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 	
@@ -87,12 +87,12 @@ public class PathFinder {
 		totalPath.size = path.size();
 		return totalPath;
 	}
-	
-	private double heuristicCost(Vertex v, Vertex goal, VertexGraph vg) {
+
+	private static double heuristicCost(Vertex v, Vertex goal, VertexGraph vg) {
 		return Math.sqrt(Math.pow(v.x - goal.x, 2) + Math.pow(v.y - goal.y, 2));
 	}
-	
-	private DirectionType getDirectionBetween(Vertex from, Vertex to) {
+
+	private static DirectionType getDirectionBetween(Vertex from, Vertex to) {
 		int x = from.x;
 		int y = from.y;
 		if (to.x > x) { //if it's to the right
@@ -121,7 +121,7 @@ public class PathFinder {
 			}
 		}
 	}
-	
+
 	public static VertexGraph mapToVertexGraph(VertexGraph vg, Map map) {
 		int effHeight = map.height - 1;
 		int effWidth = map.width - 1;
@@ -129,9 +129,9 @@ public class PathFinder {
 		vg.effWidth = effWidth;
 		vg.endingVertices = new ArrayList<Vertex>();
 		vg.startingVertices = new ArrayList<Vertex>();
-		
+
 		Vertex[] graph = new Vertex[(effHeight) * (effWidth)];
-		
+
 		//this can be optimized by caching two of the tiles for the next iteration instead of regrabbing them
 		Tile TL, TR, BL, BR; //topleft, topright, bottomleft, bottomright
 		int TL_x, TL_y;
@@ -158,7 +158,7 @@ public class PathFinder {
 			vert.index = v;
 			assignType(vg, vert, TL, TR, BL, BR);
 			//this can be optimized by only passing the vertex and setting TR, TL, etc. directly with the getTile
-			
+
 			againstLeft = false;
 			againstRight = false;
 			againstTop = false;
@@ -183,51 +183,39 @@ public class PathFinder {
 			} else {
 				againstBot = true;
 			}
-			if (!againstRight && !againstTop) {
+			if (!(againstRight || againstTop)) {
 				vert.neighbors.add(graph[v - effWidth + 1]);
 			}
-			if (!againstRight && !againstBot) {
+			if (!(againstRight || againstBot)) {
 				vert.neighbors.add(graph[v + effWidth + 1]);
 			}
-			if (!againstLeft && !againstTop) {
+			if (!(againstLeft || againstTop)) {
 				vert.neighbors.add(graph[v - effWidth - 1]);
 			}
-			if (!againstLeft && !againstBot) {
+			if (!(againstLeft || againstBot)) {
 				vert.neighbors.add(graph[v + effWidth - 1]);
 			}
 			//there will be additional logic once teleporters are added
 		}
-		
+
 		vg.graph = graph;
 		return vg;
 	}
-	
+
 	private static void assignType(VertexGraph vg, Vertex vert, Tile TL, Tile TR, Tile BL, Tile BR) {
-		if (TL.type.groundTraversable && 
-			TR.type.groundTraversable && 
-			BL.type.groundTraversable && 
-			BR.type.groundTraversable) {
+		if (TL.type.groundTraversable && TR.type.groundTraversable && BL.type.groundTraversable && BR.type.groundTraversable) {
 			vert.groundTraversable = true;
 		}
-		
-		if (TL.type.airTraversable &&
-			TR.type.airTraversable &&
-			BL.type.airTraversable &&
-			BR.type.airTraversable) {
+
+		if (TL.type.airTraversable && TR.type.airTraversable && BL.type.airTraversable && BR.type.airTraversable) {
 			vert.airTraversable = true;
 		}
-		
-		if (TL.type == TileType.START &&
-			TR.type == TileType.START &&
-			BL.type == TileType.START &&
-			BR.type == TileType.START) {
+
+		if (TL.type == TileType.START && TR.type == TileType.START && BL.type == TileType.START && BR.type == TileType.START) {
 			vg.startingVertices.add(vert);
 		}
-		
-		if (TL.type == TileType.FINISH &&
-			TR.type == TileType.FINISH &&
-			BL.type == TileType.FINISH &&
-			BR.type == TileType.FINISH) {
+
+		if (TL.type == TileType.FINISH && TR.type == TileType.FINISH && BL.type == TileType.FINISH && BR.type == TileType.FINISH) {
 			vg.endingVertices.add(vert);
 		}
 	}
