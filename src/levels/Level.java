@@ -22,7 +22,7 @@ import utilities.PathFinder;
  */
 public class Level {
 
-	private final Map map;
+	public final Map map;
 	private final Player player;
 	private final ArrayList<Wave> creepWaves;
 
@@ -35,8 +35,8 @@ public class Level {
 	boolean roundInProgress = false;
 
 	//Currently loaded/active units
-	ArrayList<Tower> towers = new ArrayList<Tower>();
-	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+	public ArrayList<Tower> towers = new ArrayList<Tower>();
+	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
 	public Path groundPath;
@@ -78,8 +78,14 @@ public class Level {
 			}
 		}
 
-		for (Projectile p : projectiles) {
-			//Update movement, execute impact logic if needed
+		for (i = 0; i < projectiles.size(); i++) {
+			Projectile p = projectiles.get(i);
+			p.update();
+			if (p.isDone()) {
+				detonateProjectile(p);
+				projectiles.remove(i);
+				i--;
+			}
 		}
 
 		for (i = 0; i < creeps.size(); i++) {
@@ -92,12 +98,18 @@ public class Level {
 		}
 
 		for (Tower t : towers) {
-			//Update target, if ready fire new projectile
+			t.update();
 		}
 
 		//Check if round has finished from all creep being dead
 
 		tick++;
+	}
+
+	private void detonateProjectile(Projectile p) {
+		//Check for aoe and complicated shit
+		p.applyEffect(p.targetCreep);
+
 	}
 
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
@@ -131,8 +143,9 @@ public class Level {
 	}
 
 	//Can be called from App
-	public void buildTower(ElementType type, Tile location) {
+	public void buildTower(Tower t) {
 		//@TODO
+		towers.add(t);
 	}
 
 	//Can be called from App
@@ -153,6 +166,9 @@ public class Level {
 	}
 
 	public boolean stillSpawning() {
+		if (currentWave == null) {
+			return true; //Hack for quick GUI fix, fix later @TODO
+		}
 		return currentWave.stillSpawning();
 	}
 
@@ -166,6 +182,42 @@ public class Level {
 
 	public boolean isOver() {
 		return isRoundOver() && round == creepWaves.size();
+	}
+
+	public Creep findTargetCreep(Tower tower) {
+		Creep toTarget = null;
+		ArrayList<Creep> inRange = new ArrayList<Creep>();
+		for (Creep c : creeps) {
+			if (c.hitBox.intersects(tower.targetArea)) {
+				inRange.add(c);
+			}
+		}
+		switch (tower.targetingType) {
+		case AREA:
+			break;
+		case FIRST:
+			int max = -1;
+			for (Creep c : inRange) {
+				if (c.pathIndex > max) {
+					toTarget = c;
+					max = c.pathIndex;
+				}
+			}
+			break;
+		case HIGHEST_HEALTH:
+			break;
+		case LAST:
+			break;
+		default:
+			break;
+
+		}
+		return toTarget;
+	}
+
+	public void addProjectile(Projectile p) {
+		projectiles.add(p);
+		//add game event for new fire!
 	}
 
 }

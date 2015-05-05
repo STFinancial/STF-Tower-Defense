@@ -8,6 +8,7 @@ import maps.DirectionType;
 import maps.Vertex;
 import projectiles.DamageEffect;
 import projectiles.ProjectileEffect;
+import utilities.Circle;
 
 public class Creep {
 	//Primary Stats
@@ -36,6 +37,8 @@ public class Creep {
 	public float xOff, yOff;
 	public Path path;
 	public int pathIndex;
+	public float size = .4f; //Radius
+	public Circle hitBox;
 
 	public Creep(int health, int armor, float speed, int healthCost, int goldValue, ElementType elementType) {
 		this.health = health;
@@ -49,10 +52,19 @@ public class Creep {
 		currentSpeed = speed;
 
 		resist = elementType.baseResist();
+		hitBox = new Circle(1,1,1);
 	}
 
 	public void addAffix(CreepType type) {
 		creepTypes.add(type);
+		if(type == CreepType.GIANT){
+			size = .7f;
+			hitBox.radius = size;
+		}
+		if(type == CreepType.QUICK){
+			size = .2f;
+			hitBox.radius = size;
+		}
 	}
 
 	public void addEffect(ProjectileEffect effect) {
@@ -115,6 +127,7 @@ public class Creep {
 
 	public void update() {
 		updateMovement();
+		updateHitBox();
 		updateEffects();
 	}
 
@@ -157,5 +170,10 @@ public class Creep {
 			xOff = direction.x * speedRemaining;
 			yOff = direction.y * speedRemaining;
 		}
+	}
+	
+	public void updateHitBox(){
+		hitBox.x = currentVertex.x + xOff;
+		hitBox.y = currentVertex.y + yOff;
 	}
 }

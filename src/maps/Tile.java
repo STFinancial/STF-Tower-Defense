@@ -5,7 +5,7 @@ package maps;
 public class Tile {
 	public Map map; //the map to which the tile belongs
 	
-	int x, y;
+	public int x, y;
 	public TileType type; //going to make this public for now
 	
 
