@@ -149,7 +149,10 @@ public class PathFinder {
 			assignType(vg, vert, TL, TR, BL, BR);
 			//this can be optimized by only passing the vertex and setting TR, TL, etc. directly with the getTile
 			
-			againstLeft = false, againstRight = false, againstTop = false, againstBot = false;
+			againstLeft = false;
+			againstRight = false;
+			againstTop = false;
+			againstBot = false;
 			if (TL_x != 0) { //not against the left edge of the map
 				vert.neighbors.add(graph[v - 1]);
 			} else {
