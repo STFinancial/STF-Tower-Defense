@@ -148,7 +148,6 @@ public class Creep {
 			damage = 0;
 		}
 		currentHealth -= damage;
-		System.out.println("Ouch i was just hit by " + baseDamage + " but i only took " + damage + ", " + currentHealth + " life remaining");
 		//TODO shield calculations
 	}
 
