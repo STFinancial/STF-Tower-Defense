@@ -13,6 +13,10 @@ public class Damage extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
+	}
+
+	@Override
+	public void onExpire(Creep creep) {
 		creep.health = creep.health - (int) modifier;
 	}
 }

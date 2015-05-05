@@ -18,4 +18,10 @@ public class Snare extends ProjectileEffect {
 		lifetime--;
 	}
 
+	@Override
+	public void onExpire(Creep creep) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

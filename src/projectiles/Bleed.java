@@ -15,4 +15,8 @@ public class Bleed extends ProjectileEffect {
 
 	}
 
+	@Override
+	public void onExpire(Creep creep) {
+	}
+
 }

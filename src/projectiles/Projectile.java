@@ -1,6 +1,6 @@
 package projectiles;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import creeps.Creep;
 /*
@@ -14,10 +14,10 @@ public class Projectile {
 	public int v;
 	public Object graphic;
 
-	public HashSet<ProjectileEffect> effects;
+	public ArrayList<ProjectileEffect> effects;
 
 	public Projectile() {
-		effects = new HashSet<ProjectileEffect>();
+		effects = new ArrayList<ProjectileEffect>();
 	}
 
 	public void addEffect(ProjectileEffect effect) {
