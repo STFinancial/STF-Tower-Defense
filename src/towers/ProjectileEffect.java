@@ -8,7 +8,7 @@ import creeps.Creep;
  */
 public class ProjectileEffect {
 	public enum ProjectileEffectType {
-		SLOW, SNARE, STUN, DAMAGE_OVER_TIME, MORTAL_STRIKE, ;
+		DAMAGE, SLOW, SNARE, STUN, DAMAGE_OVER_TIME, MORTAL_STRIKE, ;
 	}
 
 	public ProjectileEffectType effectType;
