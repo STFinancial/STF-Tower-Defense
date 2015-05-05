@@ -15,7 +15,6 @@ public class Snare extends ProjectileEffect {
 			speed = creep.speed;
 		}
 		creep.speed = 0;
-		lifetime--;
 	}
 
 	@Override

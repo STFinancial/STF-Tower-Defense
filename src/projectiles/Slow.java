@@ -20,7 +20,6 @@ public class Slow extends ProjectileEffect {
 		else if (creep.speed == creepSpeed) {
 			creep.speed = creep.speed * modifier;
 		}
-		lifetime--;
 	}
 
 	@Override
