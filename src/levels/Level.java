@@ -35,9 +35,10 @@ public class Level {
 	//Currently loaded/active units
 	ArrayList<Tower> towers = new ArrayList<Tower>();
 	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-	ArrayList<Creep> creeps = new ArrayList<Creep>();
+	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
-	Path groundPath, airPath;
+	public Path groundPath;
+	Path airPath;
 	
 	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves){
@@ -82,6 +83,7 @@ public class Level {
 	
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		for(Creep c: creepsToSpawn){
+			System.out.println("Spawned Creep!");
 			if (c.isFlying()) {
 				c.setPath(airPath);
 			} else {
