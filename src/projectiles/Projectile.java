@@ -49,7 +49,7 @@ public class Projectile {
 	}
 	
 	public void update(){
-		if(targetsCreep){
+		if (targetsCreep) {
 			if(targetCreep != null){
 				if(targetCreep.isDead()){
 					dud = true;
