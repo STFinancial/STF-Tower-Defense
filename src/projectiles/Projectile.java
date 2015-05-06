@@ -16,7 +16,7 @@ public class Projectile {
 	public Tower parent;
 	public float x, y;
 	public float currentSpeed, speed;
-	public float size = .05f;
+	public float size = .01f;
 	public Circle hitBox;
 	
 	public boolean dud = false; //When creep is killed by something else or escapes before contact;

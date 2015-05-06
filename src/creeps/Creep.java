@@ -37,7 +37,7 @@ public class Creep {
 	public float xOff, yOff;
 	public Path path;
 	public int pathIndex;
-	public float size = .4f; //Radius
+	public float size = .2f; //Radius
 	public Circle hitBox;
 
 	public Creep(int health, int armor, float speed, int healthCost, int goldValue, ElementType elementType) {
@@ -52,17 +52,17 @@ public class Creep {
 		currentSpeed = speed;
 
 		resist = elementType.baseResist();
-		hitBox = new Circle(1,1,1);
+		hitBox = new Circle(1,1,size);
 	}
 
 	public void addAffix(CreepType type) {
 		creepTypes.add(type);
 		if(type == CreepType.GIANT){
-			size = .7f;
+			size = .4f;
 			hitBox.radius = size;
 		}
 		if(type == CreepType.QUICK){
-			size = .2f;
+			size = .1f;
 			hitBox.radius = size;
 		}
 	}
@@ -82,7 +82,6 @@ public class Creep {
 			damage = 0;
 		}
 		currentHealth -= damage;
-		System.out.println("Ouch i was just hit by " + baseDamage + " but i only took " + damage + ", " + currentHealth + " life remaining");
 		//TODO shield calculations
 	}
 
@@ -173,7 +172,7 @@ public class Creep {
 	}
 	
 	public void updateHitBox(){
-		hitBox.x = currentVertex.x + xOff;
-		hitBox.y = currentVertex.y + yOff;
+		hitBox.x = currentVertex.x + xOff + 1;
+		hitBox.y = currentVertex.y + yOff + 1;
 	}
 }

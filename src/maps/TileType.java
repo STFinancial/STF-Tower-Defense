@@ -7,7 +7,8 @@ public enum TileType {
 	//ground traversable, air traversable, buildable
 	LAND (true, true, true), 
 	GRAVEL (true, true, false), 
-	VOID (false, true, false), 
+	VOID (false, true, false),
+	BLOCK (false, false, false),
 	EDGE (false, false, false), 
 	START (true, true, false), 
 	FINISH (true, true, false);
