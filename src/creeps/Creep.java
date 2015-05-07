@@ -41,7 +41,7 @@ public class Creep {
 	public Circle hitBox;
 
 	//Fancy Effects
-	ArrayList<Creep> children;
+	public ArrayList<Creep> children;
 	int baseShield;
 	int currentShield;
 	int shieldCap;
@@ -92,25 +92,17 @@ public class Creep {
 		//TODO shield calculations
 	}
 
-	public void death() {
+	public ArrayList<Creep> death() {
 		//TODO
-		//activate deathrattle and shit
+		return children;
 	}
 
 	public boolean isDead() {
 		return currentHealth < 1;
 	}
 
-	public boolean isFlying() {
-		return creepTypes.contains(CreepType.FLYING);
-	}
-
-	public boolean isGiant() {
-		return creepTypes.contains(CreepType.GIANT);
-	}
-
-	public boolean isQuick() {
-		return creepTypes.contains(CreepType.QUICK);
+	public boolean is(CreepType type){
+		return creepTypes.contains(type);
 	}
 
 	public void setDestination(int index) {
@@ -181,5 +173,16 @@ public class Creep {
 	public void updateHitBox(){
 		hitBox.x = currentVertex.x + xOff + 1;
 		hitBox.y = currentVertex.y + yOff + 1;
+	}
+
+	public void setLocation(Creep c) {
+		//Update freshly spawned deathrattle creep with parent's path
+		this.currentVertex = c.currentVertex;
+		this.nextVertex = c.nextVertex;
+		this.direction = c.direction;
+		this.xOff = c.xOff;
+		this.yOff = c.yOff;
+		this.path = c.path;
+		this.pathIndex = c.pathIndex;
 	}
 }
