@@ -40,6 +40,13 @@ public class Creep {
 	public float size = .2f; //Radius
 	public Circle hitBox;
 
+	//Fancy Effects
+	ArrayList<Creep> children;
+	int baseShield;
+	int currentShield;
+	int shieldCap;
+	int disruptorAmount;
+	
 	public Creep(int health, int armor, float speed, int healthCost, int goldValue, ElementType elementType) {
 		this.health = health;
 		this.armor = armor;
