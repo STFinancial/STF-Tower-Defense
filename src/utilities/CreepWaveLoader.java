@@ -26,6 +26,8 @@ public class CreepWaveLoader {
 		int waveNumber, numberOfCreep, delayInterior, delayBefore, health, armor, healthCost, goldValue;
 		float speed;
 		ElementType elementType;
+		boolean deathRattle = false;
+		Creep c = null;
 		try {
 
 			br = new BufferedReader(new FileReader(cvsFile));
@@ -52,15 +54,26 @@ public class CreepWaveLoader {
 				}
 
 				for (int i = 0; i < numberOfCreep; i++) {
-					Creep c = new Creep(health, armor, speed, healthCost, goldValue, elementType);
+					c = new Creep(health, armor, speed, healthCost, goldValue, elementType);
 					for (int j = 10; j < waveSegment.length; j++) {
 						System.out.println(waveSegment[j]);
 						c.addAffix(CreepType.fromString(waveSegment[j]));
 					}
-					if (i == 0) {
-						toReturn.get(waveNumber - 1).addCreep(c, delayBefore);
-					} else {
-						toReturn.get(waveNumber - 1).addCreep(c, delayInterior);
+					if(deathRattle){
+						//TODO only supports addining the children to one deathrattle creep
+						toReturn.get(waveNumber - 1).creeps.get(toReturn.get(waveNumber - 1).creeps.size() - 1).children.add(c);
+					}else{
+						if (i == 0) {
+							toReturn.get(waveNumber - 1).addCreep(c, delayBefore);
+						} else {
+							toReturn.get(waveNumber - 1).addCreep(c, delayInterior);
+						}
+					}
+				}
+				if(c != null){
+					deathRattle = c.is(CreepType.DEATH_RATTLE);
+					if(deathRattle){
+						c.children = new ArrayList<Creep>();
 					}
 				}
 

@@ -10,6 +10,7 @@ import maps.Vertex;
 import maps.VertexGraph;
 import maps.Wave;
 import creeps.Creep;
+import creeps.CreepType;
 import creeps.ElementType;
 import maps.Tile;
 import players.Player;
@@ -115,7 +116,7 @@ public class Level {
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		for (Creep c : creepsToSpawn) {
 
-			if (c.isFlying()) {
+			if (c.is(CreepType.FLYING)) {
 				c.setPath(airPath);
 			} else {
 				c.setPath(groundPath);
@@ -137,7 +138,14 @@ public class Level {
 
 	private void killCreep(Creep c) {
 		// TODO Auto-generated method stub
-		c.death();
+		ArrayList<Creep> deathRattleChildren;
+		deathRattleChildren = c.death();
+		if (deathRattleChildren != null) {
+			for (Creep drc : deathRattleChildren) {
+				drc.setLocation(c);
+				creeps.add(drc);
+			}
+		}
 		//Creep slain event
 		//Add gold
 	}
