@@ -25,6 +25,8 @@ public abstract class Tower {
 	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
 
 	private Level level;
+	
+	public Tower tetheredTo;
 
 	
 	abstract Projectile fireProjectile();
