@@ -13,7 +13,7 @@ public final class Constants {
 	public final float WATER_BASE_SPLASH_RADIUS = 1f; //# of tiles
 	public final boolean WATER_BASE_HITS_AIR = false;
 	public final boolean WATER_BASE_HITS_GROUND = true;
-	public final int WATER_BASE_RANGE = 120; //this needs to be defined
+	public final float WATER_BASE_RANGE = 120; //this needs to be defined
 	public final int WATER_BASE_SLOW = 25; //percentage
 	
 	public final int EARTH_BASE_PHYSICAL_DAMAGE = 55; //this seems high
@@ -24,7 +24,7 @@ public final class Constants {
 	public final float EARTH_BASE_SPLASH_RADIUS = 1f; //# of tiles
 	public final boolean EARTH_BASE_HITS_AIR = false;
 	public final boolean EARTH_BASE_HITS_GROUND = true;
-	public final int EARTH_BASE_RANGE = 80; //this needs to be defined
+	public final float EARTH_BASE_RANGE = 1.7f; //this needs to be defined
 	public final int EARTH_BASE_SLOW = 0; //percentage
 	
 	public final int FIRE_BASE_PHYSICAL_DAMAGE = 15;
@@ -35,7 +35,7 @@ public final class Constants {
 	public final float FIRE_BASE_SPLASH_RADIUS = 1f; //# of tiles
 	public final boolean FIRE_BASE_HITS_AIR = true; //?
 	public final boolean FIRE_BASE_HITS_GROUND = true;
-	public final int FIRE_BASE_RANGE = 100; //this needs to be defined
+	public final float FIRE_BASE_RANGE = 2.1f; //this needs to be defined
 	public final int FIRE_BASE_SLOW = 0; //percentage
 	
 	public final int AIR_BASE_PHYSICAL_DAMAGE = 10;
@@ -46,7 +46,7 @@ public final class Constants {
 	public final float AIR_BASE_SPLASH_RADIUS = 1f; //# of tiles
 	public final boolean AIR_BASE_HITS_AIR = true;
 	public final boolean AIR_BASE_HITS_GROUND = true;
-	public final int AIR_BASE_RANGE = 140; //this needs to be defined
+	public final float AIR_BASE_RANGE = 3.5f; //this needs to be defined
 	public final int AIR_BASE_SLOW = 0; //percentage
 	
 	
