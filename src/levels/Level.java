@@ -60,6 +60,9 @@ public class Level {
 		round++;
 		tick = 0;
 		nextSpawnTick = currentWave.getDelayForNextCreep();
+		for (Tower t: towers) {
+			t.roundInit();
+		}
 	}
 
 	public void gameTick() {

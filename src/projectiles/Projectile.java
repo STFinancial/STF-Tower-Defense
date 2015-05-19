@@ -26,7 +26,7 @@ public class Projectile {
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
 
 	public ArrayList<ProjectileEffect> effects;
-
+	
 	public Projectile(Tower parent) {
 		this.parent = parent;
 		this.x = parent.centerX;
@@ -50,14 +50,14 @@ public class Projectile {
 	
 	public void update(){
 		if (targetsCreep) {
-			if(targetCreep != null){
-				if(targetCreep.isDead()){
+			if (targetCreep != null) {
+				if (targetCreep.isDead()) {
 					dud = true;
 					return;
-				}else{
+				} else {
 					targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
 				}
-			}else{
+			} else {
 				dud = true;
 				return;
 			}
@@ -69,10 +69,10 @@ public class Projectile {
 	}
 	
 	public boolean isDone(){
-		if(dud){
+		if (dud) {
 			return true;
 		}
-		if(targetsCreep){
+		if (targetsCreep) {
 			return hitBox.intersects(targetCreep.hitBox);
 		}
 		//TODO add area target part

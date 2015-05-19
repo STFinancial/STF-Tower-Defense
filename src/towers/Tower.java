@@ -61,8 +61,15 @@ public abstract class Tower {
 			}
 		}
 	}
+	
+	public void roundInit() {
+		// TODO generate the projectile effects
+		
+	}
 
 	private void updateAngle(Creep targetCreep) {
 		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}
+
+	
 }
