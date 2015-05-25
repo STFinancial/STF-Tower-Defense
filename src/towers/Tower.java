@@ -28,6 +28,7 @@ public abstract class Tower {
 	
 	public Tower tetheredTo;
 
+	public TowerType type;
 	
 	abstract Projectile fireProjectile();
 	

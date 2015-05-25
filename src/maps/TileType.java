@@ -8,12 +8,11 @@ public enum TileType {
 	LAND (true, true, true), 
 	GRAVEL (true, true, false), 
 	VOID (false, true, false),
-	BLOCK (false, false, false),
+	BLOCK (false, false, false), //What functional purpose does this add compared to EDGE
 	EDGE (false, false, false), 
 	START (true, true, false), 
 	FINISH (true, true, false);
 	
-	//Can shorten these names if they are too wordy
 	public boolean groundTraversable;
 	public boolean airTraversable;
 	public boolean buildable;

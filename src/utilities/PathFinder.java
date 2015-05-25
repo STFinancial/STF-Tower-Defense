@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import towers.Tower;
 import levels.Path;
 import maps.DirectionType;
 import maps.Tile;
@@ -203,11 +204,11 @@ public class PathFinder {
 	}
 
 	private static void assignType(VertexGraph vg, Vertex vert, Tile TL, Tile TR, Tile BL, Tile BR) {
-		if (TL.type.groundTraversable && TR.type.groundTraversable && BL.type.groundTraversable && BR.type.groundTraversable) {
+		if (TL.groundTraversable && TR.groundTraversable && BL.groundTraversable && BR.groundTraversable) {
 			vert.groundTraversable = true;
 		}
 
-		if (TL.type.airTraversable && TR.type.airTraversable && BL.type.airTraversable && BR.type.airTraversable) {
+		if (TL.airTraversable && TR.airTraversable && BL.airTraversable && BR.airTraversable) {
 			vert.airTraversable = true;
 		}
 

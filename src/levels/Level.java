@@ -15,7 +15,14 @@ import creeps.ElementType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
+import towers.BasicAirTower;
+import towers.BasicEarthTower;
+import towers.BasicFireTower;
+import towers.BasicWaterTower;
 import towers.Tower;
+import towers.TowerType;
+import utilities.CreepWaveGenerator;
+import utilities.MapGenerator;
 import utilities.PathFinder;
 
 /*
@@ -34,23 +41,27 @@ public class Level {
 	int nextSpawnTick = -1;
 	Wave currentWave;
 	boolean roundInProgress = false;
-
+	
 	//Currently loaded/active units
 	public ArrayList<Tower> towers = new ArrayList<Tower>();
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
-	public Path groundPath;
-	Path airPath;
+	public Path groundPath, airPath, proposedGroundPath;
 
 	//Temp Variables for readability
 	Creep c;
 	int i;
 
+	public Level(){
+		this(new Player(), (new MapGenerator()).generateMap(), (new CreepWaveGenerator()).generateCreepWaves());
+	}
+	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
 		this.player = player;
 		this.map = map;
 		this.creepWaves = creepWaves;
+		updatePath();
 	}
 
 	//Can be called from App
@@ -154,19 +165,42 @@ public class Level {
 	}
 
 	//Can be called from App
-	public void buildTower(Tower t) {
-		//@TODO
+	public Tower buildTower(TowerType type, int x, int y) {
+		//TODO gold cost and stats and plenty of other shit
+		Tower t;
+		Tile tile = map.getTile(y,x);
+		switch(type){ //TODO move this to a factory pattern? probably if we go with the TowerType enum
+		case AIR:
+			t = new BasicAirTower(this, tile);
+			break;
+		case WATER:
+			t = new BasicWaterTower(this, tile);
+			break;
+		case FIRE:
+			t = new BasicFireTower(this, tile);
+			break;
+		default:
+			t = new BasicEarthTower(this, tile);
+			break;
+		}
 		towers.add(t);
+		for(int i = 0; i < t.width; i++){
+			for(int j = 0; j < t.height; j++){
+				map.getTile(t.y + j, t.x + i).addTower(t);
+			}
+		}
+		updatePath();
+		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
 
 	//Can be called from App
 	public void upgradeTower(Tower t, int index) {
-		//@TODO
+		//TODO
 	}
 
 	//Can be called from App
 	public void razeTower(Tower t) {
-		//@TODO
+		//TODO
 	}
 
 	public void updatePath() {
@@ -175,10 +209,33 @@ public class Level {
 		groundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
 		airPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
 	}
+	
+	public void proposePath(int x, int y, int width, int height){
+		//Cludgey as fuck, fix for me tim TODO
+		
+		boolean old[][] = new boolean[height][width];
+		
+		for(int i = 0; i < width; i++){
+			for(int j = 0; j < height; j++){
+				old[j][i] = map.getTile(y + j, x + i).groundTraversable;
+				map.getTile(y + j, x + i).groundTraversable = false;
+			}
+		}
+		
+		VertexGraph vg = new VertexGraph();
+		vg = PathFinder.mapToVertexGraph(vg, map);
+		proposedGroundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
+		
+		for(int i = 0; i < width; i++){
+			for(int j = 0; j < height; j++){
+				map.getTile(y + j, x + i).groundTraversable = old[j][i];
+			}
+		}
+	}
 
 	public boolean stillSpawning() {
 		if (currentWave == null) {
-			return true; //Hack for quick GUI fix, fix later @TODO
+			return true; //Hack for quick GUI fix, fix later TODO
 		}
 		return currentWave.stillSpawning();
 	}
@@ -229,6 +286,23 @@ public class Level {
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);
 		//add game event for new fire!
+	}
+
+	public boolean canBuild(int x, int y, int width, int height) {
+		if(x < 0 || y < 0 || x + width >= map.width || y + height >= map.height){
+			proposedGroundPath = null;
+			return false;
+		}
+		for(int i = x; i < x + width; i++){
+			for(int j = y; j < y + height; j++){
+				if(!map.getTile(j, i).buildable){
+					proposedGroundPath = null;
+					return false;
+				}
+			}
+		}
+		proposePath(x, y, width, height);
+		return proposedGroundPath != null;
 	}
 
 }

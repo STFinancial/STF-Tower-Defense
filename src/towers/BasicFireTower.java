@@ -1,21 +1,31 @@
 package towers;
 
+import creeps.ElementType;
+import projectiles.Damage;
 import projectiles.Projectile;
+import projectiles.ProjectileEffect;
+import projectiles.Slow;
 import levels.Level;
 import maps.Tile;
 
 public class BasicFireTower extends Tower {
 
-	public BasicFireTower(Level level, Tile topLeftTile, int width, int height,
-			int attackCoolDown, boolean targetsCreep, float range) {
-		super(level, topLeftTile, width, height, attackCoolDown, targetsCreep, range);
-		// TODO Auto-generated constructor stub
+	public BasicFireTower(Level level, Tile topLeft) {
+		super(level, topLeft, 2, 2, 15, true, 3f); // TODO make this readable
+		this.type = TowerType.FIRE;
 	}
 
 	@Override
 	Projectile fireProjectile() {
-		// TODO Auto-generated method stub
-		return null;
+		Projectile p = new Projectile(this);
+		ProjectileEffect effect = new Damage(6);
+		effect.elementType = ElementType.FIRE;
+		p.addEffect(effect);
+		effect = new Slow(10, .05f);
+		effect.elementType = ElementType.WATER;
+		p.addEffect(effect);
+		p.currentSpeed = p.speed = .20f;
+		return p;
 	}
 
 }
