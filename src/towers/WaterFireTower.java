@@ -6,16 +6,25 @@ import maps.Tile;
 
 public class WaterFireTower extends Tower {
 
-	public WaterFireTower(Level level, Tile topLeftTile, int width, int height,
-			int attackCoolDown, boolean targetsCreep, float range) {
-		super(level, topLeftTile, width, height, attackCoolDown, targetsCreep, range);
-		// TODO Auto-generated constructor stub
+	public WaterFireTower(Level level, Tile topLeft){
+		super(level, topLeft, TowerConstants.AIR_BASE_WIDTH, TowerConstants.AIR_BASE_HEIGHT,
+				true, TowerConstants.AIR_BASE_RANGE, TowerConstants.AIR_BASE_PHYSICAL_DAMAGE, TowerConstants.AIR_BASE_MAGIC_DAMAGE,
+				TowerConstants.AIR_BASE_FIRE_RATE, TowerConstants.AIR_BASE_DAMAGE_SPLASH_COEFFICIENT, TowerConstants.AIR_BASE_EFFECT_SPLASH_COEFFICIENT,
+				TowerConstants.AIR_BASE_SPLASH_RADIUS, TowerConstants.AIR_BASE_HITS_AIR, TowerConstants.AIR_BASE_HITS_GROUND, TowerConstants.AIR_BASE_SLOW, 
+				TowerConstants.AIR_BASE_SLOW_DURATION, TowerConstants.AIR_BASE_NAME);
+		this.type = TowerType.AIR;
 	}
 
 	@Override
 	Projectile fireProjectile() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void roundInit() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

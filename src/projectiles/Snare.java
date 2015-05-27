@@ -1,6 +1,7 @@
 package projectiles;
 
 import creeps.Creep;
+import creeps.Creep.CreepEffect;
 
 public class Snare extends ProjectileEffect {
 
@@ -9,7 +10,7 @@ public class Snare extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	public void applyEffect(Creep creep, CreepEffect effect) {
 		creep.currentSpeed = 0;
 	}
 

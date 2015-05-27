@@ -1,22 +1,22 @@
 package projectiles;
 
 import creeps.Creep;
+import creeps.Creep.CreepEffect;
 import creeps.ElementType;
 
 public class Bleed extends DamageEffect {
 
 	int timing;
-	int counter = 0;
 
-	public Bleed(int lifetime, float modifier, int timing) {
-		super(lifetime, modifier);
+	public Bleed(int lifetime, float modifier, int timing, boolean physical) {
+		super(lifetime, modifier, physical);
 		elementType = ElementType.EARTH;
 		this.timing = timing;
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
-		if ((++counter) % timing == 0) {
+	public void applyEffect(Creep creep, CreepEffect effect) {
+		if ((effect.counter) % timing == 0) {
 			creep.damage(this);
 		}
 	}
@@ -33,5 +33,6 @@ public class Bleed extends DamageEffect {
 
 	@Override
 	public void onExpire(Creep creep) {
+		
 	}
 }

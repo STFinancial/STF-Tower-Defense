@@ -24,6 +24,9 @@ public class Projectile {
 	float targetX, targetY; //For ground spot target towers, in Tile coordinates
 	public Creep targetCreep;
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
+	public float splashRadius = 0;
+	public float damageSplash;
+	public float effectSplash;
 
 	public ArrayList<ProjectileEffect> effects;
 	
@@ -45,7 +48,7 @@ public class Projectile {
 	}
 
 	public void applyEffect(Creep creep) {
-		creep.effects.addAll(effects);
+		creep.addAllEffects(effects);
 	}
 	
 	public void update(){

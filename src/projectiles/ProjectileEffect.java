@@ -1,6 +1,7 @@
 package projectiles;
 
 import creeps.Creep;
+import creeps.Creep.CreepEffect;
 import creeps.ElementType;
 
 
@@ -9,8 +10,6 @@ import creeps.ElementType;
  * information such as chance to hit, duration and effect are included
  */
 public abstract class ProjectileEffect {
-	Projectile parentProjectile;
-
 	public float modifier = 0;
 	public int lifetime = 0;
 	public ElementType elementType;
@@ -22,13 +21,14 @@ public abstract class ProjectileEffect {
 	public ProjectileEffect(int lifetime, float modifier) {
 		this(modifier);
 		this.lifetime = lifetime;
+		//timeRemaining = lifetime;
 	}
 
-	public abstract void applyEffect(Creep creep);
+	public abstract void applyEffect(Creep creep, CreepEffect effect);
 
-	public boolean isExpired(){
-		return lifetime < 0;
-	}
+//	public boolean isExpired(){
+//		return timeRemaining < 0;
+//	}
 
 	public abstract void onExpire(Creep creep);
 
@@ -36,18 +36,14 @@ public abstract class ProjectileEffect {
 		this.modifier = modifier;
 	}
 
-	public void setParent(Projectile projectile) {
-		parentProjectile = projectile;
-	}
-
-	public boolean update(Creep creep) {
-		if (lifetime == 0) {
-			onExpire(creep);
-		}
-		else if (lifetime > 0) {
-			applyEffect(creep);
-		}
-		lifetime--;
-		return lifetime < 0;
-	}
+//	public boolean update(Creep creep) {
+//		if (timeRemaining == 0) {
+//			onExpire(creep);
+//		}
+//		else if (timeRemaining > 0) {
+//			applyEffect(creep);
+//		}
+//		timeRemaining--;
+//		return timeRemaining < 0;
+//	}
 }

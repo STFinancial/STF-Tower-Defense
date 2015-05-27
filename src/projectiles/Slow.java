@@ -1,6 +1,7 @@
 package projectiles;
 
 import creeps.Creep;
+import creeps.Creep.CreepEffect;
 
 public class Slow extends ProjectileEffect {
 	/*
@@ -12,7 +13,7 @@ public class Slow extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	public void applyEffect(Creep creep, CreepEffect effect) {
 		//TODO, figure diminishing returns idea for multiple slows
 		creep.currentSpeed = creep.speed * modifier;
 	}

@@ -28,7 +28,7 @@ public class Creep {
 	public int currentArmor;
 	public int currentHealth;
 	public float currentSpeed;
-	public ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
+	public ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
 
 	//Movement
 	public Vertex currentVertex;
@@ -61,6 +61,27 @@ public class Creep {
 		resist = elementType.baseResist();
 		hitBox = new Circle(1,1,size);
 	}
+	
+	public class CreepEffect {
+		CreepEffect(ProjectileEffect p, int d) {
+			projectileEffect = p;
+			duration = d;
+			counter = 0;
+		}
+		ProjectileEffect projectileEffect;
+		int duration;
+		public int counter;
+	}
+	
+	public void addEffect(ProjectileEffect effect) {
+		effects.add(new CreepEffect(effect, effect.lifetime));
+	}
+	
+	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
+		for (ProjectileEffect p: effects) {
+			this.effects.add(new CreepEffect(p, p.lifetime));
+		}
+	}
 
 	public void addAffix(CreepType type) {
 		creepTypes.add(type);
@@ -72,10 +93,6 @@ public class Creep {
 			size = .1f;
 			hitBox.radius = size;
 		}
-	}
-
-	public void addEffect(ProjectileEffect effect) {
-		effects.add(effect);
 	}
 
 	public void damage(DamageEffect damager) {
@@ -131,12 +148,14 @@ public class Creep {
 
 	private void updateEffects() {
 		currentSpeed = speed;
-		for(int i = 0; i < effects.size() ; i++){
-			ProjectileEffect e = effects.get(i);
-			e.update(this);
-			if(e.isExpired()){
+		for (CreepEffect e: effects) {
+			e.counter++; //TODO should we do this before or after?
+			if (e.duration == 0) {
+				e.projectileEffect.onExpire(this);
 				effects.remove(e);
-				i--;
+			} else {
+				e.projectileEffect.applyEffect(this, e);
+				e.duration--;
 			}
 		}
 	}
