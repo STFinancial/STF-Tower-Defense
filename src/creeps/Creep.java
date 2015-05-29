@@ -12,7 +12,7 @@ import utilities.Circle;
 
 public class Creep {
 	//Primary Stats
-	public int health;
+	public int health; //TODO might make this float so we don't have to round
 	public int armor; //Flat damage reduction on hit
 	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public int healthCost; //Damage Player takes on escape

@@ -109,6 +109,9 @@ public abstract class Tower {
 		//TODO for now we are just going to reference the effects of the baseProjecile
 		newProj.effects.addAll(p.effects);
 		newProj.currentSpeed = newProj.speed = p.speed; //TODO this logic might need to change if we have projectiles that speed up
+		newProj.splashRadius = p.splashRadius;
+		newProj.damageSplash = p.damageSplash;
+		newProj.effectSplash = p.effectSplash;
 		return newProj;
 	}
 }

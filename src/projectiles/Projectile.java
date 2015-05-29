@@ -1,6 +1,7 @@
 package projectiles;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import towers.Tower;
 import utilities.Circle;
@@ -80,6 +81,22 @@ public class Projectile {
 		}
 		//TODO add area target part
 		return false;
+	}
+
+	public void applySplashEffects(HashSet<Creep> creepInRange) {
+		//TODO add effect splash or decide if that's something we even want
+		ArrayList<ProjectileEffect> splashEffects = new ArrayList<ProjectileEffect>();
+		DamageEffect d;
+		for (ProjectileEffect eff: effects) {
+			if (eff instanceof Damage) {
+				d = new Damage(eff.modifier * damageSplash, ((Damage) eff).physical);
+				splashEffects.add(d);
+			}
+		}
+		for (Creep c: creepInRange) {
+			c.addAllEffects(splashEffects);
+		}
+		//TODO this is *might* get rekt by garbage collect and will take a lot of time, calls for refactoring the "DamageEffect" and making damage nonobjects and just an int
 	}
 
 }
