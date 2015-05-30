@@ -15,12 +15,13 @@ import creeps.Wave;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
-import towers.BasicAirTower;
+import towers.BasicWindTower;
 import towers.BasicEarthTower;
 import towers.BasicFireTower;
 import towers.BasicWaterTower;
 import towers.Tower;
 import towers.TowerType;
+import utilities.Circle;
 import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
 import utilities.PathFinder;
@@ -123,8 +124,16 @@ public class Level {
 
 	private void detonateProjectile(Projectile p) {
 		//Check for aoe and complicated shit
-		p.applyEffect(p.targetCreep);
-
+		if (p.targetsCreep) {
+			//Targeted a specific minion
+			p.applyEffect(p.targetCreep);
+			p.applySplashEffects(getCreepInRange(p, p.splashRadius));
+			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
+		} else {
+			//Targeted an area
+			
+		}
+		
 	}
 
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
@@ -170,8 +179,8 @@ public class Level {
 		Tower t;
 		Tile tile = map.getTile(y,x);
 		switch(type){ //TODO move this to a factory pattern? probably if we go with the TowerType enum
-		case AIR:
-			t = new BasicAirTower(this, tile);
+		case WIND:
+			t = new BasicWindTower(this, tile);
 			break;
 		case WATER:
 			t = new BasicWaterTower(this, tile);
@@ -191,6 +200,11 @@ public class Level {
 		}
 		updatePath();
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
+	}
+	
+	public void tetherTower(Tower tetherFrom, Tower tetherTo) {
+		//TODO Implement tower tether
+		//Need to destroy old tower then create new hybrid one?
 	}
 
 	//Can be called from App
@@ -215,8 +229,8 @@ public class Level {
 		
 		boolean old[][] = new boolean[height][width];
 		
-		for(int i = 0; i < width; i++){
-			for(int j = 0; j < height; j++){
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				old[j][i] = map.getTile(y + j, x + i).groundTraversable;
 				map.getTile(y + j, x + i).groundTraversable = false;
 			}
@@ -226,8 +240,8 @@ public class Level {
 		vg = PathFinder.mapToVertexGraph(vg, map);
 		proposedGroundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
 		
-		for(int i = 0; i < width; i++){
-			for(int j = 0; j < height; j++){
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				map.getTile(y + j, x + i).groundTraversable = old[j][i];
 			}
 		}
@@ -282,6 +296,17 @@ public class Level {
 		}
 		return toTarget;
 	}
+	
+	public HashSet<Creep> getCreepInRange(Projectile p, float range) {
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		Circle splash = new Circle(p.x, p.y, range);
+		for (Creep c : creeps) {
+			if (c.hitBox.intersects(splash)) {
+				inRange.add(c);
+			}
+		}
+		return inRange;
+	}
 
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);
@@ -289,13 +314,13 @@ public class Level {
 	}
 
 	public boolean canBuild(int x, int y, int width, int height) {
-		if(x < 0 || y < 0 || x + width >= map.width || y + height >= map.height){
+		if (x < 0 || y < 0 || x + width >= map.width || y + height >= map.height) {
 			proposedGroundPath = null;
 			return false;
 		}
-		for(int i = x; i < x + width; i++){
-			for(int j = y; j < y + height; j++){
-				if(!map.getTile(j, i).buildable){
+		for (int i = x; i < x + width; i++) {
+			for (int j = y; j < y + height; j++) {
+				if (!map.getTile(j, i).buildable) {
 					proposedGroundPath = null;
 					return false;
 				}

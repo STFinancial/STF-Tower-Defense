@@ -7,20 +7,23 @@ import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
 import projectiles.DamageEffect;
+import projectiles.DamageType;
 import projectiles.ProjectileEffect;
 import utilities.Circle;
 
 public class Creep {
 	//Primary Stats
-	public int health;
-	public int armor; //Flat damage reduction on hit
+	public float health;
+	public int toughness; //flat reduction for all types
+	public float armor;
 	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public int healthCost; //Damage Player takes on escape
 	public int goldValue; //Money player takes on kill
 
 	//Secondary Stats
 	public float[] resist; //percentage of damage taken from each element
-	public int slowResist;
+	public float slowResist;
+	public boolean snareImmune;
 	public ElementType elementType;
 	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
@@ -28,7 +31,7 @@ public class Creep {
 	public int currentArmor;
 	public int currentHealth;
 	public float currentSpeed;
-	public ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
+	public ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
 
 	//Movement
 	public Vertex currentVertex;
@@ -42,24 +45,45 @@ public class Creep {
 
 	//Fancy Effects
 	public ArrayList<Creep> children;
-	int baseShield;
-	int currentShield;
-	int shieldCap;
-	int disruptorAmount;
+	float baseShield;
+	float currentShield;
+	float shieldCap;
+	public int disruptorAmount;
 	
-	public Creep(int health, int armor, float speed, int healthCost, int goldValue, ElementType elementType) {
+	public Creep(int health, float speed, float armor, int toughness, int healthCost, int goldValue, ElementType elementType) {
 		this.health = health;
-		this.armor = armor;
 		this.speed = speed;
 		this.healthCost = healthCost;
 		this.goldValue = goldValue;
 		this.elementType = elementType;
-		currentHealth = health;
-		currentArmor = armor;
+		this.toughness = toughness;
+		disruptorAmount = 0; //TODO set this another way
+		currentHealth = health; 
 		currentSpeed = speed;
 
 		resist = elementType.baseResist();
-		hitBox = new Circle(1,1,size);
+		hitBox = new Circle(1, 1, size);
+	}
+	
+	public class CreepEffect {
+		CreepEffect(ProjectileEffect p, int d) {
+			projectileEffect = p;
+			duration = d;
+			counter = 0;
+		}
+		public ProjectileEffect projectileEffect;
+		int duration;
+		public int counter;
+	}
+	
+	public void addEffect(ProjectileEffect effect) {
+		effects.add(new CreepEffect(effect, effect.lifetime));
+	}
+	
+	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
+		for (ProjectileEffect p: effects) {
+			this.effects.add(new CreepEffect(p, p.lifetime));
+		}
 	}
 
 	public void addAffix(CreepType type) {
@@ -74,22 +98,28 @@ public class Creep {
 		}
 	}
 
-	public void addEffect(ProjectileEffect effect) {
-		effects.add(effect);
-	}
-
 	public void damage(DamageEffect damager) {
 		float baseDamage = damager.modifier;
-		float damageToDo = baseDamage * resist[damager.elementType.ordinal()];
-		if(!damager.ignoresArmor()){
-			damageToDo -= armor;
+		float damageToDo = baseDamage;
+		if (damager.damageType == DamageType.PHYSICAL) {
+			if (!damager.ignoresArmor()) {
+				damageToDo *= armor;
+			}
+		} else {
+			damageToDo = baseDamage * resist[damager.elementType.ordinal()];
 		}
-		int damage = (int) damageToDo;
-		if (damage < 0) {
-			damage = 0;
+		damageToDo -= toughness;
+		
+		if (damageToDo < 0) {
+			damageToDo = 0;
 		}
-		currentHealth -= damage;
-		//TODO shield calculations
+		if (currentShield < damageToDo) {
+			float damageLeft = currentShield - damageToDo;
+			currentShield = 0;
+			currentHealth -= damageLeft;
+		} else {
+			currentShield -= damageToDo;
+		}
 	}
 
 	public ArrayList<Creep> death() {
@@ -131,12 +161,14 @@ public class Creep {
 
 	private void updateEffects() {
 		currentSpeed = speed;
-		for(int i = 0; i < effects.size() ; i++){
-			ProjectileEffect e = effects.get(i);
-			e.update(this);
-			if(e.isExpired()){
+		for (CreepEffect e: effects) {
+			e.counter++; //TODO should we do this before or after?
+			if (e.duration == 0) {
+				e.projectileEffect.onExpire(this);
 				effects.remove(e);
-				i--;
+			} else {
+				e.projectileEffect.applyEffect(this, e);
+				e.duration--;
 			}
 		}
 	}
