@@ -124,8 +124,16 @@ public class Level {
 
 	private void detonateProjectile(Projectile p) {
 		//Check for aoe and complicated shit
-		p.applyEffect(p.targetCreep);
-		p.applySplashEffects(getCreepInRange(p, p.splashRadius));
+		if (p.targetsCreep) {
+			//Targeted a specific minion
+			p.applyEffect(p.targetCreep);
+			p.applySplashEffects(getCreepInRange(p, p.splashRadius));
+			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
+		} else {
+			//Targeted an area
+			
+		}
+		
 	}
 
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
@@ -192,6 +200,11 @@ public class Level {
 		}
 		updatePath();
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
+	}
+	
+	public void tetherTower(Tower tetherFrom, Tower tetherTo) {
+		//TODO Implement tower tether
+		//Need to destroy old tower then create new hybrid one?
 	}
 
 	//Can be called from App

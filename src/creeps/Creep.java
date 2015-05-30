@@ -13,7 +13,7 @@ import utilities.Circle;
 
 public class Creep {
 	//Primary Stats
-	public float health; //TODO might make this float so we don't have to round
+	public float health;
 	public int toughness; //flat reduction for all types
 	public float armor;
 	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
@@ -22,7 +22,8 @@ public class Creep {
 
 	//Secondary Stats
 	public float[] resist; //percentage of damage taken from each element
-	public int slowResist;
+	public float slowResist;
+	public boolean snareImmune;
 	public ElementType elementType;
 	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
@@ -44,18 +45,19 @@ public class Creep {
 
 	//Fancy Effects
 	public ArrayList<Creep> children;
-	int baseShield;
-	int currentShield;
-	int shieldCap;
-	int disruptorAmount;
+	float baseShield;
+	float currentShield;
+	float shieldCap;
+	public int disruptorAmount;
 	
-	public Creep(int health, float speed, float armor, int healthCost, int goldValue, ElementType elementType) {
+	public Creep(int health, float speed, float armor, int toughness, int healthCost, int goldValue, ElementType elementType) {
 		this.health = health;
 		this.speed = speed;
 		this.healthCost = healthCost;
 		this.goldValue = goldValue;
 		this.elementType = elementType;
-		this.toughness = 0; //TODO deal with this
+		this.toughness = toughness;
+		disruptorAmount = 0; //TODO set this another way
 		currentHealth = health; 
 		currentSpeed = speed;
 
@@ -69,7 +71,7 @@ public class Creep {
 			duration = d;
 			counter = 0;
 		}
-		ProjectileEffect projectileEffect;
+		public ProjectileEffect projectileEffect;
 		int duration;
 		public int counter;
 	}
@@ -111,8 +113,13 @@ public class Creep {
 		if (damageToDo < 0) {
 			damageToDo = 0;
 		}
-		currentHealth -= damageToDo;
-		//TODO shield calculations
+		if (currentShield < damageToDo) {
+			float damageLeft = currentShield - damageToDo;
+			currentShield = 0;
+			currentHealth -= damageLeft;
+		} else {
+			currentShield -= damageToDo;
+		}
 	}
 
 	public ArrayList<Creep> death() {

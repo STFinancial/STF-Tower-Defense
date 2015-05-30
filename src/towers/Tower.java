@@ -49,9 +49,7 @@ public abstract class Tower {
 	
 	abstract Projectile fireProjectile();
 	
-	//TODO this constructor is a mess
 	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height){
-		//Set Positional Data
 		this.level = level;
 		x = topLeftTile.x;
 		y = topLeftTile.y;
@@ -92,6 +90,7 @@ public abstract class Tower {
 		newProj.splashRadius = p.splashRadius;
 		newProj.damageSplash = p.damageSplash;
 		newProj.effectSplash = p.effectSplash;
+		newProj.parent = this;
 		return newProj;
 	}
 }

@@ -12,14 +12,20 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep, CreepEffect effect) {
-		// TODO Factor in snare resist
-		creep.currentSpeed = 0;
+		if (!creep.snareImmune) {
+			creep.currentSpeed = 0;			
+		}
 	}
 
 	@Override
 	public void onExpire(Creep creep) {
 		// TODO Auto-generated method stub
-
+		creep.currentSpeed = creep.speed;
+		for (CreepEffect c: creep.effects) {
+			if (c.projectileEffect instanceof Slow) {
+				c.projectileEffect.applyEffect(creep, c);
+			}
+		}
 	}
 
 }

@@ -23,7 +23,7 @@ public class CreepWaveLoader {
 		String cvsSplitBy = ",";
 		int currentWave = 0;
 		ArrayList<Wave> toReturn = new ArrayList<Wave>();
-		int waveNumber, numberOfCreep, delayInterior, delayBefore, health, healthCost, goldValue;
+		int waveNumber, numberOfCreep, delayInterior, delayBefore, health, toughness, healthCost, goldValue;
 		float speed, armor;
 		ElementType elementType;
 		boolean deathRattle = false;
@@ -43,10 +43,11 @@ public class CreepWaveLoader {
 				delayBefore = Integer.parseInt(waveSegment[3]);
 				health = Integer.parseInt(waveSegment[4]);
 				armor = Float.parseFloat(waveSegment[5]);
-				speed = Float.parseFloat(waveSegment[6]);
-				healthCost = Integer.parseInt(waveSegment[7]);
-				goldValue = Integer.parseInt(waveSegment[8]);
-				elementType = ElementType.fromString(waveSegment[9]);
+				toughness = Integer.parseInt(waveSegment[6]);
+				speed = Float.parseFloat(waveSegment[7]);
+				healthCost = Integer.parseInt(waveSegment[8]);
+				goldValue = Integer.parseInt(waveSegment[9]);
+				elementType = ElementType.fromString(waveSegment[10]);
 
 				if (waveNumber != currentWave) {
 					currentWave = waveNumber;
@@ -54,7 +55,7 @@ public class CreepWaveLoader {
 				}
 
 				for (int i = 0; i < numberOfCreep; i++) {
-					c = new Creep(health, armor, speed, healthCost, goldValue, elementType);
+					c = new Creep(health, speed, armor, toughness, healthCost, goldValue, elementType);
 					for (int j = 10; j < waveSegment.length; j++) {
 						System.out.println(waveSegment[j]);
 						c.addAffix(CreepType.fromString(waveSegment[j]));

@@ -1,7 +1,6 @@
 package towers;
 
 public final class TowerConstants {
-	//TODO this shit is getting out of hand
 	public final static String WATER_BASE_NAME = "Water";
 	public final static int WATER_BASE_WIDTH = 2;
 	public final static int WATER_BASE_HEIGHT = 2;
