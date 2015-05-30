@@ -15,7 +15,7 @@ import creeps.ElementType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
-import towers.BasicAirTower;
+import towers.BasicWindTower;
 import towers.BasicEarthTower;
 import towers.BasicFireTower;
 import towers.BasicWaterTower;
@@ -171,8 +171,8 @@ public class Level {
 		Tower t;
 		Tile tile = map.getTile(y,x);
 		switch(type){ //TODO move this to a factory pattern? probably if we go with the TowerType enum
-		case AIR:
-			t = new BasicAirTower(this, tile);
+		case WIND:
+			t = new BasicWindTower(this, tile);
 			break;
 		case WATER:
 			t = new BasicWaterTower(this, tile);

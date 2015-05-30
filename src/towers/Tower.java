@@ -50,10 +50,7 @@ public abstract class Tower {
 	abstract Projectile fireProjectile();
 	
 	//TODO this constructor is a mess
-	public Tower(Level level, Tile topLeftTile, int width, int height, boolean targetsCreep, float range,
-			int basePhysical, int baseMagic, int baseFireRate, float baseDS, float baseES, float baseSplashRadius, boolean hitsAir, boolean hitsGround, 
-			float baseSlow, int baseSlowDuration, String name){
-		
+	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height){
 		//Set Positional Data
 		this.level = level;
 		x = topLeftTile.x;
@@ -64,23 +61,6 @@ public abstract class Tower {
 		targetArea = new Circle(centerX, centerY, range);
 		this.targetsCreep = targetsCreep;
 		this.targetingType = TargetingType.FIRST;
-		this.width = width;
-		this.height = height;
-		
-		//Set Attributes
-		this.attackCoolDown = baseFireRate;
-		this.range = range;
-		this.physicalDamage = basePhysical;
-		this.magicDamage = baseMagic;
-		this.fireRate = baseFireRate;
-		this.damageSplash = baseDS;
-		this.effectSplash = baseES;
-		this.splashRadius = baseSplashRadius;
-		this.hitsAir = hitsAir;
-		this.hitsGround = hitsGround;
-		this.slow = baseSlow;
-		this.name = name;
-		this.slowDuration = baseSlowDuration;
 	}
 
 	

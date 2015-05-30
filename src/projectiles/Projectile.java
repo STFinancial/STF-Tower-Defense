@@ -89,7 +89,7 @@ public class Projectile {
 		DamageEffect d;
 		for (ProjectileEffect eff: effects) {
 			if (eff instanceof Damage) {
-				d = new Damage(eff.modifier * damageSplash, ((Damage) eff).physical);
+				d = new Damage(eff.modifier * damageSplash, ((Damage) eff).damageType, eff.elementType);
 				splashEffects.add(d);
 			}
 		}

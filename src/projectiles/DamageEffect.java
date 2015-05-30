@@ -1,16 +1,13 @@
 package projectiles;
 
-public abstract class DamageEffect extends ProjectileEffect {
-	public boolean physical;
-	
-	public DamageEffect(float modifier, boolean physical) {
-		super(modifier);
-		this.physical = physical;
-	}
+import creeps.ElementType;
 
-	public DamageEffect(int lifetime, float modifier, boolean physical) {
-		super(lifetime, modifier);
-		this.physical = physical;
+public abstract class DamageEffect extends ProjectileEffect {
+	public DamageType damageType;
+
+	public DamageEffect(int lifetime, float modifier, DamageType damageType, ElementType elementType) {
+		super(lifetime, modifier, elementType);
+		this.damageType = damageType;
 	}
 
 	public abstract boolean ignoresArmor();

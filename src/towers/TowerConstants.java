@@ -1,7 +1,6 @@
 package towers;
 
 public final class TowerConstants {
-	//TODO should there be constants for slow duration?
 	//TODO this shit is getting out of hand
 	public final static String WATER_BASE_NAME = "Water";
 	public final static int WATER_BASE_WIDTH = 2;
@@ -48,18 +47,18 @@ public final class TowerConstants {
 	public final static float FIRE_BASE_SLOW = 0f;
 	public final static int FIRE_BASE_SLOW_DURATION = 10;
 	
-	public final static String AIR_BASE_NAME = "Wind";
-	public final static int AIR_BASE_WIDTH = 2;
-	public final static int AIR_BASE_HEIGHT = 2;
-	public final static int AIR_BASE_PHYSICAL_DAMAGE = 10;
-	public final static int AIR_BASE_MAGIC_DAMAGE = 10;
-	public final static int AIR_BASE_FIRE_RATE = 5; //# of game ticks?
-	public final static float AIR_BASE_DAMAGE_SPLASH_COEFFICIENT = 0f;
-	public final static float AIR_BASE_EFFECT_SPLASH_COEFFICIENT = .10f;
-	public final static float AIR_BASE_SPLASH_RADIUS = 0f; //# of tiles
-	public final static boolean AIR_BASE_HITS_AIR = true;
-	public final static boolean AIR_BASE_HITS_GROUND = true;
-	public final static float AIR_BASE_RANGE = 3.5f; //this needs to be defined
-	public final static float AIR_BASE_SLOW = 0f;
-	public final static int AIR_BASE_SLOW_DURATION = 10;
+	public final static String WIND_BASE_NAME = "Wind";
+	public final static int WIND_BASE_WIDTH = 2;
+	public final static int WIND_BASE_HEIGHT = 2;
+	public final static int WIND_BASE_PHYSICAL_DAMAGE = 10;
+	public final static int WIND_BASE_MAGIC_DAMAGE = 10;
+	public final static int WIND_BASE_FIRE_RATE = 5; //# of game ticks?
+	public final static float WIND_BASE_DAMAGE_SPLASH_COEFFICIENT = 0f;
+	public final static float WIND_BASE_EFFECT_SPLASH_COEFFICIENT = .10f;
+	public final static float WIND_BASE_SPLASH_RADIUS = 0f; //# of tiles
+	public final static boolean WIND_BASE_HITS_AIR = true;
+	public final static boolean WIND_BASE_HITS_GROUND = true;
+	public final static float WIND_BASE_RANGE = 3.5f; //this needs to be defined
+	public final static float WIND_BASE_SLOW = 0f;
+	public final static int WIND_BASE_SLOW_DURATION = 10;
 }

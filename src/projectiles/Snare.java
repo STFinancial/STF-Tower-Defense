@@ -2,18 +2,18 @@ package projectiles;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
+import creeps.ElementType;
 
 public class Snare extends ProjectileEffect {
 
-	public Snare(int lifetime, float modifier) {
-		super(lifetime, modifier);
-		// TODO Auto-generated constructor stub
+	public Snare(int lifetime, float modifier, ElementType elementType) {
+		super(lifetime, modifier, elementType);
 	}
 
 	@Override
 	public void applyEffect(Creep creep, CreepEffect effect) {
-		// TODO Auto-generated method stub
-
+		// TODO Factor in snare resist
+		creep.currentSpeed = 0;
 	}
 
 	@Override

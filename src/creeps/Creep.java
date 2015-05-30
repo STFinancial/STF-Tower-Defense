@@ -7,13 +7,15 @@ import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
 import projectiles.DamageEffect;
+import projectiles.DamageType;
 import projectiles.ProjectileEffect;
 import utilities.Circle;
 
 public class Creep {
 	//Primary Stats
-	public int health; //TODO might make this float so we don't have to round
-	public int armor; //Flat damage reduction on hit
+	public float health; //TODO might make this float so we don't have to round
+	public int toughness; //flat reduction for all types
+	public float armor;
 	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public int healthCost; //Damage Player takes on escape
 	public int goldValue; //Money player takes on kill
@@ -47,19 +49,18 @@ public class Creep {
 	int shieldCap;
 	int disruptorAmount;
 	
-	public Creep(int health, int armor, float speed, int healthCost, int goldValue, ElementType elementType) {
+	public Creep(int health, float speed, float armor, int healthCost, int goldValue, ElementType elementType) {
 		this.health = health;
-		this.armor = armor;
 		this.speed = speed;
 		this.healthCost = healthCost;
 		this.goldValue = goldValue;
 		this.elementType = elementType;
-		currentHealth = health;
-		currentArmor = armor;
+		this.toughness = 0; //TODO deal with this
+		currentHealth = health; 
 		currentSpeed = speed;
 
 		resist = elementType.baseResist();
-		hitBox = new Circle(1,1,size);
+		hitBox = new Circle(1, 1, size);
 	}
 	
 	public class CreepEffect {
@@ -97,15 +98,20 @@ public class Creep {
 
 	public void damage(DamageEffect damager) {
 		float baseDamage = damager.modifier;
-		float damageToDo = baseDamage * resist[damager.elementType.ordinal()];
-		if(!damager.ignoresArmor()){
-			damageToDo -= armor;
+		float damageToDo = baseDamage;
+		if (damager.damageType == DamageType.PHYSICAL) {
+			if (!damager.ignoresArmor()) {
+				damageToDo *= armor;
+			}
+		} else {
+			damageToDo = baseDamage * resist[damager.elementType.ordinal()];
 		}
-		int damage = (int) damageToDo;
-		if (damage < 0) {
-			damage = 0;
+		damageToDo -= toughness;
+		
+		if (damageToDo < 0) {
+			damageToDo = 0;
 		}
-		currentHealth -= damage;
+		currentHealth -= damageToDo;
 		//TODO shield calculations
 	}
 

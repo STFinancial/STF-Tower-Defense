@@ -11,9 +11,8 @@ public class Damage extends DamageEffect {
 	
 	//TODO will decide if 
 
-	public Damage(float modifier, boolean physical) {
-		super(modifier, physical);
-		elementType = ElementType.LIGHT;
+	public Damage(float modifier, DamageType damageType, ElementType elementType) {
+		super(0, modifier, damageType, elementType);
 	}
 
 	@Override

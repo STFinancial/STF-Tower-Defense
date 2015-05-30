@@ -4,9 +4,9 @@ import projectiles.Projectile;
 import levels.Level;
 import maps.Tile;
 
-public class EarthWaterTower extends Tower {
+public class WindWaterTower extends Tower {
 
-	public EarthWaterTower(Level level, Tile topLeft){
+	public WindWaterTower(Level level, Tile topLeft){
 		super(level, topLeft, true, TowerConstants.EARTH_BASE_WIDTH, TowerConstants.EARTH_BASE_HEIGHT);
 		this.type = TowerType.EARTH;
 		this.attackCoolDown = TowerConstants.EARTH_BASE_FIRE_RATE;

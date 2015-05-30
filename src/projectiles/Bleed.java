@@ -8,9 +8,8 @@ public class Bleed extends DamageEffect {
 
 	int timing;
 
-	public Bleed(int lifetime, float modifier, int timing, boolean physical) {
-		super(lifetime, modifier, physical);
-		elementType = ElementType.EARTH;
+	public Bleed(int lifetime, float modifier, int timing, ElementType elementType) {
+		super(lifetime, modifier, DamageType.PHYSICAL, elementType);
 		this.timing = timing;
 	}
 

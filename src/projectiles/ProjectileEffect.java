@@ -14,13 +14,10 @@ public abstract class ProjectileEffect {
 	public int lifetime = 0;
 	public ElementType elementType;
 
-	public ProjectileEffect(float modifier) {
+	public ProjectileEffect(int lifetime, float modifier, ElementType elementType) {
 		this.modifier = modifier;
-	}
-
-	public ProjectileEffect(int lifetime, float modifier) {
-		this(modifier);
 		this.lifetime = lifetime;
+		this.elementType = elementType;
 		//timeRemaining = lifetime;
 	}
 
