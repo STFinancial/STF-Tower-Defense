@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import creeps.Creep;
+import creeps.CreepType;
+import creeps.ElementType;
 import creeps.Wave;
 
 public class CreepWaveGenerator {
@@ -22,8 +24,9 @@ public class CreepWaveGenerator {
 	int minimumCreepPerChunk = 4, maximumCreepPerChunk = 8;
 	
 				//flying  deathrattle, disruptor, Giant, quick, shielded, regen, juggernaut
-	float[] creepTypeChances = {.05f, .05f, 0f, .1f, .1f, 0f, 0f, 0f}; //Out of 1, matches indexs of CreepType
-
+	float[] typeChances = {.05f, .05f, 0f, .1f, .1f, 0f, 0f, 0f}; //Out of 1, matches indexs of creeps.CreepType
+	float[] elementalChances = {.25f, .25f, .25f, .25f}; //Add to 1, matchesindex of creeps.ElementType
+	
 	public ArrayList<Wave> generateCreepWaves() {
 		ArrayList<Wave> waves = new ArrayList<Wave>();
 		difficulty = baseDifficulty;
@@ -68,7 +71,43 @@ public class CreepWaveGenerator {
 
 	//Collection of the same creep
 	private ArrayList<Creep> generateChunk(float difficulty, int chunkSize) {
-		// TODO Auto-generated method stub
+		ElementType elementType;
+		ArrayList<CreepType> creepTypes = new ArrayList<CreepType>();
+		
+		float temp = r.nextFloat(), temp2 = 0;
+		for(int i = 0; i < elementalChances.length; i++){
+			temp2 += elementalChances[i];
+			if(temp <= temp2){
+				elementType = ElementType.values()[i];
+				break;
+			}
+		}
+		
+		for(int i = 0 ; i < typeChances.length; i++){
+			if(r.nextFloat() < typeChances[i]){
+				creepTypes.add(CreepType.values()[i]);
+				switch(CreepType.values()[i]){
+				case DEATH_RATTLE:
+					break;
+				case DISRUPTOR:
+					break;
+				case FLYING:
+					break;
+				case GIANT:
+					break;
+				case JUGGERNAUT:
+					break;
+				case QUICK:
+					break;
+				case REGENERATING:
+					break;
+				case SHIELDED:
+					break;
+				default:
+					break;
+				}
+			}
+		}
 		return null;
 	}
 
