@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import creeps.Creep;
 import creeps.CreepType;
 import creeps.ElementType;
-import maps.Wave;
+import creeps.Wave;
 
 /*
  * Pass it absolute file location (Will adjust later), loads a creep wave for you

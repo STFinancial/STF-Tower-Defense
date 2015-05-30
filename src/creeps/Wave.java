@@ -1,9 +1,7 @@
-package maps;
+package creeps;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import creeps.Creep;
 
 /*
  * Collection of Creep and their relative spawn times
