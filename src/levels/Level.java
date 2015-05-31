@@ -11,7 +11,7 @@ import maps.VertexGraph;
 import maps.Wave;
 import creeps.Creep;
 import creeps.CreepType;
-import creeps.ElementType;
+import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;

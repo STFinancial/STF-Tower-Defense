@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import creeps.Creep;
 import creeps.CreepType;
-import creeps.ElementType;
+import creeps.DamageType;
 import maps.Wave;
 
 /*
@@ -25,7 +25,7 @@ public class CreepWaveLoader {
 		ArrayList<Wave> toReturn = new ArrayList<Wave>();
 		int waveNumber, numberOfCreep, delayInterior, delayBefore, health, toughness, healthCost, goldValue;
 		float speed, armor;
-		ElementType elementType;
+		DamageType elementType;
 		boolean deathRattle = false;
 		Creep c = null;
 		try {
@@ -47,7 +47,7 @@ public class CreepWaveLoader {
 				speed = Float.parseFloat(waveSegment[7]);
 				healthCost = Integer.parseInt(waveSegment[8]);
 				goldValue = Integer.parseInt(waveSegment[9]);
-				elementType = ElementType.fromString(waveSegment[10]);
+				elementType = DamageType.fromString(waveSegment[10]);
 
 				if (waveNumber != currentWave) {
 					currentWave = waveNumber;
@@ -55,7 +55,7 @@ public class CreepWaveLoader {
 				}
 
 				for (int i = 0; i < numberOfCreep; i++) {
-					c = new Creep(health, speed, armor, toughness, healthCost, goldValue, elementType);
+					c = new Creep(health, speed, toughness, healthCost, goldValue, elementType);
 					for (int j = 10; j < waveSegment.length; j++) {
 						System.out.println(waveSegment[j]);
 						c.addAffix(CreepType.fromString(waveSegment[j]));

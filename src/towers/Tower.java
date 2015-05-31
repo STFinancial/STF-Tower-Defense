@@ -3,7 +3,7 @@ package towers;
 import levels.Level;
 import maps.Tile;
 import creeps.Creep;
-import creeps.ElementType;
+import creeps.DamageType;
 import projectiles.Projectile;
 import projectiles.ProjectileEffect;
 import utilities.Circle;

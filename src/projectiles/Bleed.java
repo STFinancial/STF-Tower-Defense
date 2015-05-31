@@ -2,14 +2,14 @@ package projectiles;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
-import creeps.ElementType;
+import creeps.DamageType;
 
 public class Bleed extends DamageEffect {
 
 	int timing;
 
-	public Bleed(int lifetime, float modifier, int timing, ElementType elementType) {
-		super(lifetime, modifier, DamageType.PHYSICAL, elementType);
+	public Bleed(int lifetime, float modifier, int timing) {
+		super(lifetime, modifier, DamageType.PHYSICAL);
 		this.timing = timing;
 	}
 
