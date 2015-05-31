@@ -57,7 +57,6 @@ public class Creep {
 		this.goldValue = goldValue;
 		this.elementType = elementType;
 		this.toughness = toughness;
-		disruptorAmount = 0; //TODO set this another way
 		currentHealth = health; 
 		currentSpeed = speed;
 
