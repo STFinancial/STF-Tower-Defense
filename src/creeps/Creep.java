@@ -12,24 +12,24 @@ import utilities.Circle;
 
 public class Creep {
 	//Primary Stats
-	public float health;
+	public int health;
 	public int toughness; //flat reduction for all types
 	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public int healthCost; //Damage Player takes on escape
 	public int goldValue; //Money player takes on kill
+	public DamageType elementType; //FIRE AIR etc creep type 
+
+	//Current Stats
+	public int currentToughness;
+	public float currentHealth;
+	public float currentSpeed;
+	public ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
 
 	//Secondary Stats
 	public float[] resist; //percentage of damage taken from each element
 	public float slowResist;
 	public boolean snareImmune;
-	public DamageType elementType;
 	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
-
-	//Current Stats
-	public int currentArmor;
-	public int currentHealth;
-	public float currentSpeed;
-	public ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
 
 	//Movement
 	public Vertex currentVertex;
@@ -47,7 +47,7 @@ public class Creep {
 	float currentShield;
 	float shieldCap;
 	public int disruptorAmount;
-	
+
 	public Creep(int health, float speed, int toughness, int healthCost, int goldValue, DamageType elementType) {
 		this.health = health;
 		this.speed = speed;
@@ -55,41 +55,42 @@ public class Creep {
 		this.goldValue = goldValue;
 		this.elementType = elementType;
 		this.toughness = toughness;
-		currentHealth = health; 
+		currentHealth = health;
 		currentSpeed = speed;
 
 		resist = elementType.baseResist();
 		hitBox = new Circle(1, 1, size);
 	}
-	
+
 	public class CreepEffect {
 		CreepEffect(ProjectileEffect p, int d) {
 			projectileEffect = p;
 			duration = d;
 			counter = 0;
 		}
+
 		public ProjectileEffect projectileEffect;
 		int duration;
 		public int counter;
 	}
-	
+
 	public void addEffect(ProjectileEffect effect) {
 		effects.add(new CreepEffect(effect, effect.lifetime));
 	}
-	
+
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
-		for (ProjectileEffect p: effects) {
+		for (ProjectileEffect p : effects) {
 			this.effects.add(new CreepEffect(p, p.lifetime));
 		}
 	}
 
 	public void addAffix(CreepType type) {
 		creepTypes.add(type);
-		if(type == CreepType.GIANT){
+		if (type == CreepType.GIANT) {
 			size = .4f;
 			hitBox.radius = size;
 		}
-		if(type == CreepType.QUICK){
+		if (type == CreepType.QUICK) {
 			size = .1f;
 			hitBox.radius = size;
 		}
@@ -106,7 +107,7 @@ public class Creep {
 			damageToDo = baseDamage * (1 - resist[damager.damageType.ordinal()]);
 		}
 		damageToDo -= toughness;
-		
+
 		if (damageToDo < 0) {
 			damageToDo = 0;
 		}
@@ -128,7 +129,7 @@ public class Creep {
 		return currentHealth < 1;
 	}
 
-	public boolean is(CreepType type){
+	public boolean is(CreepType type) {
 		return creepTypes.contains(type);
 	}
 
@@ -158,7 +159,7 @@ public class Creep {
 
 	private void updateEffects() {
 		currentSpeed = speed;
-		for (CreepEffect e: effects) {
+		for (CreepEffect e : effects) {
 			e.counter++; //TODO should we do this before or after?
 			if (e.duration == 0) {
 				e.projectileEffect.onExpire(this);
@@ -198,8 +199,8 @@ public class Creep {
 			yOff = direction.y * speedRemaining;
 		}
 	}
-	
-	public void updateHitBox(){
+
+	public void updateHitBox() {
 		hitBox.x = currentVertex.x + xOff + 1;
 		hitBox.y = currentVertex.y + yOff + 1;
 	}
@@ -213,5 +214,50 @@ public class Creep {
 		this.yOff = c.yOff;
 		this.path = c.path;
 		this.pathIndex = c.pathIndex;
+	}
+
+	/*
+	 * NOT A FULL CLONE, ONLY WORKS FOR CREEPS NOT YET SPAWNED
+	 */
+	public Creep clone() {
+		Creep clone = new Creep(health, speed, toughness, healthCost, goldValue, elementType);
+
+		//Secondary Stats
+		clone.resist = this.resist.clone(); //percentage of damage taken from each element
+		clone.slowResist = this.slowResist;
+		clone.snareImmune = this.snareImmune;
+		clone.creepTypes = new HashSet<CreepType>();
+		for (CreepType type : this.creepTypes) {
+			clone.creepTypes.add(type);
+		}
+
+		clone.size = this.size; //Radius
+		clone.hitBox.radius = this.hitBox.radius;
+
+		//Fancy Effects
+		clone.children = new ArrayList<Creep>();
+		if (this.children != null) {
+			for (Creep child : this.children) {
+				clone.children.add(child.clone());
+			}
+		}
+		clone.baseShield = this.baseShield;
+		clone.currentShield = this.currentShield;
+		clone.shieldCap = this.shieldCap;
+		clone.disruptorAmount = this.disruptorAmount;
+
+		return clone;
+	}
+
+	public String toString() {
+		String string = "Base Creep Stats: hp = " + health + ", toughness = " + toughness + " , speed = " + speed;
+		string += "\nelement = " + elementType + ", Modifiers: ";
+		for (CreepType type : creepTypes) {
+			string += " " + type;
+			if (type == CreepType.DEATH_RATTLE) {
+				string += "\n  " + children.size() + " Children: " + children.get(0).toString();
+			}
+		}
+		return string;
 	}
 }

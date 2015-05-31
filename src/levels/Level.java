@@ -10,12 +10,8 @@ import maps.Vertex;
 import maps.VertexGraph;
 import creeps.Creep;
 import creeps.CreepType;
-<<<<<<< HEAD
-import creeps.ElementType;
 import creeps.Wave;
-=======
 import creeps.DamageType;
->>>>>>> 467266cd9bbc0a054a06ca9f931d05fdab80790b
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
