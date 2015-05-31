@@ -1,8 +1,7 @@
 package towers;
 
-import creeps.ElementType;
+import creeps.DamageType;
 import projectiles.Damage;
-import projectiles.DamageType;
 import projectiles.Projectile;
 import projectiles.ProjectileEffect;
 import projectiles.Slow;
@@ -39,17 +38,14 @@ public class BasicWaterTower extends Tower {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
 		
-		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL, ElementType.WATER);
-		effect.elementType = ElementType.WATER;
+		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
 		
-		effect = new Damage(magicDamage, DamageType.MAGIC, ElementType.WATER);
-		effect.elementType = ElementType.WATER;
+		effect = new Damage(magicDamage, DamageType.WATER);
 		baseProjectile.addEffect(effect);
 		
 		if (slow != 0) {
-			effect = new Slow(slowDuration, slow, ElementType.WATER);
-			effect.elementType = ElementType.WATER;//?
+			effect = new Slow(slowDuration, slow, DamageType.WATER);
 			baseProjectile.addEffect(effect);
 		}
 		

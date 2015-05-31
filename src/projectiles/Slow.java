@@ -2,14 +2,14 @@ package projectiles;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
-import creeps.ElementType;
+import creeps.DamageType;
 
 public class Slow extends ProjectileEffect {
 	/*
 	 * Slow effect
 	 */
 
-	public Slow(int lifetime, float modifier, ElementType elementType) {
+	public Slow(int lifetime, float modifier, DamageType elementType) {
 		super(lifetime, modifier, elementType);
 	}
 

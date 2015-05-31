@@ -1,8 +1,7 @@
 package towers;
 
-import creeps.ElementType;
+import creeps.DamageType;
 import projectiles.Damage;
-import projectiles.DamageType;
 import projectiles.Projectile;
 import projectiles.ProjectileEffect;
 import projectiles.Slow;
@@ -38,17 +37,14 @@ public class BasicEarthTower extends Tower {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
 		
-		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL, ElementType.EARTH);
-		effect.elementType = ElementType.EARTH;
+		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
 		
-		effect = new Damage(magicDamage, DamageType.MAGIC, ElementType.EARTH);
-		effect.elementType = ElementType.EARTH;
+		effect = new Damage(magicDamage, DamageType.EARTH);
 		baseProjectile.addEffect(effect);
 		
 		if (slow != 0) {
-			effect = new Slow(slowDuration, slow, ElementType.EARTH);
-			effect.elementType = ElementType.EARTH; //OR SHOULD THIS BE THE TYPE THAT GIVES THE SLOW
+			effect = new Slow(slowDuration, slow, DamageType.EARTH); //OR SHOULD THIS BE THE TYPE THAT GIVES THE SLOW
 			baseProjectile.addEffect(effect);
 		}
 		

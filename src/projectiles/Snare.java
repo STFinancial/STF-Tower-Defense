@@ -2,11 +2,11 @@ package projectiles;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
-import creeps.ElementType;
+import creeps.DamageType;
 
 public class Snare extends ProjectileEffect {
 
-	public Snare(int lifetime, float modifier, ElementType elementType) {
+	public Snare(int lifetime, float modifier, DamageType elementType) {
 		super(lifetime, modifier, elementType);
 	}
 

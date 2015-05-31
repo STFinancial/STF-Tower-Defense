@@ -7,7 +7,6 @@ import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
 import projectiles.DamageEffect;
-import projectiles.DamageType;
 import projectiles.ProjectileEffect;
 import utilities.Circle;
 
@@ -15,7 +14,6 @@ public class Creep {
 	//Primary Stats
 	public float health;
 	public int toughness; //flat reduction for all types
-	public float armor;
 	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public int healthCost; //Damage Player takes on escape
 	public int goldValue; //Money player takes on kill
@@ -24,7 +22,7 @@ public class Creep {
 	public float[] resist; //percentage of damage taken from each element
 	public float slowResist;
 	public boolean snareImmune;
-	public ElementType elementType;
+	public DamageType elementType;
 	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
 	//Current Stats
@@ -50,7 +48,7 @@ public class Creep {
 	float shieldCap;
 	public int disruptorAmount;
 	
-	public Creep(int health, float speed, float armor, int toughness, int healthCost, int goldValue, ElementType elementType) {
+	public Creep(int health, float speed, int toughness, int healthCost, int goldValue, DamageType elementType) {
 		this.health = health;
 		this.speed = speed;
 		this.healthCost = healthCost;
@@ -102,10 +100,10 @@ public class Creep {
 		float damageToDo = baseDamage;
 		if (damager.damageType == DamageType.PHYSICAL) {
 			if (!damager.ignoresArmor()) {
-				damageToDo *= armor;
+				damageToDo *= (1 - resist[6]);
 			}
 		} else {
-			damageToDo = baseDamage * resist[damager.elementType.ordinal()];
+			damageToDo = baseDamage * (1 - resist[damager.damageType.ordinal()]);
 		}
 		damageToDo -= toughness;
 		

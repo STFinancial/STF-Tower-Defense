@@ -1,13 +1,11 @@
 package projectiles;
 
-import creeps.ElementType;
+import creeps.DamageType;
 
 public abstract class DamageEffect extends ProjectileEffect {
-	public DamageType damageType;
 
-	public DamageEffect(int lifetime, float modifier, DamageType damageType, ElementType elementType) {
-		super(lifetime, modifier, elementType);
-		this.damageType = damageType;
+	public DamageEffect(int lifetime, float modifier, DamageType damageType) {
+		super(lifetime, modifier, damageType);
 	}
 
 	public abstract boolean ignoresArmor();
