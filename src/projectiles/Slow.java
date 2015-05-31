@@ -20,5 +20,6 @@ public class Slow extends ProjectileEffect {
 
 	@Override
 	public void onExpire(Creep creep) {
+		
 	}
 }

@@ -62,6 +62,7 @@ public class Creep {
 		hitBox = new Circle(1,1,size);
 	}
 	
+	//TODO possibly remove this and go back to just recreating each projectile effect
 	public class CreepEffect {
 		CreepEffect(ProjectileEffect p, int d) {
 			projectileEffect = p;
