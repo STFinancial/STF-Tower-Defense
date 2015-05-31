@@ -78,6 +78,12 @@ public abstract class Tower {
 	
 	public abstract void roundInit();
 
+	//this should be called on any time we make changes to the tower
+	public void updateProjectile() {
+		//TODO make this method
+		//if ()
+	}
+	
 	protected void updateAngle(Creep targetCreep) {
 		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}

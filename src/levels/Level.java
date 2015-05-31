@@ -188,7 +188,16 @@ public class Level {
 			}
 		}
 		updatePath();
+		t.updateProjectile();
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
+	}
+	
+	//TODO need an event so that the GUI knows it can change the tower graphic
+	//But I think it can just take the type before and after and change it.
+	public void untetherTower(Tower t) {
+		t.tetheredTo = null;
+		t.type = TowerType.getDowngrade(t.type);
+		t.updateProjectile();
 	}
 	
 	public void tetherTower(Tower tetherFrom, Tower tetherTo) {
@@ -196,7 +205,8 @@ public class Level {
 		Tile tile = map.getTile(tetherFrom.y, tetherFrom.x);
 		//TODO preserve upgrade levels and do damage calculations
 		razeTower(tetherFrom);
-		buildTower(newType, tetherFrom.y, tetherFrom.x);
+		Tower t = buildTower(newType, tetherFrom.y, tetherFrom.x);
+		t.updateProjectile();
 	}	
 
 	//Can be called from App

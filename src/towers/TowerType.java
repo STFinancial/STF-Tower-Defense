@@ -10,4 +10,8 @@ public enum TowerType {
 	public static TowerType getUpgrade(TowerType tetherFrom, TowerType tetherTo) {
 		return TowerType.values()[((tetherFrom.ordinal() + 1) * 4) + tetherTo.ordinal()];
 	}
+	
+	public static TowerType getDowngrade(TowerType type) {
+		return TowerType.values()[(type.ordinal() / 4) - 1];
+	}
 }
