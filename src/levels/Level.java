@@ -15,12 +15,7 @@ import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
-import towers.BasicWindTower;
-import towers.BasicEarthTower;
-import towers.BasicFireTower;
-import towers.BasicWaterTower;
-import towers.Tower;
-import towers.TowerType;
+import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
@@ -59,6 +54,7 @@ public class Level {
 	}
 	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
+		gold = 500;
 		this.player = player;
 		this.map = map;
 		this.creepWaves = creepWaves;
@@ -172,26 +168,19 @@ public class Level {
 		//Creep slain event
 		//Add gold
 	}
+	
+	//GUI should call this method to build towers
+	public Tower buyTower(TowerType type, int y, int x) {
+		Tower t = buildTower(type, y, x);
+		gold -= t.cost;
+		return t;
+	}
 
-	//Can be called from App
-	public Tower buildTower(TowerType type, int x, int y) {
-		//TODO gold cost and stats and plenty of other shit
+	private Tower buildTower(TowerType type, int y, int x) {
+		//TODO stats and plenty of other shit
 		Tower t;
 		Tile tile = map.getTile(y,x);
-		switch(type){ //TODO move this to a factory pattern? probably if we go with the TowerType enum
-		case WIND:
-			t = new BasicWindTower(this, tile);
-			break;
-		case WATER:
-			t = new BasicWaterTower(this, tile);
-			break;
-		case FIRE:
-			t = new BasicFireTower(this, tile);
-			break;
-		default:
-			t = new BasicEarthTower(this, tile);
-			break;
-		}
+		t = TowerFactory.generateTower(this, type, tile);
 		towers.add(t);
 		for(int i = 0; i < t.width; i++){
 			for(int j = 0; j < t.height; j++){
@@ -203,18 +192,37 @@ public class Level {
 	}
 	
 	public void tetherTower(Tower tetherFrom, Tower tetherTo) {
-		//TODO Implement tower tether
-		//Need to destroy old tower then create new hybrid one?
-	}
+		TowerType newType = TowerType.getUpgrade(tetherFrom.type, tetherTo.type);
+		Tile tile = map.getTile(tetherFrom.y, tetherFrom.x);
+		//TODO preserve upgrade levels and do damage calculations
+		razeTower(tetherFrom);
+		buildTower(newType, tetherFrom.y, tetherFrom.x);
+	}	
 
 	//Can be called from App
 	public void upgradeTower(Tower t, int index) {
-		//TODO
+		
 	}
 
+	//GUI should call this method
+	public void sellTower(Tower t) {
+		if (t.tetheredTo == null) {
+			gold += t.cost * .75f;
+		} else {
+			gold += t.cost * .5f;
+		}
+		razeTower(t);
+	}
+	
 	//Can be called from App
-	public void razeTower(Tower t) {
-		//TODO
+	private void razeTower(Tower t) {
+		towers.remove(t);
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
+				map.getTile(t.y + j, t.x + i).removeTower();
+			}
+		}
+		updatePath();
 	}
 
 	public void updatePath() {
