@@ -73,9 +73,6 @@ public class Level {
 			System.out.println("Starting round " + round);
 			tick = 0;
 			nextSpawnTick = currentWave.getDelayForNextCreep();
-			for (Tower t : towers) {
-				t.roundInit();
-			}
 		}
 	}
 

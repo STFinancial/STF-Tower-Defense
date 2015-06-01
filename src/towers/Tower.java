@@ -60,8 +60,6 @@ public abstract class Tower {
 	public boolean hitsAir;
 	public boolean hitsGround;
 
-	abstract Projectile fireProjectile();
-
 	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height) {
 		this.level = level;
 		this.width = width;
