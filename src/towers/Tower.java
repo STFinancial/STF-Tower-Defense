@@ -103,7 +103,11 @@ public abstract class Tower {
 		effectSplash = baseAttributeList.baseEffectSplash;
 		splashRadius = baseAttributeList.baseSplashRadius;
 		range = baseAttributeList.baseRange;
-		//TODO recursively handle siphon damage
+		//TODO recursively handle siphon
+		//we need to take 50% of the siphoned stuff
+		//how do we avoid cycles without recursively recalculating each time?
+		//Does it even matter, relatively speaking that is no computation at all
+		//I think we need to go through all towers in the tether chain and recalculate
 	}
 	
 	//this should be called on any time we make changes to the tower
@@ -112,7 +116,7 @@ public abstract class Tower {
 		DamageType damageType = baseAttributeList.mainDamageType;
 		ProjectileEffect effect;
 		baseProjectile.splashRadius = splashRadius;
-		//TODO Optimize
+		//TODO Optimize - At this point the base classes only have one damage type
 		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
 			if (damageArray[i] != 0) {
 				effect = new Damage(damageArray[i], DamageType.values()[i]);
