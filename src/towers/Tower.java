@@ -18,7 +18,7 @@ public abstract class Tower {
 	public int width;
 	public int height;
 	public int cost;
-	
+
 	//Targeting Details
 	public TargetingType targetingType;
 	public boolean targetsCreep; //False for targeting a ground spot;
@@ -59,14 +59,18 @@ public abstract class Tower {
 	public float range;
 	public boolean hitsAir;
 	public boolean hitsGround;
-	
-	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height){
+
+	abstract Projectile fireProjectile();
+
+	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height) {
 		this.level = level;
-		this.x = topLeftTile.x;
-		this.y = topLeftTile.y;
-		this.centerX = x + width / 2f;
-		this.centerY = y + height / 2f;
-		this.targetArea = new Circle(centerX, centerY, range);
+		this.width = width;
+		this.height = height;
+		x = topLeftTile.x;
+		y = topLeftTile.y;
+		centerX = x + width / 2f;
+		centerY = y + height / 2f;
+		targetArea = new Circle(centerX, centerY, range);
 		this.targetsCreep = targetsCreep;
 		this.targetingType = TargetingType.FIRST;
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
@@ -76,8 +80,7 @@ public abstract class Tower {
 		return duplicateProjectile(baseProjectile);
 	}
 
-	
-	public void update(){
+	public void update() {
 		currentAttackCoolDown--;
 		if (targetsCreep) {
 			targetCreep = level.findTargetCreep(this);
@@ -90,7 +93,7 @@ public abstract class Tower {
 			}
 		}
 	}
-	
+
 	public void adjustTowerValues() {
 		adjustStats();
 		adjustProjectile();
@@ -151,11 +154,11 @@ public abstract class Tower {
 		//Set the speed
 		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
 	}
-	
+
 	protected void updateAngle(Creep targetCreep) {
 		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}
-	
+
 	protected Projectile duplicateProjectile(Projectile p) {
 		Projectile newProj = new Projectile(this);
 		//TODO for now we are just going to reference the effects of the baseProjecile
@@ -165,5 +168,9 @@ public abstract class Tower {
 		newProj.splashRadius = p.splashRadius;
 		newProj.parent = this;
 		return newProj;
+	}
+
+	public String toString() {
+		return "Type: " + type + " at " + x + " , " + y;
 	}
 }

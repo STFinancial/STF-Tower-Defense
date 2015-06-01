@@ -33,11 +33,12 @@ public class Level {
 	public int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	public int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
 
-	int gold, health;
+	public int gold = 500;
+	public int health = 100;
 	int nextSpawnTick = -1;
-	Wave currentWave;
-	boolean roundInProgress = false;
-	
+	public Wave currentWave;
+	public boolean roundInProgress = false;
+
 	//Currently loaded/active units
 	public ArrayList<Tower> towers = new ArrayList<Tower>();
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
@@ -45,16 +46,17 @@ public class Level {
 
 	public Path groundPath, airPath, proposedGroundPath;
 
+	public ArrayList<GameEvent> events = new ArrayList<GameEvent>();
 	//Temp Variables for readability
 	Creep c;
 	int i;
+	private boolean creepLeft;
 
-	public Level(){
+	public Level() {
 		this(new Player(), (new MapGenerator()).generateMap(), (new CreepWaveGenerator()).generateCreepWaves());
 	}
-	
+
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
-		gold = 500;
 		this.player = player;
 		this.map = map;
 		this.creepWaves = creepWaves;
@@ -63,14 +65,18 @@ public class Level {
 
 	//Can be called from App
 	public void startRound() {
-		roundInProgress = true;
-		currentWave = creepWaves.get(round);
-		round++;
-		tick = 0;
-		nextSpawnTick = currentWave.getDelayForNextCreep();
-//		for (Tower t: towers) {
-//			t.roundInit();
-//		}
+		if (!roundInProgress) {
+			roundInProgress = true;
+			creepLeft = true;
+			currentWave = creepWaves.get(round);
+			round++;
+			System.out.println("Starting round " + round);
+			tick = 0;
+			nextSpawnTick = currentWave.getDelayForNextCreep();
+			for (Tower t : towers) {
+				t.roundInit();
+			}
+		}
 	}
 
 	public void gameTick() {
@@ -78,6 +84,9 @@ public class Level {
 		if (tick == nextSpawnTick) {
 			spawnCreeps(currentWave.getNextCreeps());
 			nextSpawnTick = tick + currentWave.getDelayForNextCreep();
+			if (nextSpawnTick < tick) {
+				creepLeft = false;
+			}
 		}
 
 		for (i = 0; i < creeps.size(); i++) {
@@ -87,6 +96,9 @@ public class Level {
 				escapeCreep(c);
 				creeps.remove(i);
 				i--;
+				if (creeps.size() == 0 && creepLeft == false) {
+					roundInProgress = false;
+				}
 			}
 		}
 
@@ -106,14 +118,15 @@ public class Level {
 				killCreep(c);
 				creeps.remove(c);
 				i--;
+				if (creeps.size() == 0 && creepLeft == false) {
+					roundInProgress = false;
+				}
 			}
 		}
 
 		for (Tower t : towers) {
 			t.update();
 		}
-
-		//Check if round has finished from all creep being dead
 
 		tick++;
 	}
@@ -127,9 +140,9 @@ public class Level {
 			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
 		} else {
 			//Targeted an area
-			
+
 		}
-		
+		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
 	}
 
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
@@ -141,16 +154,14 @@ public class Level {
 				c.setPath(groundPath);
 			}
 			creeps.add(c);
-			//Game Spawn Event
+			newEvent(GameEventType.CREEP_SPAWNED, c);
 		}
 	}
 
 	private void escapeCreep(Creep c) {
 		//TODO
-		//Game Escape Event
-
-		//Take away health or gold or whatever
-
+		newEvent(GameEventType.CREEP_ESCAPED, c);
+		health -= c.healthCost;
 		//Check if we lose?
 
 	}
@@ -165,10 +176,13 @@ public class Level {
 				creeps.add(drc);
 			}
 		}
-		//Creep slain event
-		//Add gold
+
+		newEvent(GameEventType.CREEP_KILLED, c);
+
+		gold += c.goldValue;
+
 	}
-	
+
 	//GUI should call this method to build towers
 	public Tower buyTower(TowerType type, int y, int x) {
 		Tower t = buildTower(type, y, x);
@@ -179,19 +193,20 @@ public class Level {
 	private Tower buildTower(TowerType type, int y, int x) {
 		//TODO stats and plenty of other shit
 		Tower t;
-		Tile tile = map.getTile(y,x);
+		Tile tile = map.getTile(y, x);
 		t = TowerFactory.generateTower(this, type, tile);
 		towers.add(t);
-		for(int i = 0; i < t.width; i++){
-			for(int j = 0; j < t.height; j++){
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).addTower(t);
 			}
 		}
 		updatePath();
 		t.adjustTowerValues();
+		newEvent(GameEventType.TOWER_CREATED, t);
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
-	
+
 	//TODO need an event so that the GUI knows it can change the tower graphic
 	//But I think it can just take the type before and after and change it.
 	public Tower unsiphonTower(Tower t) {
@@ -204,18 +219,18 @@ public class Level {
 		t.adjustTowerValues();
 		return t;
 	}
-	
+
 	public void siphonTower(Tower siphonTo, Tower siphonFrom) {
 		TowerType newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type);
 		//TODO preserve upgrade levels and do damage calculations
 		razeTower(siphonTo);
 		Tower t = buildTower(newType, siphonTo.y, siphonTo.x);
 		t.adjustTowerValues();
-	}	
+	}
 
 	//Can be called from App
 	public void upgradeTower(Tower t, int index) {
-		
+
 	}
 
 	//GUI should call this method
@@ -227,8 +242,7 @@ public class Level {
 		}
 		razeTower(t);
 	}
-	
-	//Can be called from App
+
 	private void razeTower(Tower t) {
 		towers.remove(t);
 		for (int i = 0; i < t.width; i++) {
@@ -237,6 +251,8 @@ public class Level {
 			}
 		}
 		updatePath();
+
+		newEvent(GameEventType.TOWER_DESTROYED, t);
 	}
 
 	public void updatePath() {
@@ -245,47 +261,26 @@ public class Level {
 		groundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
 		airPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
 	}
-	
-	public void proposePath(int x, int y, int width, int height){
-		//Cludgey as fuck, fix for me tim TODO
-		
+
+	public void proposePath(int x, int y, int width, int height) {
 		boolean old[][] = new boolean[height][width];
-		
+
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				old[j][i] = map.getTile(y + j, x + i).groundTraversable;
 				map.getTile(y + j, x + i).groundTraversable = false;
 			}
 		}
-		
+
 		VertexGraph vg = new VertexGraph();
 		vg = PathFinder.mapToVertexGraph(vg, map);
 		proposedGroundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
-		
+
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				map.getTile(y + j, x + i).groundTraversable = old[j][i];
 			}
 		}
-	}
-
-	public boolean stillSpawning() {
-		if (currentWave == null) {
-			return true; //Hack for quick GUI fix, fix later TODO
-		}
-		return currentWave.stillSpawning();
-	}
-
-	public boolean creepLeft() {
-		return !creeps.isEmpty();
-	}
-
-	public boolean isRoundOver() {
-		return !stillSpawning() && !creepLeft();
-	}
-
-	public boolean isOver() {
-		return isRoundOver() && round == creepWaves.size();
 	}
 
 	public Creep findTargetCreep(Tower tower) {
@@ -296,6 +291,7 @@ public class Level {
 				inRange.add(c);
 			}
 		}
+		//System.out.println("Saw : " + inRange.size());
 		switch (tower.targetingType) {
 		case AREA:
 			break;
@@ -318,7 +314,7 @@ public class Level {
 		}
 		return toTarget;
 	}
-	
+
 	public HashSet<Creep> getCreepInRange(Projectile p, float range) {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		Circle splash = new Circle(p.x, p.y, range);
@@ -332,10 +328,15 @@ public class Level {
 
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);
-		//add game event for new fire!
+		newEvent(GameEventType.PROJECTILE_FIRED, p);
 	}
 
-	public boolean canBuild(int x, int y, int width, int height) {
+	public boolean canBuild(TowerType type, int y, int x) {
+		if (TowerConstants.getCost(type) > gold) {
+			return false;
+		}
+		int width = TowerConstants.getWidth(type);
+		int height = TowerConstants.getHeight(type);
 		if (x < 0 || y < 0 || x + width >= map.width || y + height >= map.height) {
 			proposedGroundPath = null;
 			return false;
@@ -350,6 +351,17 @@ public class Level {
 		}
 		proposePath(x, y, width, height);
 		return proposedGroundPath != null;
+	}
+
+	private void newEvent(GameEventType t, Object o) {
+		events.add(new GameEvent(t, o, round, tick));
+	}
+
+	public GameEvent getEvent() {
+		if (events.size() > 0) {
+			return events.remove(0);
+		}
+		return null;
 	}
 
 }

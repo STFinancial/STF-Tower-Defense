@@ -22,6 +22,7 @@ public class CreepWaveGenerator {
 	public final static int BASE_GOLD = 20;
 	public final static int BASE_HEALTH_DAMAGE = 5;
 	public final static float BASE_SPEED = .05f;
+	public final static int BASE_DELAY = 30;
 
 	public static float DEATH_RATTLE_PENALTY = .5f;
 	public static float DEATH_RATTLE_CHUNK_SIZE_PENALTY = .5f;
@@ -56,8 +57,9 @@ public class CreepWaveGenerator {
 		difficulty = baseDifficulty;
 		waveLength = startingWaveLength;
 		for (int i = 0; i < numberOfWaves; i++) {
-			if(debug)
+			if (debug) {
 				System.out.println("\nWave " + i);
+			}
 			waves.add(generateWave(difficulty, waveLength));
 			difficulty = (difficulty + linearDifficulty) * exponentialDifficulty;
 			waveLength += linearLengthIncrease;
@@ -65,14 +67,10 @@ public class CreepWaveGenerator {
 		return waves;
 	}
 
-	public static void main(String[] args) {
-		CreepWaveGenerator me = new CreepWaveGenerator();
-		me.generateCreepWaves();
-	}
-
 	private Wave generateWave(float difficulty, int waveLength) {
 		ArrayList<Creep> creeps = new ArrayList<Creep>();
 		ArrayList<Integer> chunkSizes = new ArrayList<Integer>();
+		ArrayList<Integer> timings = new ArrayList<Integer>();
 		int chunkSize;
 		while (waveLength > 0) {
 			if (waveLength > minimumCreepPerChunk + maximumCreepPerChunk) {
@@ -83,12 +81,33 @@ public class CreepWaveGenerator {
 				chunkSize = waveLength;
 			}
 			waveLength -= chunkSize;
-			creeps.addAll(generateChunk(difficulty, chunkSize, false));
-			
-			chunkSizes.add(chunkSize);
+			ArrayList<Creep> chunk = generateChunk(difficulty, chunkSize, false);
+			creeps.addAll(chunk);
+			chunkSizes.add(chunk.size());
+		}
+		timings.add(0);
+		for (Integer i : chunkSizes) {
+			for (int j = 0; j < i; j++) {
+				int time = BASE_DELAY;
+				if (i > maximumCreepPerChunk) {
+					time = time / 3;
+				} else if (i < minimumCreepPerChunk) {
+					time *= 3;
+				}
+				if (j == i - 1) {
+					time *= 3;
+				}
+				timings.add(time);
+
+			}
 		}
 
-		return null;
+		Wave wave = new Wave();
+		for (int i = 0; i < creeps.size(); i++) {
+			wave.addCreep(creeps.get(i), timings.get(i));
+		}
+
+		return wave;
 	}
 
 	// Collection of the same creep
@@ -122,7 +141,7 @@ public class CreepWaveGenerator {
 			if (r.nextFloat() < typeChances[i]) {
 				switch (CreepType.values()[i]) {
 				case DEATH_RATTLE:
-					int drsize = nextInt(2,4);
+					int drsize = nextInt(2, 4);
 					deathRattle = generateChunk(difficulty / drsize, drsize, true);
 					health *= DEATH_RATTLE_PENALTY;
 					toughness *= DEATH_RATTLE_PENALTY;
@@ -172,17 +191,17 @@ public class CreepWaveGenerator {
 			}
 		}
 		Creep c = new Creep((int) health, speed, (int) toughness, (int) healthCost, (int) gold, damageType);
-		for(CreepType type : creepTypes){
+		for (CreepType type : creepTypes) {
 			c.addAffix(type);
 		}
-		if(deathRattle != null){
-				c.children = deathRattle;
+		if (deathRattle != null) {
+			c.children = deathRattle;
 		}
 		for (int i = 0; i < chunkSize; i++) {
 			chunk.add(c.clone());
 		}
-		if(!dr){
-			if(debug)
+		if (!dr) {
+			if (debug)
 				System.out.println((int) chunkSize + " of " + c);
 		}
 		return chunk;
