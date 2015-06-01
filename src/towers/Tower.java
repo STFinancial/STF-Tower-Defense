@@ -18,7 +18,7 @@ public abstract class Tower {
 	public int width;
 	public int height;
 	public int cost;
-	
+
 	//Targeting Details
 	public TargetingType targetingType;
 	public boolean targetsCreep; //False for targeting a ground spot;
@@ -29,7 +29,7 @@ public abstract class Tower {
 	//Misc.
 	public Tower tetheredTo;
 	public Projectile baseProjectile;
-	
+
 	//Attributes
 	public TowerType type;
 	public String name;
@@ -46,14 +46,15 @@ public abstract class Tower {
 	public int attackCoolDown;
 	public int currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
 	public int slowDuration;
-	
+
 	abstract Projectile fireProjectile();
-	
-	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height){
+
+	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height) {
 		this.level = level;
+		this.width = width;
+		this.height = height;
 		x = topLeftTile.x;
 		y = topLeftTile.y;
-		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 		centerX = x + width / 2f;
 		centerY = y + height / 2f;
 		targetArea = new Circle(centerX, centerY, range);
@@ -61,8 +62,7 @@ public abstract class Tower {
 		this.targetingType = TargetingType.FIRST;
 	}
 
-	
-	public void update(){
+	public void update() {
 		currentAttackCoolDown--;
 		if (targetsCreep) {
 			targetCreep = level.findTargetCreep(this);
@@ -75,7 +75,7 @@ public abstract class Tower {
 			}
 		}
 	}
-	
+
 	public abstract void roundInit();
 
 	//this should be called on any time we make changes to the tower
@@ -83,11 +83,11 @@ public abstract class Tower {
 		//TODO make this method
 		//if ()
 	}
-	
+
 	protected void updateAngle(Creep targetCreep) {
 		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}
-	
+
 	protected Projectile duplicateProjectile(Projectile p) {
 		Projectile newProj = new Projectile(this);
 		//TODO for now we are just going to reference the effects of the baseProjecile
@@ -98,5 +98,9 @@ public abstract class Tower {
 		newProj.effectSplash = p.effectSplash;
 		newProj.parent = this;
 		return newProj;
+	}
+
+	public String toString() {
+		return "Type: " + type + " at " + x + " , " + y;
 	}
 }

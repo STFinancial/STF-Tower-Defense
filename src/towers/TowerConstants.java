@@ -12,10 +12,10 @@ public final class TowerConstants {
 	public final static float WATER_BASE_SPLASH_RADIUS = 0f; //# of tiles
 	public final static boolean WATER_BASE_HITS_AIR = false;
 	public final static boolean WATER_BASE_HITS_GROUND = true;
-	public final static float WATER_BASE_RANGE = 1.2f; //this needs to be defined
+	public final static float WATER_BASE_RANGE = 7.5f; //this needs to be defined
 	public final static float WATER_BASE_SLOW = .25f; //percentage
 	public final static int WATER_BASE_SLOW_DURATION = 10;
-	
+
 	public final static String EARTH_BASE_NAME = "Earth";
 	public final static int EARTH_BASE_WIDTH = 2;
 	public final static int EARTH_BASE_HEIGHT = 2;
@@ -27,10 +27,10 @@ public final class TowerConstants {
 	public final static float EARTH_BASE_SPLASH_RADIUS = 1f; //# of tiles
 	public final static boolean EARTH_BASE_HITS_AIR = false;
 	public final static boolean EARTH_BASE_HITS_GROUND = true;
-	public final static float EARTH_BASE_RANGE = 1.7f; //this needs to be defined
+	public final static float EARTH_BASE_RANGE = 7.5f; //this needs to be defined
 	public final static float EARTH_BASE_SLOW = 0f;
 	public final static int EARTH_BASE_SLOW_DURATION = 10;
-	
+
 	public final static String FIRE_BASE_NAME = "Firebolt";
 	public final static int FIRE_BASE_WIDTH = 2;
 	public final static int FIRE_BASE_HEIGHT = 2;
@@ -42,10 +42,10 @@ public final class TowerConstants {
 	public final static float FIRE_BASE_SPLASH_RADIUS = 0f; //# of tiles
 	public final static boolean FIRE_BASE_HITS_AIR = true; //?
 	public final static boolean FIRE_BASE_HITS_GROUND = true;
-	public final static float FIRE_BASE_RANGE = 2.1f; //this needs to be defined
+	public final static float FIRE_BASE_RANGE = 7.5f; //this needs to be defined
 	public final static float FIRE_BASE_SLOW = 0f;
 	public final static int FIRE_BASE_SLOW_DURATION = 10;
-	
+
 	public final static String WIND_BASE_NAME = "Wind";
 	public final static int WIND_BASE_WIDTH = 2;
 	public final static int WIND_BASE_HEIGHT = 2;
@@ -57,7 +57,27 @@ public final class TowerConstants {
 	public final static float WIND_BASE_SPLASH_RADIUS = 0f; //# of tiles
 	public final static boolean WIND_BASE_HITS_AIR = true;
 	public final static boolean WIND_BASE_HITS_GROUND = true;
-	public final static float WIND_BASE_RANGE = 3.5f; //this needs to be defined
+	public final static float WIND_BASE_RANGE = 7.5f; //this needs to be defined
 	public final static float WIND_BASE_SLOW = 0f;
 	public final static int WIND_BASE_SLOW_DURATION = 10;
+
+	public static int getCost(TowerType type) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public static int getWidth(TowerType type) {
+		// TODO Auto-generated method stub
+		return 2;
+	}
+
+	public static int getHeight(TowerType type) {
+		// TODO Auto-generated method stub
+		return 2;
+	}
+
+	public static float getRange(TowerType draggingType) {
+		// TODO Auto-generated method stub
+		return 7.5f;
+	}
 }

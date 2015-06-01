@@ -36,19 +36,21 @@ public class BasicEarthTower extends Tower {
 	public void roundInit() {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
-		
+
 		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
-		
+
 		effect = new Damage(magicDamage, DamageType.EARTH);
 		baseProjectile.addEffect(effect);
-		
+
 		if (slow != 0) {
 			effect = new Slow(slowDuration, slow, DamageType.EARTH); //OR SHOULD THIS BE THE TYPE THAT GIVES THE SLOW
 			baseProjectile.addEffect(effect);
 		}
-		
+
 		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
+
+		targetArea.radius = range;
 	}
 
 }

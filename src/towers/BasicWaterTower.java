@@ -37,19 +37,21 @@ public class BasicWaterTower extends Tower {
 	public void roundInit() {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
-		
+
 		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
-		
+
 		effect = new Damage(magicDamage, DamageType.WATER);
 		baseProjectile.addEffect(effect);
-		
+
 		if (slow != 0) {
 			effect = new Slow(slowDuration, slow, DamageType.WATER);
 			baseProjectile.addEffect(effect);
 		}
-		
+
 		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
+
+		targetArea.radius = range;
 	}
 
 }

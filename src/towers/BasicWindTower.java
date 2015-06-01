@@ -10,7 +10,7 @@ import maps.Tile;
 
 public class BasicWindTower extends Tower {
 
-	public BasicWindTower(Level level, Tile topLeft){
+	public BasicWindTower(Level level, Tile topLeft) {
 		super(level, topLeft, true, TowerConstants.WIND_BASE_WIDTH, TowerConstants.WIND_BASE_HEIGHT);
 		this.type = TowerType.WIND;
 		this.attackCoolDown = TowerConstants.WIND_BASE_FIRE_RATE;
@@ -27,7 +27,7 @@ public class BasicWindTower extends Tower {
 		this.name = TowerConstants.WIND_BASE_NAME;
 		this.slowDuration = TowerConstants.WIND_BASE_SLOW_DURATION;
 	}
-	
+
 	@Override
 	Projectile fireProjectile() {
 		return duplicateProjectile(baseProjectile);
@@ -37,18 +37,20 @@ public class BasicWindTower extends Tower {
 	public void roundInit() {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
-		
+
 		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
-		
+
 		effect = new Damage(magicDamage, DamageType.WIND);
 		baseProjectile.addEffect(effect);
-		
+
 		if (slow != 0) {
 			effect = new Slow(slowDuration, slow, DamageType.WIND); //OR SHOULD THIS BE THE TYPE THAT GIVES THE SLOW
 			baseProjectile.addEffect(effect);
 		}
-		
+
 		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
+
+		targetArea.radius = range;
 	}
 }
