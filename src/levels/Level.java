@@ -68,9 +68,9 @@ public class Level {
 		round++;
 		tick = 0;
 		nextSpawnTick = currentWave.getDelayForNextCreep();
-		for (Tower t: towers) {
-			t.roundInit();
-		}
+//		for (Tower t: towers) {
+//			t.roundInit();
+//		}
 	}
 
 	public void gameTick() {
@@ -188,25 +188,29 @@ public class Level {
 			}
 		}
 		updatePath();
-		t.updateProjectile();
+		t.adjustTowerValues();
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
 	
 	//TODO need an event so that the GUI knows it can change the tower graphic
 	//But I think it can just take the type before and after and change it.
-	public void untetherTower(Tower t) {
-		t.tetheredTo = null;
-		t.type = TowerType.getDowngrade(t.type);
-		t.updateProjectile();
+	public Tower unsiphonTower(Tower t) {
+		t.siphoningFrom.siphoningTo = null;
+		t.siphoningFrom = null;
+		t.type = t.type.getDowngrade();
+		//TODO preserve upgrade levels and do damage calculations
+		razeTower(t);
+		t = buildTower(t.type, t.y, t.x);
+		t.adjustTowerValues();
+		return t;
 	}
 	
-	public void tetherTower(Tower tetherFrom, Tower tetherTo) {
-		TowerType newType = TowerType.getUpgrade(tetherFrom.type, tetherTo.type);
-		Tile tile = map.getTile(tetherFrom.y, tetherFrom.x);
+	public void siphonTower(Tower siphonTo, Tower siphonFrom) {
+		TowerType newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type);
 		//TODO preserve upgrade levels and do damage calculations
-		razeTower(tetherFrom);
-		Tower t = buildTower(newType, tetherFrom.y, tetherFrom.x);
-		t.updateProjectile();
+		razeTower(siphonTo);
+		Tower t = buildTower(newType, siphonTo.y, siphonTo.x);
+		t.adjustTowerValues();
 	}	
 
 	//Can be called from App
@@ -216,7 +220,7 @@ public class Level {
 
 	//GUI should call this method
 	public void sellTower(Tower t) {
-		if (t.tetheredTo == null) {
+		if (t.siphoningFrom == null) {
 			gold += t.cost * .75f;
 		} else {
 			gold += t.cost * .5f;

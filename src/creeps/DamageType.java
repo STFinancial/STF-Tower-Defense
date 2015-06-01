@@ -1,5 +1,4 @@
 package creeps;
-
 /*
  * Elemental Affix that affects elemental damage multipliers
  */
@@ -33,5 +32,4 @@ public enum DamageType {
 			return new float[] { 0, 0, 0, 0, 0, 0, .2f};
 		}
 	}
-
 }
