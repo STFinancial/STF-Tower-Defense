@@ -18,6 +18,7 @@ public abstract class Tower {
 	public int width;
 	public int height;
 	public int cost;
+	public TowerType type;
 
 	//Targeting Details
 	public TargetingType targetingType;
@@ -33,19 +34,9 @@ public abstract class Tower {
 	public boolean checked;
 	
 	//Base Attributes
-	public int[] baseDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public float[] baseSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
-	public int[] baseSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public int baseFireRate;
-	public int baseAttackCoolDown;
-	public float baseDamageSplash;
-	public float baseEffectSplash;
-	public float baseSplashRadius;
-	public float baseRange;
+	public BaseAttributeList baseAttributeList;
 	
 	//Current Attributes
-	public TowerType type;
-	public String name;
 	public int[] damageArray = new int[Constants.NUM_DAMAGE_TYPES];
 	public float[] slowArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public int[] slowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
@@ -60,15 +51,18 @@ public abstract class Tower {
 	public boolean hitsAir;
 	public boolean hitsGround;
 
-	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, int width, int height) {
+	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, BaseAttributeList baseAttributeList) {
+		this.baseAttributeList = baseAttributeList;
 		this.level = level;
-		this.width = width;
-		this.height = height;
-		x = topLeftTile.x;
-		y = topLeftTile.y;
-		centerX = x + width / 2f;
-		centerY = y + height / 2f;
-		targetArea = new Circle(centerX, centerY, range);
+		this.width = baseAttributeList.baseWidth;
+		this.height = baseAttributeList.baseHeight;
+		this.type = baseAttributeList.type;
+		this.cost = baseAttributeList.baseCost;
+		this.x = topLeftTile.x;
+		this.y = topLeftTile.y;
+		this.centerX = x + width / 2f;
+		this.centerY = y + height / 2f;
+		this.targetArea = new Circle(centerX, centerY, range);
 		this.targetsCreep = targetsCreep;
 		this.targetingType = TargetingType.FIRST;
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
@@ -99,39 +93,39 @@ public abstract class Tower {
 	
 	protected void adjustStats() {
 		//TODO deal with tower upgrades somehow
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			slowArray[i] = baseSlowArray[i];
-			damageArray[i] = baseDamageArray[i];
-			slowDurationArray[i] = baseSlowDurationArray[i];
-		}
-		fireRate = baseFireRate;
-		attackCoolDown = baseAttackCoolDown;
-		damageSplash = baseDamageSplash;
-		effectSplash = baseEffectSplash;
-		splashRadius = baseSplashRadius;
-		range = baseRange;
+		slowArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlow;
+		damageArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseElementalDamage;
+		damageArray[Constants.NUM_DAMAGE_TYPES - 1] = baseAttributeList.basePhysicalDamage;
+		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlowDuration;
+		fireRate = baseAttributeList.baseFireRate;
+		attackCoolDown = baseAttributeList.baseAttackCoolDown;
+		damageSplash = baseAttributeList.baseDamageSplash;
+		effectSplash = baseAttributeList.baseEffectSplash;
+		splashRadius = baseAttributeList.baseSplashRadius;
+		range = baseAttributeList.baseRange;
 		//TODO recursively handle siphon damage
 	}
 	
 	//this should be called on any time we make changes to the tower
 	protected void adjustProjectile() {
 		baseProjectile = new Projectile(this);
-		DamageType damageType = type.getDamageType();
+		DamageType damageType = baseAttributeList.mainDamageType;
 		ProjectileEffect effect;
+		baseProjectile.splashRadius = splashRadius;
 		//TODO Optimize
 		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
 			if (damageArray[i] != 0) {
 				effect = new Damage(damageArray[i], DamageType.values()[i]);
 				baseProjectile.addEffect(effect);
-				if (splashRadius != 0) {
+				if (damageSplash != 0) {
 					effect = new Damage(damageArray[i] * damageSplash, DamageType.values()[i]);
 					baseProjectile.addSplashEffect(effect);
 				}
 			}
-			if (slowDurationArray[i] != 0) {
+			if (slowArray[i] != 0) {
 				effect = new Slow(slowDurationArray[i], slowArray[i], DamageType.values()[i]);
 				baseProjectile.addEffect(effect);
-				if (splashRadius != 0) {
+				if (effectSplash != 0) {
 					effect = new Slow(slowDurationArray[i] / 2, slowArray[i] * effectSplash, DamageType.values()[i]);
 					baseProjectile.addSplashEffect(effect);
 				}
@@ -144,7 +138,7 @@ public abstract class Tower {
 			
 			//TODO do we really want snare to splash?
 			//Maybe some types of snares? (short)
-			if (splashRadius != 0) {
+			if (effectSplash != 0) {
 				effect = new Snare(snareDuration / 4, 0, damageType);
 				baseProjectile.addSplashEffect(effect);
 			}

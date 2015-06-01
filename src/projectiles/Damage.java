@@ -8,8 +8,6 @@ public class Damage extends DamageEffect {
 	/*
 	 * Plain damage
 	 */
-	
-	//TODO will decide if 
 
 	public Damage(float modifier, DamageType damageType) {
 		super(0, modifier, damageType);

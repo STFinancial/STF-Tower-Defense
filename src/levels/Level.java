@@ -188,7 +188,6 @@ public class Level {
 	}
 
 	private Tower buildTower(TowerType type, int y, int x) {
-		//TODO stats and plenty of other shit
 		Tower t;
 		Tile tile = map.getTile(y, x);
 		t = TowerFactory.generateTower(this, type, tile);
@@ -209,7 +208,7 @@ public class Level {
 	public Tower unsiphonTower(Tower t) {
 		t.siphoningFrom.siphoningTo = null;
 		t.siphoningFrom = null;
-		t.type = t.type.getDowngrade();
+		t.type = t.baseAttributeList.downgradeType;
 		//TODO preserve upgrade levels and do damage calculations
 		razeTower(t);
 		t = buildTower(t.type, t.y, t.x);
@@ -329,11 +328,11 @@ public class Level {
 	}
 
 	public boolean canBuild(TowerType type, int y, int x) {
-		if (TowerConstants.getCost(type) > gold) {
+		if (type.getCost() > gold) {
 			return false;
 		}
-		int width = TowerConstants.getWidth(type);
-		int height = TowerConstants.getHeight(type);
+		int width = type.getWidth();
+		int height = type.getHeight();
 		if (x < 0 || y < 0 || x + width >= map.width || y + height >= map.height) {
 			proposedGroundPath = null;
 			return false;

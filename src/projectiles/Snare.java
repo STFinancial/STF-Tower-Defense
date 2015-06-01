@@ -19,8 +19,8 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	public void onExpire(Creep creep) {
-		// TODO Auto-generated method stub
 		creep.currentSpeed = creep.speed;
+		//Need to reapply all the slows on it
 		for (CreepEffect c: creep.effects) {
 			if (c.projectileEffect instanceof Slow) {
 				c.projectileEffect.applyEffect(creep, c);
