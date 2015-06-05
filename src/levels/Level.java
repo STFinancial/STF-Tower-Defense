@@ -8,19 +8,14 @@ import java.util.Set;
 import maps.Map;
 import maps.Vertex;
 import maps.VertexGraph;
-import maps.Wave;
 import creeps.Creep;
 import creeps.CreepType;
-import creeps.ElementType;
+import creeps.Wave;
+import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
-import towers.BasicAirTower;
-import towers.BasicEarthTower;
-import towers.BasicFireTower;
-import towers.BasicWaterTower;
-import towers.Tower;
-import towers.TowerType;
+import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
@@ -59,6 +54,7 @@ public class Level {
 	}
 	
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
+		gold = 500;
 		this.player = player;
 		this.map = map;
 		this.creepWaves = creepWaves;
@@ -124,8 +120,16 @@ public class Level {
 
 	private void detonateProjectile(Projectile p) {
 		//Check for aoe and complicated shit
-		p.applyEffect(p.targetCreep);
-		p.applySplashEffects(getCreepInRange(p, p.splashRadius));
+		if (p.targetsCreep) {
+			//Targeted a specific minion
+			p.applyEffect(p.targetCreep);
+			p.applySplashEffects(getCreepInRange(p, p.splashRadius));
+			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
+		} else {
+			//Targeted an area
+			
+		}
+		
 	}
 
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
@@ -164,44 +168,71 @@ public class Level {
 		//Creep slain event
 		//Add gold
 	}
+	
+	//GUI should call this method to build towers
+	public Tower buyTower(TowerType type, int y, int x) {
+		Tower t = buildTower(type, y, x);
+		gold -= t.cost;
+		return t;
+	}
 
-	//Can be called from App
-	public Tower buildTower(TowerType type, int x, int y) {
-		//TODO gold cost and stats and plenty of other shit
+	private Tower buildTower(TowerType type, int y, int x) {
+		//TODO stats and plenty of other shit
 		Tower t;
 		Tile tile = map.getTile(y,x);
-		switch(type){ //TODO move this to a factory pattern? probably if we go with the TowerType enum
-		case AIR:
-			t = new BasicAirTower(this, tile);
-			break;
-		case WATER:
-			t = new BasicWaterTower(this, tile);
-			break;
-		case FIRE:
-			t = new BasicFireTower(this, tile);
-			break;
-		default:
-			t = new BasicEarthTower(this, tile);
-			break;
-		}
+		t = TowerFactory.generateTower(this, type, tile);
 		towers.add(t);
-		for(int i = 0; i < t.width; i++){
-			for(int j = 0; j < t.height; j++){
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).addTower(t);
 			}
 		}
 		updatePath();
+		t.updateProjectile();
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
+	
+	//TODO need an event so that the GUI knows it can change the tower graphic
+	//But I think it can just take the type before and after and change it.
+	public void untetherTower(Tower t) {
+		t.tetheredTo = null;
+		t.type = TowerType.getDowngrade(t.type);
+		t.updateProjectile();
+	}
+	
+	public void tetherTower(Tower tetherFrom, Tower tetherTo) {
+		TowerType newType = TowerType.getUpgrade(tetherFrom.type, tetherTo.type);
+		Tile tile = map.getTile(tetherFrom.y, tetherFrom.x);
+		//TODO preserve upgrade levels and do damage calculations
+		razeTower(tetherFrom);
+		Tower t = buildTower(newType, tetherFrom.y, tetherFrom.x);
+		t.updateProjectile();
+	}	
 
 	//Can be called from App
 	public void upgradeTower(Tower t, int index) {
-		//TODO
+		
 	}
 
+	//GUI should call this method
+	public void sellTower(Tower t) {
+		if (t.tetheredTo == null) {
+			gold += t.cost * .75f;
+		} else {
+			gold += t.cost * .5f;
+		}
+		razeTower(t);
+	}
+	
 	//Can be called from App
-	public void razeTower(Tower t) {
-		//TODO
+	private void razeTower(Tower t) {
+		towers.remove(t);
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
+				map.getTile(t.y + j, t.x + i).removeTower();
+			}
+		}
+		updatePath();
 	}
 
 	public void updatePath() {

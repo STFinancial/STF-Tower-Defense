@@ -1,6 +1,6 @@
 package towers;
 
-import creeps.ElementType;
+import creeps.DamageType;
 import projectiles.Damage;
 import projectiles.Projectile;
 import projectiles.ProjectileEffect;
@@ -9,14 +9,22 @@ import levels.Level;
 import maps.Tile;
 
 public class BasicEarthTower extends Tower {
-	//TODO this is a total clusterfuck
 	public BasicEarthTower(Level level, Tile topLeft) {
-		super(level, topLeft, TowerConstants.EARTH_BASE_WIDTH, TowerConstants.EARTH_BASE_HEIGHT,
-				true, TowerConstants.EARTH_BASE_RANGE, TowerConstants.EARTH_BASE_PHYSICAL_DAMAGE, TowerConstants.EARTH_BASE_MAGIC_DAMAGE,
-				TowerConstants.EARTH_BASE_FIRE_RATE, TowerConstants.EARTH_BASE_DAMAGE_SPLASH_COEFFICIENT, TowerConstants.EARTH_BASE_EFFECT_SPLASH_COEFFICIENT,
-				TowerConstants.EARTH_BASE_SPLASH_RADIUS, TowerConstants.EARTH_BASE_HITS_AIR, TowerConstants.EARTH_BASE_HITS_GROUND, TowerConstants.EARTH_BASE_SLOW, 
-				TowerConstants.EARTH_BASE_SLOW_DURATION, TowerConstants.EARTH_BASE_NAME);
+		super(level, topLeft, true, TowerConstants.EARTH_BASE_WIDTH, TowerConstants.EARTH_BASE_HEIGHT);
 		this.type = TowerType.EARTH;
+		this.attackCoolDown = TowerConstants.EARTH_BASE_FIRE_RATE;
+		this.range = TowerConstants.EARTH_BASE_RANGE;
+		this.physicalDamage = TowerConstants.EARTH_BASE_PHYSICAL_DAMAGE;
+		this.magicDamage = TowerConstants.EARTH_BASE_MAGIC_DAMAGE;
+		this.fireRate = TowerConstants.EARTH_BASE_FIRE_RATE;
+		this.damageSplash = TowerConstants.EARTH_BASE_DAMAGE_SPLASH_COEFFICIENT;
+		this.effectSplash = TowerConstants.EARTH_BASE_EFFECT_SPLASH_COEFFICIENT;
+		this.splashRadius = TowerConstants.EARTH_BASE_SPLASH_RADIUS;
+		this.hitsAir = TowerConstants.EARTH_BASE_HITS_AIR;
+		this.hitsGround = TowerConstants.EARTH_BASE_HITS_GROUND;
+		this.slow = TowerConstants.EARTH_BASE_SLOW;
+		this.name = TowerConstants.EARTH_BASE_NAME;
+		this.slowDuration = TowerConstants.EARTH_BASE_SLOW_DURATION;
 	}
 
 	@Override
@@ -29,17 +37,14 @@ public class BasicEarthTower extends Tower {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
 		
-		ProjectileEffect effect = new Damage(physicalDamage, true);
-		effect.elementType = ElementType.EARTH;
+		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
 		
-		effect = new Damage(magicDamage, false);
-		effect.elementType = ElementType.EARTH;
+		effect = new Damage(magicDamage, DamageType.EARTH);
 		baseProjectile.addEffect(effect);
 		
 		if (slow != 0) {
-			effect = new Slow(slowDuration, slow);
-			effect.elementType = ElementType.EARTH; //OR SHOULD THIS BE THE TYPE THAT GIVES THE SLOW
+			effect = new Slow(slowDuration, slow, DamageType.EARTH); //OR SHOULD THIS BE THE TYPE THAT GIVES THE SLOW
 			baseProjectile.addEffect(effect);
 		}
 		

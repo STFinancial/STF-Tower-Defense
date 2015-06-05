@@ -2,7 +2,7 @@ package projectiles;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
-import creeps.ElementType;
+import creeps.DamageType;
 
 
 /*
@@ -12,15 +12,12 @@ import creeps.ElementType;
 public abstract class ProjectileEffect {
 	public float modifier = 0;
 	public int lifetime = 0;
-	public ElementType elementType;
+	public DamageType damageType;
 
-	public ProjectileEffect(float modifier) {
+	public ProjectileEffect(int lifetime, float modifier, DamageType damageType) {
 		this.modifier = modifier;
-	}
-
-	public ProjectileEffect(int lifetime, float modifier) {
-		this(modifier);
 		this.lifetime = lifetime;
+		this.damageType = damageType;
 		//timeRemaining = lifetime;
 	}
 

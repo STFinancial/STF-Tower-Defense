@@ -2,7 +2,7 @@ package projectiles;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
-import creeps.ElementType;
+import creeps.DamageType;
 
 public class Damage extends DamageEffect {
 	/*
@@ -11,9 +11,8 @@ public class Damage extends DamageEffect {
 	
 	//TODO will decide if 
 
-	public Damage(float modifier, boolean physical) {
-		super(modifier, physical);
-		elementType = ElementType.LIGHT;
+	public Damage(float modifier, DamageType damageType) {
+		super(0, modifier, damageType);
 	}
 
 	@Override

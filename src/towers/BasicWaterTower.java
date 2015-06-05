@@ -1,6 +1,6 @@
 package towers;
 
-import creeps.ElementType;
+import creeps.DamageType;
 import projectiles.Damage;
 import projectiles.Projectile;
 import projectiles.ProjectileEffect;
@@ -11,12 +11,21 @@ import maps.Tile;
 public class BasicWaterTower extends Tower {
 
 	public BasicWaterTower(Level level, Tile topLeft) {
-		super(level, topLeft, TowerConstants.WATER_BASE_WIDTH, TowerConstants.WATER_BASE_HEIGHT,
-				true, TowerConstants.WATER_BASE_RANGE, TowerConstants.WATER_BASE_PHYSICAL_DAMAGE, TowerConstants.WATER_BASE_MAGIC_DAMAGE,
-				TowerConstants.WATER_BASE_FIRE_RATE, TowerConstants.WATER_BASE_DAMAGE_SPLASH_COEFFICIENT, TowerConstants.WATER_BASE_EFFECT_SPLASH_COEFFICIENT,
-				TowerConstants.WATER_BASE_SPLASH_RADIUS, TowerConstants.WATER_BASE_HITS_AIR, TowerConstants.WATER_BASE_HITS_GROUND, TowerConstants.WATER_BASE_SLOW, 
-				TowerConstants.WATER_BASE_SLOW_DURATION, TowerConstants.WATER_BASE_NAME);
+		super(level, topLeft, true, TowerConstants.WATER_BASE_WIDTH, TowerConstants.WATER_BASE_HEIGHT);
 		this.type = TowerType.WATER;
+		this.attackCoolDown = TowerConstants.WATER_BASE_FIRE_RATE;
+		this.range = TowerConstants.WATER_BASE_RANGE;
+		this.physicalDamage = TowerConstants.WATER_BASE_PHYSICAL_DAMAGE;
+		this.magicDamage = TowerConstants.WATER_BASE_MAGIC_DAMAGE;
+		this.fireRate = TowerConstants.WATER_BASE_FIRE_RATE;
+		this.damageSplash = TowerConstants.WATER_BASE_DAMAGE_SPLASH_COEFFICIENT;
+		this.effectSplash = TowerConstants.WATER_BASE_EFFECT_SPLASH_COEFFICIENT;
+		this.splashRadius = TowerConstants.WATER_BASE_SPLASH_RADIUS;
+		this.hitsAir = TowerConstants.WATER_BASE_HITS_AIR;
+		this.hitsGround = TowerConstants.WATER_BASE_HITS_GROUND;
+		this.slow = TowerConstants.WATER_BASE_SLOW;
+		this.name = TowerConstants.WATER_BASE_NAME;
+		this.slowDuration = TowerConstants.WATER_BASE_SLOW_DURATION;
 	}
 
 	@Override
@@ -29,17 +38,14 @@ public class BasicWaterTower extends Tower {
 		// TODO Auto-generated method stub
 		baseProjectile = new Projectile(this);
 		
-		ProjectileEffect effect = new Damage(physicalDamage, true);
-		effect.elementType = ElementType.WATER;
+		ProjectileEffect effect = new Damage(physicalDamage, DamageType.PHYSICAL);
 		baseProjectile.addEffect(effect);
 		
-		effect = new Damage(magicDamage, false);
-		effect.elementType = ElementType.WATER;
+		effect = new Damage(magicDamage, DamageType.WATER);
 		baseProjectile.addEffect(effect);
 		
 		if (slow != 0) {
-			effect = new Slow(slowDuration, slow);
-			effect.elementType = ElementType.WATER;//?
+			effect = new Slow(slowDuration, slow, DamageType.WATER);
 			baseProjectile.addEffect(effect);
 		}
 		
