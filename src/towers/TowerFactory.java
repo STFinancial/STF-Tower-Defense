@@ -6,7 +6,7 @@ import maps.Tile;
 public class TowerFactory {
 	public static Tower generateTower(Level level, TowerType type, Tile topLeft) {
 		Tower t = null;
-		switch(type){ //TODO move this to a factory pattern? probably if we go with the TowerType enum
+		switch (type) {
 		case WIND:
 			t = new BasicWindTower(level, topLeft);
 			break;

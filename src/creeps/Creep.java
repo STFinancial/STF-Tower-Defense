@@ -38,7 +38,7 @@ public class Creep {
 	public float xOff, yOff;
 	public Path path;
 	public int pathIndex;
-	public float size = .2f; //Radius
+	public float size = .4f; //Radius
 	public Circle hitBox;
 
 	//Fancy Effects
@@ -87,16 +87,17 @@ public class Creep {
 	public void addAffix(CreepType type) {
 		creepTypes.add(type);
 		if (type == CreepType.GIANT) {
-			size = .4f;
+			size = .7f;
 			hitBox.radius = size;
 		}
 		if (type == CreepType.QUICK) {
-			size = .1f;
+			size = .2f;
 			hitBox.radius = size;
 		}
 	}
 
 	public void damage(DamageEffect damager) {
+
 		float baseDamage = damager.modifier;
 		float damageToDo = baseDamage;
 		if (damager.damageType == DamageType.PHYSICAL) {
@@ -111,6 +112,7 @@ public class Creep {
 		if (damageToDo < 0) {
 			damageToDo = 0;
 		}
+		/*
 		if (currentShield < damageToDo) {
 			float damageLeft = currentShield - damageToDo;
 			currentShield = 0;
@@ -118,6 +120,8 @@ public class Creep {
 		} else {
 			currentShield -= damageToDo;
 		}
+		*/
+		currentHealth -= damageToDo;
 	}
 
 	public ArrayList<Creep> death() {
@@ -159,11 +163,12 @@ public class Creep {
 
 	private void updateEffects() {
 		currentSpeed = speed;
-		for (CreepEffect e : effects) {
+		for (int i = 0; i < effects.size(); i++) {
+			CreepEffect e = effects.get(i);
 			e.counter++; //TODO should we do this before or after?
 			if (e.duration == 0) {
 				e.projectileEffect.onExpire(this);
-				effects.remove(e);
+				effects.remove(i);
 			} else {
 				e.projectileEffect.applyEffect(this, e);
 				e.duration--;
@@ -250,7 +255,7 @@ public class Creep {
 	}
 
 	public String toString() {
-		String string = "Base Creep Stats: hp = " + health + ", toughness = " + toughness + " , speed = " + speed;
+		String string = "hp = " + health + ", toughness = " + toughness + " , speed = " + speed;
 		string += "\nelement = " + elementType + ", Modifiers: ";
 		for (CreepType type : creepTypes) {
 			string += " " + type;

@@ -26,10 +26,9 @@ public class Projectile {
 	public Creep targetCreep;
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
 	public float splashRadius = 0;
-	public float damageSplash;
-	public float effectSplash;
 
 	public ArrayList<ProjectileEffect> effects;
+	public ArrayList<ProjectileEffect> splashEffects;
 	
 	public Projectile(Tower parent) {
 		this.parent = parent;
@@ -41,11 +40,16 @@ public class Projectile {
 		targetCreep = parent.targetCreep;
 		targetAngle = parent.targetAngle;
 		effects = new ArrayList<ProjectileEffect>();
+		splashEffects = new ArrayList<ProjectileEffect>();
 		hitBox = new Circle(x, y, size);
 	}
 
 	public void addEffect(ProjectileEffect effect) {
 		effects.add(effect);
+	}
+	
+	public void addSplashEffect(ProjectileEffect effect) {
+		splashEffects.add(effect);
 	}
 
 	public void applyEffect(Creep creep) {
@@ -84,19 +88,8 @@ public class Projectile {
 	}
 
 	public void applySplashEffects(HashSet<Creep> creepInRange) {
-		//TODO add effect splash or decide if that's something we even want
-		ArrayList<ProjectileEffect> splashEffects = new ArrayList<ProjectileEffect>();
-		DamageEffect d;
-		for (ProjectileEffect eff: effects) {
-			if (eff instanceof Damage) {
-				d = new Damage(eff.modifier * damageSplash, ((Damage) eff).damageType);
-				splashEffects.add(d);
-			}
-		}
 		for (Creep c: creepInRange) {
 			c.addAllEffects(splashEffects);
 		}
-		//TODO this is *might* get rekt by garbage collect and will take a lot of time, calls for refactoring the "DamageEffect" and making damage nonobjects and just an int
 	}
-
 }
