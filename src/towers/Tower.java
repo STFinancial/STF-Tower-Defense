@@ -32,6 +32,7 @@ public abstract class Tower {
 	public Tower siphoningTo;
 	public Projectile baseProjectile;
 	public boolean checked;
+	public static Tower cycleEnd;
 	
 	//Base Attributes
 	public BaseAttributeList baseAttributeList;
@@ -50,6 +51,18 @@ public abstract class Tower {
 	public float range;
 	public boolean hitsAir;
 	public boolean hitsGround;
+	
+	//Siphoned Attributes
+	//TODO do I want to siphon snare or "unique" effects?
+	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
+	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
+	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
+	public int siphFireRate; //Still deciding if this will actually be the same as attack cooldown
+	public int siphAttackCoolDown;
+	public float siphDamageSplash;
+	public float siphEffectSplash;
+	public float siphSplashRadius;
+	public float siphRange;
 
 	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, BaseAttributeList baseAttributeList) {
 		this.baseAttributeList = baseAttributeList;
@@ -87,11 +100,109 @@ public abstract class Tower {
 	}
 
 	public void adjustTowerValues() {
-		adjustStats();
+		cycleEnd = null;
+		adjustBaseStats();
+		adjustSiphonChain(this);
 		adjustProjectile();
 	}
 	
-	protected void adjustStats() {
+	protected static void adjustSiphonChain(Tower t) {
+		if (t.siphoningTo == null) {
+			recursiveSiphon(t, 0);
+		} else {
+			Tower currentTower = t;
+			int counter = 1;
+			t.checked = true;
+			while (currentTower.siphoningTo != null) {
+				//while we are not at the head
+				currentTower = currentTower.siphoningTo;
+				//move back 1
+				counter++;
+				//we've seen one more
+				if (currentTower.checked) {
+					//if we've checked it before, we hit a cycle
+					recursiveSiphon(t, counter);
+				}
+				//mark that we checked it and keep going
+				currentTower.checked = true;
+			}
+			recursiveSiphon(currentTower, 0);
+		}
+	}
+	
+	private static void recursiveSiphon(Tower t, int cycleLength) {
+		t.checked = false;
+		if (cycleLength != 0) {
+			Tower currentTower = t;
+			int counter = cycleLength;
+			while (counter != 0) {
+				currentTower.checked = false;
+				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+					t.siphDamageArray[i] += currentTower.damageArray[i];
+					t.siphSlowArray[i] += currentTower.slowArray[i];
+					t.siphSlowDurationArray[i] += currentTower.slowDurationArray[i];
+				}
+				t.siphRange += currentTower.range;
+				t.siphFireRate += currentTower.fireRate;
+				t.siphAttackCoolDown += currentTower.attackCoolDown;
+				t.siphDamageSplash += currentTower.damageSplash;
+				t.siphEffectSplash += currentTower.effectSplash;
+				t.siphSplashRadius += currentTower.splashRadius;
+				currentTower = currentTower.siphoningFrom;
+				counter--;
+			}
+			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+				t.siphDamageArray[i] /= cycleLength;
+				t.siphSlowArray[i] /= cycleLength;
+				t.siphSlowDurationArray[i] /= cycleLength;
+			}
+			t.siphRange /= cycleLength;
+			t.siphFireRate /= cycleLength;
+			t.siphAttackCoolDown /= cycleLength;
+			t.siphDamageSplash /= cycleLength;
+			t.siphEffectSplash /= cycleLength;
+			t.siphSplashRadius /= cycleLength;
+			
+			counter = cycleLength - 1;
+			currentTower = t.siphoningFrom;
+			while (counter != 0) {
+				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+					currentTower.siphDamageArray[i] += t.damageArray[i];
+					currentTower.siphSlowArray[i] += t.slowArray[i];
+					currentTower.siphSlowDurationArray[i] += t.slowDurationArray[i];
+				}
+				currentTower.siphRange += t.range;
+				currentTower.siphFireRate += t.fireRate;
+				currentTower.siphAttackCoolDown += t.attackCoolDown;
+				currentTower.siphDamageSplash += t.damageSplash;
+				currentTower.siphEffectSplash += t.effectSplash;
+				currentTower.siphSplashRadius += t.splashRadius;
+				currentTower = currentTower.siphoningFrom;
+				counter--;
+			}
+		} else {
+			Tower sf = t.siphoningFrom;
+			//we are not in a cycle and we can just recurse normally
+			if (sf == null) {
+				return;
+			}
+			recursiveSiphon(sf, 0);
+			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+				t.siphDamageArray[i] = (int) ((sf.damageArray[i] + sf.siphDamageArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
+				t.siphSlowArray[i] = (sf.slowArray[i] + sf.siphSlowArray[i]) * Constants.SIPHON_BONUS_MODIFIER;
+				t.siphSlowDurationArray[i] = (int) ((sf.slowDurationArray[i] + sf.siphSlowDurationArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
+			}
+			t.siphRange = (sf.range + sf.siphRange) * Constants.SIPHON_BONUS_MODIFIER;
+			t.siphFireRate = (int) ((sf.fireRate + sf.siphFireRate) * Constants.SIPHON_BONUS_MODIFIER);
+			t.siphAttackCoolDown = (int) ((sf.attackCoolDown + sf.siphAttackCoolDown) * Constants.SIPHON_BONUS_MODIFIER);
+			t.siphDamageSplash = (sf.damageSplash + sf.siphDamageSplash) * Constants.SIPHON_BONUS_MODIFIER;
+			t.siphEffectSplash = (sf.effectSplash + sf.siphEffectSplash) * Constants.SIPHON_BONUS_MODIFIER;
+			t.siphSplashRadius = (sf.splashRadius + sf.siphSplashRadius) * Constants.SIPHON_BONUS_MODIFIER;
+		}
+	}
+	
+	
+	protected void adjustBaseStats() {
 		//TODO deal with tower upgrades somehow
 		slowArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlow;
 		damageArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseElementalDamage;
@@ -103,14 +214,12 @@ public abstract class Tower {
 		effectSplash = baseAttributeList.baseEffectSplash;
 		splashRadius = baseAttributeList.baseSplashRadius;
 		range = baseAttributeList.baseRange;
-		//TODO recursively handle siphon
-		//we need to take 50% of the siphoned stuff
-		//how do we avoid cycles without recursively recalculating each time?
-		//Does it even matter, relatively speaking that is no computation at all
-		//I think we need to go through all towers in the tether chain and recalculate
+		//TODO handle talents and upgrades
+		
 	}
 	
 	//this should be called on any time we make changes to the tower
+	//TODO factor in siphoned attributes into the projectile
 	protected void adjustProjectile() {
 		baseProjectile = new Projectile(this);
 		DamageType damageType = baseAttributeList.mainDamageType;

@@ -206,8 +206,12 @@ public class Level {
 	//TODO need an event so that the GUI knows it can change the tower graphic
 	//But I think it can just take the type before and after and change it.
 	public Tower unsiphonTower(Tower t) {
-		t.siphoningFrom.siphoningTo = null;
-		t.siphoningFrom = null;
+		Tower sf = t.siphoningFrom;
+		
+		sf.siphoningFrom.siphoningTo = null;
+		
+		sf.siphoningFrom = null;
+		sf.adjustTowerValues();
 		t.type = t.baseAttributeList.downgradeType;
 		//TODO preserve upgrade levels and do damage calculations
 		razeTower(t);
@@ -217,10 +221,18 @@ public class Level {
 	}
 
 	public void siphonTower(Tower siphonTo, Tower siphonFrom) {
-		TowerType newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type);
+		TowerType newType = null;
+		if (siphonFrom.type.isBaseType()) {
+			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type);
+		} else {
+			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type.getAttributeList().downgradeType);
+		}
 		//TODO preserve upgrade levels and do damage calculations
 		razeTower(siphonTo);
 		Tower t = buildTower(newType, siphonTo.y, siphonTo.x);
+		t.siphoningFrom = siphonFrom;
+		t.siphoningTo = null;
+		siphonFrom.siphoningTo = t;
 		t.adjustTowerValues();
 	}
 

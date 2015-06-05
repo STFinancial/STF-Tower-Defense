@@ -1,6 +1,5 @@
 package towers;
 
-import utilities.Constants;
 import levels.Level;
 import maps.Tile;
 

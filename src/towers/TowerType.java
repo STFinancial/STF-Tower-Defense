@@ -3,7 +3,8 @@ package towers;
 import creeps.DamageType;
 
 public enum TowerType {
-	
+	//TODO I want each (upgraded?) tower to have it's unique projectile effect too
+	//TODO need to adjust stats so that each tower can merit being the head of a chain (attack speed/range is too strong)
 	EARTH (new BaseAttributeList(){{
 		type                = EARTH;
 		name                = "Earth";
@@ -208,5 +209,9 @@ public enum TowerType {
 
 	public float getRange() {
 		return baseAttributeList.baseRange;
+	}
+	
+	public boolean isBaseType() {
+		return this == EARTH || this == FIRE || this == WATER || this == WIND;
 	}
 }
