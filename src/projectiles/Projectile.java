@@ -29,6 +29,7 @@ public class Projectile {
 
 	public ArrayList<ProjectileEffect> effects;
 	public ArrayList<ProjectileEffect> splashEffects;
+	public AffixModifier multiplier;
 	
 	public Projectile(Tower parent) {
 		this.parent = parent;

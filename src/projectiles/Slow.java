@@ -15,7 +15,6 @@ public class Slow extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep, CreepEffect effect) {
-		//TODO, figure diminishing returns idea for multiple slows
 		creep.currentSpeed = creep.currentSpeed * (1 - (modifier * (1 - creep.slowResist)));
 	}
 

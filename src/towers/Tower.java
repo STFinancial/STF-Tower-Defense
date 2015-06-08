@@ -32,7 +32,9 @@ public abstract class Tower {
 	public Tower siphoningTo;
 	public Projectile baseProjectile;
 	public boolean checked;
-	public static Tower cycleEnd;
+	
+	//Upgrading Information
+	//TODO boolean/1-0 array tracking upgrade path
 	
 	//Base Attributes
 	public BaseAttributeList baseAttributeList;
@@ -53,7 +55,6 @@ public abstract class Tower {
 	public boolean hitsGround;
 	
 	//Siphoned Attributes
-	//TODO do I want to siphon snare or "unique" effects?
 	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
 	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
@@ -64,6 +65,7 @@ public abstract class Tower {
 	public float siphSplashRadius;
 	public float siphRange;
 
+	//TODO targetsCreep should move to the baseAttributeList
 	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, BaseAttributeList baseAttributeList) {
 		this.baseAttributeList = baseAttributeList;
 		this.level = level;
@@ -71,6 +73,7 @@ public abstract class Tower {
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
 		this.cost = baseAttributeList.baseCost;
+		this.type = baseAttributeList.type;
 		this.x = topLeftTile.x;
 		this.y = topLeftTile.y;
 		this.centerX = x + width / 2f;
@@ -78,6 +81,7 @@ public abstract class Tower {
 		this.targetArea = new Circle(centerX, centerY, range);
 		this.targetsCreep = targetsCreep;
 		this.targetingType = TargetingType.FIRST;
+		adjustTowerValues();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
 	
@@ -94,13 +98,12 @@ public abstract class Tower {
 			updateAngle(targetCreep);
 			if (currentAttackCoolDown < 1) {
 				level.addProjectile(fireProjectile());
-				currentAttackCoolDown = attackCoolDown;
+				currentAttackCoolDown = (attackCoolDown * siphAttackCoolDown) / (attackCoolDown * siphAttackCoolDown);
 			}
 		}
 	}
 
 	public void adjustTowerValues() {
-		cycleEnd = null;
 		adjustBaseStats();
 		adjustSiphonChain(this);
 		adjustProjectile();
@@ -132,9 +135,24 @@ public abstract class Tower {
 	
 	private static void recursiveSiphon(Tower t, int cycleLength) {
 		t.checked = false;
+		//set the siphoned stats to 0
+		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+			t.siphDamageArray[i] = 0;
+			t.siphSlowArray[i] = 0;
+			t.siphSlowDurationArray[i] = 0;
+		}
+		t.siphRange = 0;
+		t.siphFireRate = 0;
+		t.siphAttackCoolDown = 0;
+		t.siphDamageSplash = 0;
+		t.siphEffectSplash = 0;
+		t.siphSplashRadius = 0;
+		
 		if (cycleLength != 0) {
+			//It's a cycle
 			Tower currentTower = t;
 			int counter = cycleLength;
+			//Aggregate the stats we are giving out
 			while (counter != 0) {
 				currentTower.checked = false;
 				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
@@ -151,12 +169,14 @@ public abstract class Tower {
 				currentTower = currentTower.siphoningFrom;
 				counter--;
 			}
+			//stats per tower (could also cycle through and subtract for each tower
 			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
 				t.siphDamageArray[i] /= cycleLength;
 				t.siphSlowArray[i] /= cycleLength;
 				t.siphSlowDurationArray[i] /= cycleLength;
 			}
 			t.siphRange /= cycleLength;
+			t.targetArea.radius = t.range + t.siphRange;
 			t.siphFireRate /= cycleLength;
 			t.siphAttackCoolDown /= cycleLength;
 			t.siphDamageSplash /= cycleLength;
@@ -167,16 +187,17 @@ public abstract class Tower {
 			currentTower = t.siphoningFrom;
 			while (counter != 0) {
 				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-					currentTower.siphDamageArray[i] += t.damageArray[i];
-					currentTower.siphSlowArray[i] += t.slowArray[i];
-					currentTower.siphSlowDurationArray[i] += t.slowDurationArray[i];
+					currentTower.siphDamageArray[i] = t.siphDamageArray[i];
+					currentTower.siphSlowArray[i] = t.siphSlowArray[i];
+					currentTower.siphSlowDurationArray[i] = t.siphSlowDurationArray[i];
 				}
-				currentTower.siphRange += t.range;
-				currentTower.siphFireRate += t.fireRate;
-				currentTower.siphAttackCoolDown += t.attackCoolDown;
-				currentTower.siphDamageSplash += t.damageSplash;
-				currentTower.siphEffectSplash += t.effectSplash;
-				currentTower.siphSplashRadius += t.splashRadius;
+				currentTower.siphRange = t.siphRange;
+				currentTower.targetArea.radius = currentTower.range + currentTower.siphRange;
+				currentTower.siphFireRate = t.siphFireRate;
+				currentTower.siphAttackCoolDown = t.siphAttackCoolDown;
+				currentTower.siphDamageSplash = t.siphDamageSplash;
+				currentTower.siphEffectSplash = t.siphEffectSplash;
+				currentTower.siphSplashRadius = t.siphSplashRadius;
 				currentTower = currentTower.siphoningFrom;
 				counter--;
 			}
@@ -193,6 +214,7 @@ public abstract class Tower {
 				t.siphSlowDurationArray[i] = (int) ((sf.slowDurationArray[i] + sf.siphSlowDurationArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
 			}
 			t.siphRange = (sf.range + sf.siphRange) * Constants.SIPHON_BONUS_MODIFIER;
+			t.targetArea.radius = t.range + t.siphRange;
 			t.siphFireRate = (int) ((sf.fireRate + sf.siphFireRate) * Constants.SIPHON_BONUS_MODIFIER);
 			t.siphAttackCoolDown = (int) ((sf.attackCoolDown + sf.siphAttackCoolDown) * Constants.SIPHON_BONUS_MODIFIER);
 			t.siphDamageSplash = (sf.damageSplash + sf.siphDamageSplash) * Constants.SIPHON_BONUS_MODIFIER;
@@ -219,45 +241,46 @@ public abstract class Tower {
 	}
 	
 	//this should be called on any time we make changes to the tower
-	//TODO factor in siphoned attributes into the projectile
 	protected void adjustProjectile() {
 		baseProjectile = new Projectile(this);
 		DamageType damageType = baseAttributeList.mainDamageType;
 		ProjectileEffect effect;
 		baseProjectile.splashRadius = splashRadius;
-		//TODO Optimize - At this point the base classes only have one damage type
 		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			if (damageArray[i] != 0) {
-				effect = new Damage(damageArray[i], DamageType.values()[i]);
+			if (damageArray[i] + siphDamageArray[i] != 0) {
+				effect = new Damage(damageArray[i] + siphDamageArray[i], DamageType.values()[i]);
 				baseProjectile.addEffect(effect);
-				if (damageSplash != 0) {
-					effect = new Damage(damageArray[i] * damageSplash, DamageType.values()[i]);
+				if (damageSplash + siphDamageSplash != 0) {
+					effect = new Damage((damageArray[i] + siphDamageArray[i]) * (damageSplash + siphDamageSplash), DamageType.values()[i]);
 					baseProjectile.addSplashEffect(effect);
 				}
 			}
-			if (slowArray[i] != 0) {
-				effect = new Slow(slowDurationArray[i], slowArray[i], DamageType.values()[i]);
+			if (slowArray[i] + siphSlowArray[i] != 0) {
+				effect = new Slow(slowDurationArray[i] + siphSlowDurationArray[i], slowArray[i] + siphSlowArray[i], DamageType.values()[i]);
 				baseProjectile.addEffect(effect);
-				if (effectSplash != 0) {
-					effect = new Slow(slowDurationArray[i] / 2, slowArray[i] * effectSplash, DamageType.values()[i]);
+				if (effectSplash + siphEffectSplash != 0) {
+					effect = new Slow((slowDurationArray[i] + siphSlowDurationArray[i])/ 2, (slowArray[i] + siphSlowArray[i]) * (effectSplash + siphEffectSplash), DamageType.values()[i]);
 					baseProjectile.addSplashEffect(effect);
 				}
 			}
 		}
-		//Snare Effects
+		//TODO this line will probably disappear when unique effects are added
 		if (snareDuration != 0) {
 			effect = new Snare(snareDuration, 0, damageType);
 			baseProjectile.addEffect(effect);
-			
-			//TODO do we really want snare to splash?
-			//Maybe some types of snares? (short)
-			if (effectSplash != 0) {
-				effect = new Snare(snareDuration / 4, 0, damageType);
-				baseProjectile.addSplashEffect(effect);
-			}
 		}
 		//Set the speed
 		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
+	}
+	
+
+	//TODO Upgrades
+	public void upgrade() {
+		if (baseAttributeList.upgrades == null) {
+			return;
+		} else {
+			
+		}
 	}
 
 	protected void updateAngle(Creep targetCreep) {
@@ -266,7 +289,6 @@ public abstract class Tower {
 
 	protected Projectile duplicateProjectile(Projectile p) {
 		Projectile newProj = new Projectile(this);
-		//TODO for now we are just going to reference the effects of the baseProjecile
 		newProj.effects.addAll(p.effects);
 		newProj.splashEffects.addAll(p.splashEffects);
 		newProj.currentSpeed = newProj.speed = p.speed; //TODO this logic might need to change if we have projectiles that speed up
