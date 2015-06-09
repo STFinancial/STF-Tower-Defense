@@ -7,10 +7,8 @@ public enum TowerType {
 	//TODO I want each (upgraded) tower to have it's unique projectile effect too
 	//TODO need to adjust stats so that each tower can merit being the head of a chain (attack speed/range is too strong)
 	EARTH (new BaseAttributeList(){{
-		type                = EARTH;
 		name                = "Earth";
 		mainDamageType      = DamageType.EARTH;
-		downgradeType		= EARTH;
 		baseWidth			= 2;
 		baseHeight			= 2;
 		basePhysicalDamage  = 55;
@@ -26,13 +24,12 @@ public enum TowerType {
 		baseSlow			= 0.10f;
 		hitsAir				= false;
 		hitsGround			= true;
+		targetsCreep		= true;
 		upgrades			= null;
 	}}),
 	FIRE (new BaseAttributeList(){{
-		type                = FIRE;
 		name                = "Fire";
 		mainDamageType      = DamageType.FIRE;
-		downgradeType		= FIRE;
 		baseWidth			= 2;
 		baseHeight			= 2;
 		basePhysicalDamage  = 15;
@@ -48,13 +45,12 @@ public enum TowerType {
 		baseSlow			= 0;
 		hitsAir				= true;
 		hitsGround			= true;
+		targetsCreep		= true;
 		upgrades			= null;
 	}}),
 	WATER (new BaseAttributeList(){{
-		type                = WATER;
 		name                = "Water";
 		mainDamageType      = DamageType.WATER;
-		downgradeType		= WATER;
 		baseWidth			= 2;
 		baseHeight			= 2;
 		basePhysicalDamage  = 15;
@@ -70,13 +66,12 @@ public enum TowerType {
 		baseSlow			= 0.35f;
 		hitsAir				= false;
 		hitsGround			= true;
+		targetsCreep		= true;
 		upgrades			= null;
 	}}),
 	WIND (new BaseAttributeList(){{
-		type                = WIND;
 		name                = "Wind";
 		mainDamageType      = DamageType.WIND;
-		downgradeType		= WIND;
 		baseWidth			= 2;
 		baseHeight			= 2;
 		basePhysicalDamage  = 10;
@@ -92,15 +87,18 @@ public enum TowerType {
 		baseSlow			= 0f;
 		hitsAir				= true;
 		hitsGround			= true;
+		targetsCreep		= true;
 		upgrades			= null;
 	}}),
 	//TODO this is sort of the blueprint for how the upgrades are defined
 	//TODO these functions are called by the upgrade method in the tower class
 	EARTH_EARTH (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
+		targetsCreep		= true;
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
+						{text = "Double the Splash Effectiveness";}
 						public void upgrade(Tower t) {
 							t.damageSplash *= 2;
 							t.effectSplash *= 2;
@@ -109,6 +107,7 @@ public enum TowerType {
 				},
 				{
 					new Upgrade() {
+						{text = "Double the Physical Damage";}
 						public void upgrade(Tower t) {
 							t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2;
 						}
@@ -118,53 +117,70 @@ public enum TowerType {
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
+		targetsCreep		= true;
 	}}),
 	EARTH_WATER (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
+		targetsCreep		= true;
 	}}),
 	EARTH_WIND (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
+		targetsCreep		= true;
 	}}), 
 	FIRE_EARTH (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
+		targetsCreep		= true;
 	}}), 
 	FIRE_FIRE (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
+		targetsCreep		= true;
 	}}),  
 	FIRE_WATER (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
+		targetsCreep		= true;
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
+		targetsCreep		= true;
 	}}), 
 	WATER_EARTH (new BaseAttributeList(){{
 		downgradeType 		= WATER;
+		targetsCreep		= true;
 	}}), 
 	WATER_FIRE (new BaseAttributeList(){{
 		downgradeType 		= WATER;
+		targetsCreep		= true;
 	}}),  
 	WATER_WATER (new BaseAttributeList(){{
 		downgradeType 		= WATER;
+		targetsCreep		= true;
 	}}), 
 	WATER_WIND (new BaseAttributeList(){{
 		downgradeType 		= WATER;
+		targetsCreep		= true;
 	}}), 
 	WIND_EARTH (new BaseAttributeList(){{
 		downgradeType 		= WIND;
+		targetsCreep		= true;
 	}}), 
 	WIND_FIRE (new BaseAttributeList(){{
 		downgradeType 		= WIND;
+		targetsCreep		= true;
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		downgradeType 		= WIND;
+		targetsCreep		= true;
 	}}), 
 	WIND_WIND (new BaseAttributeList(){{
 		downgradeType 		= WIND;
+		targetsCreep		= true;
 	}});
 	
 	private BaseAttributeList baseAttributeList;
 	
 	private TowerType (BaseAttributeList baseAttributeList) {
+		baseAttributeList.downgradeType = this;
+		baseAttributeList.type = this;
 		this.baseAttributeList = baseAttributeList;
 	}
 	

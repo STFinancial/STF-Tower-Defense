@@ -35,7 +35,7 @@ public class Projectile {
 		this.parent = parent;
 		this.x = parent.centerX;
 		this.y = parent.centerY;
-		targetsCreep = parent.targetsCreep;
+		//targetsCreep = parent.targetsCreep;
 		targetX = parent.targetX;
 		targetY = parent.targetY;
 		targetCreep = parent.targetCreep;

@@ -3,8 +3,9 @@ package towers;
 import creeps.DamageType;
 
 public class BaseAttributeList {
-	public interface Upgrade {
-		public void upgrade(Tower t);
+	public abstract class Upgrade {
+		public String text;
+		public abstract void upgrade(Tower t);
 	}
 	public TowerType type;
 	public String name;
@@ -25,5 +26,6 @@ public class BaseAttributeList {
 	public float baseSlow;
 	public boolean hitsAir;
 	public boolean hitsGround;
+	public boolean targetsCreep;
 	public Upgrade[][] upgrades;
 }

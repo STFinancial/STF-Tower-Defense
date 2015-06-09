@@ -190,7 +190,7 @@ public class Level {
 	private Tower buildTower(TowerType type, int y, int x) {
 		Tower t;
 		Tile tile = map.getTile(y, x);
-		t = TowerFactory.generateTower(this, type, tile);
+		t = new Tower(this, tile, type);
 		towers.add(t);
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {

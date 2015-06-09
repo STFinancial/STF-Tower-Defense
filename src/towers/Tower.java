@@ -1,5 +1,7 @@
 package towers;
 
+import java.util.HashMap;
+
 import levels.Level;
 import maps.Tile;
 import creeps.Creep;
@@ -9,7 +11,7 @@ import utilities.Circle;
 import utilities.Constants;
 import utilities.TrigHelper;
 
-public abstract class Tower {
+public class Tower {
 	//Positional Details
 	protected Level level;
 	public int x, y; //Top Left corner in Tile Coordinates
@@ -22,7 +24,6 @@ public abstract class Tower {
 
 	//Targeting Details
 	public TargetingType targetingType;
-	public boolean targetsCreep; //False for targeting a ground spot;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
 	public Creep targetCreep;
 	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
@@ -35,6 +36,8 @@ public abstract class Tower {
 	
 	//Upgrading Information
 	//TODO boolean/1-0 array tracking upgrade path
+	public boolean[][][] upgradeTracks;
+	
 	
 	//Base Attributes
 	public BaseAttributeList baseAttributeList;
@@ -66,8 +69,9 @@ public abstract class Tower {
 	public float siphRange;
 
 	//TODO targetsCreep should move to the baseAttributeList
-	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, BaseAttributeList baseAttributeList) {
-		this.baseAttributeList = baseAttributeList;
+	public Tower(Level level, Tile topLeftTile, TowerType type) {
+		this.baseAttributeList = type.getAttributeList();
+		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][baseAttributeList.upgrades.length][baseAttributeList.upgrades[0].length];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
@@ -79,7 +83,6 @@ public abstract class Tower {
 		this.centerX = x + width / 2f;
 		this.centerY = y + height / 2f;
 		this.targetArea = new Circle(centerX, centerY, range);
-		this.targetsCreep = targetsCreep;
 		this.targetingType = TargetingType.FIRST;
 		adjustTowerValues();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
@@ -91,7 +94,7 @@ public abstract class Tower {
 
 	public void update() {
 		currentAttackCoolDown--;
-		if (targetsCreep) {
+		if (baseAttributeList.targetsCreep) {
 			targetCreep = level.findTargetCreep(this);
 		}
 		if (targetCreep != null) {
@@ -275,11 +278,25 @@ public abstract class Tower {
 	
 
 	//TODO Upgrades
-	public void upgrade() {
-		if (baseAttributeList.upgrades == null) {
-			return;
+	/**
+	 * 
+	 * @param path - 1 or 0 depending on the upgrade path
+	 */
+	public void upgrade(int track) {
+		for (int i = 0; i < upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track].length; i++) {
+			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i]) {
+				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i] = true;
+				baseAttributeList.upgrades[track][i].upgrade(this);
+				return;
+			}
+		}
+	}
+	
+	public boolean canUpgrade(int track) {
+		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
+			return false;
 		} else {
-			
+			return upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][baseAttributeList.upgrades[0].length];
 		}
 	}
 
