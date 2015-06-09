@@ -1,9 +1,10 @@
 package towers;
 
+import utilities.Constants;
 import creeps.DamageType;
 
 public enum TowerType {
-	//TODO I want each (upgraded?) tower to have it's unique projectile effect too
+	//TODO I want each (upgraded) tower to have it's unique projectile effect too
 	//TODO need to adjust stats so that each tower can merit being the head of a chain (attack speed/range is too strong)
 	EARTH (new BaseAttributeList(){{
 		type                = EARTH;
@@ -25,6 +26,7 @@ public enum TowerType {
 		baseSlow			= 0.10f;
 		hitsAir				= false;
 		hitsGround			= true;
+		upgrades			= null;
 	}}),
 	FIRE (new BaseAttributeList(){{
 		type                = FIRE;
@@ -46,6 +48,7 @@ public enum TowerType {
 		baseSlow			= 0;
 		hitsAir				= true;
 		hitsGround			= true;
+		upgrades			= null;
 	}}),
 	WATER (new BaseAttributeList(){{
 		type                = WATER;
@@ -67,6 +70,7 @@ public enum TowerType {
 		baseSlow			= 0.35f;
 		hitsAir				= false;
 		hitsGround			= true;
+		upgrades			= null;
 	}}),
 	WIND (new BaseAttributeList(){{
 		type                = WIND;
@@ -88,9 +92,29 @@ public enum TowerType {
 		baseSlow			= 0f;
 		hitsAir				= true;
 		hitsGround			= true;
+		upgrades			= null;
 	}}),
+	//TODO this is sort of the blueprint for how the upgrades are defined
+	//TODO these functions are called by the upgrade method in the tower class
 	EARTH_EARTH (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						public void upgrade(Tower t) {
+							t.damageSplash *= 2;
+							t.effectSplash *= 2;
+						}
+					}
+				},
+				{
+					new Upgrade() {
+						public void upgrade(Tower t) {
+							t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2;
+						}
+					}
+				}
+		};
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
@@ -144,7 +168,6 @@ public enum TowerType {
 		this.baseAttributeList = baseAttributeList;
 	}
 	
-	//TODO it's kind of bad practice to rely on the ordering of the enum
 	//TODO this way is a lot slower and more tedious though
 	public static TowerType getUpgrade(TowerType tetherFrom, TowerType tetherTo) {
 		if (tetherFrom == WIND) {
