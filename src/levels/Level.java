@@ -214,9 +214,11 @@ public class Level {
 		sf.adjustTowerValues();
 		t.type = t.baseAttributeList.downgradeType;
 		//TODO preserve upgrade levels and do damage calculations
+		boolean[][][] upgradeTracks = t.upgradeTracks;
 		razeTower(t);
 		t = buildTower(t.type, t.y, t.x);
-		t.adjustTowerValues();
+		t.upgradeTracks = upgradeTracks;
+		
 		return t;
 	}
 
@@ -228,8 +230,10 @@ public class Level {
 			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type.getAttributeList().downgradeType);
 		}
 		//TODO preserve upgrade levels and do damage calculations
+		boolean[][][] upgradeTracks = siphonTo.upgradeTracks;
 		razeTower(siphonTo);
 		Tower t = buildTower(newType, siphonTo.y, siphonTo.x);
+		t.upgradeTracks = upgradeTracks;
 		t.siphoningFrom = siphonFrom;
 		t.siphoningTo = null;
 		siphonFrom.siphoningTo = t;
