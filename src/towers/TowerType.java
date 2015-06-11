@@ -5,7 +5,6 @@ import creeps.DamageType;
 
 public enum TowerType {
 	//TODO I want each (upgraded) tower to have it's unique projectile effect too
-	//TODO need to adjust stats so that each tower can merit being the head of a chain (attack speed/range is too strong)
 	EARTH (new BaseAttributeList(){{
 		name                = "Earth";
 		mainDamageType      = DamageType.EARTH;
@@ -98,7 +97,8 @@ public enum TowerType {
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{text = "Double the Splash Effectiveness";}
+						{text 		= "Double the Splash Effectiveness";
+						 baseCost   = 500;}
 						public void upgrade(Tower t) {
 							t.damageSplash *= 2;
 							t.effectSplash *= 2;
@@ -107,7 +107,8 @@ public enum TowerType {
 				},
 				{
 					new Upgrade() {
-						{text = "Double the Physical Damage";}
+						{text 		= "Double the Physical Damage";
+						baseCost 	= 600;}
 						public void upgrade(Tower t) {
 							t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2;
 						}

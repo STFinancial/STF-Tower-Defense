@@ -35,7 +35,6 @@ public class Tower {
 	public boolean checked;
 	
 	//Upgrading Information
-	//TODO boolean/1-0 array tracking upgrade path
 	public boolean[][][] upgradeTracks;
 	
 	
@@ -228,7 +227,6 @@ public class Tower {
 	
 	
 	protected void adjustBaseStats() {
-		//TODO deal with tower upgrades somehow
 		slowArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlow;
 		damageArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseElementalDamage;
 		damageArray[Constants.NUM_DAMAGE_TYPES - 1] = baseAttributeList.basePhysicalDamage;
@@ -239,7 +237,18 @@ public class Tower {
 		effectSplash = baseAttributeList.baseEffectSplash;
 		splashRadius = baseAttributeList.baseSplashRadius;
 		range = baseAttributeList.baseRange;
-		//TODO handle talents and upgrades
+		//TODO handle talents
+		//apply all the upgrades that we have purchased
+		if (siphoningFrom != null) {
+			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+			for (int track = 0; track < baseAttributeList.upgrades.length; track++) {
+				for (int uNum = 0; uNum < baseAttributeList.upgrades[track].length; uNum++) {
+					if (progress[track][uNum]) {
+						 baseAttributeList.upgrades[track][uNum].upgrade(this);
+					}
+				}
+			}
+		}
 		
 	}
 	
@@ -293,6 +302,7 @@ public class Tower {
 	}
 	
 	public boolean canUpgrade(int track) {
+		//TODO something to handle cost
 		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
 			return false;
 		} else {
