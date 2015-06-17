@@ -10,11 +10,11 @@ public class Slow extends ProjectileEffect {
 	 */
 
 	public Slow(int lifetime, float modifier, DamageType elementType) {
-		super(lifetime, modifier, elementType);
+		super(lifetime, modifier, 0, elementType);
 	}
 
 	@Override
-	public void applyEffect(Creep creep, CreepEffect effect) {
+	public void applyEffect(Creep creep) {
 		creep.currentSpeed = creep.currentSpeed * (1 - (modifier * (1 - creep.slowResist)));
 	}
 

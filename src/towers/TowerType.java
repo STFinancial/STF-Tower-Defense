@@ -12,10 +12,10 @@ public enum TowerType {
 		baseHeight			= 2;
 		basePhysicalDamage  = 55;
 		baseElementalDamage = 0;
-		baseFireRate		= 15;
-		baseAttackCoolDown	= 15;
 		baseSlowDuration	= 10;
 		baseCost			= 200;
+		baseFireRate		= 15f;
+		baseAttackCoolDown	= 15f;
 		baseDamageSplash	= 0.05f;
 		baseEffectSplash	= 0.05f;
 		baseSplashRadius	= 1f;
@@ -25,6 +25,7 @@ public enum TowerType {
 		hitsGround			= true;
 		targetsCreep		= true;
 		upgrades			= null;
+		additionalEffect    = null;
 	}}),
 	FIRE (new BaseAttributeList(){{
 		name                = "Fire";
@@ -33,10 +34,10 @@ public enum TowerType {
 		baseHeight			= 2;
 		basePhysicalDamage  = 15;
 		baseElementalDamage = 25;
-		baseFireRate		= 12;
-		baseAttackCoolDown	= 12;
 		baseSlowDuration	= 0;
 		baseCost			= 200;
+		baseFireRate		= 12f;
+		baseAttackCoolDown	= 12f;
 		baseDamageSplash	= 0.25f;
 		baseEffectSplash	= 0.25f;
 		baseSplashRadius	= 1f;
@@ -46,6 +47,7 @@ public enum TowerType {
 		hitsGround			= true;
 		targetsCreep		= true;
 		upgrades			= null;
+		additionalEffect    = null;
 	}}),
 	WATER (new BaseAttributeList(){{
 		name                = "Water";
@@ -54,10 +56,10 @@ public enum TowerType {
 		baseHeight			= 2;
 		basePhysicalDamage  = 15;
 		baseElementalDamage = 15;
-		baseFireRate		= 10;
-		baseAttackCoolDown	= 10;
 		baseSlowDuration	= 10;
 		baseCost			= 200;
+		baseFireRate		= 10f;
+		baseAttackCoolDown	= 10f;
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0.25f;
 		baseSplashRadius	= 1f;
@@ -67,6 +69,7 @@ public enum TowerType {
 		hitsGround			= true;
 		targetsCreep		= true;
 		upgrades			= null;
+		additionalEffect    = null;
 	}}),
 	WIND (new BaseAttributeList(){{
 		name                = "Wind";
@@ -75,10 +78,10 @@ public enum TowerType {
 		baseHeight			= 2;
 		basePhysicalDamage  = 10;
 		baseElementalDamage = 10;
-		baseFireRate		= 5;
-		baseAttackCoolDown	= 5;
 		baseSlowDuration	= 10;
 		baseCost			= 200;
+		baseFireRate		= 5f;
+		baseAttackCoolDown	= 5f;
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0.10f;
 		baseSplashRadius	= 0f;
@@ -88,6 +91,7 @@ public enum TowerType {
 		hitsGround			= true;
 		targetsCreep		= true;
 		upgrades			= null;
+		additionalEffect    = null;
 	}}),
 	//TODO this is sort of the blueprint for how the upgrades are defined
 	//TODO these functions are called by the upgrade method in the tower class

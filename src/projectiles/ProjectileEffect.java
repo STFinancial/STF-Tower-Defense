@@ -12,16 +12,18 @@ import creeps.DamageType;
 public abstract class ProjectileEffect {
 	public float modifier = 0;
 	public int lifetime = 0;
+	public int timing;
 	public DamageType damageType;
 
-	public ProjectileEffect(int lifetime, float modifier, DamageType damageType) {
+	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType) {
 		this.modifier = modifier;
 		this.lifetime = lifetime;
 		this.damageType = damageType;
+		this.timing = timing;
 		//timeRemaining = lifetime;
 	}
 
-	public abstract void applyEffect(Creep creep, CreepEffect effect);
+	public abstract void applyEffect(Creep creep);
 
 //	public boolean isExpired(){
 //		return timeRemaining < 0;

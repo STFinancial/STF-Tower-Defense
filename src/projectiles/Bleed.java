@@ -4,34 +4,31 @@ import creeps.Creep;
 import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
-public class Bleed extends DamageEffect {
-
-	int timing;
+public class Bleed extends ProjectileEffect {
 
 	public Bleed(int lifetime, float modifier, int timing, DamageType damageType) {
-		super(lifetime, modifier, damageType);
-		this.timing = timing;
+		super(lifetime, modifier, timing, damageType);
 	}
 
 	@Override
-	public void applyEffect(Creep creep, CreepEffect effect) {
-		if ((effect.counter) % timing == 0) {
-			creep.damage(this);
+	public void applyEffect(Creep creep) {
+		float damageToDo = modifier - creep.toughness;
+		//TODO: should this be affected by toughness and shield?
+		
+		if (damageToDo < 0) {
+			damageToDo = 0;
+		}
+		if (creep.currentShield < damageToDo) {
+			float damageLeft = damageToDo - creep.currentShield;
+			creep.currentShield = 0;
+			creep.currentHealth -= damageLeft;
+		} else {
+			creep.currentShield -= damageToDo;
 		}
 	}
 
 	@Override
-	public boolean ignoresArmor() {
-		return true;
-	}
-
-	@Override
-	public boolean ignoresShield() {
-		return true;
-	}
-
-	@Override
 	public void onExpire(Creep creep) {
-		
+		return;
 	}
 }

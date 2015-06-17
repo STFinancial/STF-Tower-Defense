@@ -1,5 +1,6 @@
 package towers;
 
+import projectiles.ProjectileEffect;
 import creeps.DamageType;
 
 public class BaseAttributeList {
@@ -16,10 +17,10 @@ public class BaseAttributeList {
 	public int baseHeight;
 	public int basePhysicalDamage;
 	public int baseElementalDamage;
-	public int baseFireRate;
-	public int baseAttackCoolDown;
 	public int baseSlowDuration;
 	public int baseCost;
+	public float baseFireRate;
+	public float baseAttackCoolDown;
 	public float baseDamageSplash;
 	public float baseEffectSplash;
 	public float baseSplashRadius;
@@ -28,5 +29,6 @@ public class BaseAttributeList {
 	public boolean hitsAir;
 	public boolean hitsGround;
 	public boolean targetsCreep;
+	public ProjectileEffect additionalEffect;
 	public Upgrade[][] upgrades;
 }

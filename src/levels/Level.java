@@ -179,11 +179,15 @@ public class Level {
 		gold += c.goldValue;
 
 	}
+	
+	public boolean canBuyTower(TowerType type) {
+		return gold >= type.getCost();
+	}
 
 	//GUI should call this method to build towers
 	public Tower buyTower(TowerType type, int y, int x) {
 		Tower t = buildTower(type, y, x);
-		gold -= t.cost;
+		gold -= type.getCost();
 		return t;
 	}
 
@@ -242,9 +246,13 @@ public class Level {
 
 	//Can be called from App
 	public void upgradeTower(Tower t, int index) {
-
+		t.upgrade(index);
 	}
 
+	public boolean canSellTower(Tower t) {
+		return t.siphoningTo == null;
+	}
+	
 	//GUI should call this method
 	public void sellTower(Tower t) {
 		if (t.siphoningFrom == null) {

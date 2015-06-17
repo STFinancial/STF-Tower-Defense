@@ -45,14 +45,15 @@ public class Tower {
 	public int[] damageArray = new int[Constants.NUM_DAMAGE_TYPES];
 	public float[] slowArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public int[] slowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public int fireRate; //Still deciding if this will actually be the same as attack cooldown
-	public int attackCoolDown;
-	public int currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
-	public int snareDuration = 0;
+	public float fireRate; //Still deciding if this will actually be the same as attack cooldown
+	public float attackCoolDown;
+	public float currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
+	public float attackCarryOver;
 	public float damageSplash;
 	public float effectSplash;
 	public float splashRadius;
 	public float range;
+	public int snareDuration = 0;
 	public boolean hitsAir;
 	public boolean hitsGround;
 	
@@ -60,8 +61,8 @@ public class Tower {
 	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
 	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public int siphFireRate; //Still deciding if this will actually be the same as attack cooldown
-	public int siphAttackCoolDown;
+	public float siphFireRate; //Still deciding if this will actually be the same as attack cooldown
+	public float siphAttackCoolDown;
 	public float siphDamageSplash;
 	public float siphEffectSplash;
 	public float siphSplashRadius;
@@ -83,6 +84,7 @@ public class Tower {
 		this.centerY = y + height / 2f;
 		this.targetArea = new Circle(centerX, centerY, range);
 		this.targetingType = TargetingType.FIRST;
+		this.attackCarryOver = 0f;
 		adjustTowerValues();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
@@ -100,7 +102,12 @@ public class Tower {
 			updateAngle(targetCreep);
 			if (currentAttackCoolDown < 1) {
 				level.addProjectile(fireProjectile());
+				attackCarryOver += 1 - currentAttackCoolDown;
 				currentAttackCoolDown = (attackCoolDown * siphAttackCoolDown) / (attackCoolDown * siphAttackCoolDown);
+				if (attackCarryOver > 1) {
+					attackCarryOver--;
+					currentAttackCoolDown--;
+				}
 			}
 		}
 	}

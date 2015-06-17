@@ -6,7 +6,6 @@ import java.util.HashSet;
 import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
-import projectiles.DamageEffect;
 import projectiles.ProjectileEffect;
 import utilities.Circle;
 
@@ -44,7 +43,7 @@ public class Creep {
 	//Fancy Effects
 	public ArrayList<Creep> children;
 	float baseShield;
-	float currentShield;
+	public float currentShield;
 	float shieldCap;
 	public int disruptorAmount;
 
@@ -63,24 +62,26 @@ public class Creep {
 	}
 	//TODO possibly remove this and go back to just recreating each projectile effect
 	public class CreepEffect {
-		CreepEffect(ProjectileEffect p, int d) {
+		CreepEffect(ProjectileEffect p) {
 			projectileEffect = p;
-			duration = d;
+			duration = p.lifetime;
+			timing = p.timing;
 			counter = 0;
 		}
 
 		public ProjectileEffect projectileEffect;
 		int duration;
+		int timing;
 		public int counter;
 	}
 
 	public void addEffect(ProjectileEffect effect) {
-		effects.add(new CreepEffect(effect, effect.lifetime));
+		effects.add(new CreepEffect(effect));
 	}
 
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
 		for (ProjectileEffect p : effects) {
-			this.effects.add(new CreepEffect(p, p.lifetime));
+			this.effects.add(new CreepEffect(p));
 		}
 	}
 
@@ -94,34 +95,6 @@ public class Creep {
 			size = .2f;
 			hitBox.radius = size;
 		}
-	}
-
-	public void damage(DamageEffect damager) {
-
-		float baseDamage = damager.modifier;
-		float damageToDo = baseDamage;
-		if (damager.damageType == DamageType.PHYSICAL) {
-			if (!damager.ignoresArmor()) {
-				damageToDo *= (1 - resist[6]);
-			}
-		} else {
-			damageToDo = baseDamage * (1 - resist[damager.damageType.ordinal()]);
-		}
-		damageToDo -= toughness;
-
-		if (damageToDo < 0) {
-			damageToDo = 0;
-		}
-		/*
-		if (currentShield < damageToDo) {
-			float damageLeft = currentShield - damageToDo;
-			currentShield = 0;
-			currentHealth -= damageLeft;
-		} else {
-			currentShield -= damageToDo;
-		}
-		*/
-		currentHealth -= damageToDo;
 	}
 
 	public ArrayList<Creep> death() {
@@ -165,14 +138,17 @@ public class Creep {
 		currentSpeed = speed;
 		for (int i = 0; i < effects.size(); i++) {
 			CreepEffect e = effects.get(i);
-			e.counter++; //TODO should we do this before or after?
-			if (e.duration == 0) {
-				e.projectileEffect.onExpire(this);
-				effects.remove(i);
-			} else {
-				e.projectileEffect.applyEffect(this, e);
-				e.duration--;
+			if (e.timing != 0 && e.counter % e.timing == 0) {
+				e.projectileEffect.applyEffect(this);
+			} else if (e.timing == 0 && e.counter == 0) {
+				e.projectileEffect.applyEffect(this);
 			}
+			if (e.counter == e.duration) {
+				e.projectileEffect.onExpire(this);
+				effects.remove(i--);
+				continue;
+			}
+			e.counter++;
 		}
 	}
 
