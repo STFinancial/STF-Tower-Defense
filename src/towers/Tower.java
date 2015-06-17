@@ -303,6 +303,7 @@ public class Tower {
 			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i]) {
 				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i] = true;
 				baseAttributeList.upgrades[track][i].upgrade(this);
+				adjustTowerValues();
 				return;
 			}
 		}
