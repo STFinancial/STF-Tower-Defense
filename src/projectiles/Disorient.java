@@ -10,7 +10,7 @@ import creeps.DamageType;
  *
  */
 public class Disorient extends ProjectileEffect {
-
+	
 	public Disorient(int lifetime, float modifier, int timing, DamageType damageType) {
 		super(lifetime, modifier, timing, damageType);
 		// TODO Auto-generated constructor stub

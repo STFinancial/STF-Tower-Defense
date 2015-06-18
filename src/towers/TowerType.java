@@ -165,18 +165,22 @@ public enum TowerType {
 		targetsCreep		= true;
 	}}), 
 	WIND_EARTH (new BaseAttributeList(){{
+		name = "Sandstorm";
 		downgradeType 		= WIND;
 		targetsCreep		= true;
 	}}), 
 	WIND_FIRE (new BaseAttributeList(){{
+		name = "Lightning";
 		downgradeType 		= WIND;
 		targetsCreep		= true;
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
+		name = "Blizzard";
 		downgradeType 		= WIND;
 		targetsCreep		= true;
 	}}), 
 	WIND_WIND (new BaseAttributeList(){{
+		name = "Gale";
 		downgradeType 		= WIND;
 		targetsCreep		= true;
 	}});
