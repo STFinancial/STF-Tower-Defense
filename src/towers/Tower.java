@@ -23,9 +23,10 @@ public class Tower {
 	public TowerType type;
 
 	//Targeting Details
-	public TargetingType targetingType;
+	public TargetingModeType targetingType;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
 	public Creep targetCreep;
+	public Circle placeToTarget;
 	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
 
 	//Misc.
@@ -83,7 +84,7 @@ public class Tower {
 		this.centerX = x + width / 2f;
 		this.centerY = y + height / 2f;
 		this.targetArea = new Circle(centerX, centerY, range);
-		this.targetingType = TargetingType.FIRST;
+		this.targetingType = TargetingModeType.FIRST;
 		this.attackCarryOver = 0f;
 		adjustTowerValues();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
@@ -95,9 +96,12 @@ public class Tower {
 
 	public void update() {
 		currentAttackCoolDown--;
-		if (baseAttributeList.targetsCreep) {
-			targetCreep = level.findTargetCreep(this);
-		}
+		targetCreep = level.findTargetCreep(this);
+//		if (baseAttributeList.targetsCreep) {
+//			targetCreep = level.findTargetCreep(this);
+//		} else {
+//			targetCreep = level.findTargetCreep(this);
+//		}
 		if (targetCreep != null) {
 			updateAngle(targetCreep);
 			if (currentAttackCoolDown < 1) {
@@ -262,6 +266,9 @@ public class Tower {
 	//this should be called on any time we make changes to the tower
 	protected void adjustProjectile() {
 		baseProjectile = new Projectile(this);
+		baseProjectile.targetingType  = baseAttributeList.targetingType;
+		baseProjectile.collisionType  = baseAttributeList.collisionType;
+		baseProjectile.travelType 	  = baseAttributeList.travelType;
 		DamageType damageType = baseAttributeList.mainDamageType;
 		ProjectileEffect effect;
 		baseProjectile.splashRadius = splashRadius;
@@ -317,19 +324,17 @@ public class Tower {
 			return upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][baseAttributeList.upgrades[0].length];
 		}
 	}
+	
+	public void setTargetArea(float y, float x) {
+		placeToTarget = new Circle(x, y, splashRadius);
+	}
 
 	protected void updateAngle(Creep targetCreep) {
 		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}
 
 	protected Projectile duplicateProjectile(Projectile p) {
-		Projectile newProj = new Projectile(this);
-		newProj.effects.addAll(p.effects);
-		newProj.splashEffects.addAll(p.splashEffects);
-		newProj.currentSpeed = newProj.speed = p.speed; //TODO this logic might need to change if we have projectiles that speed up
-		newProj.splashRadius = p.splashRadius;
-		newProj.parent = this;
-		return newProj;
+		return p.clone();
 	}
 
 	public String toString() {

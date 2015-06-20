@@ -2,6 +2,7 @@ package towers;
 
 import utilities.Constants;
 import creeps.DamageType;
+import projectiles.*;
 
 public enum TowerType {
 	//TODO I want each (upgraded) tower to have it's unique projectile effect too
@@ -23,7 +24,6 @@ public enum TowerType {
 		baseSlow			= 0.10f;
 		hitsAir				= false;
 		hitsGround			= true;
-		targetsCreep		= true;
 		upgrades			= null;
 		additionalEffect    = null;
 	}}),
@@ -45,7 +45,6 @@ public enum TowerType {
 		baseSlow			= 0;
 		hitsAir				= true;
 		hitsGround			= true;
-		targetsCreep		= true;
 		upgrades			= null;
 		additionalEffect    = null;
 	}}),
@@ -67,7 +66,6 @@ public enum TowerType {
 		baseSlow			= 0.35f;
 		hitsAir				= false;
 		hitsGround			= true;
-		targetsCreep		= true;
 		upgrades			= null;
 		additionalEffect    = null;
 	}}),
@@ -89,7 +87,6 @@ public enum TowerType {
 		baseSlow			= 0f;
 		hitsAir				= true;
 		hitsGround			= true;
-		targetsCreep		= true;
 		upgrades			= null;
 		additionalEffect    = null;
 	}}),
@@ -97,7 +94,6 @@ public enum TowerType {
 	//TODO these functions are called by the upgrade method in the tower class
 	EARTH_EARTH (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
-		targetsCreep		= true;
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -121,68 +117,57 @@ public enum TowerType {
 		};
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
+		name = "Meteor";
 		downgradeType 		= EARTH;
-		targetsCreep		= true;
 	}}),
 	EARTH_WATER (new BaseAttributeList(){{
+		//this will do rupture spikes on a selected area
+		name = "Stalagmite";
+		targetingType		= TargetingType.AREA;
 		downgradeType 		= EARTH;
-		targetsCreep		= true;
 	}}),
 	EARTH_WIND (new BaseAttributeList(){{
 		downgradeType 		= EARTH;
-		targetsCreep		= true;
 	}}), 
 	FIRE_EARTH (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
-		targetsCreep		= true;
 	}}), 
 	FIRE_FIRE (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
-		targetsCreep		= true;
 	}}),  
 	FIRE_WATER (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
-		targetsCreep		= true;
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
 		downgradeType 		= FIRE;
-		targetsCreep		= true;
 	}}), 
 	WATER_EARTH (new BaseAttributeList(){{
 		downgradeType 		= WATER;
-		targetsCreep		= true;
 	}}), 
 	WATER_FIRE (new BaseAttributeList(){{
 		downgradeType 		= WATER;
-		targetsCreep		= true;
 	}}),  
 	WATER_WATER (new BaseAttributeList(){{
 		downgradeType 		= WATER;
-		targetsCreep		= true;
 	}}), 
 	WATER_WIND (new BaseAttributeList(){{
 		downgradeType 		= WATER;
-		targetsCreep		= true;
 	}}), 
 	WIND_EARTH (new BaseAttributeList(){{
 		name = "Sandstorm";
 		downgradeType 		= WIND;
-		targetsCreep		= true;
 	}}), 
 	WIND_FIRE (new BaseAttributeList(){{
 		name = "Lightning";
 		downgradeType 		= WIND;
-		targetsCreep		= true;
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		name = "Blizzard";
 		downgradeType 		= WIND;
-		targetsCreep		= true;
 	}}), 
 	WIND_WIND (new BaseAttributeList(){{
 		name = "Gale";
 		downgradeType 		= WIND;
-		targetsCreep		= true;
 	}});
 	
 	private BaseAttributeList baseAttributeList;

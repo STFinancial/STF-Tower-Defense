@@ -139,9 +139,9 @@ public class Creep {
 		for (int i = 0; i < effects.size(); i++) {
 			CreepEffect e = effects.get(i);
 			if (e.timing != 0 && e.counter % e.timing == 0) {
-				e.projectileEffect.applyEffect(this);
+				e.projectileEffect.applyEffect(this, null);
 			} else if (e.timing == 0 && e.counter == 0) {
-				e.projectileEffect.applyEffect(this);
+				e.projectileEffect.applyEffect(this, null);
 			}
 			if (e.counter == e.duration) {
 				e.projectileEffect.onExpire(this);

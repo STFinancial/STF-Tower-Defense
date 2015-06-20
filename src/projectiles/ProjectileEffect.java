@@ -23,7 +23,7 @@ public abstract class ProjectileEffect {
 		//timeRemaining = lifetime;
 	}
 
-	public abstract void applyEffect(Creep creep);
+	public abstract void applyEffect(Creep creep, Projectile p);
 
 //	public boolean isExpired(){
 //		return timeRemaining < 0;

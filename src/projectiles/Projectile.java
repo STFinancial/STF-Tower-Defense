@@ -21,14 +21,17 @@ public class Projectile {
 	public Circle hitBox;
 	
 	public boolean dud = false; //When creep is killed by something else or escapes before contact;
-	public boolean targetsCreep; //False for targeting a ground spot;
 	float targetX, targetY; //For ground spot target towers, in Tile coordinates
 	public Creep targetCreep;
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
 	public float splashRadius = 0;
-
-	public ArrayList<ProjectileEffect> effects;
-	public ArrayList<ProjectileEffect> splashEffects;
+	public TargetingType targetingType;
+	public TravelType travelType;
+	public CollisionType collisionType;
+	
+	ArrayList<ProjectileEffect> creepEffects;
+	ArrayList<ProjectileEffect> splashEffects;
+	ArrayList<ProjectileEffect> modEffects;
 	public AffixModifier multiplier;
 	
 	public Projectile(Tower parent) {
@@ -40,25 +43,49 @@ public class Projectile {
 		targetY = parent.targetY;
 		targetCreep = parent.targetCreep;
 		targetAngle = parent.targetAngle;
-		effects = new ArrayList<ProjectileEffect>();
+		creepEffects = new ArrayList<ProjectileEffect>();
 		splashEffects = new ArrayList<ProjectileEffect>();
+		modEffects = new ArrayList<ProjectileEffect>();
 		hitBox = new Circle(x, y, size);
+	}
+	
+	public Projectile clone() {
+		Projectile p = new Projectile(parent);
+		p.creepEffects.addAll(creepEffects);
+		p.splashEffects.addAll(splashEffects);
+		for (ProjectileEffect pe: modEffects) {
+			p.addEffect(pe);
+		}
+		p.currentSpeed = p.speed = speed; //TODO this logic might need to change if we have projectiles that speed up
+		p.splashRadius = splashRadius;
+		p.parent = parent;
+		p.multiplier = multiplier;
+		p.targetingType = targetingType;
+		p.collisionType = collisionType;
+		p.travelType = travelType;
+		return p;
 	}
 
 	public void addEffect(ProjectileEffect effect) {
-		effects.add(effect);
+		if (effect instanceof CreepModifierEffect) {
+			creepEffects.add(effect);
+		} else if (effect instanceof ProjectileModifierEffect) {
+			((ProjectileModifierEffect) effect).applyEffectToProjectile(this);
+			modEffects.add(effect);
+		}
+		
 	}
 	
 	public void addSplashEffect(ProjectileEffect effect) {
 		splashEffects.add(effect);
 	}
 
-	public void applyEffect(Creep creep) {
-		creep.addAllEffects(effects);
+	public void applyEffects(Creep creep) {
+		creep.addAllEffects(creepEffects);
 	}
 	
 	public void update(){
-		if (targetsCreep) {
+		if (targetingType == TargetingType.CREEP) {
 			if (targetCreep != null) {
 				if (targetCreep.isDead()) {
 					dud = true;
@@ -81,7 +108,7 @@ public class Projectile {
 		if (dud) {
 			return true;
 		}
-		if (targetsCreep) {
+		if (targetingType == TargetingType.CREEP) {
 			return hitBox.intersects(targetCreep.hitBox);
 		}
 		//TODO add area target part

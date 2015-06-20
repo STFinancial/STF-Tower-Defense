@@ -9,7 +9,7 @@ import creeps.DamageType;
  * @author Timothy
  *
  */
-public class Disorient extends ProjectileEffect {
+public class Disorient extends CreepModifierEffect {
 	
 	public Disorient(int lifetime, float modifier, int timing, DamageType damageType) {
 		super(lifetime, modifier, timing, damageType);
@@ -17,7 +17,7 @@ public class Disorient extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	void applyEffectToCreep(Creep creep) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,6 +1,6 @@
 package towers;
 
-import projectiles.ProjectileEffect;
+import projectiles.*;
 import creeps.DamageType;
 
 public class BaseAttributeList {
@@ -28,7 +28,9 @@ public class BaseAttributeList {
 	public float baseSlow;
 	public boolean hitsAir;
 	public boolean hitsGround;
-	public boolean targetsCreep;
+	public TargetingType targetingType;
+	public TravelType travelType;
+	public CollisionType collisionType;
 	public ProjectileEffect additionalEffect;
 	public Upgrade[][] upgrades;
 }

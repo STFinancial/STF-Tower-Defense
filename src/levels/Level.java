@@ -15,6 +15,7 @@ import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
+import projectiles.TargetingType;
 import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
@@ -130,14 +131,19 @@ public class Level {
 
 	private void detonateProjectile(Projectile p) {
 		//Check for aoe and complicated shit
-		if (p.targetsCreep) {
+		if (p.targetingType == TargetingType.CREEP) {
 			//Targeted a specific minion
-			p.applyEffect(p.targetCreep);
+			p.applyEffects(p.targetCreep);
 			p.applySplashEffects(getCreepInRange(p, p.splashRadius));
 			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
-		} else {
+		} else if (p.targetingType == TargetingType.AREA) {
 			//Targeted an area
-
+			//TODO: currently applies normal and splash effects, is this wanted?
+			HashSet<Creep> creepsInRange = getCreepInRange(p.parent.placeToTarget);
+			for (Creep c: creepsInRange) {
+				p.applyEffects(c);
+			}
+			p.applySplashEffects(creepsInRange);
 		}
 		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
 	}
@@ -211,9 +217,7 @@ public class Level {
 	//But I think it can just take the type before and after and change it.
 	public Tower unsiphonTower(Tower t) {
 		Tower sf = t.siphoningFrom;
-		
 		sf.siphoningFrom.siphoningTo = null;
-		
 		sf.siphoningFrom = null;
 		sf.adjustTowerValues();
 		t.type = t.baseAttributeList.downgradeType;
@@ -313,8 +317,8 @@ public class Level {
 		}
 		//System.out.println("Saw : " + inRange.size());
 		switch (tower.targetingType) {
-		case AREA:
-			break;
+//		case AREA:
+//			break;
 		case FIRST:
 			int max = -1;
 			for (Creep c : inRange) {
@@ -345,6 +349,17 @@ public class Level {
 		}
 		return inRange;
 	}
+	
+	public HashSet<Creep> getCreepInRange(Circle area) {
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		for (Creep c: creeps) {
+			if (c.hitBox.intersects(area)) {
+				inRange.add(c);
+			}
+		}
+		return inRange;
+	}
+	
 
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);

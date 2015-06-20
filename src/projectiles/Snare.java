@@ -4,14 +4,14 @@ import creeps.Creep;
 import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
-public class Snare extends ProjectileEffect {
+public class Snare extends CreepModifierEffect {
 
 	public Snare(int lifetime, float modifier, DamageType elementType) {
 		super(lifetime, modifier, 0, elementType);
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	void applyEffectToCreep(Creep creep) {
 		if (!creep.snareImmune) {
 			creep.currentSpeed = 0;			
 		}
@@ -23,7 +23,7 @@ public class Snare extends ProjectileEffect {
 		//Need to reapply all the slows on it
 		for (CreepEffect c: creep.effects) {
 			if (c.projectileEffect instanceof Slow) {
-				c.projectileEffect.applyEffect(creep);
+				((Snare) c.projectileEffect).applyEffectToCreep(creep);
 			}
 		}
 	}
