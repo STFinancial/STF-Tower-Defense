@@ -93,6 +93,7 @@ public enum TowerType {
 	//TODO this is sort of the blueprint for how the upgrades are defined
 	//TODO these functions are called by the upgrade method in the tower class
 	EARTH_EARTH (new BaseAttributeList(){{
+		name				= "Gaia";
 		downgradeType 		= EARTH;
 		upgrades			= new Upgrade[][]{
 				{
@@ -117,57 +118,77 @@ public enum TowerType {
 		};
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
-		name = "Meteor";
+		//does tons of damage
+		name 				= "Meteor";
 		downgradeType 		= EARTH;
 	}}),
 	EARTH_WATER (new BaseAttributeList(){{
 		//this will do rupture spikes on a selected area
-		name = "Stalagmite";
+		name 				= "Stalagmite";
 		targetingType		= TargetingType.AREA;
 		downgradeType 		= EARTH;
 	}}),
 	EARTH_WIND (new BaseAttributeList(){{
+		//has enormous splash radius
 		downgradeType 		= EARTH;
 	}}), 
 	FIRE_EARTH (new BaseAttributeList(){{
+		//this tower shreds through enemy armor for a period of time
 		downgradeType 		= FIRE;
 	}}), 
 	FIRE_FIRE (new BaseAttributeList(){{
+		//this tower ignites enemies with all types of elemental damage
+		name				= "Greater Fire";
 		downgradeType 		= FIRE;
 	}}),  
 	FIRE_WATER (new BaseAttributeList(){{
+		//this tower fires a laser thing that passes through enemies and goes a fixed distance
+		name				= "Plasma";
 		downgradeType 		= FIRE;
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
+		//attacks ignore all types of defenses
 		downgradeType 		= FIRE;
 	}}), 
 	WATER_EARTH (new BaseAttributeList(){{
+		//does large AoE slow
 		downgradeType 		= WATER;
 	}}), 
 	WATER_FIRE (new BaseAttributeList(){{
+		//this tower applies an MR shred for a period of time
+		name				= "Purging"; //(?)
 		downgradeType 		= WATER;
 	}}),  
 	WATER_WATER (new BaseAttributeList(){{
+		//this tower does an aoe slow/freeze
 		downgradeType 		= WATER;
 	}}), 
 	WATER_WIND (new BaseAttributeList(){{
+		//this tower has a high splash effect coefficient?
+		name				= "Hail";
 		downgradeType 		= WATER;
 	}}), 
 	WIND_EARTH (new BaseAttributeList(){{
-		name = "Sandstorm";
+		//this tower disorients enemies and makes them walk randomly
+		name 				= "Sandstorm";
 		downgradeType 		= WIND;
 	}}), 
 	WIND_FIRE (new BaseAttributeList(){{
-		name = "Lightning";
+		//this tower chains damage and removes shield (?)
+		name 				= "Lightning";
 		downgradeType 		= WIND;
+		
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
-		name = "Blizzard";
+		//slows enemies and reduces toughness
+		name				= "Blizzard";
 		downgradeType 		= WIND;
 	}}), 
 	WIND_WIND (new BaseAttributeList(){{
-		name = "Gale";
+		//this tower does a pushback (is this too hard?)
+		name 				= "Gale";
 		downgradeType 		= WIND;
+		
 	}});
 	
 	private BaseAttributeList baseAttributeList;
