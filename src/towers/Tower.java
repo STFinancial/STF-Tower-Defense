@@ -1,5 +1,6 @@
 package towers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import levels.Level;
@@ -30,8 +31,9 @@ public class Tower {
 	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
 
 	//Misc.
+	public int towerID;
 	public Tower siphoningFrom;
-	public Tower siphoningTo;
+	public ArrayList<Tower> siphoningTo;
 	public Projectile baseProjectile;
 	public boolean checked;
 	
@@ -70,7 +72,7 @@ public class Tower {
 	public float siphRange;
 
 	//TODO targetsCreep should move to the baseAttributeList
-	public Tower(Level level, Tile topLeftTile, TowerType type) {
+	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList();
 		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][baseAttributeList.upgrades.length][baseAttributeList.upgrades[0].length];
 		this.level = level;
@@ -86,6 +88,7 @@ public class Tower {
 		this.targetArea = new Circle(centerX, centerY, range);
 		this.targetingType = TargetingModeType.FIRST;
 		this.attackCarryOver = 0f;
+		this.towerID = towerID;
 		adjustTowerValues();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
@@ -145,6 +148,12 @@ public class Tower {
 			recursiveSiphon(currentTower, 0);
 		}
 	}
+	
+	protected static void adjustSiphonChain(Tower t) {
+		
+	}
+	
+	private static ArrayList<Tower> getSiphonChain()
 	
 	private static void recursiveSiphon(Tower t, int cycleLength) {
 		t.checked = false;
@@ -339,5 +348,18 @@ public class Tower {
 
 	public String toString() {
 		return "Type: " + type + " at " + x + " , " + y;
+	}
+	
+	public boolean equals(Tower t) {
+		return t.towerID == towerID;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Tower)) {
+			return false;
+		}
+        Tower t = (Tower) o;
+        return t.towerID == towerID;
 	}
 }

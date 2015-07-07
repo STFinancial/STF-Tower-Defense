@@ -21,6 +21,7 @@ import utilities.Circle;
 import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
 import utilities.PathFinder;
+import utilities.TowerHelper;
 
 /*
  * Executes main game logic loop
@@ -42,6 +43,7 @@ public class Level {
 
 	//Currently loaded/active units
 	public ArrayList<Tower> towers = new ArrayList<Tower>();
+	public TowerHelper towerHelper = new TowerHelper();
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
