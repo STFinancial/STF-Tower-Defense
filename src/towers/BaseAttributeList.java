@@ -7,6 +7,7 @@ public class BaseAttributeList {
 	public abstract class Upgrade {
 		public String text;
 		public int baseCost;
+		public boolean isBase;
 		public abstract void upgrade(Tower t);
 	}
 	public TowerType type;

@@ -15,8 +15,11 @@ public final class Constants {
 	public static final int SIPHON_BASE_COST = 300; //the "mana" cost of siphoning
 	public static final float SIPHON_CHAIN_COST_MULTIPLIER = 1.5f; //chaining is exponential, this ensures the cost is too
 	
-	public final int BASE_INTEREST_RATE = 3;
+	public static final int NUM_UPGRADE_PATHS = 2;
+	public static final int UPGRADE_PATH_LENGTH = 4;
 	
-	public final static float SQRT_2_OVER_2 = 0.7071f;
-	public final static float SQRT_2 = 1.414f;
+	public static final int BASE_INTEREST_RATE = 3;
+	
+	public static final float SQRT_2_OVER_2 = 0.7071f;
+	public static final float SQRT_2 = 1.414f;
 }

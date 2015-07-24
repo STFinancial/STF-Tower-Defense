@@ -99,7 +99,8 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{text 		= "Double the Splash Effectiveness";
-						 baseCost   = 500;}
+						 baseCost   = 500;
+						 isBase 	= false;}
 						public void upgrade(Tower t) {
 							t.damageSplash *= 2;
 							t.effectSplash *= 2;
@@ -109,7 +110,8 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{text 		= "Double the Physical Damage";
-						baseCost 	= 600;}
+						baseCost 	= 600;
+						isBase		= false;}
 						public void upgrade(Tower t) {
 							t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2;
 						}
@@ -200,45 +202,45 @@ public enum TowerType {
 	}
 	
 	//TODO this way is a lot slower and more tedious though
-	public static TowerType getUpgrade(TowerType tetherFrom, TowerType tetherTo) {
-		if (tetherFrom == WIND) {
-			if (tetherTo == WIND) {
+	public static TowerType getUpgrade(TowerType source, TowerType destination) {
+		if (source == WIND) {
+			if (destination == WIND) {
 				return WIND_WIND;
-			} else if (tetherTo == EARTH) {
+			} else if (destination == EARTH) {
 				return WIND_EARTH;
-			} else if (tetherTo == FIRE) {
+			} else if (destination == FIRE) {
 				return WIND_FIRE;
-			} else if (tetherTo == WATER) {
+			} else if (destination == WATER) {
 				return WIND_WATER;
 			}
-		} else if (tetherFrom == EARTH) {
-			if (tetherTo == WIND) {
+		} else if (source == EARTH) {
+			if (destination == WIND) {
 				return EARTH_WIND;
-			} else if (tetherTo == EARTH) {
+			} else if (destination == EARTH) {
 				return EARTH_EARTH;
-			} else if (tetherTo == FIRE) {
+			} else if (destination == FIRE) {
 				return EARTH_FIRE;
-			} else if (tetherTo == WATER) {
+			} else if (destination == WATER) {
 				return EARTH_WATER;
 			}
-		} else if (tetherFrom == FIRE) {
-			if (tetherTo == WIND) {
+		} else if (source == FIRE) {
+			if (destination == WIND) {
 				return FIRE_WIND;
-			} else if (tetherTo == EARTH) {
+			} else if (destination == EARTH) {
 				return FIRE_EARTH;
-			} else if (tetherTo == FIRE) {
+			} else if (destination == FIRE) {
 				return FIRE_FIRE;
-			} else if (tetherTo == WATER) {
+			} else if (destination == WATER) {
 				return FIRE_WATER;
 			}
-		} else if (tetherFrom == WATER) {
-			if (tetherTo == WIND) {
+		} else if (source == WATER) {
+			if (destination == WIND) {
 				return WATER_WIND;
-			} else if (tetherTo == EARTH) {
+			} else if (destination == EARTH) {
 				return WATER_EARTH;
-			} else if (tetherTo == FIRE) {
+			} else if (destination == FIRE) {
 				return WATER_FIRE;
-			} else if (tetherTo == WATER) {
+			} else if (destination == WATER) {
 				return WATER_WATER;
 			}
 		}

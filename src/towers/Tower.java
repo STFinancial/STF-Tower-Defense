@@ -1,7 +1,8 @@
 package towers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import levels.Level;
 import maps.Tile;
@@ -35,7 +36,6 @@ public class Tower {
 	public Tower siphoningFrom;
 	public ArrayList<Tower> siphoningTo;
 	public Projectile baseProjectile;
-	public boolean checked;
 	
 	//Upgrading Information
 	public boolean[][][] upgradeTracks;
@@ -56,25 +56,25 @@ public class Tower {
 	public float effectSplash;
 	public float splashRadius;
 	public float range;
-	public int snareDuration = 0;
+//	public int snareDuration = 0;
 	public boolean hitsAir;
 	public boolean hitsGround;
 	
 	//Siphoned Attributes
-	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
-	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public float siphFireRate; //Still deciding if this will actually be the same as attack cooldown
-	public float siphAttackCoolDown;
-	public float siphDamageSplash;
-	public float siphEffectSplash;
-	public float siphSplashRadius;
-	public float siphRange;
+//	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
+//	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
+//	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
+//	public float siphFireRate = 0; //Still deciding if this will actually be the same as attack cooldown
+//	public float siphAttackCoolDown = 0;
+//	public float siphDamageSplash = 0;
+//	public float siphEffectSplash = 0;
+//	public float siphSplashRadius = 0;
+//	public float siphRange = 0;
 
-	//TODO targetsCreep should move to the baseAttributeList
+	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList();
-		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][baseAttributeList.upgrades.length][baseAttributeList.upgrades[0].length];
+		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][Constants.NUM_UPGRADE_PATHS][Constants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
@@ -89,7 +89,8 @@ public class Tower {
 		this.targetingType = TargetingModeType.FIRST;
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
-		adjustTowerValues();
+		this.siphoningTo = new ArrayList<Tower>();
+		updateTowerChain();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
 	
@@ -110,227 +111,175 @@ public class Tower {
 			if (currentAttackCoolDown < 1) {
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCoolDown;
-				currentAttackCoolDown = (attackCoolDown * siphAttackCoolDown) / (attackCoolDown * siphAttackCoolDown);
+				currentAttackCoolDown = attackCoolDown;
 				if (attackCarryOver > 1) {
-					attackCarryOver--;
+					attackCarryOver -= 1;
 					currentAttackCoolDown--;
 				}
 			}
 		}
 	}
-
-	public void adjustTowerValues() {
-		adjustBaseStats();
+	
+	public void evolve(Tower source) {
+		type = TowerType.getUpgrade(source.type, type);
+		baseAttributeList = type.getAttributeList();
+		updateTowerChain();
+	}
+	
+	public void devolve() {
+		type = baseAttributeList.downgradeType;
+		baseAttributeList = type.getAttributeList();
+		updateTowerChain();
+	}
+	
+	public void updateTowerChain() {
 		adjustSiphonChain(this);
-		adjustProjectile();
 	}
 	
 	protected static void adjustSiphonChain(Tower t) {
-		if (t.siphoningTo == null) {
-			recursiveSiphon(t, 0);
-		} else {
-			Tower currentTower = t;
-			int counter = 1;
-			t.checked = true;
-			while (currentTower.siphoningTo != null) {
-				//while we are not at the head
-				currentTower = currentTower.siphoningTo;
-				//move back 1
-				counter++;
-				//we've seen one more
-				if (currentTower.checked) {
-					//if we've checked it before, we hit a cycle
-					recursiveSiphon(t, counter);
-				}
-				//mark that we checked it and keep going
-				currentTower.checked = true;
-			}
-			recursiveSiphon(currentTower, 0);
+		Tower current = t;
+		while (current.siphoningFrom != null) {
+			current = current.siphoningFrom;
 		}
+		BFSAdjust(current);
 	}
 	
-	protected static void adjustSiphonChain(Tower t) {
-		
-	}
-	
-	private static ArrayList<Tower> getSiphonChain()
-	
-	private static void recursiveSiphon(Tower t, int cycleLength) {
-		t.checked = false;
-		//set the siphoned stats to 0
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			t.siphDamageArray[i] = 0;
-			t.siphSlowArray[i] = 0;
-			t.siphSlowDurationArray[i] = 0;
-		}
-		t.siphRange = 0;
-		t.siphFireRate = 0;
-		t.siphAttackCoolDown = 0;
-		t.siphDamageSplash = 0;
-		t.siphEffectSplash = 0;
-		t.siphSplashRadius = 0;
-		
-		if (cycleLength != 0) {
-			//It's a cycle
-			Tower currentTower = t;
-			int counter = cycleLength;
-			//Aggregate the stats we are giving out
-			while (counter != 0) {
-				currentTower.checked = false;
-				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-					t.siphDamageArray[i] += currentTower.damageArray[i];
-					t.siphSlowArray[i] += currentTower.slowArray[i];
-					t.siphSlowDurationArray[i] += currentTower.slowDurationArray[i];
-				}
-				t.siphRange += currentTower.range;
-				t.siphFireRate += currentTower.fireRate;
-				t.siphAttackCoolDown += currentTower.attackCoolDown;
-				t.siphDamageSplash += currentTower.damageSplash;
-				t.siphEffectSplash += currentTower.effectSplash;
-				t.siphSplashRadius += currentTower.splashRadius;
-				currentTower = currentTower.siphoningFrom;
-				counter--;
-			}
-			//stats per tower (could also cycle through and subtract for each tower
+	private static void BFSAdjust(Tower root) {
+		Queue<Tower> openList = new LinkedList<Tower>();
+		openList.addAll(root.siphoningTo);
+		Tower current;
+		Tower sf;
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			current.adjustBaseStats();
+			openList.addAll(current.siphoningTo);
+			sf = current.siphoningFrom;
 			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-				t.siphDamageArray[i] /= cycleLength;
-				t.siphSlowArray[i] /= cycleLength;
-				t.siphSlowDurationArray[i] /= cycleLength;
+				current.damageArray[i] += (int) (sf.damageArray[i] * Constants.SIPHON_BONUS_MODIFIER);
+				current.slowArray[i] += sf.slowArray[i] * Constants.SIPHON_BONUS_MODIFIER;
+				current.slowDurationArray[i] += (int) ((sf.slowDurationArray[i] * Constants.SIPHON_BONUS_MODIFIER) / 2);
 			}
-			t.siphRange /= cycleLength;
-			t.targetArea.radius = t.range + t.siphRange;
-			t.siphFireRate /= cycleLength;
-			t.siphAttackCoolDown /= cycleLength;
-			t.siphDamageSplash /= cycleLength;
-			t.siphEffectSplash /= cycleLength;
-			t.siphSplashRadius /= cycleLength;
+			//TODO find a good equation for range siphoning
+			current.range = Math.max(current.range, (current.range + sf.range) / 2);//should I really max this?
+			current.targetArea.radius = current.range;
 			
-			counter = cycleLength - 1;
-			currentTower = t.siphoningFrom;
-			while (counter != 0) {
-				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-					currentTower.siphDamageArray[i] = t.siphDamageArray[i];
-					currentTower.siphSlowArray[i] = t.siphSlowArray[i];
-					currentTower.siphSlowDurationArray[i] = t.siphSlowDurationArray[i];
-				}
-				currentTower.siphRange = t.siphRange;
-				currentTower.targetArea.radius = currentTower.range + currentTower.siphRange;
-				currentTower.siphFireRate = t.siphFireRate;
-				currentTower.siphAttackCoolDown = t.siphAttackCoolDown;
-				currentTower.siphDamageSplash = t.siphDamageSplash;
-				currentTower.siphEffectSplash = t.siphEffectSplash;
-				currentTower.siphSplashRadius = t.siphSplashRadius;
-				currentTower = currentTower.siphoningFrom;
-				counter--;
-			}
-		} else {
-			Tower sf = t.siphoningFrom;
-			//we are not in a cycle and we can just recurse normally
-			if (sf == null) {
-				return;
-			}
-			recursiveSiphon(sf, 0);
-			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-				t.siphDamageArray[i] = (int) ((sf.damageArray[i] + sf.siphDamageArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
-				t.siphSlowArray[i] = (sf.slowArray[i] + sf.siphSlowArray[i]) * Constants.SIPHON_BONUS_MODIFIER;
-				t.siphSlowDurationArray[i] = (int) ((sf.slowDurationArray[i] + sf.siphSlowDurationArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
-			}
-			t.siphRange = (sf.range + sf.siphRange) * Constants.SIPHON_BONUS_MODIFIER;
-			t.targetArea.radius = t.range + t.siphRange;
-			t.siphFireRate = (int) ((sf.fireRate + sf.siphFireRate) * Constants.SIPHON_BONUS_MODIFIER);
-			t.siphAttackCoolDown = (int) ((sf.attackCoolDown + sf.siphAttackCoolDown) * Constants.SIPHON_BONUS_MODIFIER);
-			t.siphDamageSplash = (sf.damageSplash + sf.siphDamageSplash) * Constants.SIPHON_BONUS_MODIFIER;
-			t.siphEffectSplash = (sf.effectSplash + sf.siphEffectSplash) * Constants.SIPHON_BONUS_MODIFIER;
-			t.siphSplashRadius = (sf.splashRadius + sf.siphSplashRadius) * Constants.SIPHON_BONUS_MODIFIER;
+			//TODO find a good equation for fire rate siphoning
+			current.fireRate = (int) ((sf.fireRate + current.fireRate) / 2);
+			current.damageSplash += sf.damageSplash * Constants.SIPHON_BONUS_MODIFIER;
+			current.effectSplash += sf.effectSplash * Constants.SIPHON_BONUS_MODIFIER;
+			current.splashRadius += sf.splashRadius * Constants.SIPHON_BONUS_MODIFIER;
+			current.adjustTalentStats();
+			current.adjustUpgradeStats();
+			current.adjustProjectileStats();
 		}
 	}
-	
 	
 	protected void adjustBaseStats() {
-		slowArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlow;
-		damageArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseElementalDamage;
-		damageArray[Constants.NUM_DAMAGE_TYPES - 1] = baseAttributeList.basePhysicalDamage;
-		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlowDuration;
-		fireRate = baseAttributeList.baseFireRate;
-		attackCoolDown = baseAttributeList.baseAttackCoolDown;
-		damageSplash = baseAttributeList.baseDamageSplash;
-		effectSplash = baseAttributeList.baseEffectSplash;
-		splashRadius = baseAttributeList.baseSplashRadius;
-		range = baseAttributeList.baseRange;
-		//TODO handle talents
-		//apply all the upgrades that we have purchased
+		slowArray[baseAttributeList.mainDamageType.ordinal()] 			= baseAttributeList.baseSlow;
+		damageArray[baseAttributeList.mainDamageType.ordinal()] 		= baseAttributeList.baseElementalDamage;
+		damageArray[Constants.NUM_DAMAGE_TYPES - 1] 					= baseAttributeList.basePhysicalDamage;
+		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] 	= baseAttributeList.baseSlowDuration;
+		fireRate 														= baseAttributeList.baseFireRate;
+		attackCoolDown 													= baseAttributeList.baseAttackCoolDown;
+		damageSplash 													= baseAttributeList.baseDamageSplash;
+		effectSplash													= baseAttributeList.baseEffectSplash;
+		splashRadius													= baseAttributeList.baseSplashRadius;
+		range 															= baseAttributeList.baseRange;
+		hitsAir															= baseAttributeList.hitsAir;
+		hitsGround														= baseAttributeList.hitsGround;
+		attackCarryOver													= 0;
+		currentAttackCoolDown											= 0;
+	}
+	
+	private void adjustUpgradeStats() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int track = 0; track < baseAttributeList.upgrades.length; track++) {
-				for (int uNum = 0; uNum < baseAttributeList.upgrades[track].length; uNum++) {
+			for (int track = 0; track < Constants.NUM_UPGRADE_PATHS; track++) {
+				for (int uNum = 0; uNum < Constants.UPGRADE_PATH_LENGTH; uNum++) {
 					if (progress[track][uNum]) {
 						 baseAttributeList.upgrades[track][uNum].upgrade(this);
 					}
 				}
 			}
 		}
+	}
+	
+	private void adjustTalentStats() {
 		
 	}
 	
 	//this should be called on any time we make changes to the tower
-	protected void adjustProjectile() {
+	private void adjustProjectileStats() {
 		baseProjectile = new Projectile(this);
 		baseProjectile.targetingType  = baseAttributeList.targetingType;
 		baseProjectile.collisionType  = baseAttributeList.collisionType;
 		baseProjectile.travelType 	  = baseAttributeList.travelType;
-		DamageType damageType = baseAttributeList.mainDamageType;
+		DamageType damageType 		  = baseAttributeList.mainDamageType;
+		baseProjectile.splashRadius   = splashRadius;
 		ProjectileEffect effect;
-		baseProjectile.splashRadius = splashRadius;
+		
 		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			if (damageArray[i] + siphDamageArray[i] != 0) {
-				effect = new Damage(damageArray[i] + siphDamageArray[i], DamageType.values()[i]);
+			if (damageArray[i] != 0) {
+				effect = new Damage(damageArray[i], DamageType.values()[i]);
 				baseProjectile.addEffect(effect);
-				if (damageSplash + siphDamageSplash != 0) {
-					effect = new Damage((damageArray[i] + siphDamageArray[i]) * (damageSplash + siphDamageSplash), DamageType.values()[i]);
+				if (damageSplash != 0) {
+					effect = new Damage(damageArray[i] * damageSplash, DamageType.values()[i]);
 					baseProjectile.addSplashEffect(effect);
 				}
 			}
-			if (slowArray[i] + siphSlowArray[i] != 0) {
-				effect = new Slow(slowDurationArray[i] + siphSlowDurationArray[i], slowArray[i] + siphSlowArray[i], DamageType.values()[i]);
+			if (slowArray[i] != 0) {
+				effect = new Slow(slowDurationArray[i], slowArray[i], DamageType.values()[i]);
 				baseProjectile.addEffect(effect);
-				if (effectSplash + siphEffectSplash != 0) {
-					effect = new Slow((slowDurationArray[i] + siphSlowDurationArray[i])/ 2, (slowArray[i] + siphSlowArray[i]) * (effectSplash + siphEffectSplash), DamageType.values()[i]);
+				if (effectSplash != 0) {
+					effect = new Slow(slowDurationArray[i], slowArray[i] * effectSplash, DamageType.values()[i]);
 					baseProjectile.addSplashEffect(effect);
 				}
 			}
 		}
 		//TODO this line will probably disappear when unique effects are added
-		if (snareDuration != 0) {
-			effect = new Snare(snareDuration, 0, damageType);
-			baseProjectile.addEffect(effect);
-		}
+//		if (snareDuration != 0) {
+//			effect = new Snare(snareDuration, 0, damageType);
+//			baseProjectile.addEffect(effect);
+//		}
+		//TODO this might change in baseattributelist
 		//Set the speed
 		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
 	}
 	
-
-	//TODO Upgrades
 	/**
 	 * 
 	 * @param path - 1 or 0 depending on the upgrade path
 	 */
 	public void upgrade(int track) {
-		for (int i = 0; i < upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track].length; i++) {
+		for (int i = 0; i < Constants.UPGRADE_PATH_LENGTH; i++) {
 			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i]) {
 				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i] = true;
-				baseAttributeList.upgrades[track][i].upgrade(this);
-				adjustTowerValues();
+				updateTowerChain();
 				return;
 			}
 		}
 	}
 	
-	public boolean canUpgrade(int track) {
-		//TODO something to handle cost
+	/**
+	 * 
+	 * @param track - Each tower has two upgrade tracks, and this specifies whether it is the upper (0), or lower (1) track that we want to upgrade
+	 * @param playerGold - This is the amount of gold that the player has. This is passed in to be more clear about what the boolean returned from this function will mean
+	 * @return A boolean value specifying whether the given track can be upgraded both in terms of whether the upgrade is available, and if the player has enough gold
+	 */
+	public boolean canUpgrade(int track, int playerGold) {
 		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
 			return false;
 		} else {
-			return upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][baseAttributeList.upgrades[0].length];
+			int sfType = siphoningFrom.baseAttributeList.downgradeType.ordinal();
+			for (int i = 0; i < Constants.UPGRADE_PATH_LENGTH; i++) {
+				if (!upgradeTracks[sfType][track][i]) {
+					if (baseAttributeList.upgrades[track][i].baseCost <= playerGold) {
+						return true;
+					}
+					return false;
+				}
+			}
+			return false;
 		}
 	}
 	

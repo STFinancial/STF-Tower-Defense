@@ -21,7 +21,6 @@ import utilities.Circle;
 import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
 import utilities.PathFinder;
-import utilities.TowerHelper;
 
 /*
  * Executes main game logic loop
@@ -34,7 +33,8 @@ public class Level {
 
 	public int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	public int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
-
+	public int currentTowerID = 0;
+	
 	public int gold = 500;
 	public int health = 100;
 	int nextSpawnTick = -1;
@@ -43,7 +43,6 @@ public class Level {
 
 	//Currently loaded/active units
 	public ArrayList<Tower> towers = new ArrayList<Tower>();
-	public TowerHelper towerHelper = new TowerHelper();
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
@@ -195,6 +194,7 @@ public class Level {
 	//GUI should call this method to build towers
 	public Tower buyTower(TowerType type, int y, int x) {
 		Tower t = buildTower(type, y, x);
+		//TODO this needs to be affected by global talents
 		gold -= type.getCost();
 		return t;
 	}
@@ -202,7 +202,7 @@ public class Level {
 	private Tower buildTower(TowerType type, int y, int x) {
 		Tower t;
 		Tile tile = map.getTile(y, x);
-		t = new Tower(this, tile, type);
+		t = new Tower(this, tile, type, currentTowerID++);
 		towers.add(t);
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
@@ -210,54 +210,34 @@ public class Level {
 			}
 		}
 		updatePath();
-		t.adjustTowerValues();
+		t.updateTowerChain();
 		newEvent(GameEventType.TOWER_CREATED, t);
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
 
-	//TODO need an event so that the GUI knows it can change the tower graphic
-	//But I think it can just take the type before and after and change it.
-	public Tower unsiphonTower(Tower t) {
-		Tower sf = t.siphoningFrom;
-		sf.siphoningFrom.siphoningTo = null;
-		sf.siphoningFrom = null;
-		sf.adjustTowerValues();
-		t.type = t.baseAttributeList.downgradeType;
-		//TODO preserve upgrade levels and do damage calculations
-		boolean[][][] upgradeTracks = t.upgradeTracks;
-		razeTower(t);
-		t = buildTower(t.type, t.y, t.x);
-		t.upgradeTracks = upgradeTracks;
-		
-		return t;
+	public Tower unsiphonTower(Tower source, Tower destination) {
+		source.siphoningTo.remove(destination);
+		destination.devolve();
+		newEvent(GameEventType.SIPHON_CHANGED, destination);
+		return destination;
 	}
 
-	public void siphonTower(Tower siphonTo, Tower siphonFrom) {
-		TowerType newType = null;
-		if (siphonFrom.type.isBaseType()) {
-			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type);
-		} else {
-			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type.getAttributeList().downgradeType);
-		}
-		//TODO preserve upgrade levels and do damage calculations
-		boolean[][][] upgradeTracks = siphonTo.upgradeTracks;
-		razeTower(siphonTo);
-		Tower t = buildTower(newType, siphonTo.y, siphonTo.x);
-		t.upgradeTracks = upgradeTracks;
-		t.siphoningFrom = siphonFrom;
-		t.siphoningTo = null;
-		siphonFrom.siphoningTo = t;
-		t.adjustTowerValues();
+	public Tower siphonTower(Tower source, Tower destination) {
+		source.siphoningTo.add(destination);
+		destination.siphoningFrom = source;
+		destination.evolve(source);
+		newEvent(GameEventType.SIPHON_CHANGED, destination);
+		return destination;
 	}
 
 	//Can be called from App
-	public void upgradeTower(Tower t, int index) {
-		t.upgrade(index);
+	public void upgradeTower(Tower t, int track) {
+		t.upgrade(track);
 	}
 
-	public boolean canSellTower(Tower t) {
-		return t.siphoningTo == null;
-	}
+//	public boolean canSellTower(Tower t) {
+//		return t.siphoningTo == null;
+//	}
 	
 	//GUI should call this method
 	public void sellTower(Tower t) {
@@ -277,7 +257,6 @@ public class Level {
 			}
 		}
 		updatePath();
-
 		newEvent(GameEventType.TOWER_DESTROYED, t);
 	}
 
