@@ -1,4 +1,4 @@
-package projectiles;
+package projectileeffects;
 
 import creeps.Creep;
 import creeps.Creep.CreepEffect;

@@ -3,121 +3,87 @@ package projectiles;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import levels.Level;
+
+import projectileeffects.AffixModifier;
+import projectileeffects.CreepModifierEffect;
+import projectileeffects.Damage;
+import projectileeffects.ProjectileEffect;
+import projectileeffects.Slow;
+
 import towers.Tower;
 import utilities.Circle;
+import utilities.Constants;
 import utilities.TrigHelper;
 import creeps.Creep;
+import creeps.DamageType;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
  * as well as tower that fired the projectile. lastly contains the projectile effect which happens when the projectile lands or times out
  * PERHAPS an additional item for stuff like points (bullets) vs rings (aoe circle) vs cones (Flamethrower), or seperate class?
  * Also possibly a second class for passive boost from towers like attack speed in radius
  */
-public class Projectile {
+public abstract class Projectile {
 	public Tower parent;
 	public float x, y;
 	public float currentSpeed, speed;
 	public float size = .01f;
+	public float splashRadius;
 	public Circle hitBox;
 	
-	public boolean dud = false; //When creep is killed by something else or escapes before contact;
-	float targetX, targetY; //For ground spot target towers, in Tile coordinates
+	public boolean dud; //When creep is killed by something else or escapes before contact;
 	public Creep targetCreep;
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
-	public float splashRadius = 0;
-	public TargetingType targetingType;
-	public TravelType travelType;
-	public CollisionType collisionType;
 	
 	ArrayList<ProjectileEffect> creepEffects;
 	ArrayList<ProjectileEffect> splashEffects;
-	ArrayList<ProjectileEffect> modEffects;
 	public AffixModifier multiplier;
 	
+	protected Projectile() {
+		dud = false;
+	}
+	
 	public Projectile(Tower parent) {
-		this.parent = parent;
+		dud = false;
 		this.x = parent.centerX;
 		this.y = parent.centerY;
-		//targetsCreep = parent.targetsCreep;
-		targetX = parent.targetX;
-		targetY = parent.targetY;
-		targetCreep = parent.targetCreep;
-		targetAngle = parent.targetAngle;
+		splashRadius = parent.splashRadius;
+		hitBox = new Circle(x, y, size);
 		creepEffects = new ArrayList<ProjectileEffect>();
 		splashEffects = new ArrayList<ProjectileEffect>();
-		modEffects = new ArrayList<ProjectileEffect>();
-		hitBox = new Circle(x, y, size);
+		targetAngle = parent.targetAngle;
+		this.parent = parent;
+		multiplier = new AffixModifier();
+		addGeneralEffects();
+		addSpecificEffects();
 	}
 	
-	public Projectile clone() {
-		Projectile p = new Projectile(parent);
-		p.creepEffects.addAll(creepEffects);
-		p.splashEffects.addAll(splashEffects);
-		for (ProjectileEffect pe: modEffects) {
-			p.addEffect(pe);
-		}
-		p.currentSpeed = p.speed = speed; //TODO this logic might need to change if we have projectiles that speed up
-		p.splashRadius = splashRadius;
-		p.parent = parent;
-		p.multiplier = multiplier;
-		p.targetingType = targetingType;
-		p.collisionType = collisionType;
-		p.travelType = travelType;
-		return p;
-	}
-
-	public void addEffect(ProjectileEffect effect) {
-		if (effect instanceof CreepModifierEffect) {
-			creepEffects.add(effect);
-		} else if (effect instanceof ProjectileModifierEffect) {
-			((ProjectileModifierEffect) effect).applyEffectToProjectile(this);
-			modEffects.add(effect);
-		}
-		
-	}
-	
-	public void addSplashEffect(ProjectileEffect effect) {
-		splashEffects.add(effect);
-	}
-
-	public void applyEffects(Creep creep) {
-		creep.addAllEffects(creepEffects);
-	}
-	
-	public void update(){
-		if (targetingType == TargetingType.CREEP) {
-			if (targetCreep != null) {
-				if (targetCreep.isDead()) {
-					dud = true;
-					return;
-				} else {
-					targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+	private void addGeneralEffects() {
+		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+			if (parent.damageArray[i] != 0) {
+				creepEffects.add(new Damage(parent.damageArray[i], DamageType.values()[i]));
+				if (parent.damageSplash != 0) {
+					splashEffects.add(new Damage(parent.damageArray[i] * parent.damageSplash, DamageType.values()[i]));
 				}
-			} else {
-				dud = true;
-				return;
+			}
+			if (parent.slowArray[i] != 0) {
+				creepEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i], DamageType.values()[i]));
+				if (parent.effectSplash != 0) {
+					splashEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i] * parent.effectSplash, DamageType.values()[i]));
+				}
 			}
 		}
-		x -= Math.cos(targetAngle) * currentSpeed;
-		y -= Math.sin(targetAngle) * currentSpeed;
-		hitBox.x = x;
-		hitBox.y = y;
+		//TODO this might change in baseattributelist... also we might change the size somewhere
+		currentSpeed = speed = .20f;
 	}
 	
-	public boolean isDone(){
-		if (dud) {
-			return true;
-		}
-		if (targetingType == TargetingType.CREEP) {
-			return hitBox.intersects(targetCreep.hitBox);
-		}
-		//TODO add area target part
-		return false;
-	}
+	public abstract Projectile clone();
+	
+	public abstract void update();
+	
+	public abstract boolean isDone();
+	
+	public abstract void detonate(Level level);
 
-	public void applySplashEffects(HashSet<Creep> creepInRange) {
-		for (Creep c: creepInRange) {
-			c.addAllEffects(splashEffects);
-		}
-	}
+	protected abstract void addSpecificEffects();
 }

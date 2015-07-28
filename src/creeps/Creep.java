@@ -6,7 +6,7 @@ import java.util.HashSet;
 import levels.Path;
 import maps.DirectionType;
 import maps.Vertex;
-import projectiles.ProjectileEffect;
+import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 
 public class Creep {

@@ -15,7 +15,6 @@ import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
-import projectiles.TargetingType;
 import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
@@ -131,21 +130,7 @@ public class Level {
 	}
 
 	private void detonateProjectile(Projectile p) {
-		//Check for aoe and complicated shit
-		if (p.targetingType == TargetingType.CREEP) {
-			//Targeted a specific minion
-			p.applyEffects(p.targetCreep);
-			p.applySplashEffects(getCreepInRange(p, p.splashRadius));
-			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
-		} else if (p.targetingType == TargetingType.AREA) {
-			//Targeted an area
-			//TODO: currently applies normal and splash effects, is this wanted?
-			HashSet<Creep> creepsInRange = getCreepInRange(p.parent.placeToTarget);
-			for (Creep c: creepsInRange) {
-				p.applyEffects(c);
-			}
-			p.applySplashEffects(creepsInRange);
-		}
+		p.detonate(this);
 		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
 	}
 
@@ -202,32 +187,50 @@ public class Level {
 	private Tower buildTower(TowerType type, int y, int x) {
 		Tower t;
 		Tile tile = map.getTile(y, x);
-		t = new Tower(this, tile, type, currentTowerID++);
+		t = TowerFactory.generateTower(this, tile, type, currentTowerID++);
+		constructTower(t);
+		updatePath();
+		t.updateTowerChain();
+		newEvent(GameEventType.TOWER_CREATED, t);
+		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
+	}
+	
+	private void constructTower(Tower t) {
 		towers.add(t);
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).addTower(t);
 			}
 		}
-		updatePath();
-		t.updateTowerChain();
-		newEvent(GameEventType.TOWER_CREATED, t);
-		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
 
 	public Tower unsiphonTower(Tower source, Tower destination) {
 		source.siphoningTo.remove(destination);
-		destination.devolve();
-		newEvent(GameEventType.SIPHON_CHANGED, destination);
-		return destination;
+		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, destination.baseAttributeList.downgradeType, destination.towerID);
+		newDest.upgradeTracks = destination.upgradeTracks;
+		newDest.siphoningTo = destination.siphoningTo;
+		destroyTower(destination);
+		newEvent(GameEventType.TOWER_DESTROYED, destination);
+		constructTower(newDest);
+		newDest.updateTowerChain();
+		source.updateTowerChain();
+		newEvent(GameEventType.TOWER_CREATED, newDest);
+		return newDest;
 	}
 
 	public Tower siphonTower(Tower source, Tower destination) {
 		source.siphoningTo.add(destination);
-		destination.siphoningFrom = source;
-		destination.evolve(source);
-		newEvent(GameEventType.SIPHON_CHANGED, destination);
-		return destination;
+		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, TowerType.getUpgrade(source.type, destination.type), destination.towerID);
+		newDest.upgradeTracks = destination.upgradeTracks;
+		newDest.siphoningFrom = source;
+		newDest.siphoningTo = destination.siphoningTo;
+		destroyTower(destination);
+		newEvent(GameEventType.TOWER_DESTROYED, destination);
+		constructTower(newDest);
+		newDest.updateTowerChain();
+		source.updateTowerChain();
+		newEvent(GameEventType.TOWER_CREATED, newDest);
+		return newDest;
 	}
 
 	//Can be called from App
@@ -250,14 +253,18 @@ public class Level {
 	}
 
 	private void razeTower(Tower t) {
+		destroyTower(t);
+		updatePath();
+		newEvent(GameEventType.TOWER_DESTROYED, t);
+	}
+	
+	private void destroyTower(Tower t) {
 		towers.remove(t);
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).removeTower();
 			}
 		}
-		updatePath();
-		newEvent(GameEventType.TOWER_DESTROYED, t);
 	}
 
 	public void updatePath() {

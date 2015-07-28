@@ -93,14 +93,14 @@ public enum TowerType {
 	//TODO this is sort of the blueprint for how the upgrades are defined
 	//TODO these functions are called by the upgrade method in the tower class
 	EARTH_EARTH (new BaseAttributeList(){{
+		//does an AOE earthquake?
 		name				= "Gaia";
 		downgradeType 		= EARTH;
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{text 		= "Double the Splash Effectiveness";
-						 baseCost   = 500;
-						 isBase 	= false;}
+						 baseCost   = 500;}
 						public void upgrade(Tower t) {
 							t.damageSplash *= 2;
 							t.effectSplash *= 2;
@@ -110,8 +110,7 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{text 		= "Double the Physical Damage";
-						baseCost 	= 600;
-						isBase		= false;}
+						baseCost 	= 600;}
 						public void upgrade(Tower t) {
 							t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2;
 						}
@@ -127,11 +126,11 @@ public enum TowerType {
 	EARTH_WATER (new BaseAttributeList(){{
 		//this will do rupture spikes on a selected area
 		name 				= "Stalagmite";
-		targetingType		= TargetingType.AREA;
 		downgradeType 		= EARTH;
 	}}),
 	EARTH_WIND (new BaseAttributeList(){{
 		//has enormous splash radius
+		//basically "explodes" outward
 		downgradeType 		= EARTH;
 	}}), 
 	FIRE_EARTH (new BaseAttributeList(){{
@@ -144,12 +143,12 @@ public enum TowerType {
 		downgradeType 		= FIRE;
 	}}),  
 	FIRE_WATER (new BaseAttributeList(){{
-		//this tower fires a laser thing that passes through enemies and goes a fixed distance
+		//attacks ignore all types of defenses
 		name				= "Plasma";
 		downgradeType 		= FIRE;
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
-		//attacks ignore all types of defenses
+		//this tower fires a laser thing that passes through enemies and goes a fixed distance
 		downgradeType 		= FIRE;
 	}}), 
 	WATER_EARTH (new BaseAttributeList(){{
@@ -179,7 +178,6 @@ public enum TowerType {
 		//this tower chains damage and removes shield (?)
 		name 				= "Lightning";
 		downgradeType 		= WIND;
-		
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		//slows enemies and reduces toughness
@@ -190,7 +188,6 @@ public enum TowerType {
 		//this tower does a pushback (is this too hard?)
 		name 				= "Gale";
 		downgradeType 		= WIND;
-		
 	}});
 	
 	private BaseAttributeList baseAttributeList;

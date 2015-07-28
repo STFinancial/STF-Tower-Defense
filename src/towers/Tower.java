@@ -7,16 +7,16 @@ import java.util.Queue;
 import levels.Level;
 import maps.Tile;
 import creeps.Creep;
-import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
 import utilities.Constants;
 import utilities.TrigHelper;
 
-public class Tower {
+public abstract class Tower {
 	//Positional Details
 	protected Level level;
 	public int x, y; //Top Left corner in Tile Coordinates
+	public Tile topLeft;
 	public float centerX, centerY;
 	public Circle targetArea;
 	public int width;
@@ -28,7 +28,6 @@ public class Tower {
 	public TargetingModeType targetingType;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
 	public Creep targetCreep;
-	public Circle placeToTarget;
 	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
 
 	//Misc.
@@ -56,7 +55,6 @@ public class Tower {
 	public float effectSplash;
 	public float splashRadius;
 	public float range;
-//	public int snareDuration = 0;
 	public boolean hitsAir;
 	public boolean hitsGround;
 	
@@ -73,7 +71,7 @@ public class Tower {
 
 	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		this.baseAttributeList = type.getAttributeList();
+		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][Constants.NUM_UPGRADE_PATHS][Constants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
@@ -83,6 +81,7 @@ public class Tower {
 		this.type = baseAttributeList.type;
 		this.x = topLeftTile.x;
 		this.y = topLeftTile.y;
+		this.topLeft = topLeftTile;
 		this.centerX = x + width / 2f;
 		this.centerY = y + height / 2f;
 		this.targetArea = new Circle(centerX, centerY, range);
@@ -98,6 +97,7 @@ public class Tower {
 		return duplicateProjectile(baseProjectile);
 	}
 
+	//TODO this needs to be reworked
 	public void update() {
 		currentAttackCoolDown--;
 		targetCreep = level.findTargetCreep(this);
@@ -118,18 +118,6 @@ public class Tower {
 				}
 			}
 		}
-	}
-	
-	public void evolve(Tower source) {
-		type = TowerType.getUpgrade(source.type, type);
-		baseAttributeList = type.getAttributeList();
-		updateTowerChain();
-	}
-	
-	public void devolve() {
-		type = baseAttributeList.downgradeType;
-		baseAttributeList = type.getAttributeList();
-		updateTowerChain();
 	}
 	
 	public void updateTowerChain() {
@@ -208,43 +196,7 @@ public class Tower {
 		
 	}
 	
-	//this should be called on any time we make changes to the tower
-	private void adjustProjectileStats() {
-		baseProjectile = new Projectile(this);
-		baseProjectile.targetingType  = baseAttributeList.targetingType;
-		baseProjectile.collisionType  = baseAttributeList.collisionType;
-		baseProjectile.travelType 	  = baseAttributeList.travelType;
-		DamageType damageType 		  = baseAttributeList.mainDamageType;
-		baseProjectile.splashRadius   = splashRadius;
-		ProjectileEffect effect;
-		
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			if (damageArray[i] != 0) {
-				effect = new Damage(damageArray[i], DamageType.values()[i]);
-				baseProjectile.addEffect(effect);
-				if (damageSplash != 0) {
-					effect = new Damage(damageArray[i] * damageSplash, DamageType.values()[i]);
-					baseProjectile.addSplashEffect(effect);
-				}
-			}
-			if (slowArray[i] != 0) {
-				effect = new Slow(slowDurationArray[i], slowArray[i], DamageType.values()[i]);
-				baseProjectile.addEffect(effect);
-				if (effectSplash != 0) {
-					effect = new Slow(slowDurationArray[i], slowArray[i] * effectSplash, DamageType.values()[i]);
-					baseProjectile.addSplashEffect(effect);
-				}
-			}
-		}
-		//TODO this line will probably disappear when unique effects are added
-//		if (snareDuration != 0) {
-//			effect = new Snare(snareDuration, 0, damageType);
-//			baseProjectile.addEffect(effect);
-//		}
-		//TODO this might change in baseattributelist
-		//Set the speed
-		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
-	}
+	protected abstract void adjustProjectileStats();
 	
 	/**
 	 * 
@@ -283,10 +235,6 @@ public class Tower {
 		}
 	}
 	
-	public void setTargetArea(float y, float x) {
-		placeToTarget = new Circle(x, y, splashRadius);
-	}
-
 	protected void updateAngle(Creep targetCreep) {
 		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}
