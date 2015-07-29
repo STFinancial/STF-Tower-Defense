@@ -117,24 +117,28 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Fault Lines";
 						 text 		= "Increase the base RANGE";
+						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+						 public void upgrade(Tower t) { t.range += 2; }
 					},
 					new Upgrade() {
 						{name		= "Tectonics";
 						 text 		= "Increase the base pulse rate";
+						 isBase		= true;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.baseAttributeList.baseFireRate -= 3; t.baseAttributeList.baseAttackCoolDown -= 3; }
+						 public void upgrade(Tower t) { t.fireRate -= 3; t.attackCoolDown -= 3; }
 					},
 					new Upgrade() {
 						{name		= "Channel the Earth";
 						 text 		= "Converts all PHYSICAL damage to EARTH damage";
+						 isBase		= false;
 						 baseCost   = 2000;}
 						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1]; t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] = 0; }
 					},
 					new Upgrade() {
 						{name		= "Living Earth";
 						 text 		= "All earth tiles deal EARTH damage in a circle around them";
+						 isBase		= false;
 						 baseCost   = 5000;}
 						 public void upgrade(Tower t) {  }
 					},
@@ -143,24 +147,28 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Hardened Earth";
 						 text 		= "Double the PHYSICAL Damage";
+						 isBase 	= false;
 						 baseCost 	= 600;}
 						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2; }
 					},
 					new Upgrade() {
 						{name		= "Fault Lines";
 						 text 		= "Increase the base RANGE";
+						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+						 public void upgrade(Tower t) { t.range += 2; }
 					},
 					new Upgrade() {
 						{name		= "Fragmentation";
 						 text 		= "Deal additional PHYSICAL damage as a bleed";
+						 isBase		= true;
 						 baseCost   = 2500;}
-						 public void upgrade(Tower t) { t.baseAttributeList.basePhysicalDamage += 50; }
+						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] += 50; }
 					},
 					new Upgrade() {
 						{name		= "Grievous Wound";
 						 text 		= "Creep affected by this Tower's bleed have reduced TOUGHNESS";
+						 isBase		= false;
 						 baseCost   = 5000;}
 						 public void upgrade(Tower t) {  }
 					},

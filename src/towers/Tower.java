@@ -73,6 +73,7 @@ public abstract class Tower implements Updatable {
 
 	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
+		//TODO since I changed the way base stats are modified I can remove this clone I think
 		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][Constants.NUM_UPGRADE_PATHS][Constants.UPGRADE_PATH_LENGTH];
 		this.level = level;
@@ -121,6 +122,7 @@ public abstract class Tower implements Updatable {
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			current.adjustBaseStats();
+			current.adjustBaseUpgradeStats();
 			openList.addAll(current.siphoningTo);
 			sf = current.siphoningFrom;
 			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
@@ -138,7 +140,7 @@ public abstract class Tower implements Updatable {
 			current.effectSplash += sf.effectSplash * Constants.SIPHON_BONUS_MODIFIER;
 			current.splashRadius += sf.splashRadius * Constants.SIPHON_BONUS_MODIFIER;
 			current.adjustTalentStats();
-			current.adjustUpgradeStats();
+			current.adjustNonBaseUpgradeStats();
 			current.adjustProjectileStats();
 		}
 	}
@@ -160,12 +162,25 @@ public abstract class Tower implements Updatable {
 		currentAttackCoolDown											= 0;
 	}
 	
-	private void adjustUpgradeStats() {
+	private void adjustBaseUpgradeStats() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			for (int track = 0; track < Constants.NUM_UPGRADE_PATHS; track++) {
 				for (int uNum = 0; uNum < Constants.UPGRADE_PATH_LENGTH; uNum++) {
-					if (progress[track][uNum]) {
+					if (progress[track][uNum] && baseAttributeList.upgrades[track][uNum].isBase) {
+						 baseAttributeList.upgrades[track][uNum].upgrade(this);
+					}
+				}
+			}
+		}
+	}
+	
+	private void adjustNonBaseUpgradeStats() {
+		if (siphoningFrom != null) {
+			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+			for (int track = 0; track < Constants.NUM_UPGRADE_PATHS; track++) {
+				for (int uNum = 0; uNum < Constants.UPGRADE_PATH_LENGTH; uNum++) {
+					if (progress[track][uNum] && !baseAttributeList.upgrades[track][uNum].isBase) {
 						 baseAttributeList.upgrades[track][uNum].upgrade(this);
 					}
 				}

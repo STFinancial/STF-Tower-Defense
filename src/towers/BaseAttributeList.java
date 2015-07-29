@@ -1,15 +1,14 @@
 package towers;
 
-import java.lang.reflect.Constructor;
 
 import projectileeffects.ProjectileEffect;
-import projectiles.*;
 import creeps.DamageType;
 
 public class BaseAttributeList {
 	public abstract class Upgrade {
 		public String name;
 		public String text;
+		public boolean isBase;
 		public int baseCost;
 		public abstract void upgrade(Tower t);
 	}
