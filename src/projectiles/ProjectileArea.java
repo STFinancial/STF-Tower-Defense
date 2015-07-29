@@ -38,10 +38,4 @@ public class ProjectileArea extends Projectile {
 		
 	}
 
-	@Override
-	protected void addSpecificEffects() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

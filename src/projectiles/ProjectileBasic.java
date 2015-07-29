@@ -22,6 +22,7 @@ public class ProjectileBasic extends Projectile {
 	public Projectile clone() {
 		Projectile p = new ProjectileBasic();
 		p.parent = parent;
+		p.level = level;
 		p.creepEffects = creepEffects;
 		p.splashEffects = splashEffects;
 		p.hitBox = hitBox;
@@ -63,15 +64,13 @@ public class ProjectileBasic extends Projectile {
 
 	@Override
 	public void detonate(Level level) {
+		if (dud) {
+			return;
+		}
 		targetCreep.addAllEffects(creepEffects);
 		for (Creep c: level.getCreepInRange(this, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
-	}
-
-	@Override
-	protected void addSpecificEffects() {
-		
 	}
 
 }

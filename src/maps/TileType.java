@@ -5,7 +5,8 @@ package maps;
 public enum TileType {
 	
 	//ground traversable, air traversable, buildable
-	LAND (true, true, true), 
+	LAND (true, true, true),
+	EARTH (false, false, false), //This is used for the earth tower functionality
 	GRAVEL (true, true, false), 
 	VOID (false, true, false),
 	BLOCK (false, false, false), //What functional purpose does this add compared to EDGE

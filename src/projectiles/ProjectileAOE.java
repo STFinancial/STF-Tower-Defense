@@ -11,40 +11,47 @@ import creeps.Creep;
 //This is like the tack tower from bloons
 public class ProjectileAOE extends Projectile {
 
+	public ProjectileAOE() {
+		
+	}
+	
 	public ProjectileAOE(Tower parent) {
 		super(parent);
-		// TODO Auto-generated constructor stub
+		speed = currentSpeed = 0f;
+		
 	}
 
 	@Override
 	public Projectile clone() {
-		// TODO Auto-generated method stub
-		return null;
+		Projectile p = new ProjectileAOE();
+		p.parent = parent;
+		p.level = level;
+		p.creepEffects = creepEffects;
+		p.splashEffects = splashEffects;
+		p.x = parent.centerX;
+		p.y = parent.centerY;
+		p.splashRadius = splashRadius;
+		p.multiplier = multiplier;
+		return p;
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	@Override
-	protected void addSpecificEffects() {
-		// TODO Auto-generated method stub
-
+		return true;
 	}
 
 	@Override
 	public void detonate(Level level) {
-		// TODO Auto-generated method stub
-		
+		//TODO: how do we want to handle splash effects with this projectile type
+		HashSet<Creep> creepInRange = level.getCreepInRange(this, parent.range);
+		for (Creep c: creepInRange) {
+			c.addAllEffects(creepEffects);
+		}
 	}
 
 }

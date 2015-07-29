@@ -11,17 +11,17 @@ public enum TowerType {
 		mainDamageType      = DamageType.EARTH;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 55;
+		basePhysicalDamage  = 70;
 		baseElementalDamage = 0;
-		baseSlowDuration	= 10;
+		baseSlowDuration	= 0;
 		baseCost			= 200;
 		baseFireRate		= 15f;
 		baseAttackCoolDown	= 15f;
-		baseDamageSplash	= 0.05f;
-		baseEffectSplash	= 0.05f;
-		baseSplashRadius	= 1f;
-		baseRange			= 7.5f;
-		baseSlow			= 0.10f;
+		baseDamageSplash	= 0.1f;
+		baseEffectSplash	= 0f;
+		baseSplashRadius	= 2f;
+		baseRange			= 6.5f;
+		baseSlow			= 0f;
 		hitsAir				= false;
 		hitsGround			= true;
 		upgrades			= null;
@@ -32,7 +32,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.FIRE;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 15;
+		basePhysicalDamage  = 25;
 		baseElementalDamage = 25;
 		baseSlowDuration	= 0;
 		baseCost			= 200;
@@ -40,7 +40,7 @@ public enum TowerType {
 		baseAttackCoolDown	= 12f;
 		baseDamageSplash	= 0.25f;
 		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 1f;
+		baseSplashRadius	= 0f;
 		baseRange			= 7.5f;
 		baseSlow			= 0;
 		hitsAir				= true;
@@ -83,7 +83,7 @@ public enum TowerType {
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0.10f;
 		baseSplashRadius	= 0f;
-		baseRange			= 7.5f;
+		baseRange			= 8.5f;
 		baseSlow			= 0f;
 		hitsAir				= true;
 		hitsGround			= true;
@@ -93,33 +93,82 @@ public enum TowerType {
 	//TODO this is sort of the blueprint for how the upgrades are defined
 	//TODO these functions are called by the upgrade method in the tower class
 	EARTH_EARTH (new BaseAttributeList(){{
-		//does an AOE earthquake?
+		//does an AOE earthquake? cannot hit flying
 		name				= "Gaia";
 		downgradeType 		= EARTH;
+		mainDamageType      = DamageType.EARTH;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		basePhysicalDamage  = 100;
+		baseElementalDamage = 0;
+		baseSlowDuration	= 10;
+		baseFireRate		= 15f;
+		baseAttackCoolDown	= 15f;
+		baseDamageSplash	= 0f;
+		baseEffectSplash	= 0f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;
+		hitsAir				= false;
+		hitsGround			= true;
+		additionalEffect    = null;
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{text 		= "Double the Splash Effectiveness";
+						{name		= "Fault Lines";
+						 text 		= "Increase the base RANGE";
+						 baseCost   = 400;}
+						 public void upgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+					},
+					new Upgrade() {
+						{name		= "Tectonics";
+						 text 		= "Increase the base pulse rate";
 						 baseCost   = 500;}
-						public void upgrade(Tower t) {
-							t.damageSplash *= 2;
-							t.effectSplash *= 2;
-						}
-					}
+						 public void upgrade(Tower t) { t.baseAttributeList.baseFireRate -= 3; t.baseAttributeList.baseAttackCoolDown -= 3; }
+					},
+					new Upgrade() {
+						{name		= "Channel the Earth";
+						 text 		= "Converts all PHYSICAL damage to EARTH damage";
+						 baseCost   = 2000;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1]; t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] = 0; }
+					},
+					new Upgrade() {
+						{name		= "Living Earth";
+						 text 		= "All earth tiles deal EARTH damage in a circle around them";
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) {  }
+					},
 				},
 				{
 					new Upgrade() {
-						{text 		= "Double the Physical Damage";
-						baseCost 	= 600;}
-						public void upgrade(Tower t) {
-							t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2;
-						}
-					}
+						{name		= "Hardened Earth";
+						 text 		= "Double the PHYSICAL Damage";
+						 baseCost 	= 600;}
+						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2; }
+					},
+					new Upgrade() {
+						{name		= "Fault Lines";
+						 text 		= "Increase the base RANGE";
+						 baseCost   = 400;}
+						 public void upgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+					},
+					new Upgrade() {
+						{name		= "Fragmentation";
+						 text 		= "Deal additional PHYSICAL damage as a bleed";
+						 baseCost   = 500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "Grievous Wound";
+						 text 		= "Creep affected by this Tower's bleed have reduced TOUGHNESS";
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) {  }
+					},
 				}
 		};
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
-		//does tons of damage
+		//does tons of damage and armor penetration at some point?
 		name 				= "Meteor";
 		downgradeType 		= EARTH;
 	}}),

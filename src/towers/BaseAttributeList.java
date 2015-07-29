@@ -8,6 +8,7 @@ import creeps.DamageType;
 
 public class BaseAttributeList {
 	public abstract class Upgrade {
+		public String name;
 		public String text;
 		public int baseCost;
 		public abstract void upgrade(Tower t);

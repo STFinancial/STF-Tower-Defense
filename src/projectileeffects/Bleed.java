@@ -1,17 +1,18 @@
 package projectileeffects;
 
+import projectiles.Projectile;
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
-public class Bleed extends CreepModifierEffect {
+public class Bleed extends ProjectileEffect {
 
-	public Bleed(int lifetime, float modifier, int timing, DamageType damageType) {
-		super(lifetime, modifier, timing, damageType);
+	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
+		super(lifetime, modifier, timing, damageType, parent);
 	}
 
 	@Override
-	void applyEffectToCreep(Creep creep) {
+	public void applyEffect(Creep creep) {
 		float damageToDo = modifier - creep.toughness;
 		//TODO: should this be affected by toughness and shield?
 		

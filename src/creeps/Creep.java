@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import levels.Path;
+import levels.Updatable;
 import maps.DirectionType;
 import maps.Vertex;
 import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 
-public class Creep {
+public class Creep implements Updatable {
 	//Primary Stats
 	public int health;
 	public int toughness; //flat reduction for all types
@@ -139,9 +140,9 @@ public class Creep {
 		for (int i = 0; i < effects.size(); i++) {
 			CreepEffect e = effects.get(i);
 			if (e.timing != 0 && e.counter % e.timing == 0) {
-				e.projectileEffect.applyEffect(this, null);
+				e.projectileEffect.applyEffect(this);
 			} else if (e.timing == 0 && e.counter == 0) {
-				e.projectileEffect.applyEffect(this, null);
+				e.projectileEffect.applyEffect(this);
 			}
 			if (e.counter == e.duration) {
 				e.projectileEffect.onExpire(this);

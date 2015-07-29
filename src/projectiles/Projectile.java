@@ -1,12 +1,11 @@
 package projectiles;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import levels.Level;
+import levels.Updatable;
 
 import projectileeffects.AffixModifier;
-import projectileeffects.CreepModifierEffect;
 import projectileeffects.Damage;
 import projectileeffects.ProjectileEffect;
 import projectileeffects.Slow;
@@ -14,7 +13,6 @@ import projectileeffects.Slow;
 import towers.Tower;
 import utilities.Circle;
 import utilities.Constants;
-import utilities.TrigHelper;
 import creeps.Creep;
 import creeps.DamageType;
 /*
@@ -23,13 +21,21 @@ import creeps.DamageType;
  * PERHAPS an additional item for stuff like points (bullets) vs rings (aoe circle) vs cones (Flamethrower), or seperate class?
  * Also possibly a second class for passive boost from towers like attack speed in radius
  */
-public abstract class Projectile {
+public abstract class Projectile implements Updatable {
 	public Tower parent;
+	public Level level;
 	public float x, y;
 	public float currentSpeed, speed;
 	public float size = .01f;
 	public float splashRadius;
 	public Circle hitBox;
+	public float armorPenPercent = 0f;
+	public float armorPenFlat = 0;
+	public float resistPenPercent = 0f;
+	public float resistPenFlat = 0;
+	public float toughPenPercent = 0f;
+	public float toughPenFlat = 0;
+	public boolean ignoresShield;
 	
 	public boolean dud; //When creep is killed by something else or escapes before contact;
 	public Creep targetCreep;
@@ -44,6 +50,7 @@ public abstract class Projectile {
 	}
 	
 	public Projectile(Tower parent) {
+		level = parent.level;
 		dud = false;
 		this.x = parent.centerX;
 		this.y = parent.centerY;
@@ -55,21 +62,20 @@ public abstract class Projectile {
 		this.parent = parent;
 		multiplier = new AffixModifier();
 		addGeneralEffects();
-		addSpecificEffects();
 	}
 	
 	private void addGeneralEffects() {
 		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
 			if (parent.damageArray[i] != 0) {
-				creepEffects.add(new Damage(parent.damageArray[i], DamageType.values()[i]));
+				creepEffects.add(new Damage(parent.damageArray[i], DamageType.values()[i], this));
 				if (parent.damageSplash != 0) {
-					splashEffects.add(new Damage(parent.damageArray[i] * parent.damageSplash, DamageType.values()[i]));
+					splashEffects.add(new Damage(parent.damageArray[i] * parent.damageSplash, DamageType.values()[i], this));
 				}
 			}
 			if (parent.slowArray[i] != 0) {
-				creepEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i], DamageType.values()[i]));
+				creepEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i], DamageType.values()[i], this));
 				if (parent.effectSplash != 0) {
-					splashEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i] * parent.effectSplash, DamageType.values()[i]));
+					splashEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i] * parent.effectSplash, DamageType.values()[i], this));
 				}
 			}
 		}
@@ -85,5 +91,11 @@ public abstract class Projectile {
 	
 	public abstract void detonate(Level level);
 
-	protected abstract void addSpecificEffects();
+	public void addSpecificCreepEffect(ProjectileEffect effect) {
+		creepEffects.add(effect);
+	}
+	
+	public void addSpecificSplashEffect(ProjectileEffect effect) {
+		splashEffects.add(effect);
+	}
 }

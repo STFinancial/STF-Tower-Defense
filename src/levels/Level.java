@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import maps.Map;
+import maps.TileType;
 import maps.Vertex;
 import maps.VertexGraph;
 import creeps.Creep;
@@ -46,6 +47,10 @@ public class Level {
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
 	public Path groundPath, airPath, proposedGroundPath;
+	//This will change when we create and destroy new terrain
+	private HashSet<Circle> earthTiles = new HashSet<Circle>();
+	private HashSet<Creep> creepAdjacentToEarth = new HashSet<Creep>();
+	private boolean hasEarthEarth = false;
 
 	public ArrayList<GameEvent> events = new ArrayList<GameEvent>();
 	//Temp Variables for readability
@@ -60,6 +65,13 @@ public class Level {
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
 		this.player = player;
 		this.map = map;
+		for (int y = 0; y < map.height; y++) {
+			for (int x = 0; x < map.width; x++) {
+				if (map.getTileType(y, x) == TileType.EARTH) { 
+					earthTiles.add(new Circle(x + 0.5f, y + 0.5f, 1.5f));
+				}
+			}
+		}
 		this.creepWaves = creepWaves;
 		updatePath();
 	}
@@ -99,7 +111,10 @@ public class Level {
 				}
 			}
 		}
-
+		if (hasEarthEarth) {
+			updateCreepAdjacentToEarth();
+		}
+		
 		for (i = 0; i < projectiles.size(); i++) {
 			Projectile p = projectiles.get(i);
 			p.update();
@@ -196,6 +211,9 @@ public class Level {
 	}
 	
 	private void constructTower(Tower t) {
+		if (t.type == TowerType.EARTH_EARTH) {
+			hasEarthEarth = true;
+		}
 		towers.add(t);
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
@@ -260,6 +278,12 @@ public class Level {
 	
 	private void destroyTower(Tower t) {
 		towers.remove(t);
+		hasEarthEarth = false;
+		for (Tower tow: towers) {
+			if (tow.type == TowerType.EARTH_EARTH) {
+				hasEarthEarth = true;
+			}
+		}
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).removeTower();
@@ -348,6 +372,16 @@ public class Level {
 		return inRange;
 	}
 	
+	public HashSet<Creep> getCreepAdjacentToEarth() {
+		return creepAdjacentToEarth;
+	}
+	
+	private void updateCreepAdjacentToEarth() {
+		creepAdjacentToEarth.clear();
+		for (Circle c: earthTiles) {
+			creepAdjacentToEarth.addAll(getCreepInRange(c));
+		}
+	}
 
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);

@@ -1,5 +1,6 @@
 package projectileeffects;
 
+import projectiles.Projectile;
 import creeps.Creep;
 import creeps.Creep.CreepEffect;
 import creeps.DamageType;
@@ -9,15 +10,15 @@ import creeps.DamageType;
  * @author Timothy
  *
  */
-public class Disorient extends CreepModifierEffect {
+public class Disorient extends ProjectileEffect {
 	
-	public Disorient(int lifetime, float modifier, int timing, DamageType damageType) {
-		super(lifetime, modifier, timing, damageType);
+	public Disorient(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
+		super(lifetime, modifier, timing, damageType, parent);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	void applyEffectToCreep(Creep creep) {
+	public void applyEffect(Creep creep) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -27,5 +28,6 @@ public class Disorient extends CreepModifierEffect {
 		// TODO Auto-generated method stub
 		
 	}
+	
 	
 }

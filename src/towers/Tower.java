@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import levels.Level;
+import levels.Updatable;
 import maps.Tile;
 import creeps.Creep;
 import projectiles.*;
@@ -12,9 +13,9 @@ import utilities.Circle;
 import utilities.Constants;
 import utilities.TrigHelper;
 
-public abstract class Tower {
+public abstract class Tower implements Updatable {
 	//Positional Details
-	protected Level level;
+	public Level level;
 	public int x, y; //Top Left corner in Tile Coordinates
 	public Tile topLeft;
 	public float centerX, centerY;
@@ -97,28 +98,7 @@ public abstract class Tower {
 		return duplicateProjectile(baseProjectile);
 	}
 
-	//TODO this needs to be reworked
-	public void update() {
-		currentAttackCoolDown--;
-		targetCreep = level.findTargetCreep(this);
-//		if (baseAttributeList.targetsCreep) {
-//			targetCreep = level.findTargetCreep(this);
-//		} else {
-//			targetCreep = level.findTargetCreep(this);
-//		}
-		if (targetCreep != null) {
-			updateAngle(targetCreep);
-			if (currentAttackCoolDown < 1) {
-				level.addProjectile(fireProjectile());
-				attackCarryOver += 1 - currentAttackCoolDown;
-				currentAttackCoolDown = attackCoolDown;
-				if (attackCarryOver > 1) {
-					attackCarryOver -= 1;
-					currentAttackCoolDown--;
-				}
-			}
-		}
-	}
+	public abstract void update();
 	
 	public void updateTowerChain() {
 		adjustSiphonChain(this);

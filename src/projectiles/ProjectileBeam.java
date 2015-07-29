@@ -39,10 +39,4 @@ public class ProjectileBeam extends Projectile {
 
 	}
 
-	@Override
-	protected void addSpecificEffects() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

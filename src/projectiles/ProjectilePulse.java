@@ -40,10 +40,4 @@ public class ProjectilePulse extends Projectile {
 
 	}
 
-	@Override
-	protected void addSpecificEffects() {
-		// TODO Auto-generated method stub
-
-	}
-
 }
