@@ -1,6 +1,8 @@
 package towers;
 
 import creeps.DamageType;
+import projectileeffects.ArmorShred;
+import projectileeffects.Bleed;
 import projectileeffects.Detonation;
 import projectiles.ProjectileAOE;
 import levels.Level;
@@ -21,13 +23,13 @@ public class TowerEarthEarth extends Tower {
 			
 		}
 		if (progress[0][3]) {
-			
+			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * 0.1f, DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][2]) {
-			
+			baseProjectile.addSpecificCreepEffect(new Bleed(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] * (damageArray[DamageType.PHYSICAL.ordinal()] / (damageArray[DamageType.PHYSICAL.ordinal()] + 700)), 3, DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * 0.1f, DamageType.PHYSICAL, baseProjectile));
+			baseProjectile.addSpecificCreepEffect(new ArmorShred(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] / (damageArray[DamageType.PHYSICAL.ordinal()] + 700), DamageType.PHYSICAL, baseProjectile));
 		}
 	}
 

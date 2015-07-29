@@ -155,8 +155,8 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Fragmentation";
 						 text 		= "Deal additional PHYSICAL damage as a bleed";
-						 baseCost   = 500;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 2500;}
+						 public void upgrade(Tower t) { t.baseAttributeList.basePhysicalDamage += 50; }
 					},
 					new Upgrade() {
 						{name		= "Grievous Wound";

@@ -14,6 +14,7 @@ import utilities.Constants;
 import utilities.TrigHelper;
 
 public abstract class Tower implements Updatable {
+	//TODO: want to implement something like "quality" so that we can continually upgrade the base stats of a tower with gold (so towers don't cap out)
 	//Positional Details
 	public Level level;
 	public int x, y; //Top Left corner in Tile Coordinates
