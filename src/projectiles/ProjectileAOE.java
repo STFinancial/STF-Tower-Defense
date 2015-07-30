@@ -18,7 +18,6 @@ public class ProjectileAOE extends Projectile {
 	public ProjectileAOE(Tower parent) {
 		super(parent);
 		speed = currentSpeed = 0f;
-		
 	}
 
 	@Override

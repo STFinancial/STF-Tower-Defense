@@ -5,7 +5,7 @@ import levels.Level;
 import maps.Tile;
 import projectiles.ProjectileBasic;
 
-public class TowerWater extends Tower implements TargetsCreep {
+public class TowerWater extends Tower{
 	public TowerWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER, towerID);
 	}
@@ -16,22 +16,13 @@ public class TowerWater extends Tower implements TargetsCreep {
 	}
 
 	@Override
-	public void setTargetCreep(Creep c) {
-		targetCreep = c;
-	}
-
-	@Override
-	public Creep getTargetCreep() {
-		return targetCreep;
-	}
-
-	@Override
 	public void update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
-			targetCreep = level.findTargetCreep(this);
+			Creep targetCreep = level.findTargetCreep(this);
 			if (targetCreep != null) {
-				updateAngle(targetCreep);
+				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
+				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCoolDown;
 				currentAttackCoolDown = attackCoolDown;

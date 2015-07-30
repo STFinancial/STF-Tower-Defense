@@ -22,4 +22,10 @@ public class ArmorShred extends ProjectileEffect {
 		}
 	}
 
+	@Override
+	public ProjectileEffect clone() {
+		return new ArmorShred(lifetime, modifier, damageType, parent);
+	}
+
+
 }

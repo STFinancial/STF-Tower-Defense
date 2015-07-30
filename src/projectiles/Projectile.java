@@ -13,7 +13,6 @@ import projectileeffects.Slow;
 import towers.Tower;
 import utilities.Circle;
 import utilities.Constants;
-import creeps.Creep;
 import creeps.DamageType;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
@@ -38,7 +37,6 @@ public abstract class Projectile implements Updatable {
 	public boolean ignoresShield;
 	
 	public boolean dud; //When creep is killed by something else or escapes before contact;
-	public Creep targetCreep;
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
 	
 	ArrayList<ProjectileEffect> creepEffects;
@@ -46,21 +44,22 @@ public abstract class Projectile implements Updatable {
 	public AffixModifier multiplier;
 	
 	protected Projectile() {
-		dud = false;
+		//This is called from the clone method only
 	}
 	
 	public Projectile(Tower parent) {
-		level = parent.level;
-		dud = false;
-		this.x = parent.centerX;
-		this.y = parent.centerY;
-		splashRadius = parent.splashRadius;
+		this.dud 			= false;
+		this.parent			= parent;
+		this.level 			= parent.level;
+		this.x 				= parent.centerX;
+		this.y 				= parent.centerY;
+		this.splashRadius 	= parent.splashRadius;
+		
 		hitBox = new Circle(x, y, size);
 		creepEffects = new ArrayList<ProjectileEffect>();
 		splashEffects = new ArrayList<ProjectileEffect>();
-		targetAngle = parent.targetAngle;
-		this.parent = parent;
 		multiplier = new AffixModifier();
+		
 		addGeneralEffects();
 	}
 	

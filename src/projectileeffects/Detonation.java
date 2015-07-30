@@ -48,4 +48,9 @@ public class Detonation extends ProjectileEffect {
 		return;
 	}
 
+	@Override
+	public ProjectileEffect clone() {
+		return new Detonation(modifier, damageType, parent);
+	}
+
 }

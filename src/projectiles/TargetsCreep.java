@@ -1,4 +1,4 @@
-package towers;
+package projectiles;
 
 import creeps.Creep;
 

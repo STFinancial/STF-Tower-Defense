@@ -261,6 +261,7 @@ public class Level {
 //	}
 	
 	//GUI should call this method
+	//TODO this method needs to be more sophistocated if we've bought upgrades
 	public void sellTower(Tower t) {
 		if (t.siphoningFrom == null) {
 			gold += t.cost * .75f;
@@ -370,6 +371,27 @@ public class Level {
 			}
 		}
 		return inRange;
+	}
+	
+	public HashSet<Creep> getOtherCreepInRange(Creep creep, float range) {
+		Circle splash = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		for (Creep c: creeps) {
+			if (c.hitBox.intersects(splash) && c.creepID != creep.creepID) {
+				inRange.add(c);
+			}
+		}
+		return inRange;
+	}
+	
+	public Creep getSingleCreepInRange(Creep creep, float range) {
+		Circle box = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
+		for (Creep c: creeps) {
+			if (c.hitBox.intersects(box) && c.creepID != creep.creepID) {
+				return c;
+			}
+		}
+		return null;
 	}
 	
 	public HashSet<Creep> getCreepAdjacentToEarth() {

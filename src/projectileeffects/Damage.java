@@ -42,4 +42,9 @@ public class Damage extends ProjectileEffect {
 	public void onExpire(Creep creep) {
 		return;
 	}
+
+	@Override
+	public ProjectileEffect clone() {
+		return new Damage(modifier, damageType, parent);
+	}
 }

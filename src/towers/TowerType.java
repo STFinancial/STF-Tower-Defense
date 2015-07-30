@@ -15,7 +15,6 @@ public enum TowerType {
 		baseElementalDamage = 0;
 		baseSlowDuration	= 0;
 		baseCost			= 200;
-		baseFireRate		= 15f;
 		baseAttackCoolDown	= 15f;
 		baseDamageSplash	= 0.1f;
 		baseEffectSplash	= 0f;
@@ -36,7 +35,6 @@ public enum TowerType {
 		baseElementalDamage = 25;
 		baseSlowDuration	= 0;
 		baseCost			= 200;
-		baseFireRate		= 12f;
 		baseAttackCoolDown	= 12f;
 		baseDamageSplash	= 0.25f;
 		baseEffectSplash	= 0.25f;
@@ -57,7 +55,6 @@ public enum TowerType {
 		baseElementalDamage = 15;
 		baseSlowDuration	= 10;
 		baseCost			= 200;
-		baseFireRate		= 10f;
 		baseAttackCoolDown	= 10f;
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0.25f;
@@ -78,7 +75,6 @@ public enum TowerType {
 		baseElementalDamage = 10;
 		baseSlowDuration	= 10;
 		baseCost			= 200;
-		baseFireRate		= 5f;
 		baseAttackCoolDown	= 5f;
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0.10f;
@@ -92,6 +88,7 @@ public enum TowerType {
 	}}),
 	//TODO this is sort of the blueprint for how the upgrades are defined
 	//TODO these functions are called by the upgrade method in the tower class
+	//TODO should the base stats of the towers be identical to their downgrade?
 	EARTH_EARTH (new BaseAttributeList(){{
 		//does an AOE earthquake? cannot hit flying
 		name				= "Gaia";
@@ -102,7 +99,6 @@ public enum TowerType {
 		basePhysicalDamage  = 100;
 		baseElementalDamage = 0;
 		baseSlowDuration	= 10;
-		baseFireRate		= 15f;
 		baseAttackCoolDown	= 15f;
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0f;
@@ -111,7 +107,6 @@ public enum TowerType {
 		baseSlow			= 0f;
 		hitsAir				= false;
 		hitsGround			= true;
-		additionalEffect    = null;
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -126,7 +121,7 @@ public enum TowerType {
 						 text 		= "Increase the base pulse rate";
 						 isBase		= true;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.fireRate -= 3; t.attackCoolDown -= 3; }
+						 public void upgrade(Tower t) { t.attackCoolDown -= 3; }
 					},
 					new Upgrade() {
 						{name		= "Channel the Earth";
@@ -235,6 +230,22 @@ public enum TowerType {
 		//this tower chains damage and removes shield (?)
 		name 				= "Lightning";
 		downgradeType 		= WIND;
+		mainDamageType      = DamageType.WIND;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		basePhysicalDamage  = 10;
+		baseElementalDamage = 10;
+		baseSlowDuration	= 10;
+		baseCost			= 200;
+		baseAttackCoolDown	= 5f;
+		baseDamageSplash	= 0f;
+		baseEffectSplash	= 0.10f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;
+		hitsAir				= true;
+		hitsGround			= true;
+		upgrades			= null;
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		//slows enemies and reduces toughness

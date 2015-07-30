@@ -25,7 +25,6 @@ public class BaseAttributeList {
 		newList.baseElementalDamage = baseElementalDamage;
 		newList.baseSlowDuration = baseSlowDuration;
 		newList.baseCost = baseCost;
-		newList.baseFireRate = baseFireRate;
 		newList.baseAttackCoolDown = baseAttackCoolDown;
 		newList.baseDamageSplash = baseDamageSplash;
 		newList.baseEffectSplash = baseEffectSplash;
@@ -48,7 +47,6 @@ public class BaseAttributeList {
 	public int baseElementalDamage;
 	public int baseSlowDuration;
 	public int baseCost;
-	public float baseFireRate;
 	public float baseAttackCoolDown;
 	public float baseDamageSplash;
 	public float baseEffectSplash;

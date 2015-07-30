@@ -11,6 +11,8 @@ import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 
 public class Creep implements Updatable {
+	public int creepID;
+	
 	//Primary Stats
 	public int health;
 	public int toughness; //flat reduction for all types

@@ -29,8 +29,8 @@ public abstract class Tower implements Updatable {
 	//Targeting Details
 	public TargetingModeType targetingType;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
-	public Creep targetCreep;
-	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
+//	public Creep targetCreep;
+//	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
 
 	//Misc.
 	public int towerID;
@@ -49,7 +49,6 @@ public abstract class Tower implements Updatable {
 	public int[] damageArray = new int[Constants.NUM_DAMAGE_TYPES];
 	public float[] slowArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public int[] slowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public float fireRate; //Still deciding if this will actually be the same as attack cooldown
 	public float attackCoolDown;
 	public float currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
 	public float attackCarryOver;
@@ -64,7 +63,6 @@ public abstract class Tower implements Updatable {
 //	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
 //	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
 //	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-//	public float siphFireRate = 0; //Still deciding if this will actually be the same as attack cooldown
 //	public float siphAttackCoolDown = 0;
 //	public float siphDamageSplash = 0;
 //	public float siphEffectSplash = 0;
@@ -135,13 +133,15 @@ public abstract class Tower implements Updatable {
 			current.targetArea.radius = current.range;
 			
 			//TODO find a good equation for fire rate siphoning
-			current.fireRate = (int) ((sf.fireRate + current.fireRate) / 2);
+			current.attackCoolDown = (int) ((sf.attackCoolDown + current.attackCoolDown) / 2);
 			current.damageSplash += sf.damageSplash * Constants.SIPHON_BONUS_MODIFIER;
 			current.effectSplash += sf.effectSplash * Constants.SIPHON_BONUS_MODIFIER;
 			current.splashRadius += sf.splashRadius * Constants.SIPHON_BONUS_MODIFIER;
 			current.adjustTalentStats();
+			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustNonBaseUpgradeStats();
 			current.adjustProjectileStats();
+			current.currentAttackCoolDown = current.attackCoolDown;
 		}
 	}
 	
@@ -150,7 +150,6 @@ public abstract class Tower implements Updatable {
 		damageArray[baseAttributeList.mainDamageType.ordinal()] 		= baseAttributeList.baseElementalDamage;
 		damageArray[Constants.NUM_DAMAGE_TYPES - 1] 					= baseAttributeList.basePhysicalDamage;
 		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] 	= baseAttributeList.baseSlowDuration;
-		fireRate 														= baseAttributeList.baseFireRate;
 		attackCoolDown 													= baseAttributeList.baseAttackCoolDown;
 		damageSplash 													= baseAttributeList.baseDamageSplash;
 		effectSplash													= baseAttributeList.baseEffectSplash;
@@ -229,10 +228,6 @@ public abstract class Tower implements Updatable {
 			}
 			return false;
 		}
-	}
-	
-	protected void updateAngle(Creep targetCreep) {
-		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
 	}
 
 	protected Projectile duplicateProjectile(Projectile p) {

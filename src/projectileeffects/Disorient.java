@@ -28,6 +28,12 @@ public class Disorient extends ProjectileEffect {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public ProjectileEffect clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }

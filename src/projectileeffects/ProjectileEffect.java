@@ -24,6 +24,7 @@ public abstract class ProjectileEffect {
 		this.parent = parent;
 	}
 
+	public abstract ProjectileEffect clone();
 	public abstract void applyEffect(Creep creep);
 	public abstract void onExpire(Creep creep);
 }

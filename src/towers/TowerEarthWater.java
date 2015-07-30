@@ -1,6 +1,7 @@
 package towers;
 
 import projectiles.ProjectileArea;
+import projectiles.TargetsArea;
 import utilities.Circle;
 import levels.Level;
 import maps.Tile;

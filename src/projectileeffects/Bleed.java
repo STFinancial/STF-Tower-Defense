@@ -32,4 +32,9 @@ public class Bleed extends ProjectileEffect {
 	public void onExpire(Creep creep) {
 		return;
 	}
+
+	@Override
+	public ProjectileEffect clone() {
+		return new Bleed(lifetime, modifier, timing, damageType, parent);
+	}
 }

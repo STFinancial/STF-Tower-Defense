@@ -7,20 +7,22 @@ import creeps.Creep;
 import towers.Tower;
 import utilities.TrigHelper;
 
-public class ProjectileBasic extends Projectile {
+public class ProjectileBasic extends Projectile implements TargetsCreep {
+	protected Creep targetCreep;
 	
-	private ProjectileBasic() {
-		super();
+	protected ProjectileBasic() {
+		
 	}
 	
 	public ProjectileBasic(Tower parent) {
 		super(parent);
-		targetCreep = parent.targetCreep;
 	}
 
+	//TODO if something fucks up, make sure all the fields are being set properly
 	@Override
 	public Projectile clone() {
-		Projectile p = new ProjectileBasic();
+		ProjectileBasic p = new ProjectileBasic();
+		p.dud = false;
 		p.parent = parent;
 		p.level = level;
 		p.creepEffects = creepEffects;
@@ -30,6 +32,8 @@ public class ProjectileBasic extends Projectile {
 		p.y = parent.centerY;
 		p.splashRadius = splashRadius;
 		p.size = size;
+		p.targetCreep = targetCreep;
+		//this is only safe because we clone immediately before we fire
 		p.targetAngle = targetAngle;
 		p.multiplier = multiplier;
 		return p;
@@ -68,9 +72,20 @@ public class ProjectileBasic extends Projectile {
 			return;
 		}
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: level.getCreepInRange(this, splashRadius)) {
+		for (Creep c: level.getOtherCreepInRange(targetCreep, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
+	}
+
+	@Override
+	public void setTargetCreep(Creep c) {
+		targetCreep = c;
+		targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+	}
+
+	@Override
+	public Creep getTargetCreep() {
+		return targetCreep;
 	}
 
 }

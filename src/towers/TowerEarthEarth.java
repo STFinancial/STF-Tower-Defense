@@ -37,16 +37,12 @@ public class TowerEarthEarth extends Tower {
 	public void update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
-			targetCreep = level.findTargetCreep(this);
-			if (targetCreep != null) {
-				updateAngle(targetCreep);
-				level.addProjectile(fireProjectile());
-				attackCarryOver += 1 - currentAttackCoolDown;
-				currentAttackCoolDown = attackCoolDown;
-				if (attackCarryOver > 1) {
-					attackCarryOver -= 1;
-					currentAttackCoolDown--;
-				}
+			level.addProjectile(fireProjectile());
+			attackCarryOver += 1 - currentAttackCoolDown;
+			currentAttackCoolDown = attackCoolDown;
+			if (attackCarryOver > 1) {
+				attackCarryOver -= 1;
+				currentAttackCoolDown--;
 			}
 		}
 	}
