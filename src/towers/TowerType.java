@@ -11,7 +11,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.EARTH;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/70};
+		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
 		baseSlowDuration	= 0;
 		baseCost			= 200;
 		baseAttackCoolDown	= 15f;
@@ -93,7 +93,7 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/100};
-		baseSlowDuration	= 10;
+		baseSlowDuration	= 0;
 		baseAttackCoolDown	= 15f;
 		baseDamageSplash	= 0f;
 		baseEffectSplash	= 0f;
@@ -174,6 +174,81 @@ public enum TowerType {
 		//this will do rupture spikes on a selected area
 		name 				= "Stalagmite";
 		downgradeType 		= EARTH;
+		mainDamageType      = DamageType.EARTH;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/70};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 13f;
+		baseDamageSplash	= 0f;
+		baseEffectSplash	= 0f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "Increases the radius of the stalagmites";
+						 isBase		= false;
+						 baseCost   = 400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2000;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 600;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}),
 	EARTH_WIND (new BaseAttributeList(){{
 		//has enormous splash radius
@@ -229,9 +304,9 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDuration	= 10;
+		baseSlowDuration	= 0;
 		baseCost			= 200;
-		baseAttackCoolDown	= 5f;
+		baseAttackCoolDown	= 7f;
 		baseDamageSplash	= 0.10f;
 		baseEffectSplash	= 0.10f;
 		baseSplashRadius	= 0f;

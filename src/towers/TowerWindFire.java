@@ -14,7 +14,7 @@ public class TowerWindFire extends Tower {
 	public TowerWindFire(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		super(level, topLeftTile, type, towerID);
 		maxChains = 3;
-		chainPenalty = 0.4f;
+		chainPenalty = 0.75f;
 	}
 
 	@Override
