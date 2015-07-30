@@ -13,7 +13,8 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
-		if (!creep.snareImmune) {
+		if (!creep.snareImmune && creep.timeUntilSnare < 0) {
+			creep.timeUntilSnare = creep.snareGrace;
 			creep.currentSpeed = 0;			
 		}
 	}

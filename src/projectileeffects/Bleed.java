@@ -38,4 +38,10 @@ public class Bleed extends ProjectileEffect {
 	public ProjectileEffect clone() {
 		return new Bleed(lifetime, modifier, timing, damageType, parent);
 	}
+
+	public Damage convertToDamage(float modifier, CreepEffect e) {
+		int timeLeft = lifetime - e.counter;
+		int ticks = (timeLeft / timing) + 1;
+		return new Damage(modifier * ticks * this.modifier, damageType, parent);
+	}
 }

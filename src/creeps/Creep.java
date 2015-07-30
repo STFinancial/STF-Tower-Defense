@@ -7,6 +7,7 @@ import levels.Path;
 import levels.Updatable;
 import maps.DirectionType;
 import maps.Vertex;
+import projectileeffects.Consume;
 import projectileeffects.ProjectileEffect;
 import towers.Tower;
 import utilities.Circle;
@@ -50,6 +51,8 @@ public class Creep implements Updatable {
 	public float currentShield;
 	float shieldCap;
 	public int disruptorAmount;
+	public int snareGrace;
+	public int timeUntilSnare;
 
 	public Creep(int health, float speed, int toughness, int healthCost, int goldValue, DamageType elementType) {
 		this.health = health;
@@ -60,7 +63,8 @@ public class Creep implements Updatable {
 		this.toughness = toughness;
 		currentHealth = health;
 		currentSpeed = speed;
-
+		snareGrace = 15;
+		timeUntilSnare = snareGrace;
 		resist = elementType.baseResist();
 		hitBox = new Circle(1, 1, size);
 	}
@@ -68,20 +72,26 @@ public class Creep implements Updatable {
 	public class CreepEffect {
 		CreepEffect(ProjectileEffect p) {
 			projectileEffect = p;
-			duration = p.lifetime;
+			lifetime = p.lifetime;
 			timing = p.timing;
 			counter = 0;
 		}
 		public ProjectileEffect projectileEffect;
-		int duration;
+		int lifetime;
 		int timing;
 		public int counter;
 	}
 
+	//TODO: do we want to add to different sides of the list based on the type of effect it is
+	//The result of this would be that armor shreds are applied first
 	public void addEffect(ProjectileEffect effect) {
 		effects.add(new CreepEffect(effect));
 		CreepEffect c;
-		if (effect.refreshable && (c = hasEffect(effect)) != null) {
+		if (effect instanceof Consume) {
+			//Need to proc it immediately because of how the iterators work
+			//Can't remove bleeds while we're looping through the set
+			effect.applyEffect(this);
+		} else if (effect.refreshable && (c = hasEffect(effect)) != null) {
 			c.counter = 0;
 		} else {
 			this.effects.add(new CreepEffect(effect));
@@ -91,7 +101,11 @@ public class Creep implements Updatable {
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
 		for (ProjectileEffect p : effects) {
 			CreepEffect c;
-			if (p.refreshable && (c = hasEffect(p)) != null) {
+			if (p instanceof Consume) {
+				//Need to proc it immediately because of how the iterators work
+				//Can't remove bleeds while we're looping through the set
+				p.applyEffect(this);
+			} else if (p.refreshable && (c = hasEffect(p)) != null) {
 				c.counter = 0;
 			} else {
 				this.effects.add(new CreepEffect(p));
@@ -160,6 +174,7 @@ public class Creep implements Updatable {
 
 	private void updateEffects() {
 		currentSpeed = speed;
+		timeUntilSnare--;
 		for (int i = 0; i < effects.size(); i++) {
 			CreepEffect e = effects.get(i);
 			if (e.timing != 0 && e.counter % e.timing == 0) {
@@ -167,7 +182,7 @@ public class Creep implements Updatable {
 			} else if (e.timing == 0 && e.counter == 0) {
 				e.projectileEffect.applyEffect(this);
 			}
-			if (e.counter >= e.duration) {
+			if (e.counter >= e.lifetime) {
 				e.projectileEffect.onExpire(this);
 				effects.remove(i--);
 				continue;

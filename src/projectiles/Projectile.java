@@ -68,13 +68,13 @@ public abstract class Projectile implements Updatable {
 		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
 			if (parent.damageArray[i] != 0) {
 				creepEffects.add(new Damage(parent.damageArray[i], DamageType.values()[i], this));
-				if (parent.damageSplash != 0) {
+				if (parent.damageSplash != 0 && parent.splashRadius != 0) {
 					splashEffects.add(new Damage(parent.damageArray[i] * parent.damageSplash, DamageType.values()[i], this));
 				}
 			}
 			if (parent.slowArray[i] != 0) {
 				creepEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i], DamageType.values()[i], this));
-				if (parent.effectSplash != 0) {
+				if (parent.effectSplash != 0 && parent.splashRadius != 0) {
 					splashEffects.add(new Slow(parent.slowDurationArray[i], parent.slowArray[i] * parent.effectSplash, DamageType.values()[i], this));
 				}
 			}

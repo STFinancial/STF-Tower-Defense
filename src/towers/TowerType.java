@@ -15,7 +15,7 @@ public enum TowerType {
 		baseSlowDuration	= 0;
 		baseCost			= 200;
 		baseAttackCoolDown	= 15f;
-		baseDamageSplash	= 0.1f;
+		baseDamageSplash	= 0.2f;
 		baseEffectSplash	= 0f;
 		baseSplashRadius	= 2f;
 		baseRange			= 6.5f;
@@ -36,7 +36,7 @@ public enum TowerType {
 		baseAttackCoolDown	= 12f;
 		baseDamageSplash	= 0.25f;
 		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
+		baseSplashRadius	= 1.5f;
 		baseRange			= 7.5f;
 		baseSlow			= 0;
 		hitsAir				= true;
@@ -57,7 +57,7 @@ public enum TowerType {
 		baseEffectSplash	= 0.25f;
 		baseSplashRadius	= 1f;
 		baseRange			= 7.5f;
-		baseSlow			= 0.35f;
+		baseSlow			= 0.3f;
 		hitsAir				= false;
 		hitsGround			= true;
 		upgrades			= null;
@@ -285,6 +285,83 @@ public enum TowerType {
 	WATER_WATER (new BaseAttributeList(){{
 		//this tower does an aoe slow/freeze
 		downgradeType 		= WATER;
+		name     			= "Cold Snap";
+		mainDamageType      = DamageType.WATER;
+		baseWidth  			= 2;
+		baseHeight   		= 2;
+		baseDamageArray  	= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDuration 	= 10;
+		baseAttackCoolDown 	= 10f;
+		baseDamageSplash 	= 0f;
+		baseEffectSplash 	= 0f;
+		baseSplashRadius 	= 1f;
+		baseRange   		= 7.5f;
+		baseSlow   			= 0.3f;
+		hitsAir    			= false;
+		hitsGround   		= true;
+		upgrades   = new Upgrade[][]{
+				{
+					 new Upgrade() {
+						 {name  	 = "First Frost";
+				          text   	 = "Increases base RANGE";
+				          isBase  	 = true;
+				          baseCost   = 400;}
+						  public void upgrade(Tower t) { t.range += 2; }
+						 
+				     },
+				     new Upgrade() {
+				    	 {name 	 	 = "Chilling Breath";
+				    	  text  	 = "Increases base SLOW Duration";
+				    	  isBase  	 = true;
+				    	  baseCost   = 500;}
+				    	  public void upgrade(Tower t) { t.slowDurationArray[DamageType.WATER.ordinal()] += 5; }
+				     },
+				     new Upgrade() {
+				    	 {name 		 = "Chilled to the Bone";
+				    	  text  	 = "Doubles WATER Slow potency";
+				    	  isBase 	 = false;
+				    	  baseCost   = 2000;}
+				    	  public void upgrade(Tower t) { t.slowArray[DamageType.WATER.ordinal()] *= 2; }
+				     },
+				     new Upgrade() {
+				    	 {name 		 = "Sheer Cold";
+				    	  text 		 = "Roots Enemies in place";
+				    	  isBase 	 = false;
+				    	  baseCost   = 5000;}
+				    	  public void upgrade(Tower t) {  }
+				     },
+				},
+				{
+				     new Upgrade() {
+				      	 {name 		 = "Churning Waters";
+				      	  text   	 = "Increases base pulse rate";
+				      	  isBase	 = true;
+				      	  baseCost   = 600;}
+				      	  public void upgrade(Tower t) { t.attackCoolDown -= 3; }
+				     },
+				     new Upgrade() {
+				    	 {name 		 = "Black Ice";
+				    	  text   	 = "Increases base WATER damage";
+				    	  isBase  	 = true;
+				    	  baseCost   = 700;}
+				    	  public void upgrade(Tower t) { t.damageArray[DamageType.WATER.ordinal()] += 50; }
+				     },
+				     new Upgrade() {
+				    	 {name  	 = "Poisoned Well";
+				    	  text  	 = "Slowed Enemies take additional damage over time and double WATER damage";
+				    	  isBase  	 = false;
+				    	  baseCost   = 4500;}
+				    	  public void upgrade(Tower t) {  }
+				     },
+				     new Upgrade() {
+				    	 {name  	 = "Cleanse";
+				    	  text   	 = "Consumes all damage over time effects on enemies hit";
+				    	  isBase  	 = false;
+				    	  baseCost   = 5000;}
+				    	  public void upgrade(Tower t) {  }
+				     },
+				}
+		};
 	}}), 
 	WATER_WIND (new BaseAttributeList(){{
 		//this tower has a high splash effect coefficient?
