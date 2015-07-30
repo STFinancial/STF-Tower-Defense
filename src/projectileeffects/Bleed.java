@@ -9,6 +9,7 @@ public class Bleed extends ProjectileEffect {
 
 	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, timing, damageType, parent);
+		refreshable = true;
 	}
 
 	@Override

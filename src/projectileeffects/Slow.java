@@ -12,6 +12,7 @@ public class Slow extends ProjectileEffect {
 
 	public Slow(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
+		refreshable = true;
 	}
 
 	@Override

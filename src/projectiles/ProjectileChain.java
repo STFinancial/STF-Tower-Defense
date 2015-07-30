@@ -11,7 +11,7 @@ import utilities.TrigHelper;
 
 public class ProjectileChain extends Projectile implements TargetsCreep {
 	Creep targetCreep;
-	Creep[] chainedCreep;
+	ArrayList<Creep> chainedCreep;
 	ArrayList<ArrayList<ProjectileEffect>> chainedEffects;
 	ArrayList<ArrayList<ProjectileEffect>> chainedSplashEffects;
 	/**
@@ -20,6 +20,7 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 	int maxChains;
 	float chainRadius;
 	float chainPenalty;
+	public boolean noDuplicates = true;
 	
 	//TODO I think the speed of this projectile should be increased or is instantaneous
 	protected ProjectileChain(int maxChains, float chainRadius, float chainPenalty) {
@@ -27,12 +28,12 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 		this.maxChains = maxChains;
 		this.chainRadius = chainRadius;
 		this.chainPenalty = chainPenalty;
-		chainedCreep = new Creep[maxChains];
+		chainedCreep = new ArrayList<Creep>(maxChains);
 	}
 	
 	public ProjectileChain(Tower parent, int maxChains, float chainRadius, float chainPenalty) {
 		super(parent);
-		chainedCreep = new Creep[maxChains];
+		chainedCreep = new ArrayList<Creep>(maxChains);
 		chainedEffects = new ArrayList<ArrayList<ProjectileEffect>>(maxChains);
 		chainedSplashEffects = new ArrayList<ArrayList<ProjectileEffect>>(maxChains);
 		chainedEffects.add(creepEffects);
@@ -44,12 +45,18 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 			for (int j = 0; j < creepEffects.size(); j++) {
 				e = creepEffects.get(j).clone();
 				e.modifier *= currentPenalty;
+				if (e.lifetime != 0) {
+					e.lifetime *= currentPenalty;
+				}
 				chainedEffects.get(i).add(e);
 			}
 			chainedSplashEffects.add(new ArrayList<ProjectileEffect>(splashEffects.size()));
 			for (int j = 0; j < splashEffects.size(); j++) {
 				e = splashEffects.get(j).clone();
 				e.modifier *= currentPenalty;
+				if (e.lifetime != 0) {
+					e.lifetime *= currentPenalty;
+				}
 				chainedSplashEffects.get(i).add(e);
 			}
 			currentPenalty *= chainPenalty;
@@ -71,22 +78,28 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 		}
 		int currentChains = 0;
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: level.getOtherCreepInRange(targetCreep, splashRadius)) {
+		for (Creep c: level.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
-		chainedCreep[currentChains] = targetCreep;
+		chainedCreep.add(targetCreep);
 		currentChains++;
 		
 		while (currentChains < maxChains) {
-			Creep prev = chainedCreep[currentChains - 1];
-			Creep c = level.getSingleCreepInRange(prev, chainRadius);
-			if (c == null) {
+			Creep prevCreep = chainedCreep.get(currentChains - 1);
+			Creep newCreep;
+			if (noDuplicates) {
+				newCreep = level.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep);
+			} else {
+				newCreep = level.getSingleCreepInRange(prevCreep, chainRadius, null);
+			}
+			
+			if (newCreep == null) {
 				return;
 			}
-			c.addAllEffects(chainedEffects.get(currentChains));
-			chainedCreep[currentChains] = c;
+			newCreep.addAllEffects(chainedEffects.get(currentChains));
+			chainedCreep.add(newCreep);
 			//TODO at some point we may change the splashRadius to splashRadius * currentPenalty
-			for (Creep splash: level.getOtherCreepInRange(c, splashRadius)) {
+			for (Creep splash: level.getOtherCreepInSplashRange(newCreep, splashRadius)) {
 				splash.addAllEffects(chainedSplashEffects.get(currentChains));
 			}
 			currentChains++;
@@ -111,6 +124,14 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 		p.targetCreep = targetCreep;
 		p.chainedEffects = chainedEffects;
 		p.chainedSplashEffects = chainedSplashEffects;
+		p.noDuplicates = noDuplicates;
+		p.armorPenPercent = armorPenPercent;
+		p.armorPenFlat = armorPenFlat;
+		p.resistPenPercent = resistPenPercent;
+		p.resistPenFlat = resistPenFlat;
+		p.toughPenPercent = toughPenPercent;
+		p.toughPenFlat = toughPenFlat;
+		p.shieldDrainModifier = shieldDrainModifier;
 		return p;
 	}
 

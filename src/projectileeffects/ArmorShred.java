@@ -5,9 +5,10 @@ import creeps.Creep;
 import creeps.DamageType;
 
 public class ArmorShred extends ProjectileEffect {
-
+	
 	public ArmorShred(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
+		refreshable = true;
 	}
 
 	@Override

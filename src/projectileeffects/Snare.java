@@ -7,8 +7,8 @@ import creeps.DamageType;
 
 public class Snare extends ProjectileEffect {
 
-	public Snare(int lifetime, float modifier, DamageType damageType, Projectile parent) {
-		super(lifetime, modifier, 0, damageType, parent);
+	public Snare(int lifetime, DamageType damageType, Projectile parent) {
+		super(lifetime, 0, 0, damageType, parent);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Snare(lifetime, modifier, damageType, parent);
+		return new Snare(lifetime, damageType, parent);
 	}
 
 }

@@ -3,7 +3,7 @@ package towers;
 import utilities.Constants;
 import creeps.DamageType;
 import projectiles.*;
-
+//EARTH, FIRE, WATER, WIND, LIGHT, DARK, PHYSICAL;
 public enum TowerType {
 	//TODO I want each (upgraded) tower to have it's unique projectile effect too
 	EARTH (new BaseAttributeList(){{
@@ -11,8 +11,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.EARTH;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 70;
-		baseElementalDamage = 0;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/70};
 		baseSlowDuration	= 0;
 		baseCost			= 200;
 		baseAttackCoolDown	= 15f;
@@ -31,8 +30,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.FIRE;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 25;
-		baseElementalDamage = 25;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDuration	= 0;
 		baseCost			= 200;
 		baseAttackCoolDown	= 12f;
@@ -51,8 +49,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.WATER;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 15;
-		baseElementalDamage = 15;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDuration	= 10;
 		baseCost			= 200;
 		baseAttackCoolDown	= 10f;
@@ -71,8 +68,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.WIND;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 10;
-		baseElementalDamage = 10;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/10};
 		baseSlowDuration	= 10;
 		baseCost			= 200;
 		baseAttackCoolDown	= 5f;
@@ -96,8 +92,7 @@ public enum TowerType {
 		mainDamageType      = DamageType.EARTH;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 100;
-		baseElementalDamage = 0;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/100};
 		baseSlowDuration	= 10;
 		baseAttackCoolDown	= 15f;
 		baseDamageSplash	= 0f;
@@ -233,19 +228,79 @@ public enum TowerType {
 		mainDamageType      = DamageType.WIND;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		basePhysicalDamage  = 10;
-		baseElementalDamage = 10;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDuration	= 10;
 		baseCost			= 200;
 		baseAttackCoolDown	= 5f;
-		baseDamageSplash	= 0f;
+		baseDamageSplash	= 0.10f;
 		baseEffectSplash	= 0.10f;
 		baseSplashRadius	= 0f;
 		baseRange			= 8.5f;
 		baseSlow			= 0f;
 		hitsAir				= true;
 		hitsGround			= true;
-		upgrades			= null;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "Forking";
+						 text 		= "Increase the maximum chaining by 3";
+						 isBase		= false;
+						 baseCost   = 400;}
+						 public void upgrade(Tower t) { ((TowerWindFire) t).maxChains += 3; }
+					},
+					new Upgrade() {
+						{name		= "Conductivity";
+						 text 		= "Increase all ELEMENTAL DAMAGE done by this tower";
+						 isBase		= false;
+						 baseCost   = 1000;}
+						 public void upgrade(Tower t) { for (int i=0;i<Constants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
+					},
+					new Upgrade() {
+						{name		= "No Mercy";
+						 text 		= "The tower may chain to a target it has already hit";
+						 isBase		= false;
+						 baseCost   = 2000;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "Superconducting";
+						 text 		= "Removes the DAMAGE and EFFECT penalty for chaining";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) { ((TowerWindFire) t).chainPenalty = 1; }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "Cloud Cover";
+						 text 		= "Increases the base RANGE";
+						 isBase 	= true;
+						 baseCost 	= 600;}
+						 public void upgrade(Tower t) { t.range += 2; }
+					},
+					new Upgrade() {
+						{name		= "Brewing Storm";
+						 text 		= "Increase the base FIRE and WIND damage";
+						 isBase		= true;
+						 baseCost   = 1500;}
+						 public void upgrade(Tower t) { t.damageArray[1] += 30; t.damageArray[3] += 30; }
+					},
+					new Upgrade() {
+						{name		= "Short Circuiting";
+						 text 		= "Drains a creep's SHIELD at twice the rate";
+						 isBase		= false;
+						 baseCost   = 2500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "Electrocution";
+						 text 		= "Shocks targets for a short duration";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		//slows enemies and reduces toughness

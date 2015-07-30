@@ -2,11 +2,11 @@ package projectileeffects;
 
 import projectiles.Projectile;
 import creeps.Creep;
-import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
 public class Damage extends ProjectileEffect {
-
+	
+	
 	public Damage(float modifier, DamageType damageType, Projectile parent) {
 		super(0, modifier, 0, damageType, parent);
 	}
@@ -30,11 +30,11 @@ public class Damage extends ProjectileEffect {
 		if (parent.ignoresShield) {
 			creep.currentHealth -= damageToDo;
 		} else if (creep.currentShield < damageToDo) {
-			float damageLeft = damageToDo - creep.currentShield;
+			float damageLeft = ((damageToDo * parent.shieldDrainModifier) - creep.currentShield) / parent.shieldDrainModifier;
 			creep.currentShield = 0;
 			creep.currentHealth -= damageLeft;
 		} else {
-			creep.currentShield -= damageToDo;
+			creep.currentShield -= damageToDo * parent.shieldDrainModifier;
 		}
 	}
 
@@ -45,6 +45,7 @@ public class Damage extends ProjectileEffect {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Damage(modifier, damageType, parent);
+		Damage d = new Damage(modifier, damageType, parent);
+		return d;
 	}
 }

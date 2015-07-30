@@ -46,7 +46,7 @@ public abstract class Tower implements Updatable {
 	public BaseAttributeList baseAttributeList;
 	
 	//Current Attributes
-	public int[] damageArray = new int[Constants.NUM_DAMAGE_TYPES];
+	public float[] damageArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public float[] slowArray = new float[Constants.NUM_DAMAGE_TYPES];
 	public int[] slowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
 	public float attackCoolDown;
@@ -147,8 +147,7 @@ public abstract class Tower implements Updatable {
 	
 	protected void adjustBaseStats() {
 		slowArray[baseAttributeList.mainDamageType.ordinal()] 			= baseAttributeList.baseSlow;
-		damageArray[baseAttributeList.mainDamageType.ordinal()] 		= baseAttributeList.baseElementalDamage;
-		damageArray[Constants.NUM_DAMAGE_TYPES - 1] 					= baseAttributeList.basePhysicalDamage;
+		damageArray 													= baseAttributeList.baseDamageArray;
 		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] 	= baseAttributeList.baseSlowDuration;
 		attackCoolDown 													= baseAttributeList.baseAttackCoolDown;
 		damageSplash 													= baseAttributeList.baseDamageSplash;

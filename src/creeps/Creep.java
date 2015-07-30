@@ -8,6 +8,7 @@ import levels.Updatable;
 import maps.DirectionType;
 import maps.Vertex;
 import projectileeffects.ProjectileEffect;
+import towers.Tower;
 import utilities.Circle;
 
 public class Creep implements Updatable {
@@ -71,7 +72,6 @@ public class Creep implements Updatable {
 			timing = p.timing;
 			counter = 0;
 		}
-
 		public ProjectileEffect projectileEffect;
 		int duration;
 		int timing;
@@ -80,11 +80,23 @@ public class Creep implements Updatable {
 
 	public void addEffect(ProjectileEffect effect) {
 		effects.add(new CreepEffect(effect));
+		CreepEffect c;
+		if (effect.refreshable && (c = hasEffect(effect)) != null) {
+			c.counter = 0;
+		} else {
+			this.effects.add(new CreepEffect(effect));
+		}
 	}
 
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
 		for (ProjectileEffect p : effects) {
-			this.effects.add(new CreepEffect(p));
+			CreepEffect c;
+			if (p.refreshable && (c = hasEffect(p)) != null) {
+				c.counter = 0;
+			} else {
+				this.effects.add(new CreepEffect(p));
+			}
+			
 		}
 	}
 
@@ -136,6 +148,15 @@ public class Creep implements Updatable {
 		updateHitBox();
 		updateEffects();
 	}
+	
+	private CreepEffect hasEffect(ProjectileEffect pe) {
+		for (CreepEffect c: effects) {
+			if (c.projectileEffect.equals(pe)) {
+				return c;
+			}
+		}
+		return null;
+	}
 
 	private void updateEffects() {
 		currentSpeed = speed;
@@ -146,7 +167,7 @@ public class Creep implements Updatable {
 			} else if (e.timing == 0 && e.counter == 0) {
 				e.projectileEffect.applyEffect(this);
 			}
-			if (e.counter == e.duration) {
+			if (e.counter >= e.duration) {
 				e.projectileEffect.onExpire(this);
 				effects.remove(i--);
 				continue;
@@ -243,5 +264,14 @@ public class Creep implements Updatable {
 			}
 		}
 		return string;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Tower)) {
+			return false;
+		}
+        Creep c = (Creep) o;
+        return c.creepID == creepID;
 	}
 }

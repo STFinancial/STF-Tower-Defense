@@ -21,8 +21,6 @@ public class BaseAttributeList {
 		newList.downgradeType = downgradeType;
 		newList.baseWidth = baseWidth;;
 		newList.baseHeight =  baseHeight;
-		newList.basePhysicalDamage = basePhysicalDamage;
-		newList.baseElementalDamage = baseElementalDamage;
 		newList.baseSlowDuration = baseSlowDuration;
 		newList.baseCost = baseCost;
 		newList.baseAttackCoolDown = baseAttackCoolDown;
@@ -31,6 +29,7 @@ public class BaseAttributeList {
 		newList.baseSplashRadius = baseSplashRadius;
 		newList.baseRange = baseRange;
 		newList.baseSlow = baseSlow;
+		newList.baseDamageArray = baseDamageArray;
 		newList.hitsAir = hitsAir;
 		newList.hitsGround = hitsGround;
 		newList.additionalEffect = additionalEffect;
@@ -43,8 +42,6 @@ public class BaseAttributeList {
 	public TowerType downgradeType;
 	public int baseWidth;
 	public int baseHeight;
-	public int basePhysicalDamage;
-	public int baseElementalDamage;
 	public int baseSlowDuration;
 	public int baseCost;
 	public float baseAttackCoolDown;
@@ -53,6 +50,7 @@ public class BaseAttributeList {
 	public float baseSplashRadius;
 	public float baseRange;
 	public float baseSlow;
+	public float[] baseDamageArray;
 	public boolean hitsAir;
 	public boolean hitsGround;
 	public ProjectileEffect additionalEffect;

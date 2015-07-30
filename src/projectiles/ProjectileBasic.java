@@ -36,6 +36,13 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		//this is only safe because we clone immediately before we fire
 		p.targetAngle = targetAngle;
 		p.multiplier = multiplier;
+		p.armorPenPercent = armorPenPercent;
+		p.armorPenFlat = armorPenFlat;
+		p.resistPenPercent = resistPenPercent;
+		p.resistPenFlat = resistPenFlat;
+		p.toughPenPercent = toughPenPercent;
+		p.toughPenFlat = toughPenFlat;
+		p.shieldDrainModifier = shieldDrainModifier;
 		return p;
 	}
 
@@ -72,7 +79,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 			return;
 		}
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: level.getOtherCreepInRange(targetCreep, splashRadius)) {
+		for (Creep c: level.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
 	}

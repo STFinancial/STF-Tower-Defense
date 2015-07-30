@@ -373,7 +373,7 @@ public class Level {
 		return inRange;
 	}
 	
-	public HashSet<Creep> getOtherCreepInRange(Creep creep, float range) {
+	public HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range) {
 		Circle splash = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		for (Creep c: creeps) {
@@ -384,11 +384,19 @@ public class Level {
 		return inRange;
 	}
 	
-	public Creep getSingleCreepInRange(Creep creep, float range) {
+	public Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited) {
 		Circle box = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
-		for (Creep c: creeps) {
-			if (c.hitBox.intersects(box) && c.creepID != creep.creepID) {
-				return c;
+		if (visited == null) {
+			for (Creep c: creeps) {
+				if (c.hitBox.intersects(box)) {
+					return c;
+				}
+			}
+		} else {
+			for (Creep c: creeps) {
+				if (c.hitBox.intersects(box) && c.creepID != creep.creepID && !visited.contains(c)) {
+					return c;
+				}
 			}
 		}
 		return null;

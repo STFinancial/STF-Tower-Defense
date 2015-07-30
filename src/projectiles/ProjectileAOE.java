@@ -31,6 +31,13 @@ public class ProjectileAOE extends Projectile {
 		p.y = parent.centerY;
 		p.splashRadius = splashRadius;
 		p.multiplier = multiplier;
+		p.armorPenPercent = armorPenPercent;
+		p.armorPenFlat = armorPenFlat;
+		p.resistPenPercent = resistPenPercent;
+		p.resistPenFlat = resistPenFlat;
+		p.toughPenPercent = toughPenPercent;
+		p.toughPenFlat = toughPenFlat;
+		p.shieldDrainModifier = shieldDrainModifier;
 		return p;
 	}
 

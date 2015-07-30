@@ -34,6 +34,7 @@ public abstract class Projectile implements Updatable {
 	public float resistPenFlat = 0;
 	public float toughPenPercent = 0f;
 	public float toughPenFlat = 0;
+	public float shieldDrainModifier = 1;
 	public boolean ignoresShield;
 	
 	public boolean dud; //When creep is killed by something else or escapes before contact;

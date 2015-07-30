@@ -15,6 +15,7 @@ public abstract class ProjectileEffect {
 	public int timing;
 	public DamageType damageType;
 	public Projectile parent;
+	public boolean refreshable;
 
 	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
 		this.modifier = modifier;
