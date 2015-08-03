@@ -6,36 +6,61 @@ import levels.Level;
 
 import creeps.Creep;
 import towers.Tower;
+import utilities.Circle;
 
-public class ProjectileArea extends Projectile {
-
-	public ProjectileArea(Tower parent) {
+public class ProjectileArea extends Projectile implements TargetsArea {
+	Circle targetArea;
+	float radius;
+	public boolean doesSplash;
+	
+	public ProjectileArea(Tower parent, float radius) {
 		super(parent);
-		// TODO Auto-generated constructor stub
+		this.radius = radius;
+		doesSplash = false;
+	}
+
+	private ProjectileArea() {
+		
 	}
 
 	@Override
 	public Projectile clone() {
-		// TODO Auto-generated method stub
-		return null;
+		ProjectileArea p = new ProjectileArea();
+		p.targetArea = targetArea;
+		p.doesSplash = doesSplash;
+		return p;
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public void detonate(Level level) {
-		// TODO Auto-generated method stub
-		
+		HashSet<Creep> creepInRange = level.getCreepInRange(targetArea);
+		for (Creep c: creepInRange) {
+			c.addAllEffects(creepEffects);
+			if (doesSplash) {
+				//TODO can change this to normal splash if needed
+				c.addAllEffects(splashEffects);
+			}
+		}
+	}
+	
+	public void setTargetRadius(float radius) {
+		this.radius = radius;
+	}
+
+	@Override
+	public boolean setTargetArea(float x, float y) {
+		targetArea = new Circle(x, y, radius);
+		return true;
 	}
 
 }

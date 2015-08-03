@@ -22,27 +22,9 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	@Override
 	public Projectile clone() {
 		ProjectileBasic p = new ProjectileBasic();
-		p.dud = false;
-		p.parent = parent;
-		p.level = level;
-		p.creepEffects = creepEffects;
-		p.splashEffects = splashEffects;
-		p.hitBox = hitBox;
-		p.x = parent.centerX;
-		p.y = parent.centerY;
-		p.splashRadius = splashRadius;
-		p.size = size;
+		cloneStats(p);
 		p.targetCreep = targetCreep;
 		//this is only safe because we clone immediately before we fire
-		p.targetAngle = targetAngle;
-		p.multiplier = multiplier;
-		p.armorPenPercent = armorPenPercent;
-		p.armorPenFlat = armorPenFlat;
-		p.resistPenPercent = resistPenPercent;
-		p.resistPenFlat = resistPenFlat;
-		p.toughPenPercent = toughPenPercent;
-		p.toughPenFlat = toughPenFlat;
-		p.shieldDrainModifier = shieldDrainModifier;
 		return p;
 	}
 

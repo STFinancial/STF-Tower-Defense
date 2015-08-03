@@ -23,21 +23,7 @@ public class ProjectileAOE extends Projectile {
 	@Override
 	public Projectile clone() {
 		Projectile p = new ProjectileAOE();
-		p.parent = parent;
-		p.level = level;
-		p.creepEffects = creepEffects;
-		p.splashEffects = splashEffects;
-		p.x = parent.centerX;
-		p.y = parent.centerY;
-		p.splashRadius = splashRadius;
-		p.multiplier = multiplier;
-		p.armorPenPercent = armorPenPercent;
-		p.armorPenFlat = armorPenFlat;
-		p.resistPenPercent = resistPenPercent;
-		p.resistPenFlat = resistPenFlat;
-		p.toughPenPercent = toughPenPercent;
-		p.toughPenFlat = toughPenFlat;
-		p.shieldDrainModifier = shieldDrainModifier;
+		cloneStats(p);
 		return p;
 	}
 

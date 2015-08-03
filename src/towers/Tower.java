@@ -56,6 +56,7 @@ public abstract class Tower implements Updatable {
 	public float effectSplash;
 	public float splashRadius;
 	public float range;
+	public float siphonBonus;
 	public boolean hitsAir;
 	public boolean hitsGround;
 	
@@ -90,6 +91,7 @@ public abstract class Tower implements Updatable {
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
+		this.siphonBonus = Constants.SIPHON_BONUS_MODIFIER;
 		updateTowerChain();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
@@ -112,37 +114,41 @@ public abstract class Tower implements Updatable {
 		BFSAdjust(current);
 	}
 	
-	private static void BFSAdjust(Tower root) {
+	protected static void BFSAdjust(Tower root) {
 		Queue<Tower> openList = new LinkedList<Tower>();
 		openList.addAll(root.siphoningTo);
 		Tower current;
-		Tower sf;
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			current.adjustBaseStats();
 			current.adjustBaseUpgradeStats();
 			openList.addAll(current.siphoningTo);
-			sf = current.siphoningFrom;
-			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-				current.damageArray[i] += (int) (sf.damageArray[i] * Constants.SIPHON_BONUS_MODIFIER);
-				current.slowArray[i] += sf.slowArray[i] * Constants.SIPHON_BONUS_MODIFIER;
-				current.slowDurationArray[i] += (int) ((sf.slowDurationArray[i] * Constants.SIPHON_BONUS_MODIFIER) / 2);
-			}
-			//TODO find a good equation for range siphoning
-			current.range = Math.max(current.range, (current.range + sf.range) / 2);//should I really max this?
-			current.targetArea.radius = current.range;
-			
-			//TODO find a good equation for fire rate siphoning
-			current.attackCoolDown = (int) ((sf.attackCoolDown + current.attackCoolDown) / 2);
-			current.damageSplash += sf.damageSplash * Constants.SIPHON_BONUS_MODIFIER;
-			current.effectSplash += sf.effectSplash * Constants.SIPHON_BONUS_MODIFIER;
-			current.splashRadius += sf.splashRadius * Constants.SIPHON_BONUS_MODIFIER;
+			current.siphon(current.siphoningFrom);
 			current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustNonBaseUpgradeStats();
 			current.adjustProjectileStats();
 			current.currentAttackCoolDown = current.attackCoolDown;
+			current.targetArea.radius = current.range;
 		}
+	}
+	
+	//TODO: technically we don't need to pass this as a parameter
+	protected void siphon(Tower from) {
+		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+			this.damageArray[i] += (int) (from.damageArray[i] * this.siphonBonus);
+			this.slowArray[i] += from.slowArray[i] * this.siphonBonus;
+			this.slowDurationArray[i] += (int) ((from.slowDurationArray[i] * this.siphonBonus) / 2);
+		}
+		//TODO find a good equation for range siphoning
+		this.range = Math.max(this.range, (this.range + from.range) / 2);//should I really max this?
+		this.targetArea.radius = this.range;
+		
+		//TODO find a good equation for fire rate siphoning
+		this.attackCoolDown = (int) ((from.attackCoolDown + this.attackCoolDown) / 2);
+		this.damageSplash += from.damageSplash * this.siphonBonus;
+		this.effectSplash += from.effectSplash * this.siphonBonus;
+		this.splashRadius += from.splashRadius * this.siphonBonus;
 	}
 	
 	protected void adjustBaseStats() {

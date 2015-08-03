@@ -87,7 +87,7 @@ public enum TowerType {
 	//TODO should the base stats of the towers be identical to their downgrade?
 	EARTH_EARTH (new BaseAttributeList(){{
 		//does an AOE earthquake? cannot hit flying
-		name				= "Gaia";
+		name				= "Earthquake";
 		downgradeType 		= EARTH;
 		mainDamageType      = DamageType.EARTH;
 		baseWidth			= 2;
@@ -120,10 +120,10 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Channel the Earth";
-						 text 		= "Converts all PHYSICAL damage to EARTH damage";
+						 text 		= "Converts each point of PHYSICAL damage to 1.5 points of EARTH damage";
 						 isBase		= false;
 						 baseCost   = 2000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1]; t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] = 0; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] * 1.5f; t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] = 0; }
 					},
 					new Upgrade() {
 						{name		= "Living Earth";
@@ -191,61 +191,61 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{name		= "";
-						 text 		= "Increases the radius of the stalagmites";
-						 isBase		= false;
+						 text 		= "Increases the base radius of the stalagmites";
+						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { ((TowerEarthWater) t).areaRadius += 1; }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						 text 		= "Increases the radius even more and the range of the tower";
+						 isBase		= true;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { ((TowerEarthWater) t).areaRadius += 1; t.range += 1; }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Splash Radius is added to the range of this tower, and now applies splash damage to all affected";
 						 isBase		= false;
-						 baseCost   = 2000;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) { ((TowerEarthWater) t).areaRadius += t.splashRadius; }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Siphon bonus coefficient increased to 0.75 for splash coefficients";
 						 isBase		= false;
-						 baseCost   = 5000;}
+						 baseCost   = 3000;}
 						 public void upgrade(Tower t) {  }
 					},
 				},
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase 	= false;
+						{name		= "Power of the Earth";
+						 text 		= "Increases the base EARTH damage";
+						 isBase 	= true;
 						 baseCost 	= 600;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += 40; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Hardening";
+						 text 		= "Increases the base PHYSICAL damage";
+						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] += 40; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Elemental Balance";
+						 text 		= "Adds 40% of PHYSICAL damage as WATER damage";
 						 isBase		= false;
-						 baseCost   = 2500;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 1500;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] * .4f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Burial";
+						 text 		= "Doubles the damage of this tower";
 						 isBase		= false;
-						 baseCost   = 5000;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) { for (int i=0;i<Constants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=2; } }
 					},
 				}
 		};

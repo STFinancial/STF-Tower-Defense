@@ -83,6 +83,29 @@ public abstract class Projectile implements Updatable {
 		currentSpeed = speed = .20f;
 	}
 	
+	protected void cloneStats(Projectile p) {
+		p.dud = false;
+		p.size = size;
+		p.speed = speed;
+		p.parent = parent;
+		p.level = level;
+		p.creepEffects = creepEffects;
+		p.splashEffects = splashEffects;
+		p.x = parent.centerX;
+		p.y = parent.centerY;
+		p.splashRadius = splashRadius;
+		p.multiplier = multiplier;
+		p.armorPenPercent = armorPenPercent;
+		p.armorPenFlat = armorPenFlat;
+		p.resistPenPercent = resistPenPercent;
+		p.resistPenFlat = resistPenFlat;
+		p.toughPenPercent = toughPenPercent;
+		p.toughPenFlat = toughPenFlat;
+		p.shieldDrainModifier = shieldDrainModifier;
+		p.ignoresShield = ignoresShield;
+		p.targetAngle = targetAngle;
+	}
+	
 	public abstract Projectile clone();
 	
 	public abstract void update();
