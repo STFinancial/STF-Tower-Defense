@@ -84,6 +84,7 @@ public class Creep implements Updatable {
 
 	//TODO: do we want to add to different sides of the list based on the type of effect it is
 	//The result of this would be that armor shreds are applied first
+	//ENUM seems like the best solution eventually
 	public void addEffect(ProjectileEffect effect) {
 		effects.add(new CreepEffect(effect));
 		CreepEffect c;

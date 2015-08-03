@@ -11,8 +11,8 @@ import maps.Tile;
 
 public class TowerWaterWater extends Tower {
 
-	public TowerWaterWater(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWaterWater(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WATER_WATER, towerID);
 	}
 
 	@Override

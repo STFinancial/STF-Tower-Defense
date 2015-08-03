@@ -11,8 +11,8 @@ public class TowerWindFire extends Tower {
 	int maxChains;
 	float chainPenalty;
 	
-	public TowerWindFire(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWindFire(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WIND_FIRE, towerID);
 		maxChains = 3;
 		chainPenalty = 0.75f;
 	}

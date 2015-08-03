@@ -138,7 +138,7 @@ public enum TowerType {
 						{name		= "Hardened Earth";
 						 text 		= "Double the PHYSICAL Damage";
 						 isBase 	= false;
-						 baseCost 	= 600;}
+						 baseCost 	= 1300;}
 						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2; }
 					},
 					new Upgrade() {
@@ -167,8 +167,83 @@ public enum TowerType {
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
 		//does tons of damage and armor penetration at some point?
-		name 				= "Meteor";
+		name 				= "Ironworks";
 		downgradeType 		= EARTH;
+		mainDamageType      = DamageType.EARTH;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/10, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/50};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 13f;
+		baseDamageSplash	= 0f;
+		baseEffectSplash	= 0f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "Rapid Fire";
+						 text 		= "Reduces base ATTACK COOLDOWN";
+						 isBase		= true;
+						 baseCost   = 400;}
+						 public void upgrade(Tower t) { t.attackCoolDown -= 2; }
+					},
+					new Upgrade() {
+						{name		= "Aerodynamics";
+						 text 		= "Increases the range";
+						 isBase		= false;
+						 baseCost   = 500;}
+						 public void upgrade(Tower t) { t.range += 4; }
+					},
+					new Upgrade() {
+						{name		= "Gather the Scraps";
+						 text 		= "Tower applies a wealth debuff to minions";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "Motherload";
+						 text 		= "Increases the duration and effectiveness of wealth";
+						 isBase		= false;
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) { ((TowerEarthFire) t).wealthDuration += 20; ((TowerEarthFire) t).wealthModifier += .20; }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "Arms Race";
+						 text 		= "Increases the base PHYSICAL damage";
+						 isBase 	= true;
+						 baseCost 	= 600;}
+						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] += 50; }
+					},
+					new Upgrade() {
+						{name		= "Armory";
+						 text 		= "Increases the PHYSICAL damage";
+						 isBase		= false;
+						 baseCost   = 500;}
+						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 1.5; }
+					},
+					new Upgrade() {
+						{name		= "FMJ";
+						 text 		= "Attacks and splash ignores armor";
+						 isBase		= false;
+						 baseCost   = 1500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "Piercing";
+						 text 		= "Attacks apply a stacking armor shred";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}),
 	EARTH_WATER (new BaseAttributeList(){{
 		//this will do rupture spikes on a selected area
@@ -404,7 +479,7 @@ public enum TowerType {
 						{name		= "Conductivity";
 						 text 		= "Increase all ELEMENTAL DAMAGE done by this tower";
 						 isBase		= false;
-						 baseCost   = 1000;}
+						 baseCost   = 1400;}
 						 public void upgrade(Tower t) { for (int i=0;i<Constants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
 					},
 					new Upgrade() {

@@ -11,8 +11,8 @@ import maps.Tile;
 public class TowerEarthEarth extends Tower {
 	
 	
-	public TowerEarthEarth(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
 	}
 
 	@Override

@@ -11,8 +11,8 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 	private Circle placeToTarget;
 	float areaRadius;
 	
-	public TowerEarthWater(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
 		//TODO this is kind of a lazy piece of code, figure out a better default position for the target area
 		areaRadius = 2f;
 		setTargetArea(x, y);

@@ -5,8 +5,8 @@ import maps.Tile;
 
 public class TowerWindWater extends Tower {
 
-	public TowerWindWater(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWindWater(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WIND_WATER, towerID);
 	}
 
 	@Override
