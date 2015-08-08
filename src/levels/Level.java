@@ -44,6 +44,7 @@ public class Level {
 	//Currently loaded/active units
 	public ArrayList<Tower> towers = new ArrayList<Tower>();
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+	public ArrayList<EffectPatch> patchEffects = new ArrayList<EffectPatch>();
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
 	public Path groundPath, airPath, proposedGroundPath;
@@ -449,6 +450,11 @@ public class Level {
 			return events.remove(0);
 		}
 		return null;
+	}
+
+	public void addEffectPatch(EffectPatch effectPatch) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

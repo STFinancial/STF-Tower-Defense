@@ -338,6 +338,81 @@ public enum TowerType {
 		//this tower ignites enemies with all types of elemental damage
 		name				= "Greater Fire";
 		downgradeType 		= FIRE;
+		mainDamageType      = DamageType.FIRE;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/70, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "Stoke the Flames";
+						 text 		= "Increases the base FIRE damage";
+						 isBase		= true;
+						 baseCost   = 500;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] += 50; }
+					},
+					new Upgrade() {
+						{name		= "Heating Up"; //TODO ugh
+						 text 		= "Doubles FIRE damage";
+						 isBase		= false;
+						 baseCost   = 1700;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] *= 2; }
+					},
+					new Upgrade() {
+						{name		= "Intensity";
+						 text 		= "Increases then triples FIRE damage";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  t.damageArray[DamageType.FIRE.ordinal()] += 40; t.damageArray[DamageType.FIRE.ordinal()] *= 3; }
+					},
+					new Upgrade() {
+						{name		= "Elemental Fire";
+						 text 		= "Applies a bleed of each element type equal to a percentage of your FIRE damage"; //TODO ugh
+						 isBase		= false;
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "Spreading Flames";
+						 text 		= "Increase base splash range and effectiveness";
+						 isBase 	= true;
+						 baseCost 	= 1300;}
+						 public void upgrade(Tower t) { t.splashRadius += 1; t.damageSplash += .10; t.effectSplash += .10;}
+					},
+					new Upgrade() {
+						{name		= "Uncontained";
+						 text 		= "Increases base range and splash damage coefficient";
+						 isBase		= true;
+						 baseCost   = 1400;}
+						 public void upgrade(Tower t) { t.range += 1.2; t.damageSplash += .15; }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 1500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}),  
 	FIRE_WATER (new BaseAttributeList(){{
 		//attacks ignore all types of defenses
