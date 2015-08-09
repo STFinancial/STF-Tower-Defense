@@ -2,6 +2,7 @@ package levels;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public class Level {
 	//Currently loaded/active units
 	public ArrayList<Tower> towers = new ArrayList<Tower>();
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-	public ArrayList<EffectPatch> patchEffects = new ArrayList<EffectPatch>();
+	public ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
 	public ArrayList<Creep> creeps = new ArrayList<Creep>();
 
 	public Path groundPath, airPath, proposedGroundPath;
@@ -140,6 +141,15 @@ public class Level {
 
 		for (Tower t : towers) {
 			t.update();
+		}
+		
+		Iterator<EffectPatch> i = effectPatches.iterator();
+		while (i.hasNext()) {
+			EffectPatch e = i.next();
+			e.update();
+			if (e.isDone()) {
+				i.remove();
+			}
 		}
 
 		tick++;

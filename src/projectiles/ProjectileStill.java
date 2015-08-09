@@ -1,5 +1,7 @@
 package projectiles;
 
+import java.util.ArrayList;
+
 import creeps.Creep;
 import towers.Tower;
 import levels.EffectPatch;
@@ -10,15 +12,15 @@ public class ProjectileStill extends ProjectileBasic {
 	private int lifetime;
 	private int timing;
 	private float patchRadius;
-	private ProjectileEffect effect;
+	private ArrayList<ProjectileEffect> effects;
 	
 	protected ProjectileStill() {}
 	
-	public ProjectileStill(Tower parent, int lifetime, int timing, float patchRadius, ProjectileEffect effect) {
+	public ProjectileStill(Tower parent, int lifetime, int timing, float patchRadius, ArrayList<ProjectileEffect> effects) {
 		super(parent);
 		this.lifetime = lifetime;
 		this.timing = timing;
-		this.effect = effect;
+		this.effects = effects;
 	}
 	
 	@Override
@@ -28,7 +30,7 @@ public class ProjectileStill extends ProjectileBasic {
 		p.targetCreep = targetCreep;
 		p.lifetime = lifetime;
 		p.timing = timing;
-		p.effect = effect;
+		p.effects = effects;
 		//this is only safe because we clone immediately before we fire
 		return p;
 	}
@@ -43,7 +45,7 @@ public class ProjectileStill extends ProjectileBasic {
 			c.addAllEffects(splashEffects);
 		}
 		if (patchRadius > 0) {
-			level.addEffectPatch(new EffectPatch(lifetime, timing, this.x, this.y, this.patchRadius, effect));
+			level.addEffectPatch(new EffectPatch(lifetime, timing, this.x, this.y, this.patchRadius, effects, level));
 		}
 	}
 

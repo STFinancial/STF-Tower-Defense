@@ -398,15 +398,15 @@ public enum TowerType {
 						 public void upgrade(Tower t) { t.range += 1.2; t.damageSplash += .15; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Scorched Earth";
+						 text 		= "Scorches the earth around the target, damaging all enemies that pass through it";
 						 isBase		= false;
-						 baseCost   = 1500;}
+						 baseCost   = 2500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Burning Flesh";
+						 text 		= "Scorched Earth reduces all elemental resistances";
 						 isBase		= false;
 						 baseCost   = 4000;}
 						 public void upgrade(Tower t) {  }
