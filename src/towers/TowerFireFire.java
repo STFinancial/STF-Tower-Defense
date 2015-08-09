@@ -6,6 +6,7 @@ import creeps.DamageType;
 import projectileeffects.Damage;
 import projectileeffects.ProjectileEffect;
 import projectileeffects.ArmorShred;
+import projectileeffects.Bleed;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileStill;
 import levels.Level;
@@ -13,8 +14,8 @@ import maps.Tile;
 
 public class TowerFireFire extends Tower {
 
-	public TowerFireFire(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerFireFire(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.FIRE_FIRE, towerID);
 	}
 
 	@Override
@@ -33,6 +34,12 @@ public class TowerFireFire extends Tower {
 			baseProjectile = new ProjectileStill(this, 12, 3, splashRadius, effects);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
+			if (progress[0][3]) {
+				baseProjectile.addSpecificCreepEffect(new Bleed(12, damageArray[DamageType.FIRE.ordinal()] * 15, 3, DamageType.FIRE, baseProjectile));
+				baseProjectile.addSpecificCreepEffect(new Bleed(12, damageArray[DamageType.FIRE.ordinal()] * 15, 3, DamageType.WATER, baseProjectile));
+				baseProjectile.addSpecificCreepEffect(new Bleed(12, damageArray[DamageType.FIRE.ordinal()] * 15, 3, DamageType.EARTH, baseProjectile));
+				baseProjectile.addSpecificCreepEffect(new Bleed(12, damageArray[DamageType.FIRE.ordinal()] * 15, 3, DamageType.WIND, baseProjectile));
+			}
 		}
 		
 	}
