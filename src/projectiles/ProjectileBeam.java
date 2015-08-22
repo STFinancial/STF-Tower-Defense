@@ -1,42 +1,18 @@
 package projectiles;
 
-import java.util.HashSet;
-
-import levels.Level;
-
 import towers.Tower;
 
-import creeps.Creep;
-
-public class ProjectileBeam extends Projectile {
-
+public class ProjectileBeam extends ProjectileBasic {
+	//TODO will have to add stuff so this animates better later
+	
 	public ProjectileBeam(Tower parent) {
 		super(parent);
-		// TODO Auto-generated constructor stub
+		this.speed = 0;
+		this.currentSpeed = 0;
 	}
-
-	@Override
-	public Projectile clone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
-
-	@Override
-	public void detonate(Level level) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

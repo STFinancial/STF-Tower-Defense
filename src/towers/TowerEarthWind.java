@@ -1,5 +1,8 @@
 package towers;
 
+import creeps.Creep;
+import projectiles.ProjectileBasic;
+import projectiles.ProjectileBeam;
 import levels.Level;
 import maps.Tile;
 
@@ -11,8 +14,41 @@ public class TowerEarthWind extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		// TODO Auto-generated method stub
+		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		if (progress[1][3]) {
+			baseProjectile = new ProjectileBasic(this);
+		} else {
+			baseProjectile = new ProjectileBeam(this);
+		}
+	}
 
+	@Override
+	public void update() {
+		
+		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		if (progress[1][3]) {
+			Creep targetCreep = level.findTargetCreep(this);
+			if (targetCreep != null) {
+				((ProjectileBeam) baseProjectile).setTargetCreep(targetCreep);
+				level.addProjectile(fireProjectile());
+			}
+		} else {
+			currentAttackCoolDown--;
+			if (currentAttackCoolDown < 1) {
+				Creep targetCreep = level.findTargetCreep(this);
+				if (targetCreep != null) {
+					//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
+					((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
+					level.addProjectile(fireProjectile());
+					attackCarryOver += 1 - currentAttackCoolDown;
+					currentAttackCoolDown = attackCoolDown;
+					if (attackCarryOver > 1) {
+						attackCarryOver -= 1;
+						currentAttackCoolDown--;
+					}
+				}
+			}
+		}
 	}
 
 }

@@ -8,6 +8,7 @@ import levels.Level;
 import levels.Updatable;
 import maps.Tile;
 import creeps.Creep;
+import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
 import utilities.Constants;
@@ -240,11 +241,21 @@ public abstract class Tower implements Updatable {
 	}
 
 	public String toString() {
-		return "Type: " + type + " at " + x + " , " + y;
-	}
-	
-	public boolean equals(Tower t) {
-		return t.towerID == towerID;
+		StringBuilder s = new StringBuilder();
+		s = s.append("Tower of Type " + type + " at position " + x + ", " + y + "\n");
+		s = s.append("TowerID: " + towerID);
+		s = s.append("Damage: \n");
+		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+			s.append("\t " + DamageType.values()[i] + " - " + damageArray[i] + "\n");
+		}
+		s.append("Slow: \n");
+		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+			s.append("\t " + DamageType.values()[i] + " - " + slowArray[i] * 100 + "% for " + slowDurationArray[i] + "\n");
+		}
+		s.append("Tower Range: " + range); 
+		s.append("Attack Cooldown: " + attackCoolDown);
+		s.append("Damage Splash Effectiveness: " + damageSplash * 100 + "%  Effect Splash Effectiveness: " + effectSplash * 100 + "%  Splash Radius: " + splashRadius);
+		return s.toString();
 	}
 	
 	@Override

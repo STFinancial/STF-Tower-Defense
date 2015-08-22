@@ -1,5 +1,6 @@
 package towers;
 
+import creeps.Creep;
 import creeps.DamageType;
 import projectileeffects.ArmorShred;
 import projectileeffects.Wealth;
@@ -37,7 +38,21 @@ public class TowerEarthFire extends Tower {
 
 	@Override
 	public void update() {
-		
+		currentAttackCoolDown--;
+		if (currentAttackCoolDown < 1) {
+			Creep targetCreep = level.findTargetCreep(this);
+			if (targetCreep != null) {
+				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
+				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
+				level.addProjectile(fireProjectile());
+				attackCarryOver += 1 - currentAttackCoolDown;
+				currentAttackCoolDown = attackCoolDown;
+				if (attackCarryOver > 1) {
+					attackCarryOver -= 1;
+					currentAttackCoolDown--;
+				}
+			}
+		}
 	}
 
 }

@@ -3,6 +3,7 @@ package towers;
 import utilities.Constants;
 import creeps.DamageType;
 import projectiles.*;
+//TODO can use a priority value instead of "isBase"
 //EARTH, FIRE, WATER, WIND, LIGHT, DARK, PHYSICAL;
 public enum TowerType {
 	//TODO I want each (upgraded) tower to have it's unique projectile effect too
@@ -123,7 +124,7 @@ public enum TowerType {
 						 text 		= "Converts each point of PHYSICAL damage to 1.5 points of EARTH damage";
 						 isBase		= false;
 						 baseCost   = 2000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] * 1.5f; t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] = 0; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[DamageType.PHYSICAL.ordinal()] * 1.5f; t.damageArray[DamageType.PHYSICAL.ordinal()] = 0; }
 					},
 					new Upgrade() {
 						{name		= "Living Earth";
@@ -139,7 +140,7 @@ public enum TowerType {
 						 text 		= "Double the PHYSICAL Damage";
 						 isBase 	= false;
 						 baseCost 	= 1300;}
-						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 2; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] *= 2; }
 					},
 					new Upgrade() {
 						{name		= "Fault Lines";
@@ -153,7 +154,7 @@ public enum TowerType {
 						 text 		= "Deal additional PHYSICAL damage as a bleed";
 						 isBase		= true;
 						 baseCost   = 2500;}
-						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] += 50; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 50; }
 					},
 					new Upgrade() {
 						{name		= "Grievous Wound";
@@ -219,14 +220,14 @@ public enum TowerType {
 						 text 		= "Increases the base PHYSICAL damage";
 						 isBase 	= true;
 						 baseCost 	= 600;}
-						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] += 50; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 50; }
 					},
 					new Upgrade() {
 						{name		= "Armory";
 						 text 		= "Increases the PHYSICAL damage";
 						 isBase		= false;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] *= 1.5; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] *= 1.5; }
 					},
 					new Upgrade() {
 						{name		= "FMJ";
@@ -306,14 +307,14 @@ public enum TowerType {
 						 text 		= "Increases the base PHYSICAL damage";
 						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] += 40; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 40; }
 					},
 					new Upgrade() {
 						{name		= "Elemental Balance";
 						 text 		= "Adds 40% of PHYSICAL damage as WATER damage";
 						 isBase		= false;
 						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[Constants.NUM_DAMAGE_TYPES - 1] * .4f; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[DamageType.PHYSICAL.ordinal()] * .4f; }
 					},
 					new Upgrade() {
 						{name		= "Burial";
@@ -346,62 +347,62 @@ public enum TowerType {
 		upgrades			= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
+						{name		= "Explosive Force";
 						 text 		= "Increases the splash damage and effectiveness";
 						 isBase		= true;
-						 baseCost   = 850;}
-						 public void upgrade(Tower t) { t.damageSplash += .25; t.effectSplash += .25; }
+						 baseCost   = 1350;}
+						 public void upgrade(Tower t) { t.damageSplash += .2; t.effectSplash += .2; }
 					},
 					new Upgrade() {
-						{name		= "";
+						{name		= "Explosive Force";
 						 text 		= "Increases the splash damage and effectiveness";
 						 isBase		= true;
-						 baseCost   = 850;}
-						 public void upgrade(Tower t) { t.damageSplash += .25; t.effectSplash += .25; }
+						 baseCost   = 1350;}
+						 public void upgrade(Tower t) { t.damageSplash += .2; t.effectSplash += .2; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Blast Zone";
+						 text 		= "Greatly increases the splash radius";
 						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.splashRadius += 5; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 3000;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Ground Zero";
+						 text 		= "Greatly increases the base splash radius";
+						 isBase		= true;
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) { t.splashRadius += 5; }
 					},
 				},
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Howl";
+						 text 		= "Reduces ATTACK COOLDOWN";
 						 isBase 	= false;
-						 baseCost 	= 600;}
-						 public void upgrade(Tower t) {  }
+						 baseCost 	= 1000;}
+						 public void upgrade(Tower t) { t.attackCoolDown -= 3; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Brewing Storm";
+						 text 		= "Increase base WIND damage";
 						 isBase		= false;
-						 baseCost   = 400;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 900;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()] += 40; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Whipping Winds";
+						 text 		= "Reduces ATTACK COOLDOWN and adds 50% of PHYSICAL damage as WIND damage";
 						 isBase		= false;
 						 baseCost   = 1500;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.attackCoolDown -= 3; t.damageArray[DamageType.WIND.ordinal()] += 0.5 * t.damageArray[DamageType.PHYSICAL.ordinal()];}
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Sand Blast";
+						 text 		= "Converts ATTACK COOLDOWN to PHYSICAL damage and now fires a blast of sand";
+						 isBase		= true;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCoolDown) * 40; }
 					},
 				}
 		};
