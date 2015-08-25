@@ -495,6 +495,81 @@ public enum TowerType {
 		//attacks ignore all types of defenses
 		name				= "Plasma";
 		downgradeType 		= FIRE;
+		mainDamageType      = DamageType.FIRE;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/70, /*WA*/50, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "Fission";
+						 text 		= "Increases base damage of all types";
+						 isBase		= true;
+						 baseCost   = 1500;}
+						 public void upgrade(Tower t) { for(int i=0;i<Constants.NUM_DAMAGE_TYPES;i++){DamageType d = DamageType.values()[i]; if (d!=DamageType.LIGHT || d!=DamageType.DARK) { t.damageArray[i]+=20; }}}
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 1700;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "Superheated";
+						 text 		= "Attacks ignore all types of damage resistance";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 5000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "Chain Reaction";
+						 text 		= "Increases base splash radius";
+						 isBase 	= true;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) { t.splashRadius += 3; }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= true;
+						 baseCost   = 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
 		//this tower fires a laser thing that passes through enemies and goes a fixed distance

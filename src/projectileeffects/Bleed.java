@@ -16,9 +16,12 @@ public class Bleed extends ProjectileEffect {
 	public void applyEffect(Creep creep) {
 		float damageToDo = modifier - creep.toughness;
 		//TODO: should this be affected by toughness and shield?
-		
+		float damageModifier = creep.resist[damageType.ordinal()];
 		if (damageToDo < 0) {
 			damageToDo = 0;
+		}
+		if (damageModifier < 0) {
+			damageToDo *= 1 - damageModifier;
 		}
 		if (creep.currentShield < damageToDo) {
 			float damageLeft = damageToDo - creep.currentShield;

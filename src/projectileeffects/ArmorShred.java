@@ -6,7 +6,6 @@ import creeps.DamageType;
 import creeps.Creep.CreepEffect;
 
 public class ArmorShred extends ProjectileEffect {
-	
 	public ArmorShred(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
 		refreshable = true;
@@ -29,7 +28,7 @@ public class ArmorShred extends ProjectileEffect {
 			creep.resist[damageType.ordinal()] = creep.elementType.baseResist()[damageType.ordinal()];
 			for (CreepEffect c: creep.effects) {
 				if (c.projectileEffect instanceof ArmorShred) {
-					((Snare) c.projectileEffect).applyEffect(creep);
+					((ArmorShred) c.projectileEffect).applyEffect(creep);
 				}
 			}
 			//TODO what if I want flat penetration
