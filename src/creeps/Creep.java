@@ -16,23 +16,14 @@ public class Creep implements Updatable {
 	public int creepID;
 	
 	//Primary Stats
-	public int health;
-	public int toughness; //flat reduction for all types
-	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
 	public int healthCost; //Damage Player takes on escape
 	public int goldValue; //Money player takes on kill
 	public DamageType elementType; //FIRE AIR etc creep type 
 
 	//Current Stats
-	public int currentToughness;
-	public float currentHealth;
-	public float currentSpeed;
-	public ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
+	CreepAttributes attributes;
 
 	//Secondary Stats
-	public float[] resist; //percentage of damage taken from each element
-	public float slowResist;
-	public boolean snareImmune;
 	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
 	//Movement
@@ -51,8 +42,6 @@ public class Creep implements Updatable {
 	public float currentShield;
 	float shieldCap;
 	public int disruptorAmount;
-	public int snareGrace;
-	public int timeUntilSnare;
 
 	public Creep(int health, float speed, int toughness, int healthCost, int goldValue, DamageType elementType) {
 		this.health = health;
@@ -68,51 +57,48 @@ public class Creep implements Updatable {
 		resist = elementType.baseResist();
 		hitBox = new Circle(1, 1, size);
 	}
-	//TODO possibly remove this and go back to just recreating each projectile effect
-	public class CreepEffect {
-		CreepEffect(ProjectileEffect p) {
-			projectileEffect = p;
-			lifetime = p.lifetime;
-			timing = p.timing;
-			counter = 0;
-		}
-		public ProjectileEffect projectileEffect;
-		int lifetime;
-		int timing;
-		public int counter;
-	}
 
 	//TODO: do we want to add to different sides of the list based on the type of effect it is
 	//The result of this would be that armor shreds are applied first
 	//ENUM seems like the best solution eventually
 	public void addEffect(ProjectileEffect effect) {
-		effects.add(new CreepEffect(effect));
-		CreepEffect c;
-		if (effect instanceof Consume) {
-			//Need to proc it immediately because of how the iterators work
-			//Can't remove bleeds while we're looping through the set
-			effect.applyEffect(this);
-		} else if (effect.refreshable && (c = hasEffect(effect)) != null) {
-			c.counter = 0;
-		} else {
-			this.effects.add(new CreepEffect(effect));
-		}
+		attributes.addEffect(effect);
 	}
 
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
-		for (ProjectileEffect p : effects) {
-			CreepEffect c;
-			if (p instanceof Consume) {
-				//Need to proc it immediately because of how the iterators work
-				//Can't remove bleeds while we're looping through the set
-				p.applyEffect(this);
-			} else if (p.refreshable && (c = hasEffect(p)) != null) {
-				c.counter = 0;
-			} else {
-				this.effects.add(new CreepEffect(p));
-			}
-			
-		}
+		attributes.addAllEffects(effects);
+	}
+	
+	public float reducePercentResist(DamageType type, float percentReduction) {
+		return attributes.reducePercentResist(type, percentReduction);
+	}
+	
+	public float increasePercentResist(DamageType type, float percentIncrease) {
+		return attributes.increasePercentResist(type, percentIncrease);
+	}
+	
+	public float reduceFlatResist(DamageType type, float amount) {
+		return attributes.reduceFlatResist(type, amount);
+	}
+	
+	public float increaseFlatResist(DamageType type, float amount) {
+		return attributes.increaseFlatResist(type, amount);
+	}
+	
+	public float reduceFlatToughness(float amount) {
+		return attributes.reduceFlatToughness(amount);
+	}
+	
+	public float increaseFlatToughness(float amount) {
+		return attributes.increaseFlatToughness(amount);
+	}
+	
+	public float reducePercentToughness(float amount) {
+		return attributes.reducePercentToughness(amount);
+	}
+	
+	public float increasePercentToughness(float amount) {
+		return attributes.increasePercentToughness(amount);
 	}
 
 	public void addAffix(CreepType type) {
@@ -133,7 +119,7 @@ public class Creep implements Updatable {
 	}
 
 	public boolean isDead() {
-		return currentHealth < 1;
+		return attributes.getCurrentHealth() <= 0;
 	}
 
 	public boolean is(CreepType type) {
@@ -164,37 +150,15 @@ public class Creep implements Updatable {
 		updateEffects();
 	}
 	
-	private CreepEffect hasEffect(ProjectileEffect pe) {
-		for (CreepEffect c: effects) {
-			if (c.projectileEffect.equals(pe)) {
-				return c;
-			}
-		}
-		return null;
-	}
+	
 
 	private void updateEffects() {
-		currentSpeed = speed;
-		timeUntilSnare--;
-		for (int i = 0; i < effects.size(); i++) {
-			CreepEffect e = effects.get(i);
-			if (e.timing != 0 && e.counter % e.timing == 0) {
-				e.projectileEffect.applyEffect(this);
-			} else if (e.timing == 0 && e.counter == 0) {
-				e.projectileEffect.applyEffect(this);
-			}
-			if (e.counter >= e.lifetime) {
-				e.projectileEffect.onExpire(this);
-				effects.remove(i--);
-				continue;
-			}
-			e.counter++;
-		}
+		attributes.update();
 	}
 
 	private void updateMovement() {
-		xOff += direction.x * currentSpeed;
-		yOff += direction.y * currentSpeed;
+		xOff += direction.x * attributes.getCurrentSpeed();
+		yOff += direction.y * attributes.getCurrentSpeed();
 		if (xOff >= 1 || yOff >= 1 || xOff <= -1 || yOff <= -1) {
 			//Back step, figure out how much speed was spent for movement
 			float speedRemaining;
@@ -271,7 +235,7 @@ public class Creep implements Updatable {
 	}
 
 	public String toString() {
-		String string = "hp = " + health + ", toughness = " + toughness + " , speed = " + speed;
+		String string = "hp = " + attributes.getCurrentHealth() + ", toughness = " + attributes.getCurrentToughness() + " , speed = " + attributes.getCurrentSpeed();
 		string += "\nelement = " + elementType + ", Modifiers: ";
 		for (CreepType type : creepTypes) {
 			string += " " + type;
