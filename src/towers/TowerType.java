@@ -336,7 +336,7 @@ public enum TowerType {
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/20, /*L*/0, /*D*/0, /*P*/60};
 		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 15f;
+		baseAttackCoolDown	= 14f;
 		baseDamageSplash	= 0.10f;
 		baseEffectSplash	= 0.10f;
 		baseSplashRadius	= 5f;
@@ -401,7 +401,7 @@ public enum TowerType {
 						{name		= "Sand Blast";
 						 text 		= "Converts ATTACK COOLDOWN to PHYSICAL damage and now fires a blast of sand";
 						 isBase		= true;
-						 baseCost   = 4000;}
+						 baseCost   = 8000;}
 						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCoolDown) * 40; }
 					},
 				}
