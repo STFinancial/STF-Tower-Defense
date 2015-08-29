@@ -1,7 +1,7 @@
 package players;
 
 
-import utilities.Constants;
+import utilities.GameConstants;
 
 /*
  * Class containing current world map progress and relevant statistics
@@ -12,10 +12,10 @@ public class PlayerProgress {
 	private SingleMapProgress[][] progress; //world by level by stars
 	
 	public PlayerProgress() {
-		progress = new SingleMapProgress[Constants.NUM_WORLDS][Constants.LARGEST_WORLD];
+		progress = new SingleMapProgress[GameConstants.NUM_WORLDS][GameConstants.LARGEST_WORLD];
 		
-		for (int world = 0; world < Constants.NUM_WORLDS; world++) {
-			for (int level = 0; level < Constants.LARGEST_WORLD; level++) {
+		for (int world = 0; world < GameConstants.NUM_WORLDS; world++) {
+			for (int level = 0; level < GameConstants.LARGEST_WORLD; level++) {
 				progress[world][level] = new SingleMapProgress();
 			}
 		}

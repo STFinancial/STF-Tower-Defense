@@ -38,23 +38,21 @@ public class Creep implements Updatable {
 
 	//Fancy Effects
 	public ArrayList<Creep> children;
-	float baseShield;
-	public float currentShield;
-	float shieldCap;
 	public int disruptorAmount;
 
-	public Creep(int health, float speed, int toughness, int healthCost, int goldValue, DamageType elementType) {
-		this.health = health;
-		this.speed = speed;
+	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed, int healthCost, int goldValue, DamageType elementType) {
+		this.attributes = new CreepAttributes(this, maxDamageResistsFlat, maxSlowResists, maxHealth, healthRegenRate, maxToughness, maxShieldValue, shieldRegenRate, snareImmune, maxSpeed);
 		this.healthCost = healthCost;
 		this.goldValue = goldValue;
 		this.elementType = elementType;
-		this.toughness = toughness;
-		currentHealth = health;
-		currentSpeed = speed;
-		snareGrace = 15;
-		timeUntilSnare = snareGrace;
-		resist = elementType.baseResist();
+		hitBox = new Circle(1, 1, size);
+	}
+	
+	private Creep(CreepAttributes attributes, int healthCost, int goldValue, DamageType elementType) {
+		this.attributes = attributes.clone();
+		this.healthCost = healthCost;
+		this.goldValue = goldValue;
+		this.elementType = elementType;
 		hitBox = new Circle(1, 1, size);
 	}
 
@@ -67,6 +65,10 @@ public class Creep implements Updatable {
 
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
 		attributes.addAllEffects(effects);
+	}
+	
+	public float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) {
+		return attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat);
 	}
 	
 	public float reducePercentResist(DamageType type, float percentReduction) {
@@ -205,12 +207,8 @@ public class Creep implements Updatable {
 	 * NOT A FULL CLONE, ONLY WORKS FOR CREEPS NOT YET SPAWNED
 	 */
 	public Creep clone() {
-		Creep clone = new Creep(health, speed, toughness, healthCost, goldValue, elementType);
+		Creep clone = new Creep(attributes, healthCost, goldValue, elementType);
 
-		//Secondary Stats
-		clone.resist = this.resist.clone(); //percentage of damage taken from each element
-		clone.slowResist = this.slowResist;
-		clone.snareImmune = this.snareImmune;
 		clone.creepTypes = new HashSet<CreepType>();
 		for (CreepType type : this.creepTypes) {
 			clone.creepTypes.add(type);
@@ -226,9 +224,6 @@ public class Creep implements Updatable {
 				clone.children.add(child.clone());
 			}
 		}
-		clone.baseShield = this.baseShield;
-		clone.currentShield = this.currentShield;
-		clone.shieldCap = this.shieldCap;
 		clone.disruptorAmount = this.disruptorAmount;
 
 		return clone;

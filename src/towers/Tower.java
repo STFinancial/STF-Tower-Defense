@@ -11,7 +11,7 @@ import creeps.Creep;
 import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
-import utilities.Constants;
+import utilities.GameConstants;
 import utilities.TrigHelper;
 
 public abstract class Tower implements Updatable {
@@ -47,9 +47,9 @@ public abstract class Tower implements Updatable {
 	public BaseAttributeList baseAttributeList;
 	
 	//Current Attributes
-	public float[] damageArray = new float[Constants.NUM_DAMAGE_TYPES];
-	public float[] slowArray = new float[Constants.NUM_DAMAGE_TYPES];
-	public int[] slowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
+	public float[] damageArray = new float[GameConstants.NUM_DAMAGE_TYPES];
+	public float[] slowArray = new float[GameConstants.NUM_DAMAGE_TYPES];
+	public int[] slowDurationArray = new int[GameConstants.NUM_DAMAGE_TYPES];
 	public float attackCoolDown;
 	public float currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
 	public float attackCarryOver;
@@ -75,7 +75,7 @@ public abstract class Tower implements Updatable {
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		//TODO since I changed the way base stats are modified I can remove this clone I think
 		this.baseAttributeList = type.getAttributeList().clone();
-		this.upgradeTracks = new boolean[Constants.NUM_DAMAGE_TYPES][Constants.NUM_UPGRADE_PATHS][Constants.UPGRADE_PATH_LENGTH];
+		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
@@ -92,7 +92,7 @@ public abstract class Tower implements Updatable {
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
-		this.siphonBonus = Constants.SIPHON_BONUS_MODIFIER;
+		this.siphonBonus = GameConstants.SIPHON_BONUS_MODIFIER;
 		updateTowerChain();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
@@ -136,7 +136,7 @@ public abstract class Tower implements Updatable {
 	
 	//TODO: technically we don't need to pass this as a parameter
 	protected void siphon(Tower from) {
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			this.damageArray[i] += (int) (from.damageArray[i] * this.siphonBonus);
 			this.slowArray[i] += from.slowArray[i] * this.siphonBonus;
 			this.slowDurationArray[i] += (int) ((from.slowDurationArray[i] * this.siphonBonus) / 2);
@@ -170,8 +170,8 @@ public abstract class Tower implements Updatable {
 	private void adjustBaseUpgradeStats() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int track = 0; track < Constants.NUM_UPGRADE_PATHS; track++) {
-				for (int uNum = 0; uNum < Constants.UPGRADE_PATH_LENGTH; uNum++) {
+			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
+				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
 					if (progress[track][uNum] && baseAttributeList.upgrades[track][uNum].isBase) {
 						 baseAttributeList.upgrades[track][uNum].upgrade(this);
 					}
@@ -183,8 +183,8 @@ public abstract class Tower implements Updatable {
 	private void adjustNonBaseUpgradeStats() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int track = 0; track < Constants.NUM_UPGRADE_PATHS; track++) {
-				for (int uNum = 0; uNum < Constants.UPGRADE_PATH_LENGTH; uNum++) {
+			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
+				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
 					if (progress[track][uNum] && !baseAttributeList.upgrades[track][uNum].isBase) {
 						 baseAttributeList.upgrades[track][uNum].upgrade(this);
 					}
@@ -204,7 +204,7 @@ public abstract class Tower implements Updatable {
 	 * @param path - 1 or 0 depending on the upgrade path
 	 */
 	public void upgrade(int track) {
-		for (int i = 0; i < Constants.UPGRADE_PATH_LENGTH; i++) {
+		for (int i = 0; i < GameConstants.UPGRADE_PATH_LENGTH; i++) {
 			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i]) {
 				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i] = true;
 				updateTowerChain();
@@ -224,7 +224,7 @@ public abstract class Tower implements Updatable {
 			return false;
 		} else {
 			int sfType = siphoningFrom.baseAttributeList.downgradeType.ordinal();
-			for (int i = 0; i < Constants.UPGRADE_PATH_LENGTH; i++) {
+			for (int i = 0; i < GameConstants.UPGRADE_PATH_LENGTH; i++) {
 				if (!upgradeTracks[sfType][track][i]) {
 					if (baseAttributeList.upgrades[track][i].baseCost <= playerGold) {
 						return true;
@@ -245,11 +245,11 @@ public abstract class Tower implements Updatable {
 		s = s.append("Tower of Type " + type + " at position " + x + ", " + y + "\n");
 		s = s.append("TowerID: " + towerID);
 		s = s.append("Damage: \n");
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			s.append("\t " + DamageType.values()[i] + " - " + damageArray[i] + "\n");
 		}
 		s.append("Slow: \n");
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			s.append("\t " + DamageType.values()[i] + " - " + slowArray[i] * 100 + "% for " + slowDurationArray[i] + "\n");
 		}
 		s.append("Tower Range: " + range); 

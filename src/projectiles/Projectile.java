@@ -12,7 +12,7 @@ import projectileeffects.Slow;
 
 import towers.Tower;
 import utilities.Circle;
-import utilities.Constants;
+import utilities.GameConstants;
 import creeps.DamageType;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
@@ -28,10 +28,8 @@ public abstract class Projectile implements Updatable {
 	public float size = .01f;
 	public float splashRadius;
 	public Circle hitBox;
-	public float armorPenPercent = 0f;
-	public float armorPenFlat = 0;
-	public float resistPenPercent = 0f;
-	public float resistPenFlat = 0;
+	public float[] resistPenPercent;
+	public float[] resistPenFlat;
 	public float toughPenPercent = 0f;
 	public float toughPenFlat = 0;
 	public float shieldDrainModifier = 1;
@@ -57,6 +55,8 @@ public abstract class Projectile implements Updatable {
 		this.splashRadius 	= parent.splashRadius;
 		
 		hitBox = new Circle(x, y, size);
+		resistPenPercent = new float[GameConstants.NUM_DAMAGE_TYPES];
+		resistPenFlat = new float[GameConstants.NUM_DAMAGE_TYPES];
 		creepEffects = new ArrayList<ProjectileEffect>();
 		splashEffects = new ArrayList<ProjectileEffect>();
 		multiplier = new AffixModifier();
@@ -65,7 +65,7 @@ public abstract class Projectile implements Updatable {
 	}
 	
 	private void addGeneralEffects() {
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			if (parent.damageArray[i] != 0) {
 				creepEffects.add(new Damage(parent.damageArray[i], DamageType.values()[i], this));
 				if (parent.damageSplash != 0 && parent.splashRadius != 0) {
@@ -95,10 +95,10 @@ public abstract class Projectile implements Updatable {
 		p.y = parent.centerY;
 		p.splashRadius = splashRadius;
 		p.multiplier = multiplier;
-		p.armorPenPercent = armorPenPercent;
-		p.armorPenFlat = armorPenFlat;
-		p.resistPenPercent = resistPenPercent;
-		p.resistPenFlat = resistPenFlat;
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			p.resistPenPercent[i] = resistPenPercent[i];
+			p.resistPenFlat[i] = resistPenFlat[i];
+		}
 		p.toughPenPercent = toughPenPercent;
 		p.toughPenFlat = toughPenFlat;
 		p.shieldDrainModifier = shieldDrainModifier;

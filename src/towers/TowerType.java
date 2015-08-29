@@ -1,6 +1,6 @@
 package towers;
 
-import utilities.Constants;
+import utilities.GameConstants;
 import creeps.DamageType;
 import projectiles.*;
 //TODO can use a priority value instead of "isBase"
@@ -321,7 +321,7 @@ public enum TowerType {
 						 text 		= "Doubles the damage of this tower";
 						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { for (int i=0;i<Constants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=2; } }
+						 public void upgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=2; } }
 					},
 				}
 		};
@@ -515,7 +515,7 @@ public enum TowerType {
 						 text 		= "Increases base damage of all types";
 						 isBase		= true;
 						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { for(int i=0;i<Constants.NUM_DAMAGE_TYPES;i++){DamageType d = DamageType.values()[i]; if (d!=DamageType.LIGHT || d!=DamageType.DARK) { t.damageArray[i]+=20; }}}
+						 public void upgrade(Tower t) { for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){DamageType d = DamageType.values()[i]; if (d!=DamageType.LIGHT || d!=DamageType.DARK) { t.damageArray[i]+=20; }}}
 					},
 					new Upgrade() {
 						{name		= "";
@@ -707,7 +707,7 @@ public enum TowerType {
 						 text 		= "Increase all ELEMENTAL DAMAGE done by this tower";
 						 isBase		= false;
 						 baseCost   = 1400;}
-						 public void upgrade(Tower t) { for (int i=0;i<Constants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
+						 public void upgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
 					},
 					new Upgrade() {
 						{name		= "No Mercy";

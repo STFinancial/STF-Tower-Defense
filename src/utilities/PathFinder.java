@@ -66,7 +66,7 @@ public class PathFinder {
 	
 	private static float getEdgeCost(Vertex v1, Vertex v2) {
 		if (v1.y != v2.y && v1.x != v2.x) {
-			return Constants.SQRT_2;
+			return GameConstants.SQRT_2;
 		} else {
 			return 1f;
 		}

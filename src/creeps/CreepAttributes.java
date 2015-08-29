@@ -6,6 +6,7 @@ import projectileeffects.ArmorShred;
 import projectileeffects.Consume;
 import projectileeffects.ProjectileEffect;
 import projectileeffects.Snare;
+import utilities.GameConstants;
 import levels.Updatable;
 //TODO: Possibly make this a singleton if all creeps use the same one (at most we create only a few hundred of these, shouldn't be too much overhead)
 //TODO: Optimization - This will need to be refactored away from float math if everything is too slow
@@ -27,6 +28,7 @@ final class CreepAttributes implements Updatable {
 	private float maxShield;
 	private float currentShield;
 	private float shieldRegenerationRate; //Shield increase per game tick
+	private float currentShieldRegenerationRate;
 	
 	private float maxToughness;
 	private float currentToughnessReductionPercent;
@@ -39,6 +41,7 @@ final class CreepAttributes implements Updatable {
 	private float maxHealth;
 	private float currentHealth;
 	private float healthRegenerationRate; //Health increase per game tick
+	private float currentHealthRegenerationRate;
 	
 	private float maxSpeed;
 	private float currentSpeed;
@@ -47,7 +50,7 @@ final class CreepAttributes implements Updatable {
 	private int snareGrace;
 	private int timeUntilSnare;
 	
-	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune) {
+	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed) {
 		this.parent = parent;
 		effects = new ArrayList<CreepEffect>();
 		//Damage Resists
@@ -58,13 +61,14 @@ final class CreepAttributes implements Updatable {
 		this.currentResistReductionFlat = new float[currentDamageResistsFlat.length];
 		for (int i = 0; i < maxDamageResistsFlat.length; i++) {
 			float resist = maxDamageResistsFlat[i];
-			this.currentDamageResistsPercent[i] = resist / (resist + 100f);
+			this.currentDamageResistsPercent[i] = resist / (resist + GameConstants.RESIST_DENOMINATOR_VALUE);
 			this.currentDamageResistsFlat[i] = resist;
 		}
 		//Shields
 		this.maxShield = maxShieldValue;
 		this.currentShield = maxShieldValue;
 		this.shieldRegenerationRate = shieldRegenRate;
+		this.currentShieldRegenerationRate = shieldRegenRate;
 		
 		//Toughness
 		this.maxToughness = maxToughness;
@@ -84,11 +88,19 @@ final class CreepAttributes implements Updatable {
 		this.maxHealth = maxHealth;
 		this.currentHealth = maxHealth;
 		this.healthRegenerationRate = healthRegenRate;
+		this.currentHealthRegenerationRate = healthRegenRate;
 		
 		//Snare Immunity
 		this.snareImmune = snareImmune;
 		this.snareGrace = 15;
 		this.timeUntilSnare = snareGrace;
+		
+		this.maxSpeed = maxSpeed;
+		this.currentSpeed = maxSpeed;
+	}
+	
+	private CreepAttributes(CreepAttributes attributes) {
+		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.maxSlowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.maxSpeed);
 	}
 	
 	/**
@@ -132,18 +144,29 @@ final class CreepAttributes implements Updatable {
 	boolean isSnareImmune() { return snareImmune; }
 	
 	//TODO: We're switching this over to calculating all the damage? (then how to we ignore shield and shit)
+	//TODO: Do we really want to apply toughness to damage of every type?
 	/**
 	 * Reduces the health of the creep by the amount specified. This amount should be positive and should be post-resistance calculations.
 	 * @param amount - The amount of damage to deal to the creep. This value should be positive.
 	 * @return - The health of the creep after dealing the damage.
 	 */
-	float damage(float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { 
-		if (amount < 0) {
-			currentHealth -= amount;
-			if (currentHealth < 0) {
-				currentHealth = 0;
+	float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { 
+		float flatResist = (currentDamageResistsFlat[type.ordinal()] * (1 - penPercent)) - penFlat;
+		float damageModifier = 1 - (flatResist / (GameConstants.RESIST_DENOMINATOR_VALUE + flatResist));
+		float damageToDo = amount * damageModifier;
+		damageToDo = damageToDo - ((currentToughness * (1 - toughPenPercent)) - toughPenFlat);
+		if (damageToDo > 0) {
+			float shieldDamage = damageToDo * shieldDrainModifier;
+			if (ignoresShield) {
+				return currentHealth -= damageToDo;
+			} else if (currentShield < shieldDamage) {
+				float damageLeft = (shieldDamage - currentShield) / shieldDrainModifier;
+				currentShield = 0;
+				currentHealth -= damageLeft;
+			} else {
+				currentShield -= shieldDamage;
 			}
-		}
+		} 
 		return currentHealth;
 	}
 	
@@ -179,7 +202,7 @@ final class CreepAttributes implements Updatable {
 	
 	private float updateDamageResistPercent(int index) {
 		currentDamageResistsFlat[index] = maxDamageResistsFlat[index] - (maxDamageResistsFlat[index] * currentResistReductionPercent[index]) - currentResistReductionFlat[index];
-		currentDamageResistsPercent[index] = currentDamageResistsFlat[index] / (currentDamageResistsFlat[index] + 100f);
+		currentDamageResistsPercent[index] = currentDamageResistsFlat[index] / (currentDamageResistsFlat[index] + GameConstants.RESIST_DENOMINATOR_VALUE);
 		return currentDamageResistsPercent[index];
 	}
 	
@@ -209,11 +232,11 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	float reduceFlatShield(float amount) {
-		
+		return currentShield -= amount;
 	}
 	
 	float reducePercentShield(float amount) {
-		
+		return currentShield *= 1 - amount;
 	}
 	
 	
@@ -221,17 +244,21 @@ final class CreepAttributes implements Updatable {
 	@Override public void update() {
 		updateEffects();
 		if (currentHealth > 0) {
-			currentHealth += healthRegenerationRate;
+			currentHealth += currentHealthRegenerationRate;
 			if (currentHealth >= maxHealth) {
 				currentHealth = maxHealth;
 			}
 		}
 		//TODO: Maybe make it so shield only regenerates after health is full?
 		//TODO: Or after a certain amount of time after being hit.
-		currentShield += shieldRegenerationRate;
+		currentShield += currentShieldRegenerationRate;
 		if (currentShield >= maxShield) {
 			currentShield = maxShield;
 		}
+	}
+	
+	@Override public CreepAttributes clone() {
+		return new CreepAttributes(this);
 	}
 	
 	void addEffect(ProjectileEffect effect) {
