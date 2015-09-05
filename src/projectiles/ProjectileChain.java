@@ -7,6 +7,7 @@ import projectileeffects.ProjectileEffect;
 import creeps.Creep;
 import levels.Level;
 import towers.Tower;
+import utilities.GameConstants;
 import utilities.TrigHelper;
 
 public class ProjectileChain extends Projectile implements TargetsCreep {
@@ -109,29 +110,20 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 	@Override
 	public Projectile clone() {
 		ProjectileChain p = new ProjectileChain(maxChains, chainRadius, chainPenalty);
+		super.cloneStats(p);
 		p.dud = false;
 		p.parent = parent;
 		p.level = level;
 		p.creepEffects = creepEffects;
 		p.splashEffects = splashEffects;
 		p.hitBox = hitBox;
-		p.x = parent.centerX;
-		p.y = parent.centerY;
 		p.splashRadius = splashRadius;
 		p.size = size;
 		p.targetAngle = targetAngle;
-		p.multiplier = multiplier;
 		p.targetCreep = targetCreep;
 		p.chainedEffects = chainedEffects;
 		p.chainedSplashEffects = chainedSplashEffects;
 		p.noDuplicates = noDuplicates;
-		p.armorPenPercent = armorPenPercent;
-		p.armorPenFlat = armorPenFlat;
-		p.resistPenPercent = resistPenPercent;
-		p.resistPenFlat = resistPenFlat;
-		p.toughPenPercent = toughPenPercent;
-		p.toughPenFlat = toughPenFlat;
-		p.shieldDrainModifier = shieldDrainModifier;
 		return p;
 	}
 

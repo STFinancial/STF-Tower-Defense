@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import projectiles.Projectile;
 import creeps.Creep;
-import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
 public class Consume extends ProjectileEffect {
@@ -21,15 +20,8 @@ public class Consume extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
-		ArrayList<ProjectileEffect> s = new ArrayList<ProjectileEffect>();
-		for (Iterator<CreepEffect> iterator = creep.effects.iterator(); iterator.hasNext();) {
-			CreepEffect e = iterator.next();
-			if (e.projectileEffect instanceof Bleed) {
-				s.add(((Bleed) e.projectileEffect).convertToDamage(modifier, e));
-				iterator.remove();
-			}
-		}
-		creep.addAllEffects(s);
+		creep.consumeBleeds(modifier);
+		
 	}
 
 	@Override

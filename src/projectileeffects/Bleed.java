@@ -2,7 +2,6 @@ package projectileeffects;
 
 import projectiles.Projectile;
 import creeps.Creep;
-import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
 public class Bleed extends ProjectileEffect {
@@ -14,22 +13,9 @@ public class Bleed extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
-		float damageToDo = modifier - creep.toughness;
-		//TODO: should this be affected by toughness and shield?
-		float damageModifier = creep.resist[damageType.ordinal()];
-		if (damageToDo < 0) {
-			damageToDo = 0;
-		}
-		if (damageModifier < 0) {
-			damageToDo *= 1 - damageModifier;
-		}
-		if (creep.currentShield < damageToDo) {
-			float damageLeft = damageToDo - creep.currentShield;
-			creep.currentShield = 0;
-			creep.currentHealth -= damageLeft;
-		} else {
-			creep.currentShield -= damageToDo;
-		}
+		creep.damage(damageType, modifier, parent.resistPenPercent[damageType.ordinal()],
+				parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, 
+				parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
 	}
 
 	@Override
@@ -42,8 +28,8 @@ public class Bleed extends ProjectileEffect {
 		return new Bleed(lifetime, modifier, timing, damageType, parent);
 	}
 
-	public Damage convertToDamage(float modifier, CreepEffect e) {
-		int timeLeft = lifetime - e.counter;
+	public Damage convertToDamage(float modifier, int counter) {
+		int timeLeft = lifetime - counter;
 		int ticks = (timeLeft / timing) + 1;
 		return new Damage(modifier * ticks * this.modifier, damageType, parent);
 	}

@@ -44,6 +44,7 @@ public abstract class Projectile implements Updatable {
 	
 	protected Projectile() {
 		//This is called from the clone method only
+		
 	}
 	
 	public Projectile(Tower parent) {
@@ -95,6 +96,8 @@ public abstract class Projectile implements Updatable {
 		p.y = parent.centerY;
 		p.splashRadius = splashRadius;
 		p.multiplier = multiplier;
+		p.resistPenFlat = new float[GameConstants.NUM_DAMAGE_TYPES];
+		p.resistPenPercent = new float[GameConstants.NUM_DAMAGE_TYPES];
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			p.resistPenPercent[i] = resistPenPercent[i];
 			p.resistPenFlat[i] = resistPenFlat[i];

@@ -71,6 +71,26 @@ public class Creep implements Updatable {
 		return attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat);
 	}
 	
+	public float slow(DamageType type, float amount) {
+		return attributes.slow(type, amount);
+	}
+	
+	public float unslow(DamageType type, float amount) {
+		return attributes.unslow(type, amount);
+	}
+	
+	public void snare() {
+		attributes.snare();
+	}
+	
+	public void unsnare() {
+		attributes.unsnare();
+	}
+	
+	public float consumeBleeds(float amount) {
+		return attributes.consumeBleeds(amount);
+	}
+	
 	public float reducePercentResist(DamageType type, float percentReduction) {
 		return attributes.reducePercentResist(type, percentReduction);
 	}

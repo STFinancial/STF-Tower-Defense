@@ -2,7 +2,6 @@ package projectileeffects;
 
 import projectiles.Projectile;
 import creeps.Creep;
-import creeps.Creep.CreepEffect;
 import creeps.DamageType;
 
 public class Slow extends ProjectileEffect {
@@ -17,12 +16,12 @@ public class Slow extends ProjectileEffect {
 
 	@Override
 	public void applyEffect(Creep creep) {
-		creep.currentSpeed = creep.currentSpeed * (1 - (modifier * (1 - creep.slowResist)));
+		creep.slow(damageType, modifier);
 	}
 
 	@Override
 	public void onExpire(Creep creep) {
-		creep.currentSpeed = creep.currentSpeed / (1 - (modifier * (1 - creep.slowResist)));
+		creep.unslow(damageType, modifier);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import levels.Level;
 import creeps.Creep;
 
 import towers.Tower;
+import utilities.GameConstants;
 import utilities.TrigHelper;
 
 public class ProjectileBasic extends Projectile implements TargetsCreep {
@@ -16,6 +17,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	
 	public ProjectileBasic(Tower parent) {
 		super(parent);
+		
 	}
 
 	//TODO if something fucks up, make sure all the fields are being set properly
@@ -25,6 +27,12 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		cloneStats(p);
 		p.targetCreep = targetCreep;
 		//this is only safe because we clone immediately before we fire
+		p.resistPenFlat = new float[GameConstants.NUM_DAMAGE_TYPES];
+		p.resistPenPercent = new float[GameConstants.NUM_DAMAGE_TYPES];
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			p.resistPenFlat[i] = resistPenFlat[i];
+			p.resistPenPercent[i] = resistPenPercent[i];
+		}
 		return p;
 	}
 

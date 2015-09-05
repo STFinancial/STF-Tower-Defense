@@ -1,11 +1,12 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-import projectileeffects.ArmorShred;
+import projectileeffects.Bleed;
 import projectileeffects.Consume;
 import projectileeffects.ProjectileEffect;
-import projectileeffects.Snare;
+import projectileeffects.Slow;
 import utilities.GameConstants;
 import levels.Updatable;
 //TODO: Possibly make this a singleton if all creeps use the same one (at most we create only a few hundred of these, shouldn't be too much overhead)
@@ -35,8 +36,7 @@ final class CreepAttributes implements Updatable {
 	private float currentToughnessReductionFlat;
 	private float currentToughness;
 	
-	private float[] maxSlowResists;
-	private float[] currentSlowResists;
+	private float[] slowResists;
 	
 	private float maxHealth;
 	private float currentHealth;
@@ -50,7 +50,7 @@ final class CreepAttributes implements Updatable {
 	private int snareGrace;
 	private int timeUntilSnare;
 	
-	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed) {
+	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed) {
 		this.parent = parent;
 		effects = new ArrayList<CreepEffect>();
 		//Damage Resists
@@ -77,12 +77,7 @@ final class CreepAttributes implements Updatable {
 		this.currentToughness = maxToughness;
 		
 		//Slow Resists
-		this.maxSlowResists = maxSlowResists;
-		this.currentSlowResists = new float[maxSlowResists.length];
-		//TODO: Optimization - can consolidate this with the other for loop, sacrifice readability
-		for (int i = 0; i < maxSlowResists.length; i++) {
-			currentSlowResists[i] = maxSlowResists[i];
-		}
+		this.slowResists = slowResists;
 		
 		//Health
 		this.maxHealth = maxHealth;
@@ -100,7 +95,7 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	private CreepAttributes(CreepAttributes attributes) {
-		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.maxSlowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.maxSpeed);
+		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.slowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.maxSpeed);
 	}
 	
 	/**
@@ -121,7 +116,7 @@ final class CreepAttributes implements Updatable {
 	 * @param type - The DamageType to obtain the resistance value for.
 	 * @return The percent resistance value for the slow of DamageType.
 	 */
-	float getCurrentSlowResist(DamageType type) { return currentSlowResists[type.ordinal()]; }
+	float getSlowResist(DamageType type) { return slowResists[type.ordinal()]; }
 	/**
 	 * @return The current health value of this creep.
 	 */
@@ -143,12 +138,11 @@ final class CreepAttributes implements Updatable {
 	 */
 	boolean isSnareImmune() { return snareImmune; }
 	
-	//TODO: We're switching this over to calculating all the damage? (then how to we ignore shield and shit)
 	//TODO: Do we really want to apply toughness to damage of every type?
 	/**
 	 * Reduces the health of the creep by the amount specified. This amount should be positive and should be post-resistance calculations.
 	 * @param amount - The amount of damage to deal to the creep. This value should be positive.
-	 * @return - The health of the creep after dealing the damage.
+	 * @return The health of the creep after dealing the damage.
 	 */
 	float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { 
 		float flatResist = (currentDamageResistsFlat[type.ordinal()] * (1 - penPercent)) - penFlat;
@@ -168,6 +162,56 @@ final class CreepAttributes implements Updatable {
 			}
 		} 
 		return currentHealth;
+	}
+	
+	void snare() {
+		if (!snareImmune && timeUntilSnare < 0) {
+			timeUntilSnare = snareGrace;
+			currentSpeed = 0;			
+		}
+	}
+	
+	void unsnare() {
+		currentSpeed = maxSpeed;
+		//Need to reapply all the slows on it
+		for (CreepEffect c: effects) {
+			if (c.projectileEffect instanceof Slow) {
+				((Slow) c.projectileEffect).applyEffect(parent);
+			}
+		}
+	}
+	
+	float consumeBleeds(float amount) {
+		ArrayList<ProjectileEffect> s = new ArrayList<ProjectileEffect>();
+		for (Iterator<CreepEffect> iterator = effects.iterator(); iterator.hasNext();) {
+			CreepEffect e = iterator.next();
+			if (e.projectileEffect instanceof Bleed) {
+				s.add(((Bleed) e.projectileEffect).convertToDamage(amount, e.counter));
+				iterator.remove();
+			}
+		}
+		addAllEffects(s);
+		return currentHealth;
+	}
+	
+	/**
+	 * Reduces the movement speed of the creep by the amount specified. This amount should be positive and less than 1. This is also a pre-resistance calculation.
+	 * @param type - The type of slow.
+	 * @param amount - The percent amount of slow represented as a float between 0 (inclusive) and 1 (exclusive)
+	 * @return The movement speed after application of the slow.
+	 */
+	float slow(DamageType type, float amount) {
+		return currentSpeed *= 1 - (amount * (1 - slowResists[type.ordinal()]));
+	}
+	
+	/**
+	 * Increases the movement speed of the creep by the amount specified. This amount should be positive and less than 1. This is also a pre-resistance calculation. This function should be called onExpire by the slow projectile effect
+	 * @param type - The type of slow.
+	 * @param amount - The percent amount of slow represented as a float between 0 (inclusive) and 1 (exclusive)
+	 * @return The movement speed after application of the slow.
+	 */
+	float unslow(DamageType type, float amount) {
+		return currentSpeed /= 1 - (amount * (1 - slowResists[type.ordinal()]));
 	}
 	
 	/**

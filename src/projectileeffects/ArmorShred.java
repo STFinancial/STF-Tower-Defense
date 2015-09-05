@@ -3,41 +3,37 @@ package projectileeffects;
 import projectiles.Projectile;
 import creeps.Creep;
 import creeps.DamageType;
-import creeps.Creep.CreepEffect;
 
 public class ArmorShred extends ProjectileEffect {
-	public ArmorShred(int lifetime, float modifier, DamageType damageType, Projectile parent) {
+	private boolean isFlat;
+	
+	public ArmorShred(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat) {
 		super(lifetime, modifier, 0, damageType, parent);
 		refreshable = true;
+		this.isFlat = isFlat;
 	}
 
 	@Override
 	public void applyEffect(Creep creep) {
-		if (modifier <= 1) {
-			creep.resist[damageType.ordinal()] *= 1 - modifier;
+		if (isFlat) {
+			creep.reduceFlatResist(damageType, modifier);
+		} else {
+			creep.reducePercentResist(damageType, modifier);
 		}
-		
 	}
 
 	@Override
 	public void onExpire(Creep creep) {
-		if (modifier < 1) {
-			creep.resist[damageType.ordinal()] /= 1 - modifier;
-		} else if (modifier == 1) {
-			//TODO this needs to be handled better if the creep has something that buffs their base armor
-			creep.resist[damageType.ordinal()] = creep.elementType.baseResist()[damageType.ordinal()];
-			for (CreepEffect c: creep.effects) {
-				if (c.projectileEffect instanceof ArmorShred) {
-					((ArmorShred) c.projectileEffect).applyEffect(creep);
-				}
-			}
-			//TODO what if I want flat penetration
+		if (isFlat) {
+			creep.increaseFlatResist(damageType, modifier);
+		} else {
+			creep.increasePercentResist(damageType, modifier);
 		}
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new ArmorShred(lifetime, modifier, damageType, parent);
+		return new ArmorShred(lifetime, modifier, damageType, parent, isFlat);
 	}
 
 
