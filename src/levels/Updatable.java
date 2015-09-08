@@ -1,5 +1,5 @@
 package levels;
 
 public interface Updatable {
-	public void update();
+	public int update();
 }

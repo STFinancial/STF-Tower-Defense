@@ -1,31 +1,33 @@
-package projectileeffects;
+package creeps;
 
 import projectiles.Projectile;
-import creeps.Creep;
-import creeps.DamageType;
 
-public class Slow extends ProjectileEffect {
+public class Slow extends ProjectileEffect implements Refreshable {
 	/*
 	 * Slow effect
 	 */
 
 	public Slow(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
-		refreshable = true;
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	public void applyEffect() {
 		creep.slow(damageType, modifier);
 	}
 
 	@Override
-	public void onExpire(Creep creep) {
+	public void onExpire() {
 		creep.unslow(damageType, modifier);
 	}
 
 	@Override
 	public ProjectileEffect clone() {
 		return new Slow(lifetime, modifier, damageType, parent);
+	}
+
+	@Override
+	public void refresh() {
+		counter = lifetime;
 	}
 }

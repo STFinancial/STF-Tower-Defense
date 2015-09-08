@@ -1,8 +1,6 @@
-package projectileeffects;
+package creeps;
 
 import projectiles.Projectile;
-import creeps.Creep;
-import creeps.DamageType;
 
 public class Snare extends ProjectileEffect {
 
@@ -11,12 +9,12 @@ public class Snare extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	public void applyEffect() {
 		creep.snare();
 	}
 
 	@Override
-	public void onExpire(Creep creep) {
+	public void onExpire() {
 		creep.unsnare();
 	}
 

@@ -1,6 +1,5 @@
-package projectileeffects;
+package creeps;
 
-import creeps.CreepType;
 
 /**
  * This class is attached to the baseProjectile of a Tower that has extra effects against a certain CreepType (e.g. double damage vs. monsters).

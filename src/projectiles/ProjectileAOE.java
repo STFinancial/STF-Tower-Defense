@@ -28,8 +28,8 @@ public class ProjectileAOE extends Projectile {
 	}
 
 	@Override
-	public void update() {
-		return;
+	public int update() {
+		return 0;
 	}
 
 	@Override

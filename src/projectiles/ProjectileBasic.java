@@ -37,22 +37,23 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		if (targetCreep != null) {
 			if (targetCreep.isDead()) {
 				dud = true;
-				return;
+				return -1;
 			} else {
 				targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
 			}
 		} else {
 			dud = true;
-			return;
+			return -1;
 		}
 		x -= Math.cos(targetAngle) * currentSpeed;
 		y -= Math.sin(targetAngle) * currentSpeed;
 		hitBox.x = x;
 		hitBox.y = y;
+		return 0;
 	}
 
 	@Override

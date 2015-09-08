@@ -1,8 +1,6 @@
-package projectileeffects;
+package creeps;
 
 import projectiles.Projectile;
-import creeps.Creep;
-import creeps.DamageType;
 
 public class Damage extends ProjectileEffect {
 	
@@ -11,13 +9,13 @@ public class Damage extends ProjectileEffect {
 		super(0, modifier, 0, damageType, parent);
 	}
 
-	public void applyEffect(Creep creep) {
+	public void applyEffect() {
 		creep.damage(damageType, modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
 	}
 
 	@Override
-	public void onExpire(Creep creep) {
-		return;
+	public void onExpire() {
+		applyEffect();
 	}
 
 	@Override

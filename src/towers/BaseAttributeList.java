@@ -1,8 +1,8 @@
 package towers;
 
 
-import projectileeffects.ProjectileEffect;
 import creeps.DamageType;
+import creeps.ProjectileEffect;
 
 public class BaseAttributeList {
 	public abstract class Upgrade {

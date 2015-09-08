@@ -1,11 +1,6 @@
-package projectileeffects;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+package creeps;
 
 import projectiles.Projectile;
-import creeps.Creep;
-import creeps.DamageType;
 
 public class Consume extends ProjectileEffect {
 
@@ -19,13 +14,12 @@ public class Consume extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	public void applyEffect() {
 		creep.consumeBleeds(modifier);
-		
 	}
 
 	@Override
-	public void onExpire(Creep creep) {
+	public void onExpire() {
 		return;
 	}
 

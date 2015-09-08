@@ -3,10 +3,10 @@ package projectiles;
 import java.util.ArrayList;
 
 import creeps.Creep;
+import creeps.ProjectileEffect;
 import towers.Tower;
 import levels.EffectPatch;
 import levels.Level;
-import projectileeffects.ProjectileEffect;
 
 public class ProjectileStill extends ProjectileBasic {
 	private int lifetime;

@@ -1,9 +1,7 @@
-package projectileeffects;
+package creeps;
 
 import projectiles.Projectile;
-import creeps.Creep;
 import creeps.Creep.CreepEffect;
-import creeps.DamageType;
 
 /**
  * This is where the enemies move randomly for a period of time.

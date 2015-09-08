@@ -1,10 +1,8 @@
-package projectileeffects;
+package creeps;
 
 import java.util.HashSet;
 
 import projectiles.Projectile;
-import creeps.Creep;
-import creeps.DamageType;
 
 public class Detonation extends ProjectileEffect {
 
@@ -13,7 +11,7 @@ public class Detonation extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect(Creep creep) {
+	public void applyEffect() {
 		HashSet<Creep> inRange = parent.level.getCreepAdjacentToEarth();
 		for (Creep c: inRange) {
 			c.damage(damageType, modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
@@ -21,7 +19,7 @@ public class Detonation extends ProjectileEffect {
 	}
 
 	@Override
-	public void onExpire(Creep creep) {
+	public void onExpire() {
 		return;
 	}
 

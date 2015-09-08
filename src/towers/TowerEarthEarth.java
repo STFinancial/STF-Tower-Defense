@@ -1,15 +1,15 @@
 package towers;
 
+import creeps.ArmorShred;
+import creeps.Bleed;
 import creeps.DamageType;
-import projectileeffects.ArmorShred;
-import projectileeffects.Bleed;
-import projectileeffects.Detonation;
+import creeps.Detonation;
 import projectiles.ProjectileAOE;
 import levels.Level;
 import maps.Tile;
 
 public class TowerEarthEarth extends Tower {
-	
+	private float shredModifier = .05f;
 	
 	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
@@ -29,7 +29,7 @@ public class TowerEarthEarth extends Tower {
 			baseProjectile.addSpecificCreepEffect(new Bleed(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] * (damageArray[DamageType.PHYSICAL.ordinal()] / (damageArray[DamageType.PHYSICAL.ordinal()] + 700)), 3, DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new ArmorShred(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] / (damageArray[DamageType.PHYSICAL.ordinal()] + 700), DamageType.PHYSICAL, baseProjectile));
+			baseProjectile.addSpecificCreepEffect(new ArmorShred(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] * shredModifier / (damageArray[DamageType.PHYSICAL.ordinal()] + 700), DamageType.PHYSICAL, baseProjectile, true, 5));
 		}
 	}
 

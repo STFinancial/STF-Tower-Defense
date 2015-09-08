@@ -3,10 +3,6 @@ package creeps;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import projectileeffects.Bleed;
-import projectileeffects.Consume;
-import projectileeffects.ProjectileEffect;
-import projectileeffects.Slow;
 import utilities.GameConstants;
 import levels.Updatable;
 //TODO: Possibly make this a singleton if all creeps use the same one (at most we create only a few hundred of these, shouldn't be too much overhead)
@@ -17,7 +13,7 @@ import levels.Updatable;
  *
  */
 final class CreepAttributes implements Updatable {
-	private ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
+	private ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
 	
 	private Creep parent;
 	private float[] maxDamageResistsFlat; //the maximum value of the damage resistances
@@ -52,7 +48,7 @@ final class CreepAttributes implements Updatable {
 	
 	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed) {
 		this.parent = parent;
-		effects = new ArrayList<CreepEffect>();
+		effects = new ArrayList<ProjectileEffect>();
 		//Damage Resists
 		this.maxDamageResistsFlat = maxDamageResistsFlat;
 		this.currentDamageResistsFlat = new float[currentDamageResistsFlat.length];
@@ -174,19 +170,19 @@ final class CreepAttributes implements Updatable {
 	void unsnare() {
 		currentSpeed = maxSpeed;
 		//Need to reapply all the slows on it
-		for (CreepEffect c: effects) {
-			if (c.projectileEffect instanceof Slow) {
-				((Slow) c.projectileEffect).applyEffect(parent);
+		for (ProjectileEffect c: effects) {
+			if (c instanceof Slow) {
+				((Slow) c).applyEffect();
 			}
 		}
 	}
 	
 	float consumeBleeds(float amount) {
 		ArrayList<ProjectileEffect> s = new ArrayList<ProjectileEffect>();
-		for (Iterator<CreepEffect> iterator = effects.iterator(); iterator.hasNext();) {
-			CreepEffect e = iterator.next();
-			if (e.projectileEffect instanceof Bleed) {
-				s.add(((Bleed) e.projectileEffect).convertToDamage(amount, e.counter));
+		for (Iterator<ProjectileEffect> iterator = effects.iterator(); iterator.hasNext();) {
+			ProjectileEffect e = iterator.next();
+			if (e instanceof Bleed) {
+				s.add(((Bleed) e).convertToDamage(amount, e.counter));
 				iterator.remove();
 			}
 		}
@@ -232,12 +228,14 @@ final class CreepAttributes implements Updatable {
 		return updateDamageResistPercent(index);
 	}
 	
+	
+	
 	float reduceFlatResist(DamageType type, float amount) {
 		int index = type.ordinal();
 		currentResistReductionFlat[index] += amount;
 		return updateDamageResistPercent(index);
 	}
-	
+
 	float increaseFlatResist(DamageType type, float amount) {
 		int index = type.ordinal();
 		currentResistReductionFlat[index] -= amount;
@@ -285,7 +283,7 @@ final class CreepAttributes implements Updatable {
 	
 	
 	
-	@Override public void update() {
+	@Override public int update() {
 		updateEffects();
 		if (currentHealth > 0) {
 			currentHealth += currentHealthRegenerationRate;
@@ -299,6 +297,8 @@ final class CreepAttributes implements Updatable {
 		if (currentShield >= maxShield) {
 			currentShield = maxShield;
 		}
+		
+		return (int) currentHealth;
 	}
 	
 	@Override public CreepAttributes clone() {
@@ -306,16 +306,21 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	void addEffect(ProjectileEffect effect) {
-		CreepEffect c;
 		if (effect instanceof Consume) {
 			//Need to proc it immediately because of how the iterators work
 			//Can't remove bleeds while we're looping through the set
-			effect.applyEffect(parent);
-		} else if (effect.refreshable && (c = hasEffect(effect)) != null) {
-			c.counter = 0;
+			effect.applyEffect();
+			return;
+		} else if ((effect instanceof Refreshable || effect instanceof Stackable) && hasEffect(effect)) {
+			if (effect instanceof Refreshable) {
+				((Refreshable) effect).refresh();
+			} else {
+				((Stackable) effect).stack();
+			}
 		} else {
-			this.effects.add(new CreepEffect(effect));
+			effects.add(effect);
 		}
+		effect.setCreep(parent);
 	}
 	
 	void addAllEffects(ArrayList<ProjectileEffect> effects) {
@@ -325,30 +330,34 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	private void updateEffects() {
-		currentSpeed = maxSpeed;
 		timeUntilSnare--;
-		for (int i = 0; i < effects.size(); i++) {
-			CreepEffect e = effects.get(i);
-			if (e.timing != 0 && e.counter % e.timing == 0) {
-				e.projectileEffect.applyEffect(parent);
-			} else if (e.timing == 0 && e.counter == 0) {
-				e.projectileEffect.applyEffect(parent);
+		Iterator<ProjectileEffect> i = effects.iterator();
+		while (i.hasNext()) {
+			ProjectileEffect e = i.next();
+			int updateVal = e.update();
+			switch (updateVal) {
+			case 1:
+				e.applyEffect();
+				break;
+			case 0:
+				break;
+			case -1:
+				e.onExpire();
+				i.remove();
+				break;
+			default:
+				System.out.println("Shouldn't be reached, CreepAttributes.updateEffects");
+				break;
 			}
-			if (e.counter >= e.lifetime) {
-				e.projectileEffect.onExpire(parent);
-				effects.remove(i--);
-				continue;
-			}
-			e.counter++;
 		}
 	}
 	
-	private CreepEffect hasEffect(ProjectileEffect pe) {
-		for (CreepEffect c: effects) {
-			if (c.projectileEffect.equals(pe)) {
-				return c;
+	private boolean hasEffect(ProjectileEffect pe) {
+		for (ProjectileEffect p: effects) {
+			if (p.equals(pe)) {
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 }

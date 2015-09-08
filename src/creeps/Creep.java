@@ -7,8 +7,6 @@ import levels.Path;
 import levels.Updatable;
 import maps.DirectionType;
 import maps.Vertex;
-import projectileeffects.Consume;
-import projectileeffects.ProjectileEffect;
 import towers.Tower;
 import utilities.Circle;
 
@@ -166,13 +164,12 @@ public class Creep implements Updatable {
 		pathIndex = 1;
 	}
 
-	public void update() {
+	public int update() {
 		updateMovement();
 		updateHitBox();
 		updateEffects();
+		return 0;
 	}
-	
-	
 
 	private void updateEffects() {
 		attributes.update();

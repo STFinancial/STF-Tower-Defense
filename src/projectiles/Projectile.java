@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import levels.Level;
 import levels.Updatable;
 
-import projectileeffects.AffixModifier;
-import projectileeffects.Damage;
-import projectileeffects.ProjectileEffect;
-import projectileeffects.Slow;
 
 import towers.Tower;
 import utilities.Circle;
 import utilities.GameConstants;
+import creeps.AffixModifier;
+import creeps.Damage;
 import creeps.DamageType;
+import creeps.ProjectileEffect;
+import creeps.Slow;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
  * as well as tower that fired the projectile. lastly contains the projectile effect which happens when the projectile lands or times out
@@ -111,10 +111,11 @@ public abstract class Projectile implements Updatable {
 	
 	public abstract Projectile clone();
 	
-	public abstract void update();
+	public abstract int update();
 	
 	public abstract boolean isDone();
 	
+	//TODO: Since we switched to no CreepEffects, we need to go through and make sure the projectile effects are cloned instead.
 	public abstract void detonate(Level level);
 
 	public void addSpecificCreepEffect(ProjectileEffect effect) {
