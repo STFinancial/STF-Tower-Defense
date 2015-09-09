@@ -32,8 +32,8 @@ public class ProjectileArea extends Projectile implements TargetsArea {
 	}
 
 	@Override
-	public void update() {
-		return;
+	public int update() {
+		return 0;
 	}
 
 	@Override

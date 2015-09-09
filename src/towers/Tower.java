@@ -101,8 +101,6 @@ public abstract class Tower implements Updatable {
 		return duplicateProjectile(baseProjectile);
 	}
 
-	public abstract void update();
-	
 	public void updateTowerChain() {
 		adjustSiphonChain(this);
 	}

@@ -11,11 +11,15 @@ import maps.Tile;
 public class TowerEarthFire extends Tower {
 	int wealthDuration;
 	float wealthModifier;
+	private float shredModifier;
+	private int shredDuration;
 	
 	public TowerEarthFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_FIRE, towerID);
 		wealthDuration = 30;
 		wealthModifier = 1.15f;
+		shredModifier = 0.15f;
+		shredDuration = 10;
 	}
 
 	@Override
@@ -26,18 +30,18 @@ public class TowerEarthFire extends Tower {
 			baseProjectile.addSpecificCreepEffect(new Wealth(wealthDuration, wealthModifier, DamageType.EARTH, baseProjectile));
 		}
 		if (progress[1][2]) {
-			baseProjectile.armorPenPercent = 1;
+			baseProjectile.resistPenPercent[DamageType.PHYSICAL.ordinal()] = 1;
 		}
 		if (progress[1][3]) {
-			ArmorShred a = new ArmorShred(10, .15f, DamageType.PHYSICAL, baseProjectile);
-			a.refreshable = false;
+			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.PHYSICAL, baseProjectile, false);
+			a.setMaxStacks(1);
 			baseProjectile.addSpecificCreepEffect(a);
 		}
 		
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
 			Creep targetCreep = level.findTargetCreep(this);
@@ -51,8 +55,10 @@ public class TowerEarthFire extends Tower {
 					attackCarryOver -= 1;
 					currentAttackCoolDown--;
 				}
+				return 1;
 			}
 		}
+		return 0;
 	}
 
 }

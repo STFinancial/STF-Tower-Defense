@@ -115,7 +115,6 @@ public abstract class Projectile implements Updatable {
 	
 	public abstract boolean isDone();
 	
-	//TODO: Since we switched to no CreepEffects, we need to go through and make sure the projectile effects are cloned instead.
 	public abstract void detonate(Level level);
 
 	public void addSpecificCreepEffect(ProjectileEffect effect) {

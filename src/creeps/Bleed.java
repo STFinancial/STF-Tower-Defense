@@ -3,12 +3,15 @@ package creeps;
 import projectiles.Projectile;
 
 public class Bleed extends ProjectileEffect implements Stackable {
-	private int tickDamage;
+	private float tickDamage;
 	private int numStacks;
 	private int maxStacks;
 
 	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, timing, damageType, parent);
+		this.numStacks = 0;
+		this.maxStacks = -1;
+		this.tickDamage = modifier;
 	}
 
 	@Override

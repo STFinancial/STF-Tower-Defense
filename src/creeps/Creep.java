@@ -58,11 +58,13 @@ public class Creep implements Updatable {
 	//The result of this would be that armor shreds are applied first
 	//ENUM seems like the best solution eventually
 	public void addEffect(ProjectileEffect effect) {
-		attributes.addEffect(effect);
+		attributes.addEffect(effect.clone());
 	}
 
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
-		attributes.addAllEffects(effects);
+		for (ProjectileEffect e: effects) {
+			attributes.addEffect(e.clone());
+		}
 	}
 	
 	public float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) {

@@ -9,10 +9,21 @@ import levels.Level;
 import maps.Tile;
 
 public class TowerEarthEarth extends Tower {
-	private float shredModifier = .05f;
+	private float detonationModifier;
+	private float shredModifier;
+	private float bleedModifier;
+	private int maxShredStacks;
+	private int armorShredDuration;
+	private int bleedDuration; //TODO These numbers maybe will be longer, realistically the bleed lasts only the duration of a tower cooldown
 	
 	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
+		this.detonationModifier = 0.10f;
+		this.shredModifier = 0.10f;
+		this.bleedModifier = 0.5f;
+		this.maxShredStacks = 5;
+		this.armorShredDuration = 12;
+		this.bleedDuration = 12;
 	}
 
 	@Override
@@ -23,18 +34,21 @@ public class TowerEarthEarth extends Tower {
 			
 		}
 		if (progress[0][3]) {
-			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * 0.1f, DamageType.PHYSICAL, baseProjectile));
+			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][2]) {
-			baseProjectile.addSpecificCreepEffect(new Bleed(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] * (damageArray[DamageType.PHYSICAL.ordinal()] / (damageArray[DamageType.PHYSICAL.ordinal()] + 700)), 3, DamageType.PHYSICAL, baseProjectile));
+			Bleed b = new Bleed(bleedDuration, (float) damageArray[DamageType.PHYSICAL.ordinal()] * bleedModifier, 3, DamageType.PHYSICAL, baseProjectile);
+			baseProjectile.addSpecificCreepEffect(b);
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new ArmorShred(12, (float) damageArray[DamageType.PHYSICAL.ordinal()] * shredModifier / (damageArray[DamageType.PHYSICAL.ordinal()] + 700), DamageType.PHYSICAL, baseProjectile, true, 5));
+			ArmorShred a = new ArmorShred(armorShredDuration, damageArray[DamageType.PHYSICAL.ordinal()] * shredModifier, DamageType.PHYSICAL, baseProjectile, true);
+			a.setMaxStacks(maxShredStacks);
+			baseProjectile.addSpecificCreepEffect(a);
 		}
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
 			level.addProjectile(fireProjectile());
@@ -44,7 +58,9 @@ public class TowerEarthEarth extends Tower {
 				attackCarryOver -= 1;
 				currentAttackCoolDown--;
 			}
+			return 1;
 		}
+		return 0;
 	}
 
 }

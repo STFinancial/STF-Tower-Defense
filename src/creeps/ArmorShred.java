@@ -10,6 +10,7 @@ public class ArmorShred extends ProjectileEffect implements Stackable {
 	public ArmorShred(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat) {
 		super(lifetime, modifier, 0, damageType, parent);
 		this.numStacks = 0;
+		this.maxStacks = -1;
 		this.isFlat = isFlat;
 	}
 

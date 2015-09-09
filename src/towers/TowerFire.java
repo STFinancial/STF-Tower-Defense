@@ -17,12 +17,11 @@ public class TowerFire extends Tower {
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
 			Creep targetCreep = level.findTargetCreep(this);
 			if (targetCreep != null) {
-				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCoolDown;
@@ -32,7 +31,9 @@ public class TowerFire extends Tower {
 					currentAttackCoolDown--;
 				}
 			}
+			return 1;
 		}
+		return 0;
 	}
 
 }

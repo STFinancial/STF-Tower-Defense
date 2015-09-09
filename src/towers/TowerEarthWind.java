@@ -23,7 +23,7 @@ public class TowerEarthWind extends Tower {
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][3]) {
@@ -32,6 +32,7 @@ public class TowerEarthWind extends Tower {
 				((ProjectileBeam) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 			}
+			return 1;
 		} else {
 			currentAttackCoolDown--;
 			if (currentAttackCoolDown < 1) {
@@ -47,7 +48,9 @@ public class TowerEarthWind extends Tower {
 						currentAttackCoolDown--;
 					}
 				}
+				return 1;
 			}
+			return 0;
 		}
 	}
 

@@ -30,9 +30,7 @@ public class EffectPatch implements Updatable {
 		//To protect against modding by zero
 		if (timing == 0 || counter % timing == 0) {
 			for (Creep c: level.getCreepInRange(area)) {
-				for (ProjectileEffect e: effects) {
-					c.addEffect(e.clone());
-				}
+				c.addAllEffects(effects);
 			}
 		}
 		return 0;

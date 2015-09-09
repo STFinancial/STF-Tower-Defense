@@ -16,7 +16,7 @@ public class TowerEarth extends Tower {
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		//TODO need to handle attack speeds of less than 1. We will need to fire two projectiles at once then.
 		//TODO can fix this by making creep move slower and bumping up attack cooldowns if we have the resourcse
 		currentAttackCoolDown--;
@@ -32,8 +32,10 @@ public class TowerEarth extends Tower {
 					attackCarryOver -= 1;
 					currentAttackCoolDown--;
 				}
+				return 1;
 			}
 		}
+		return 0;
 	}
 
 }

@@ -609,7 +609,6 @@ public enum TowerType {
 				          isBase  	 = true;
 				          baseCost   = 400;}
 						  public void upgrade(Tower t) { t.range += 2; }
-						 
 				     },
 				     new Upgrade() {
 				    	 {name 	 	 = "Chilling Breath";

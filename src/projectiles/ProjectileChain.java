@@ -140,7 +140,7 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 	}
 
 	@Override
-	public void update() {
-		return;
+	public int update() {
+		return 0;
 	}
 }

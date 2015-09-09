@@ -1,6 +1,6 @@
 package towers;
 
-import projectileeffects.Snare;
+import creeps.Snare;
 import projectiles.ProjectileChain;
 import creeps.Creep;
 import creeps.DamageType;
@@ -10,6 +10,7 @@ import maps.Tile;
 public class TowerWindFire extends Tower {
 	int maxChains;
 	float chainPenalty;
+	private int snareDuration = 4;
 	
 	public TowerWindFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WIND_FIRE, towerID);
@@ -28,12 +29,12 @@ public class TowerWindFire extends Tower {
 			baseProjectile.shieldDrainModifier = 2f;
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new Snare(4, DamageType.WIND, baseProjectile));
+			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WIND, baseProjectile));
 		}
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
 			Creep targetCreep = level.findTargetCreep(this);
@@ -48,7 +49,9 @@ public class TowerWindFire extends Tower {
 					currentAttackCoolDown--;
 				}
 			}
+			return 1;
 		}
+		return 0;
 	}
 
 }

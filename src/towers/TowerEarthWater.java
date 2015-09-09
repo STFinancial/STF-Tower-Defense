@@ -3,7 +3,7 @@ package towers;
 import projectiles.ProjectileArea;
 import projectiles.TargetsArea;
 import utilities.Circle;
-import utilities.Constants;
+import utilities.GameConstants;
 import levels.Level;
 import maps.Tile;
 
@@ -40,7 +40,7 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
 			level.addProjectile(fireProjectile());
@@ -50,12 +50,14 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 				attackCarryOver -= 1;
 				currentAttackCoolDown--;
 			}
+			return 1;
 		}
+		return 0;
 	}
 	
 	@Override
 	protected void siphon(Tower from) {
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			this.damageArray[i] += (int) (from.damageArray[i] * this.siphonBonus);
 			this.slowArray[i] += from.slowArray[i] * this.siphonBonus;
 			this.slowDurationArray[i] += (int) ((from.slowDurationArray[i] * this.siphonBonus) / 2);

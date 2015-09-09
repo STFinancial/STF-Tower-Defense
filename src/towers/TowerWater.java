@@ -16,7 +16,7 @@ public class TowerWater extends Tower{
 	}
 
 	@Override
-	public void update() {
+	public int update() {
 		currentAttackCoolDown--;
 		if (currentAttackCoolDown < 1) {
 			Creep targetCreep = level.findTargetCreep(this);
@@ -31,6 +31,8 @@ public class TowerWater extends Tower{
 					currentAttackCoolDown--;
 				}
 			}
+			return 1;
 		}
+		return 0;
 	}
 }
