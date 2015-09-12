@@ -28,8 +28,10 @@ public abstract class ProjectileEffect implements Updatable {
 	}
 
 	public abstract ProjectileEffect clone();
+	public abstract void onApply();
 	public abstract void applyEffect();
 	public abstract void onExpire();
+	
 	
 	public int update() {
 		counter--;

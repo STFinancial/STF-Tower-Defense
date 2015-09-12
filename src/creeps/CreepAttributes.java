@@ -22,6 +22,8 @@ final class CreepAttributes implements Updatable {
 	private float[] currentDamageResistsFlat; //the current flat damage reduction values
 	private float[] currentDamageResistsPercent; //the current damage reduction as a percent
 	
+	private float[] damageOnHitArray
+	
 	private float maxShield;
 	private float currentShield;
 	private float shieldRegenerationRate; //Shield increase per game tick
@@ -281,6 +283,9 @@ final class CreepAttributes implements Updatable {
 		return currentShield *= 1 - amount;
 	}
 	
+	float getMaxHealth() {	
+		return maxHealth;
+	}
 	
 	
 	@Override public int update() {
@@ -317,6 +322,8 @@ final class CreepAttributes implements Updatable {
 			} else {
 				((Stackable) effect).stack();
 			}
+		} else if (effect instanceof DamageOnHit) {
+			
 		} else {
 			effects.add(effect);
 		}
@@ -327,6 +334,10 @@ final class CreepAttributes implements Updatable {
 		for (ProjectileEffect p : effects) {
 			addEffect(p);
 		}
+	}
+	
+	void onDetonate() {
+		
 	}
 	
 	private void updateEffects() {
@@ -343,6 +354,9 @@ final class CreepAttributes implements Updatable {
 				break;
 			case -1:
 				e.onExpire();
+				if (e instanceof DamageOnHit) { //TODO: If this ends up being too slow we can work around by making a new method for projectile effects that activate when they attach to a creep
+					
+				}
 				i.remove();
 				break;
 			default:

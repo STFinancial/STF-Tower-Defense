@@ -67,6 +67,10 @@ public class Creep implements Updatable {
 		}
 	}
 	
+	public void onDetonate() {
+		attributes.onDetonate();
+	}
+	
 	public float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) {
 		return attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat);
 	}
@@ -121,6 +125,10 @@ public class Creep implements Updatable {
 	
 	public float increasePercentToughness(float amount) {
 		return attributes.increasePercentToughness(amount);
+	}
+	
+	public float getMaxHealth() {
+		return attributes.getMaxHealth();
 	}
 
 	public void addAffix(CreepType type) {
