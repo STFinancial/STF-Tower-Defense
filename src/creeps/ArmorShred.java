@@ -36,7 +36,12 @@ public class ArmorShred extends ProjectileEffect implements Stackable {
 	}
 
 	@Override
-	public void applyEffect() {
+	public void onApply() {
+		stack();
+	}
+	
+	@Override
+	protected void applyEffect() {
 		if (isFlat) {
 			creep.reduceFlatResist(damageType, modifier);
 		} else {

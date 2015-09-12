@@ -3,7 +3,6 @@ package creeps;
 import projectiles.Projectile;
 
 public class Consume extends ProjectileEffect {
-
 	public Consume(float modifier, DamageType damageType, Projectile parent) {
 		super(0, modifier, 0, damageType, parent);
 	}
@@ -14,7 +13,7 @@ public class Consume extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect() {
+	protected void applyEffect() {
 		creep.consumeBleeds(modifier);
 	}
 
@@ -23,4 +22,8 @@ public class Consume extends ProjectileEffect {
 		return;
 	}
 
+	@Override
+	public void onApply() {
+		applyEffect();
+	}
 }

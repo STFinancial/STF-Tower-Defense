@@ -30,4 +30,10 @@ public class Slow extends ProjectileEffect implements Refreshable {
 	public void refresh() {
 		counter = lifetime;
 	}
+
+	@Override
+	public void onApply() {
+		// TODO Auto-generated method stub
+		
+	}
 }

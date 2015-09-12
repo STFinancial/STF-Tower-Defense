@@ -54,9 +54,6 @@ public class Creep implements Updatable {
 		hitBox = new Circle(1, 1, size);
 	}
 
-	//TODO: do we want to add to different sides of the list based on the type of effect it is
-	//The result of this would be that armor shreds are applied first
-	//ENUM seems like the best solution eventually
 	public void addEffect(ProjectileEffect effect) {
 		attributes.addEffect(effect.clone());
 	}
@@ -67,8 +64,8 @@ public class Creep implements Updatable {
 		}
 	}
 	
-	public void onDetonate() {
-		attributes.onDetonate();
+	public void onProjectileCollision() {
+		attributes.onProjectileCollision();
 	}
 	
 	public float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) {
@@ -93,6 +90,14 @@ public class Creep implements Updatable {
 	
 	public float consumeBleeds(float amount) {
 		return attributes.consumeBleeds(amount);
+	}
+	
+	public void addOnHit(DamageType type, float amount) {
+		attributes.addOnHit(type, amount);
+	}
+	
+	public void removeOnHit(DamageType type, float amount) {
+		attributes.removeOnHit(type, amount);
 	}
 	
 	public float reducePercentResist(DamageType type, float percentReduction) {

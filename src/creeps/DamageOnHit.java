@@ -14,13 +14,18 @@ public class DamageOnHit extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect() {
+	protected void applyEffect() {
 		creep.damage(damageType, modifier, 1, 0, false, 0, 1, 0);
 	}
 
 	@Override
 	public void onExpire() {
-		return;
+		creep.removeOnHit(damageType, modifier);
+	}
+
+	@Override
+	public void onApply() {
+		creep.addOnHit(damageType, modifier);
 	}
 
 }

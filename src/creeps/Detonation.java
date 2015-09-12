@@ -5,13 +5,12 @@ import java.util.HashSet;
 import projectiles.Projectile;
 
 public class Detonation extends ProjectileEffect {
-
 	public Detonation(float modifier, DamageType damageType, Projectile parent) {
 		super(0, modifier, 0, damageType, parent);
 	}
 
 	@Override
-	public void applyEffect() {
+	protected void applyEffect() {
 		HashSet<Creep> inRange = parent.level.getCreepAdjacentToEarth();
 		for (Creep c: inRange) {
 			c.damage(damageType, modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
@@ -26,6 +25,11 @@ public class Detonation extends ProjectileEffect {
 	@Override
 	public ProjectileEffect clone() {
 		return new Detonation(modifier, damageType, parent);
+	}
+
+	@Override
+	public void onApply() {
+		applyEffect();
 	}
 
 }

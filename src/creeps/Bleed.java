@@ -15,7 +15,7 @@ public class Bleed extends ProjectileEffect implements Stackable {
 	}
 
 	@Override
-	public void applyEffect() {
+	protected void applyEffect() {
 		creep.damage(damageType, tickDamage, parent.resistPenPercent[damageType.ordinal()],
 				parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, 
 				parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
@@ -43,13 +43,18 @@ public class Bleed extends ProjectileEffect implements Stackable {
 			applyEffect();
 			tickDamage += modifier;
 		} else {
-			counter = lifetime;
 			applyEffect();
 		}
+		counter = lifetime;
 	}
 
 	@Override
 	public void setMaxStacks(int stacks) {
 		this.maxStacks = stacks;
+	}
+
+	@Override
+	public void onApply() {
+		stack();
 	}
 }

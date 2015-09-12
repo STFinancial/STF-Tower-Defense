@@ -264,4 +264,9 @@ public abstract class Tower implements Updatable {
         Tower t = (Tower) o;
         return t.towerID == towerID;
 	}
+	
+	@Override
+	public int hashCode() {
+		return towerID;
+	}
 }

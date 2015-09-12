@@ -3,24 +3,28 @@ package creeps;
 import projectiles.Projectile;
 
 public class Damage extends ProjectileEffect {
-	
-	
 	public Damage(float modifier, DamageType damageType, Projectile parent) {
 		super(0, modifier, 0, damageType, parent);
 	}
 
-	public void applyEffect() {
+	@Override
+	protected void applyEffect() {
 		creep.damage(damageType, modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
 	}
 
 	@Override
 	public void onExpire() {
-		applyEffect();
+		return;
 	}
 
 	@Override
 	public ProjectileEffect clone() {
 		Damage d = new Damage(modifier, damageType, parent);
 		return d;
+	}
+
+	@Override
+	public void onApply() {
+		applyEffect();
 	}
 }

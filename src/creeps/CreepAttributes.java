@@ -1,6 +1,7 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import utilities.GameConstants;
@@ -13,7 +14,7 @@ import levels.Updatable;
  *
  */
 final class CreepAttributes implements Updatable {
-	private ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
+	private HashSet<ProjectileEffect> effects = new HashSet<ProjectileEffect>();
 	
 	private Creep parent;
 	private float[] maxDamageResistsFlat; //the maximum value of the damage resistances
@@ -22,7 +23,7 @@ final class CreepAttributes implements Updatable {
 	private float[] currentDamageResistsFlat; //the current flat damage reduction values
 	private float[] currentDamageResistsPercent; //the current damage reduction as a percent
 	
-	private float[] damageOnHitArray
+	private float[] damageOnHitArray;
 	
 	private float maxShield;
 	private float currentShield;
@@ -50,18 +51,21 @@ final class CreepAttributes implements Updatable {
 	
 	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed) {
 		this.parent = parent;
-		effects = new ArrayList<ProjectileEffect>();
+		effects = new HashSet<ProjectileEffect>();
 		//Damage Resists
 		this.maxDamageResistsFlat = maxDamageResistsFlat;
-		this.currentDamageResistsFlat = new float[currentDamageResistsFlat.length];
-		this.currentDamageResistsPercent = new float[currentDamageResistsFlat.length];
-		this.currentResistReductionPercent = new float[currentDamageResistsFlat.length];
-		this.currentResistReductionFlat = new float[currentDamageResistsFlat.length];
+		this.currentDamageResistsFlat = new float[maxDamageResistsFlat.length];
+		this.currentDamageResistsPercent = new float[maxDamageResistsFlat.length];
+		this.currentResistReductionPercent = new float[maxDamageResistsFlat.length];
+		this.currentResistReductionFlat = new float[maxDamageResistsFlat.length];
 		for (int i = 0; i < maxDamageResistsFlat.length; i++) {
 			float resist = maxDamageResistsFlat[i];
 			this.currentDamageResistsPercent[i] = resist / (resist + GameConstants.RESIST_DENOMINATOR_VALUE);
 			this.currentDamageResistsFlat[i] = resist;
 		}
+		
+		this.damageOnHitArray = new float[maxDamageResistsFlat.length];
+		
 		//Shields
 		this.maxShield = maxShieldValue;
 		this.currentShield = maxShieldValue;
@@ -192,6 +196,14 @@ final class CreepAttributes implements Updatable {
 		return currentHealth;
 	}
 	
+	void addOnHit(DamageType type, float amount) {
+		damageOnHitArray[type.ordinal()] += amount;
+	}
+	
+	void removeOnHit(DamageType type, float amount) {
+		damageOnHitArray[type.ordinal()] -= amount;
+	}
+	
 	/**
 	 * Reduces the movement speed of the creep by the amount specified. This amount should be positive and less than 1. This is also a pre-resistance calculation.
 	 * @param type - The type of slow.
@@ -311,22 +323,8 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	void addEffect(ProjectileEffect effect) {
-		if (effect instanceof Consume) {
-			//Need to proc it immediately because of how the iterators work
-			//Can't remove bleeds while we're looping through the set
-			effect.applyEffect();
-			return;
-		} else if ((effect instanceof Refreshable || effect instanceof Stackable) && hasEffect(effect)) {
-			if (effect instanceof Refreshable) {
-				((Refreshable) effect).refresh();
-			} else {
-				((Stackable) effect).stack();
-			}
-		} else if (effect instanceof DamageOnHit) {
-			
-		} else {
-			effects.add(effect);
-		}
+		effect.onApply();
+		effects.add(effect);
 		effect.setCreep(parent);
 	}
 	
@@ -336,7 +334,7 @@ final class CreepAttributes implements Updatable {
 		}
 	}
 	
-	void onDetonate() {
+	void onProjectileCollision() {
 		
 	}
 	
@@ -348,15 +346,10 @@ final class CreepAttributes implements Updatable {
 			int updateVal = e.update();
 			switch (updateVal) {
 			case 1:
-				e.applyEffect();
 				break;
 			case 0:
 				break;
 			case -1:
-				e.onExpire();
-				if (e instanceof DamageOnHit) { //TODO: If this ends up being too slow we can work around by making a new method for projectile effects that activate when they attach to a creep
-					
-				}
 				i.remove();
 				break;
 			default:
@@ -366,12 +359,16 @@ final class CreepAttributes implements Updatable {
 		}
 	}
 	
-	private boolean hasEffect(ProjectileEffect pe) {
-		for (ProjectileEffect p: effects) {
-			if (p.equals(pe)) {
-				return true;
+	boolean contains(ProjectileEffect pe) {
+		return effects.contains(pe);
+	}
+	
+	ProjectileEffect getEquivalent(ProjectileEffect pe) {
+		for (ProjectileEffect e: effects) {
+			if (e.equals(pe)) {
+				return e;
 			}
 		}
-		return false;
+		return null;
 	}
 }
