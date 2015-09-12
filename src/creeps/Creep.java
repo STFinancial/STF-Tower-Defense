@@ -55,12 +55,20 @@ public class Creep implements Updatable {
 	}
 
 	public void addEffect(ProjectileEffect effect) {
-		attributes.addEffect(effect.clone());
+		if (attributes.contains(effect)) {
+			attributes.getEquivalent(effect).onApply();
+		} else {
+			attributes.addEffect(effect.clone());
+		}
 	}
 
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
 		for (ProjectileEffect e: effects) {
-			attributes.addEffect(e.clone());
+			if (attributes.contains(e)) {
+				attributes.getEquivalent(e).onApply();
+			} else {
+				attributes.addEffect(e.clone());
+			}
 		}
 	}
 	

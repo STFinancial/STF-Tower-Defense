@@ -36,7 +36,7 @@ public class ToughnessShred extends ProjectileEffect implements Stackable {
 	}
 
 	@Override
-	public void applyEffect() {
+	protected void applyEffect() {
 		if (isFlat) {
 			creep.reduceFlatToughness(modifier);
 		} else {
@@ -57,5 +57,10 @@ public class ToughnessShred extends ProjectileEffect implements Stackable {
 				numStacks--;
 			}
 		}
+	}
+
+	@Override
+	public void onApply() {
+		applyEffect();
 	}
 }

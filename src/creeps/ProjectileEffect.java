@@ -59,6 +59,8 @@ public abstract class ProjectileEffect implements Updatable {
 	
 	public void setCreep(Creep creep) {	this.creep = creep; }
 	
+	public void applyPenalty(float penalty) { modifier *= penalty; lifetime *= penalty; }
+	
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof ProjectileEffect)) {

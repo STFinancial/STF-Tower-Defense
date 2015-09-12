@@ -45,19 +45,13 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 			chainedEffects.add(new ArrayList<ProjectileEffect>(creepEffects.size()));
 			for (int j = 0; j < creepEffects.size(); j++) {
 				e = creepEffects.get(j).clone();
-				e.modifier *= currentPenalty;
-				if (e.lifetime != 0) {
-					e.lifetime *= currentPenalty;
-				}
+				e.applyPenalty(currentPenalty);
 				chainedEffects.get(i).add(e);
 			}
 			chainedSplashEffects.add(new ArrayList<ProjectileEffect>(splashEffects.size()));
 			for (int j = 0; j < splashEffects.size(); j++) {
 				e = splashEffects.get(j).clone();
-				e.modifier *= currentPenalty;
-				if (e.lifetime != 0) {
-					e.lifetime *= currentPenalty;
-				}
+				e.applyPenalty(currentPenalty);
 				chainedSplashEffects.get(i).add(e);
 			}
 			currentPenalty *= chainPenalty;

@@ -6,9 +6,11 @@ public class Slow extends ProjectileEffect implements Refreshable {
 	/*
 	 * Slow effect
 	 */
+	private boolean beenApplied;
 
 	public Slow(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
+		beenApplied = false;
 	}
 
 	@Override
@@ -33,7 +35,10 @@ public class Slow extends ProjectileEffect implements Refreshable {
 
 	@Override
 	public void onApply() {
-		// TODO Auto-generated method stub
-		
+		if (beenApplied) {
+			refresh();
+		} else {
+			applyEffect();
+		}
 	}
 }

@@ -9,7 +9,7 @@ public class Snare extends ProjectileEffect {
 	}
 
 	@Override
-	public void applyEffect() {
+	protected void applyEffect() {
 		creep.snare();
 	}
 
@@ -21,6 +21,11 @@ public class Snare extends ProjectileEffect {
 	@Override
 	public ProjectileEffect clone() {
 		return new Snare(lifetime, damageType, parent);
+	}
+
+	@Override
+	public void onApply() {
+		applyEffect();
 	}
 
 }
