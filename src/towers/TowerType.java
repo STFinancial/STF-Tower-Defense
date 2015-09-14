@@ -1,4 +1,5 @@
 package towers;
+//TODO: Fix imports of all classes.
 
 import utilities.GameConstants;
 import creeps.DamageType;
@@ -6,7 +7,7 @@ import projectiles.*;
 //TODO can use a priority value instead of "isBase"
 //EARTH, FIRE, WATER, WIND, LIGHT, DARK, PHYSICAL;
 public enum TowerType {
-	//TODO I want each (upgraded) tower to have it's unique projectile effect too
+	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
 	EARTH (new BaseAttributeList(){{
 		name                = "Earth";
 		mainDamageType      = DamageType.EARTH;
@@ -83,8 +84,6 @@ public enum TowerType {
 		upgrades			= null;
 		additionalEffect    = null;
 	}}),
-	//TODO this is sort of the blueprint for how the upgrades are defined
-	//TODO these functions are called by the upgrade method in the tower class
 	//TODO should the base stats of the towers be identical to their downgrade?
 	EARTH_EARTH (new BaseAttributeList(){{
 		//does an AOE earthquake? cannot hit flying
@@ -407,7 +406,7 @@ public enum TowerType {
 				}
 		};
 	}}), 
-	FIRE_EARTH (new BaseAttributeList(){{ //TODO: Needs ork, doesn't synergize with self
+	FIRE_EARTH (new BaseAttributeList(){{ //TODO: Needs work, doesn't synergize with self
 		name				= "Magma";
 		downgradeType 		= FIRE;
 		mainDamageType      = DamageType.FIRE;
@@ -648,16 +647,243 @@ public enum TowerType {
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
 		//this tower fires a laser thing that passes through enemies and goes a fixed distance
+		name				= "";
 		downgradeType 		= FIRE;
+		mainDamageType      = DamageType.FIRE;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}), 
 	WATER_EARTH (new BaseAttributeList(){{
 		//does large AoE slow
+		name				= "Mud";
 		downgradeType 		= WATER;
+		mainDamageType      = DamageType.WATER;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0f;
+		baseEffectSplash	= 0f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= .40f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "Flash Flood";
+						 text 		= "Increases the base range";
+						 isBase		= true;
+						 baseCost   = 1200;}
+						 public void upgrade(Tower t) { t.range += 2.7f; }
+					},
+					new Upgrade() {
+						{name		= "Heavy Rains";
+						 text 		= "Reduces attack cooldown";
+						 isBase		= false;
+						 baseCost   = 1300;}
+						 public void upgrade(Tower t) { t.attackCoolDown -= 5; }
+					},
+					new Upgrade() {
+						{name		= "Churning River";
+						 text 		= "Reduces enemy armor";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "Thickening Mud";
+						 text 		= "Increases base slow";
+						 isBase 	= true;
+						 baseCost 	= 1900;}
+						 public void upgrade(Tower t) { t.slowArray[DamageType.WATER.ordinal()] += .2f; t.slowArray[DamageType.EARTH.ordinal()] += .2f; }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}), 
 	WATER_FIRE (new BaseAttributeList(){{
 		//this tower applies an MR shred for a period of time
 		name				= "Purging"; //(?)
 		downgradeType 		= WATER;
+		mainDamageType      = DamageType.WATER;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}),  
 	WATER_WATER (new BaseAttributeList(){{
 		//this tower does an aoe slow/freeze
@@ -743,11 +969,161 @@ public enum TowerType {
 		//this tower has a high splash effect coefficient?
 		name				= "Hail";
 		downgradeType 		= WATER;
+		mainDamageType      = DamageType.WATER;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}), 
 	WIND_EARTH (new BaseAttributeList(){{
 		//this tower disorients enemies and makes them walk randomly
 		name 				= "Sandstorm";
 		downgradeType 		= WIND;
+		mainDamageType      = DamageType.WIND;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}), 
 	WIND_FIRE (new BaseAttributeList(){{
 		//this tower chains damage and removes shield (?)
@@ -834,11 +1210,161 @@ public enum TowerType {
 		//slows enemies and reduces toughness
 		name				= "Blizzard";
 		downgradeType 		= WIND;
+		mainDamageType      = DamageType.WIND;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}}), 
 	WIND_WIND (new BaseAttributeList(){{
 		//this tower does a pushback (is this too hard?)
 		name 				= "Gale";
 		downgradeType 		= WIND;
+		mainDamageType      = DamageType.WIND;
+		baseWidth			= 2;
+		baseHeight			= 2;
+		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDuration	= 0;
+		baseAttackCoolDown	= 12.3f;
+		baseDamageSplash	= 0.25f;
+		baseEffectSplash	= 0.25f;
+		baseSplashRadius	= 0f;
+		baseRange			= 8.5f;
+		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
+		hitsAir				= false;
+		hitsGround			= true;
+		upgrades			= new Upgrade[][]{
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 6000;}
+						 public void upgrade(Tower t) {  }
+					},
+				},
+				{
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase 	= false;
+						 baseCost 	= 1400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 3500;}
+						 public void upgrade(Tower t) {  }
+					},
+					new Upgrade() {
+						{name		= "";
+						 text 		= "";
+						 isBase		= false;
+						 baseCost   = 4000;}
+						 public void upgrade(Tower t) {  }
+					},
+				}
+		};
 	}});
 	
 	private BaseAttributeList baseAttributeList;

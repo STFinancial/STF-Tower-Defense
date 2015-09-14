@@ -146,8 +146,7 @@ public class Level {
 		Iterator<EffectPatch> i = effectPatches.iterator();
 		while (i.hasNext()) {
 			EffectPatch e = i.next();
-			e.update();
-			if (e.isDone()) {
+			if (e.update() == -1) {
 				i.remove();
 			}
 		}
@@ -464,8 +463,7 @@ public class Level {
 	}
 
 	public void addEffectPatch(EffectPatch effectPatch) {
-		// TODO Auto-generated method stub
-		
+		effectPatches.add(effectPatch);
 	}
 
 }

@@ -17,7 +17,6 @@ public final class ProjectileGuider {
 		return ProjectileGuider.INSTANCE;
 	}
 	
-	//TODO: Should this just be changed to a set method?
 	public void setLevel(Level level) {
 		this.level = level;
 	}

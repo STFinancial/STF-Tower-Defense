@@ -18,7 +18,12 @@ public class EffectPatch implements Updatable {
 	public EffectPatch(int lifetime, int timing, float x, float y, float radius, ArrayList<ProjectileEffect> effects, Level level) {
 		this.lifetime = lifetime;
 		this.counter = lifetime;
-		this.timing = timing;
+		if (timing == 0) {
+			lifetime = 0;
+			counter = 0;
+		} else {
+			this.timing = timing;
+		}
 		this.effects = effects;
 		this.area = new Circle(x, y, radius);
 	}
@@ -26,17 +31,17 @@ public class EffectPatch implements Updatable {
 	@Override
 	public int update() {
 		counter--;
-		//TODO: Optimization - Can avoid this check by ensuring timing is not zero earlier
-		//To protect against modding by zero
-		if (timing == 0 || counter % timing == 0) {
+		if (counter < 0) {
+			return -1;
+		} else if (timing != 0 && counter % timing == 0) {
+			//apply the effect
 			for (Creep c: level.getCreepInRange(area)) {
 				c.addAllEffects(effects);
 			}
+			return 1;
+		} else {
+			//Do nothing
+			return 0;
 		}
-		return 0;
-	}
-	
-	public boolean isDone() {
-		return counter >= lifetime;
 	}
 }

@@ -20,9 +20,9 @@ public abstract class ProjectileEffect implements Updatable {
 	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
 		this.modifier = modifier;
 		this.lifetime = lifetime;
+		this.counter = lifetime;
 		this.damageType = damageType;
 		this.timing = timing;
-		this.counter = lifetime;
 		this.parent = parent;
 	}
 
@@ -43,14 +43,14 @@ public abstract class ProjectileEffect implements Updatable {
 	
 	public int update() {
 		counter--;
-		if (timing != 0 && counter % timing == 0) {
-			//apply the effect
-			applyEffect();
-			return 1;
-		} else if (counter < 0) {
+		if (counter < 0) {
 			//remove the effect and call on expire
 			onExpire();
 			return -1;
+		} else if (timing != 0 && counter % timing == 0) {
+			//apply the effect
+			applyEffect();
+			return 1;
 		} else {
 			//Do nothing
 			return 0;
