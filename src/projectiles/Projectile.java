@@ -3,6 +3,7 @@ package projectiles;
 import java.util.ArrayList;
 
 import levels.Level;
+import levels.ProjectileGuider;
 import levels.Updatable;
 
 
@@ -34,6 +35,7 @@ public abstract class Projectile implements Updatable {
 	public float toughPenFlat = 0;
 	public float shieldDrainModifier = 1;
 	public boolean ignoresShield;
+	protected ProjectileGuider guider;
 	
 	public boolean dud; //When creep is killed by something else or escapes before contact;
 	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
@@ -44,7 +46,7 @@ public abstract class Projectile implements Updatable {
 	
 	protected Projectile() {
 		//This is called from the clone method only
-		
+		this.guider = ProjectileGuider.getInstance();
 	}
 	
 	public Projectile(Tower parent) {
@@ -54,6 +56,7 @@ public abstract class Projectile implements Updatable {
 		this.x 				= parent.centerX;
 		this.y 				= parent.centerY;
 		this.splashRadius 	= parent.splashRadius;
+		this.guider			= ProjectileGuider.getInstance();
 		
 		hitBox = new Circle(x, y, size);
 		resistPenPercent = new float[GameConstants.NUM_DAMAGE_TYPES];

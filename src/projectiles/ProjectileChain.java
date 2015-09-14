@@ -73,7 +73,7 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 		}
 		int currentChains = 0;
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: level.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
+		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
 		chainedCreep.add(targetCreep);
@@ -83,9 +83,9 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 			Creep prevCreep = chainedCreep.get(currentChains - 1);
 			Creep newCreep;
 			if (noDuplicates) {
-				newCreep = level.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep);
+				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep);
 			} else {
-				newCreep = level.getSingleCreepInRange(prevCreep, chainRadius, null);
+				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, null);
 			}
 			
 			if (newCreep == null) {
@@ -94,7 +94,7 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 			newCreep.addAllEffects(chainedEffects.get(currentChains));
 			chainedCreep.add(newCreep);
 			//TODO at some point we may change the splashRadius to splashRadius * currentPenalty
-			for (Creep splash: level.getOtherCreepInSplashRange(newCreep, splashRadius)) {
+			for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius)) {
 				splash.addAllEffects(chainedSplashEffects.get(currentChains));
 			}
 			currentChains++;

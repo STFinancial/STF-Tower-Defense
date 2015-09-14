@@ -40,7 +40,7 @@ public class ProjectileAOE extends Projectile {
 	@Override
 	public void detonate(Level level) {
 		//TODO: how do we want to handle splash effects with this projectile type
-		HashSet<Creep> creepInRange = level.getCreepInRange(this, parent.range);
+		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range);
 		for (Creep c: creepInRange) {
 			c.addAllEffects(creepEffects);
 		}

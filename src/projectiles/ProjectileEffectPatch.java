@@ -8,15 +8,15 @@ import towers.Tower;
 import levels.EffectPatch;
 import levels.Level;
 
-public class ProjectileStill extends ProjectileBasic {
+public class ProjectileEffectPatch extends ProjectileBasic {
 	private int lifetime;
 	private int timing;
 	private float patchRadius;
 	private ArrayList<ProjectileEffect> effects;
 	
-	protected ProjectileStill() {}
+	protected ProjectileEffectPatch() {}
 	
-	public ProjectileStill(Tower parent, int lifetime, int timing, float patchRadius, ArrayList<ProjectileEffect> effects) {
+	public ProjectileEffectPatch(Tower parent, int lifetime, int timing, float patchRadius, ArrayList<ProjectileEffect> effects) {
 		super(parent);
 		this.lifetime = lifetime;
 		this.timing = timing;
@@ -25,7 +25,7 @@ public class ProjectileStill extends ProjectileBasic {
 	
 	@Override
 	public Projectile clone() {
-		ProjectileStill p = new ProjectileStill();
+		ProjectileEffectPatch p = new ProjectileEffectPatch();
 		cloneStats(p);
 		p.targetCreep = targetCreep;
 		p.lifetime = lifetime;
@@ -41,7 +41,7 @@ public class ProjectileStill extends ProjectileBasic {
 			return;
 		}
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: level.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
+		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
 		if (patchRadius > 0) {

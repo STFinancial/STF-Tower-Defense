@@ -573,9 +573,9 @@ public enum TowerType {
 		mainDamageType      = DamageType.FIRE;
 		baseWidth			= 2;
 		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/70, /*WA*/50, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
+		baseDamageArray		= new float[]{/*E*/0, /*F*/70, /*WA*/50, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12f;
+		baseAttackCoolDown	= 12.3f;
 		baseDamageSplash	= 0.25f;
 		baseEffectSplash	= 0.25f;
 		baseSplashRadius	= 0f;
@@ -587,17 +587,17 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{name		= "Fission";
-						 text 		= "Increases base damage of all types";
+						 text 		= "Increases base damage of all types and siphon bonus";
 						 isBase		= true;
-						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){DamageType d = DamageType.values()[i]; if (d!=DamageType.LIGHT || d!=DamageType.DARK) { t.damageArray[i]+=20; }}}
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { t.siphonBonus += .25f; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){DamageType d = DamageType.values()[i]; if (d!=DamageType.LIGHT || d!=DamageType.DARK) { t.damageArray[i]+=20; }}}
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Amplification";
+						 text 		= "Multiplies all types of damage";
 						 isBase		= false;
-						 baseCost   = 1700;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 2200;}
+						 public void upgrade(Tower t) { for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){DamageType d = DamageType.values()[i]; if (d!=DamageType.LIGHT || d!=DamageType.DARK) { t.damageArray[i]*=1.5f; }} }
 					},
 					new Upgrade() {
 						{name		= "Superheated";
@@ -608,9 +608,9 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Projectile hits all creeps it passes through until reaching its target";
 						 isBase		= false;
-						 baseCost   = 5000;}
+						 baseCost   = 6000;}
 						 public void upgrade(Tower t) {  }
 					},
 				},
@@ -624,24 +624,24 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
-						 isBase		= true;
-						 baseCost   = 1400;}
-						 public void upgrade(Tower t) {  }
-					},
-					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						 text 		= "Increases splash radius and effectiveness";
 						 isBase		= false;
-						 baseCost   = 2500;}
+						 baseCost   = 3400;}
+						 public void upgrade(Tower t) { t.splashRadius += 5; t.damageSplash += .1f; t.effectSplash += .1f; }
+					},
+					new Upgrade() {
+						{name		= "Ground Zero";
+						 text 		= "Leaves behind a zone that, when passed through, deals damage based on max health";
+						 isBase		= false;
+						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Gamma Radiation";
+						 text 		= "Increases damage. Enemies in Ground Zero have their health and shield regeneration permanently set to zero";
 						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.WATER.ordinal()] += 75; t.damageArray[DamageType.FIRE.ordinal()] += 75; }
 					},
 				}
 		};

@@ -1,29 +1,28 @@
 package projectiles;
 
-import levels.Level;
+import java.util.HashSet;
 
 import creeps.Creep;
-
 import towers.Tower;
 import utilities.GameConstants;
 import utilities.TrigHelper;
 
-public class ProjectileBasic extends Projectile implements TargetsCreep {
-	protected Creep targetCreep;
-	
-	protected ProjectileBasic() {
+public class ProjectilePassThrough extends ProjectileBasic {
+	private HashSet<Creep> passedThrough;
+	private float passThroughRange;
+	protected ProjectilePassThrough() {
 		
 	}
 	
-	public ProjectileBasic(Tower parent) {
+	public ProjectilePassThrough(Tower parent) {
 		super(parent);
-		
+		passedThrough = new HashSet<Creep>();
+		passThroughRange = .2f;
 	}
-
-	//TODO if something fucks up, make sure all the fields are being set properly
+	
 	@Override
 	public Projectile clone() {
-		ProjectileBasic p = new ProjectileBasic();
+		ProjectilePassThrough p = new ProjectilePassThrough();
 		cloneStats(p);
 		p.targetCreep = targetCreep;
 		//this is only safe because we clone immediately before we fire
@@ -33,6 +32,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 			p.resistPenFlat[i] = resistPenFlat[i];
 			p.resistPenPercent[i] = resistPenPercent[i];
 		}
+		p.passThroughRange = passThroughRange;
 		return p;
 	}
 
@@ -53,37 +53,14 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		y -= Math.sin(targetAngle) * currentSpeed;
 		hitBox.x = x;
 		hitBox.y = y;
+		//TODO: Do we need a more sophisticated method of checking whether we "passed through" something?
+		for (Creep c: guider.getCreepInRange(this, passThroughRange)) {
+			if (!passedThrough.contains(c)) {
+				c.addAllEffects(creepEffects);
+				passedThrough.add(c);
+			}
+		}
 		return 0;
-	}
-
-	@Override
-	public boolean isDone() {
-		if (dud) {
-			return true;
-		}
-		return hitBox.intersects(targetCreep.hitBox);
-	}
-
-	@Override
-	public void detonate(Level level) {
-		if (dud) {
-			return;
-		}
-		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
-			c.addAllEffects(splashEffects);
-		}
-	}
-
-	@Override
-	public void setTargetCreep(Creep c) {
-		targetCreep = c;
-		targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
-	}
-
-	@Override
-	public Creep getTargetCreep() {
-		return targetCreep;
 	}
 
 }

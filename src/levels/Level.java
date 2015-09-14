@@ -363,7 +363,7 @@ public class Level {
 		return toTarget;
 	}
 
-	public HashSet<Creep> getCreepInRange(Projectile p, float range) {
+	HashSet<Creep> getCreepInRange(Projectile p, float range) {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		Circle splash = new Circle(p.x, p.y, range);
 		for (Creep c : creeps) {
@@ -374,7 +374,7 @@ public class Level {
 		return inRange;
 	}
 	
-	public HashSet<Creep> getCreepInRange(Circle area) {
+	HashSet<Creep> getCreepInRange(Circle area) {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		for (Creep c: creeps) {
 			if (c.hitBox.intersects(area)) {
@@ -384,7 +384,7 @@ public class Level {
 		return inRange;
 	}
 	
-	public HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range) {
+	HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range) {
 		Circle splash = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		for (Creep c: creeps) {
@@ -395,7 +395,8 @@ public class Level {
 		return inRange;
 	}
 	
-	public Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited) {
+	//TODO: Reduce visibility and move access to projectileguider
+	Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited) {
 		Circle box = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
 		if (visited == null) {
 			for (Creep c: creeps) {
@@ -413,7 +414,7 @@ public class Level {
 		return null;
 	}
 	
-	public HashSet<Creep> getCreepAdjacentToEarth() {
+	HashSet<Creep> getCreepAdjacentToEarth() {
 		return creepAdjacentToEarth;
 	}
 	

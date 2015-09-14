@@ -95,6 +95,10 @@ public class Creep implements Updatable {
 	public void unsnare() {
 		attributes.unsnare();
 	}
+
+	public void nullify() {
+		attributes.nullify();
+	}
 	
 	public float consumeBleeds(float amount) {
 		return attributes.consumeBleeds(amount);

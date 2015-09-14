@@ -371,4 +371,11 @@ final class CreepAttributes implements Updatable {
 		}
 		return null;
 	}
+
+	void nullify() {
+		healthRegenerationRate = 0;
+		currentHealthRegenerationRate = 0;
+		shieldRegenerationRate = 0;
+		currentShieldRegenerationRate = 0;
+	}
 }

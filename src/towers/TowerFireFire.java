@@ -8,7 +8,7 @@ import creeps.Damage;
 import creeps.DamageType;
 import creeps.ProjectileEffect;
 import projectiles.ProjectileBasic;
-import projectiles.ProjectileStill;
+import projectiles.ProjectileEffectPatch;
 import levels.Level;
 import maps.Tile;
 
@@ -49,7 +49,7 @@ public class TowerFireFire extends Tower {
 				effects.add(a);
 			}
 			//TODO the 12 will be changed by "quality"
-			baseProjectile = new ProjectileStill(this, effectPatchDuration, 3, splashRadius, effects);
+			baseProjectile = new ProjectileEffectPatch(this, effectPatchDuration, 3, splashRadius, effects);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 			if (progress[0][3]) {

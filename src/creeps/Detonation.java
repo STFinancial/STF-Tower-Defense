@@ -11,7 +11,7 @@ public class Detonation extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		HashSet<Creep> inRange = parent.level.getCreepAdjacentToEarth();
+		HashSet<Creep> inRange = parent.guider.getCreepAdjacentToEarth();
 		for (Creep c: inRange) {
 			c.damage(damageType, modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
 		}

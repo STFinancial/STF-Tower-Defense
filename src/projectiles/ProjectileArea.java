@@ -43,7 +43,7 @@ public class ProjectileArea extends Projectile implements TargetsArea {
 
 	@Override
 	public void detonate(Level level) {
-		HashSet<Creep> creepInRange = level.getCreepInRange(targetArea);
+		HashSet<Creep> creepInRange = guider.getCreepInRange(targetArea);
 		for (Creep c: creepInRange) {
 			c.addAllEffects(creepEffects);
 			if (doesSplash) {
