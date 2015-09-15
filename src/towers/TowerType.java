@@ -9,100 +9,91 @@ import projectiles.*;
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
 	EARTH (new BaseAttributeList(){{
-		name                = "Earth";
-		mainDamageType      = DamageType.EARTH;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
-		baseSlowDuration	= 0;
-		baseCost			= 200;
-		baseAttackCoolDown	= 15f;
-		baseDamageSplash	= 0.2f;
-		baseEffectSplash	= 0f;
-		baseSplashRadius	= 2f;
-		baseRange			= 6.5f;
-		baseSlow			= 0f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= null;
-		additionalEffect    = null;
+		name                  	= "Earth";
+		baseWidth			  	= 2;
+		baseHeight			  	= 2;
+		baseDamageArray		  	= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseCost			  	= 200;
+		baseAttackCoolDown	  	= 15f;
+		baseDamageSplash		= 0.2f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 2f;
+		baseRange				= 6.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= null;
 	}}),
 	FIRE (new BaseAttributeList(){{
-		name                = "Fire";
-		mainDamageType      = DamageType.FIRE;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDuration	= 0;
-		baseCost			= 200;
-		baseAttackCoolDown	= 12f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 1.5f;
-		baseRange			= 7.5f;
-		baseSlow			= 0;
-		hitsAir				= true;
-		hitsGround			= true;
-		upgrades			= null;
-		additionalEffect    = null;
+		name               	 	= "Fire";
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseCost				= 200;
+		baseAttackCoolDown		= 12f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 1.5f;
+		baseRange				= 7.5f;
+		hitsAir					= true;
+		hitsGround				= true;
+		upgrades				= null;
 	}}),
 	WATER (new BaseAttributeList(){{
-		name                = "Water";
-		mainDamageType      = DamageType.WATER;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDuration	= 10;
-		baseCost			= 200;
-		baseAttackCoolDown	= 10f;
-		baseDamageSplash	= 0f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 1f;
-		baseRange			= 7.5f;
-		baseSlow			= 0.3f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= null;
-		additionalEffect    = null;
+		name               	 	= "Water";
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseCost				= 200;
+		baseAttackCoolDown		= 10f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 1f;
+		baseRange				= 7.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= null;
 	}}),
 	WIND (new BaseAttributeList(){{
-		name                = "Wind";
-		mainDamageType      = DamageType.WIND;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/10};
-		baseSlowDuration	= 10;
-		baseCost			= 200;
-		baseAttackCoolDown	= 5f;
-		baseDamageSplash	= 0f;
-		baseEffectSplash	= 0.10f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= true;
-		hitsGround			= true;
-		upgrades			= null;
-		additionalEffect    = null;
+		name               	 	= "Wind";
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/10};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseCost				= 200;
+		baseAttackCoolDown		= 5f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0.10f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= true;
+		hitsGround				= true;
+		upgrades				= null;
 	}}),
 	//TODO should the base stats of the towers be identical to their downgrade?
 	EARTH_EARTH (new BaseAttributeList(){{
 		//does an AOE earthquake? cannot hit flying
-		name				= "Earthquake";
-		downgradeType 		= EARTH;
-		mainDamageType      = DamageType.EARTH;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/100};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 15f;
-		baseDamageSplash	= 0f;
-		baseEffectSplash	= 0f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "Earthquake";
+		downgradeType 			= EARTH;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/100};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 15f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Fault Lines";
@@ -167,22 +158,21 @@ public enum TowerType {
 	}}), 
 	EARTH_FIRE (new BaseAttributeList(){{
 		//does tons of damage and armor penetration at some point?
-		name 				= "Ironworks";
-		downgradeType 		= EARTH;
-		mainDamageType      = DamageType.EARTH;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/10, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/50};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 13f;
-		baseDamageSplash	= 0f;
-		baseEffectSplash	= 0f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name 					= "Ironworks";
+		downgradeType 			= EARTH;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/10, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/50};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 13f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Rapid Fire";
@@ -247,22 +237,21 @@ public enum TowerType {
 	}}),
 	EARTH_WATER (new BaseAttributeList(){{
 		//this will do rupture spikes on a selected area
-		name 				= "Stalagmite";
-		downgradeType 		= EARTH;
-		mainDamageType      = DamageType.EARTH;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/30, /*F*/0, /*WA*/30, /*WI*/0, /*L*/0, /*D*/0, /*P*/70};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 13f;
-		baseDamageSplash	= 0f;
-		baseEffectSplash	= 0f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name 					= "Stalagmite";
+		downgradeType 			= EARTH;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/30, /*F*/0, /*WA*/30, /*WI*/0, /*L*/0, /*D*/0, /*P*/70};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 13f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "";
@@ -328,22 +317,21 @@ public enum TowerType {
 	EARTH_WIND (new BaseAttributeList(){{
 		//has enormous splash radius
 		//basically "explodes" outward
-		name				= "Fragmentation";
-		downgradeType 		= EARTH;
-		mainDamageType      = DamageType.EARTH;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/20, /*L*/0, /*D*/0, /*P*/60};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 14f;
-		baseDamageSplash	= 0.10f;
-		baseEffectSplash	= 0.10f;
-		baseSplashRadius	= 5f;
-		baseRange			= 9.0f;
-		baseSlow			= 0.10f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "Fragmentation";
+		downgradeType 			= EARTH;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/20, /*L*/0, /*D*/0, /*P*/60};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 14f;
+		baseDamageSplash		= 0.10f;
+		baseEffectSplash		= 0.10f;
+		baseSplashRadius		= 5f;
+		baseRange				= 9.0f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Explosive Force";
@@ -407,22 +395,21 @@ public enum TowerType {
 		};
 	}}), 
 	FIRE_EARTH (new BaseAttributeList(){{ //TODO: Needs work, doesn't synergize with self
-		name				= "Magma";
-		downgradeType 		= FIRE;
-		mainDamageType      = DamageType.FIRE;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/20, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/35};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 14f;
-		baseDamageSplash	= 0.05f;
-		baseEffectSplash	= 0.05f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "Magma";
+		downgradeType 			= FIRE;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/20, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/35};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 14f;
+		baseDamageSplash		= 0.05f;
+		baseEffectSplash		= 0.05f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Volcano";
@@ -487,22 +474,21 @@ public enum TowerType {
 	}}), 
 	FIRE_FIRE (new BaseAttributeList(){{
 		//this tower ignites enemies with all types of elemental damage
-		name				= "Greater Fire";
-		downgradeType 		= FIRE;
-		mainDamageType      = DamageType.FIRE;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/70, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "Greater Fire";
+		downgradeType 			= FIRE;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/70, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 12f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Stoke the Flames";
@@ -567,22 +553,21 @@ public enum TowerType {
 	}}),  
 	FIRE_WATER (new BaseAttributeList(){{
 		//attacks ignore all types of defenses
-		name				= "Plasma";
-		downgradeType 		= FIRE;
-		mainDamageType      = DamageType.FIRE;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/70, /*WA*/50, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "Plasma";
+		downgradeType 			= FIRE;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/70, /*WA*/50, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 12.3f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Fission";
@@ -647,22 +632,21 @@ public enum TowerType {
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
 		//this tower fires a laser thing that passes through enemies and goes a fixed distance
-		name				= "";
-		downgradeType 		= FIRE;
-		mainDamageType      = DamageType.FIRE;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "";
+		downgradeType 			= FIRE;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 12.3f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "";
@@ -727,32 +711,31 @@ public enum TowerType {
 	}}), 
 	WATER_EARTH (new BaseAttributeList(){{
 		//does large AoE slow
-		name				= "Mud";
-		downgradeType 		= WATER;
-		mainDamageType      = DamageType.WATER;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0f;
-		baseEffectSplash	= 0f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= .40f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		name					= "Mud";
+		downgradeType 			= WATER;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 12.3f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Flash Flood";
 						 text 		= "Increases the base range";
 						 isBase		= true;
-						 baseCost   = 1200;}
+						 baseCost   = 900;}
 						 public void upgrade(Tower t) { t.range += 2.7f; }
 					},
 					new Upgrade() {
-						{name		= "Heavy Rains";
+						{name		= "";
 						 text 		= "Reduces attack cooldown";
 						 isBase		= false;
 						 baseCost   = 1300;}
@@ -766,11 +749,11 @@ public enum TowerType {
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Heavy Rains";
+						 text 		= "Hits air targets, doubles base slow duration, and ";
+						 isBase		= true;
 						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.hitsAir = true; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){t.slowDurationArray[i]*=2;} }
 					},
 				},
 				{
@@ -797,7 +780,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Permanently reduces maximum creep speed";
 						 isBase		= false;
 						 baseCost   = 4000;}
 						 public void upgrade(Tower t) {  }
@@ -813,6 +796,8 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
 		baseAttackCoolDown	= 12.3f;
 		baseDamageSplash	= 0.25f;
@@ -893,6 +878,8 @@ public enum TowerType {
 		baseWidth  			= 2;
 		baseHeight   		= 2;
 		baseDamageArray  	= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration 	= 10;
 		baseAttackCoolDown 	= 10f;
 		baseDamageSplash 	= 0f;
@@ -973,6 +960,8 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
 		baseAttackCoolDown	= 12.3f;
 		baseDamageSplash	= 0.25f;
@@ -1053,6 +1042,8 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
 		baseAttackCoolDown	= 12.3f;
 		baseDamageSplash	= 0.25f;
@@ -1133,6 +1124,8 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
 		baseCost			= 200;
 		baseAttackCoolDown	= 7f;
@@ -1214,6 +1207,8 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
 		baseAttackCoolDown	= 12.3f;
 		baseDamageSplash	= 0.25f;
@@ -1294,6 +1289,8 @@ public enum TowerType {
 		baseWidth			= 2;
 		baseHeight			= 2;
 		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDuration	= 0;
 		baseAttackCoolDown	= 12.3f;
 		baseDamageSplash	= 0.25f;

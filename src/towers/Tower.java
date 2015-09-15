@@ -7,12 +7,10 @@ import java.util.Queue;
 import levels.Level;
 import levels.Updatable;
 import maps.Tile;
-import creeps.Creep;
 import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
-import utilities.TrigHelper;
 
 public abstract class Tower implements Updatable {
 	//TODO: want to implement something like "quality" so that we can continually upgrade the base stats of a tower with gold (so towers don't cap out)
@@ -30,8 +28,6 @@ public abstract class Tower implements Updatable {
 	//Targeting Details
 	public TargetingModeType targetingType;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
-//	public Creep targetCreep;
-//	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
 
 	//Misc.
 	public int towerID;
@@ -41,7 +37,6 @@ public abstract class Tower implements Updatable {
 	
 	//Upgrading Information
 	public boolean[][][] upgradeTracks;
-	
 	
 	//Base Attributes
 	public BaseAttributeList baseAttributeList;
@@ -61,20 +56,7 @@ public abstract class Tower implements Updatable {
 	public boolean hitsAir;
 	public boolean hitsGround;
 	
-	//Siphoned Attributes
-//	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
-//	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
-//	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-//	public float siphAttackCoolDown = 0;
-//	public float siphDamageSplash = 0;
-//	public float siphEffectSplash = 0;
-//	public float siphSplashRadius = 0;
-//	public float siphRange = 0;
-
-	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		//TODO since I changed the way base stats are modified I can remove this clone I think
-		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
@@ -151,9 +133,6 @@ public abstract class Tower implements Updatable {
 	}
 	
 	protected void adjustBaseStats() {
-		slowArray[baseAttributeList.mainDamageType.ordinal()] 			= baseAttributeList.baseSlow;
-		damageArray 													= baseAttributeList.baseDamageArray;
-		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] 	= baseAttributeList.baseSlowDuration;
 		attackCoolDown 													= baseAttributeList.baseAttackCoolDown;
 		damageSplash 													= baseAttributeList.baseDamageSplash;
 		effectSplash													= baseAttributeList.baseEffectSplash;
@@ -163,6 +142,11 @@ public abstract class Tower implements Updatable {
 		hitsGround														= baseAttributeList.hitsGround;
 		attackCarryOver													= 0;
 		currentAttackCoolDown											= 0;
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			slowArray[i] = baseAttributeList.baseSlowArray[i];
+			damageArray[i] = baseAttributeList.baseDamageArray[i];
+			slowDurationArray[i] = baseAttributeList.baseSlowDurationArray[i];
+		}
 	}
 	
 	private void adjustBaseUpgradeStats() {
