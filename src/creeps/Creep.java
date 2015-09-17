@@ -104,6 +104,10 @@ public class Creep implements Updatable {
 		return attributes.consumeBleeds(amount);
 	}
 	
+	public float reduceMaxSpeed(DamageType type, float amount, boolean isFlat) {
+		return attributes.reduceMaxSpeed(type, amount, isFlat);
+	}
+	
 	public void addOnHit(DamageType type, float amount) {
 		attributes.addOnHit(type, amount);
 	}
@@ -293,4 +297,6 @@ public class Creep implements Updatable {
         Creep c = (Creep) o;
         return c.creepID == creepID;
 	}
+
+	
 }

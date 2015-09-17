@@ -196,6 +196,19 @@ final class CreepAttributes implements Updatable {
 		return currentHealth;
 	}
 	
+	//TODO: Should I use this model for reducing resistances?
+	float reduceMaxSpeed(DamageType type, float amount, boolean isFlat) {
+		if (isFlat) {
+			maxSpeed -= amount;
+		} else {
+			maxSpeed *= 1 - amount;	
+		}
+		if (currentSpeed > maxSpeed) {
+			currentSpeed = maxSpeed;
+		}
+		return currentSpeed;
+	}
+	
 	void addOnHit(DamageType type, float amount) {
 		damageOnHitArray[type.ordinal()] += amount;
 	}

@@ -8,6 +8,7 @@ import projectiles.*;
 //EARTH, FIRE, WATER, WIND, LIGHT, DARK, PHYSICAL;
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
+	//TODO: Instead of using "isBase" just modify the base values directly. This way we can mix. Need to clone the attribute lists for each tower then, but no biggie.
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
 		baseWidth			  	= 2;
@@ -750,9 +751,9 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Heavy Rains";
-						 text 		= "Hits air targets, doubles base slow duration, and ";
+						 text 		= "Hits air targets, doubles base slow duration, and...";
 						 isBase		= true;
-						 baseCost   = 6000;}
+						 baseCost   = 2000;}
 						 public void upgrade(Tower t) { t.hitsAir = true; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){t.slowDurationArray[i]*=2;} }
 					},
 				},
@@ -765,21 +766,21 @@ public enum TowerType {
 						 public void upgrade(Tower t) { t.slowArray[DamageType.WATER.ordinal()] += .2f; t.slowArray[DamageType.EARTH.ordinal()] += .2f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Cloud Cover";
+						 text 		= "Doubles base EARTH and WATER slow duration";
+						 isBase		= true;
+						 baseCost   = 1500;}
+						 public void upgrade(Tower t) { t.slowDurationArray[DamageType.WATER.ordinal()]*=2; t.slowDurationArray[DamageType.EARTH.ordinal()]*=2; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Shape the Earth";
+						 text 		= "Allows for modification of tile types"; //TODO: Implement this
+						 isBase		= true;
 						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
+						{name		= "Petrification";
 						 text 		= "Permanently reduces maximum creep speed";
 						 isBase		= false;
 						 baseCost   = 4000;}
@@ -790,24 +791,21 @@ public enum TowerType {
 	}}), 
 	WATER_FIRE (new BaseAttributeList(){{
 		//this tower applies an MR shred for a period of time
-		name				= "Purging"; //(?)
-		downgradeType 		= WATER;
-		mainDamageType      = DamageType.WATER;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		name					= "Purging"; //(?)
+		downgradeType 			= WATER;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		baseAttackCoolDown		= 12.3f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "";
