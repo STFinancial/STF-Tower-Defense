@@ -1,7 +1,6 @@
 package creeps;
 
 import projectiles.Projectile;
-import creeps.Creep.CreepEffect;
 
 /**
  * This is where the enemies move randomly for a period of time.
@@ -9,29 +8,27 @@ import creeps.Creep.CreepEffect;
  *
  */
 public class Disorient extends ProjectileEffect {
-	
-	public Disorient(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
-		super(lifetime, modifier, timing, damageType, parent);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void applyEffect(Creep creep) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onExpire(Creep creep) {
-		// TODO Auto-generated method stub
-		
+	public Disorient(int lifetime, DamageType damageType, Projectile parent) {
+		super(lifetime, 0, 0, damageType, parent);
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Disorient(lifetime, damageType, parent);
 	}
-	
-	
+
+	@Override
+	public void onApply() {
+		applyEffect();
+	}
+
+	@Override
+	protected void applyEffect() {
+		creep.disorient();
+	}
+
+	@Override
+	public void onExpire() {
+		creep.undisorient();
+	}
 }

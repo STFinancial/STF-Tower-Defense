@@ -1,6 +1,7 @@
 package towers;
 //TODO: Fix imports of all classes.
-
+//TODO: Tower targeting types that allow to target those that we can snare and disorient, etc.
+//TODO: One tower could prevent deathrattle
 import utilities.GameConstants;
 import creeps.DamageType;
 import projectiles.*;

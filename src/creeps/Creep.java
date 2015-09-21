@@ -26,11 +26,13 @@ public class Creep implements Updatable {
 
 	//Movement
 	public Vertex currentVertex;
-	public Vertex nextVertex;
 	public DirectionType direction;
+	public int previousIndex;
+	public int currentIndex;
+	public int nextIndex;
 	public float xOff, yOff;
 	public Path path;
-	public int pathIndex;
+	//public int pathIndex;
 	public float size = .4f; //Radius
 	public Circle hitBox;
 
@@ -38,8 +40,9 @@ public class Creep implements Updatable {
 	public ArrayList<Creep> children;
 	public int disruptorAmount;
 
-	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed, int healthCost, int goldValue, DamageType elementType) {
-		this.attributes = new CreepAttributes(this, maxDamageResistsFlat, maxSlowResists, maxHealth, healthRegenRate, maxToughness, maxShieldValue, shieldRegenRate, snareImmune, maxSpeed);
+	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed, int healthCost, int goldValue, DamageType elementType) {
+		//TODO: Need to do something about this. Possibly a creep builder class?
+		this.attributes = new CreepAttributes(this, maxDamageResistsFlat, maxSlowResists, maxHealth, healthRegenRate, maxToughness, maxShieldValue, shieldRegenRate, snareImmune, disorientImmune, maxSpeed);
 		this.healthCost = healthCost;
 		this.goldValue = goldValue;
 		this.elementType = elementType;
@@ -88,6 +91,20 @@ public class Creep implements Updatable {
 		return attributes.unslow(type, amount);
 	}
 	
+	public void disorient() {
+		if (attributes.disorient()) {
+			int temp = previousIndex;
+			previousIndex = nextIndex;
+			nextIndex = temp;
+			updateDirection();
+		}
+	}
+	
+	public void undisorient() {
+		attributes.undisorient();
+	}
+	
+	//TODO: Can condense a lot of these into one method like disorient is (was)?
 	public void snare() {
 		attributes.snare();
 	}
@@ -177,22 +194,32 @@ public class Creep implements Updatable {
 		return creepTypes.contains(type);
 	}
 
-	public void setDestination(int index) {
-		nextVertex = path.getVertex(index);
-		direction = path.getDirection(index);
-	}
-
-	public void setLocation(int index) {
-		currentVertex = path.getVertex(0);
-		xOff = 0;
-		yOff = 0;
-	}
-
+	/**
+	 * Sets the creep's location at the beginning of the path. This assumes that the path cannot be updated mid-round.
+	 * @param path - The path that the creep will follow.
+	 */
 	public void setPath(Path path) {
 		this.path = path;
 		setLocation(0);
-		setDestination(1);
-		pathIndex = 1;
+	}
+	
+	private void setLocation(int newLocation) {
+		xOff = 0;
+		yOff = 0;
+		currentIndex = newLocation;
+		if (attributes.isDisoriented()) {
+			previousIndex = newLocation + 1;
+			nextIndex = newLocation - 1;
+		} else {
+			previousIndex = newLocation - 1;
+			nextIndex = newLocation + 1;
+		}
+		currentVertex = path.getVertex(currentIndex);
+		updateDirection();
+	}
+	
+	private void updateDirection() {
+		direction = path.getDirection(currentIndex, nextIndex);
 	}
 
 	public int update() {
@@ -226,15 +253,21 @@ public class Creep implements Updatable {
 			}
 
 			//Move to the new vertex, then adjust our offset with the remaining speed
-			currentVertex = nextVertex;
-			pathIndex++;
-			setDestination(pathIndex);
-
+			previousIndex = currentIndex;
+			currentIndex = nextIndex;
+			currentVertex = path.getVertex(currentIndex);
+			if (attributes.isDisoriented()) {
+				nextIndex--; //If disoriented, we move backward along the path
+			} else {
+				nextIndex++; //If not, we just move forward
+			}
+			updateDirection();
+			
 			xOff = direction.x * speedRemaining;
 			yOff = direction.y * speedRemaining;
 		}
 	}
-
+	
 	public void updateHitBox() {
 		hitBox.x = currentVertex.x + xOff + 1;
 		hitBox.y = currentVertex.y + yOff + 1;
@@ -243,12 +276,20 @@ public class Creep implements Updatable {
 	public void setLocation(Creep c) {
 		//Update freshly spawned deathrattle creep with parent's path
 		this.currentVertex = c.currentVertex;
-		this.nextVertex = c.nextVertex;
-		this.direction = c.direction;
+		this.nextIndex = c.nextIndex;
+		//Creep can't be disoriented when they come out so we need to work around that
+		if (c.attributes.isDisoriented()) {
+			this.nextIndex = c.previousIndex;
+			this.previousIndex = c.nextIndex;
+			this.direction = c.direction.getOpposite();
+		} else {
+			this.nextIndex = c.nextIndex;
+			this.previousIndex = c.previousIndex;
+			this.direction = c.direction;
+		}
 		this.xOff = c.xOff;
 		this.yOff = c.yOff;
 		this.path = c.path;
-		this.pathIndex = c.pathIndex;
 	}
 
 	/*

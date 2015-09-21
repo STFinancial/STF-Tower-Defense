@@ -8,6 +8,7 @@ import utilities.GameConstants;
 import levels.Updatable;
 //TODO: Possibly make this a singleton if all creeps use the same one (at most we create only a few hundred of these, shouldn't be too much overhead)
 //TODO: Optimization - This will need to be refactored away from float math if everything is too slow
+//TODO: Organize this a bit better.
 /**
  * Contains the values for the damage resistances and slow resistances. Also includes toughness, shield, and snare immunity.
  * @author Timothy
@@ -48,8 +49,12 @@ final class CreepAttributes implements Updatable {
 	private boolean snareImmune;
 	private int snareGrace;
 	private int timeUntilSnare;
+	private boolean isDisoriented;
+	private boolean disorientImmune;
+	private int disorientGrace;
+	private int timeUntilDisorient;
 	
-	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, float maxSpeed) {
+	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed) {
 		this.parent = parent;
 		effects = new HashSet<ProjectileEffect>();
 		//Damage Resists
@@ -89,15 +94,21 @@ final class CreepAttributes implements Updatable {
 		
 		//Snare Immunity
 		this.snareImmune = snareImmune;
-		this.snareGrace = 15;
+		this.snareGrace = 30;
 		this.timeUntilSnare = snareGrace;
+		
+		//Disorient Immunity
+		this.isDisoriented = false;
+		this.disorientImmune = disorientImmune;
+		this.disorientGrace = 30;
+		this.timeUntilDisorient = disorientGrace;
 		
 		this.maxSpeed = maxSpeed;
 		this.currentSpeed = maxSpeed;
 	}
 	
 	private CreepAttributes(CreepAttributes attributes) {
-		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.slowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.maxSpeed);
+		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.slowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.disorientImmune, attributes.maxSpeed);
 	}
 	
 	/**
@@ -168,7 +179,7 @@ final class CreepAttributes implements Updatable {
 	
 	void snare() {
 		if (!snareImmune && timeUntilSnare < 0) {
-			timeUntilSnare = snareGrace;
+			timeUntilSnare = snareGrace; //TODO: Should this be set in unsnare? If so need to fix stuff in constructor too.
 			currentSpeed = 0;			
 		}
 	}
@@ -208,6 +219,19 @@ final class CreepAttributes implements Updatable {
 		}
 		return currentSpeed;
 	}
+	
+	boolean disorient() {
+		if (!disorientImmune && timeUntilDisorient < 0) {
+			timeUntilDisorient = disorientGrace; //TODO: Should this be done in un-disorient? If so need to fix stuff in constructor too.		
+			this.isDisoriented = true;
+			return true;
+		}
+		return false;
+	}
+	
+	void undisorient() { isDisoriented = false;}
+	
+	boolean isDisoriented() { return isDisoriented; }
 	
 	void addOnHit(DamageType type, float amount) {
 		damageOnHitArray[type.ordinal()] += amount;
@@ -353,6 +377,7 @@ final class CreepAttributes implements Updatable {
 	
 	private void updateEffects() {
 		timeUntilSnare--;
+		timeUntilDisorient--;
 		Iterator<ProjectileEffect> i = effects.iterator();
 		while (i.hasNext()) {
 			ProjectileEffect e = i.next();

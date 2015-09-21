@@ -18,8 +18,6 @@ import maps.VertexGraph;
  * Tool to grab the path for a certain level, will need to be run anytime a tower is built
  */
 public class PathFinder {
-	
-	
 	public static Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
@@ -82,10 +80,7 @@ public class PathFinder {
 			path.addFirst(current);
 		}
 		directions.addFirst(DirectionType.NONE);
-		Path totalPath = new Path();
-		totalPath.directions = directions;
-		totalPath.path = path;
-		totalPath.size = path.size();
+		Path totalPath = new Path(path, directions);
 		return totalPath;
 	}
 

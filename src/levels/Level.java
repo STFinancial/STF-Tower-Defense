@@ -345,9 +345,9 @@ public class Level {
 		case FIRST:
 			int max = -1;
 			for (Creep c : inRange) {
-				if (c.pathIndex > max) {
+				if (c.currentIndex > max) {
 					toTarget = c;
-					max = c.pathIndex;
+					max = c.currentIndex;
 				}
 			}
 			break;
