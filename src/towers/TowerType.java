@@ -1310,15 +1310,15 @@ public enum TowerType {
 						 public void upgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "Favorable Winds";
+						{name		= "Trade Winds";
 						 text 		= "Enemies hit by this tower apply a debuff that, when hit, grants towers reduced attack cooldown";
 						 isBase		= false;
 						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Windfall";
+						 text 		= "Applies a stacking debuff, when hit, grants gold";
 						 isBase		= false;
 						 baseCost   = 6000;}
 						 public void upgrade(Tower t) {  }
@@ -1365,7 +1365,6 @@ public enum TowerType {
 		this.baseAttributeList = baseAttributeList;
 	}
 	
-	//TODO this way is a lot slower and more tedious though
 	public static TowerType getUpgrade(TowerType source, TowerType destination) {
 		if (source == WIND) {
 			if (destination == WIND) {
@@ -1411,6 +1410,7 @@ public enum TowerType {
 		return null;
 	}
 
+	//TODO: Are these needed or can the attributes just be package private
 	public BaseAttributeList getAttributeList() {
 		return baseAttributeList;
 	}
