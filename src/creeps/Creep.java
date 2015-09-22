@@ -37,12 +37,12 @@ public class Creep implements Updatable {
 	public Circle hitBox;
 
 	//Fancy Effects
-	public ArrayList<Creep> children;
-	public int disruptorAmount;
+	public ArrayList<Creep> children; //TODO: move to attributes?
+	
 
-	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed, int healthCost, int goldValue, DamageType elementType) {
+	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed, int healthCost, int goldValue, float disruptorAmount, DamageType elementType) {
 		//TODO: Need to do something about this. Possibly a creep builder class?
-		this.attributes = new CreepAttributes(this, maxDamageResistsFlat, maxSlowResists, maxHealth, healthRegenRate, maxToughness, maxShieldValue, shieldRegenRate, snareImmune, disorientImmune, maxSpeed);
+		this.attributes = new CreepAttributes(this, maxDamageResistsFlat, maxSlowResists, maxHealth, healthRegenRate, maxToughness, maxShieldValue, shieldRegenRate, snareImmune, disorientImmune, maxSpeed, disruptorAmount);
 		this.healthCost = healthCost;
 		this.goldValue = goldValue;
 		this.elementType = elementType;
@@ -76,6 +76,7 @@ public class Creep implements Updatable {
 	}
 	
 	public void onProjectileCollision() {
+		//TODO: This needs to be called by projectiles and needs to do disruption effects
 		attributes.onProjectileCollision();
 	}
 	
@@ -111,6 +112,10 @@ public class Creep implements Updatable {
 	
 	public void unsnare() {
 		attributes.unsnare();
+	}
+	
+	public void suppressDeathrattle(float modifier, DamageType damageType, int lifetime) {
+		attributes.suppressDeathrattle(modifier, lifetime);
 	}
 
 	public void nullify() {
@@ -163,6 +168,14 @@ public class Creep implements Updatable {
 	
 	public float increasePercentToughness(float amount) {
 		return attributes.increasePercentToughness(amount);
+	}
+	
+	public float suppressDisruptionPercent(float amount, DamageType damageType) {
+		return attributes.suppressDisruptionPercent(amount);
+	}
+
+	public float unsuppressDisruptionPercent(float amount, DamageType damageType) {
+		return attributes.unsuppressDisruptionPercent(amount);
 	}
 	
 	public float getMaxHealth() {
@@ -313,7 +326,6 @@ public class Creep implements Updatable {
 				clone.children.add(child.clone());
 			}
 		}
-		clone.disruptorAmount = this.disruptorAmount;
 
 		return clone;
 	}
@@ -338,6 +350,10 @@ public class Creep implements Updatable {
         Creep c = (Creep) o;
         return c.creepID == creepID;
 	}
+
+	
+
+	
 
 	
 }

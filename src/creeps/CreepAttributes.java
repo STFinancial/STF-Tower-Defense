@@ -9,6 +9,7 @@ import levels.Updatable;
 //TODO: Possibly make this a singleton if all creeps use the same one (at most we create only a few hundred of these, shouldn't be too much overhead)
 //TODO: Optimization - This will need to be refactored away from float math if everything is too slow
 //TODO: Organize this a bit better.
+//TODO: My suggestion for cleanup is to make each attribute it's own class with it's own methods to
 /**
  * Contains the values for the damage resistances and slow resistances. Also includes toughness, shield, and snare immunity.
  * @author Timothy
@@ -54,7 +55,15 @@ final class CreepAttributes implements Updatable {
 	private int disorientGrace;
 	private int timeUntilDisorient;
 	
-	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed) {
+	private int deathrattleSuppressionTimer;
+	
+	private float disruptorAmount;
+	private float currentDisruptorReductionPercent;
+	private float currentDisruptorReductionFlat;
+	private float currentDisruptorAmount;
+	
+	//TODO: Unacceptable
+	CreepAttributes(Creep parent, float[] maxDamageResistsFlat, float[] slowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed, float disruptorAmount) {
 		this.parent = parent;
 		effects = new HashSet<ProjectileEffect>();
 		//Damage Resists
@@ -103,12 +112,23 @@ final class CreepAttributes implements Updatable {
 		this.disorientGrace = 30;
 		this.timeUntilDisorient = disorientGrace;
 		
+		//Deathrattle Suppression
+		this.deathrattleSuppressionTimer = 0;
+		
+		//Speed
 		this.maxSpeed = maxSpeed;
 		this.currentSpeed = maxSpeed;
+		
+		//Disruptor
+		this.disruptorAmount = disruptorAmount;
+		this.currentDisruptorReductionPercent = 0;
+		this.currentDisruptorReductionFlat = 0;
+		this.currentDisruptorAmount = disruptorAmount;
+		
 	}
 	
 	private CreepAttributes(CreepAttributes attributes) {
-		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.slowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.disorientImmune, attributes.maxSpeed);
+		this(attributes.parent, attributes.maxDamageResistsFlat, attributes.slowResists, attributes.maxHealth, attributes.healthRegenerationRate, attributes.maxToughness, attributes.maxShield, attributes.shieldRegenerationRate, attributes.snareImmune, attributes.disorientImmune, attributes.maxSpeed, attributes.disruptorAmount);
 	}
 	
 	/**
@@ -233,6 +253,16 @@ final class CreepAttributes implements Updatable {
 	
 	boolean isDisoriented() { return isDisoriented; }
 	
+	void suppressDeathrattle(float modifier, int lifetime) {
+		//TODO: Something with the modifier?
+		if (lifetime > deathrattleSuppressionTimer) {
+			deathrattleSuppressionTimer = lifetime;
+		}
+	}
+	
+	boolean deathrattleSuppressed() { return deathrattleSuppressionTimer > 0; }
+	
+	
 	void addOnHit(DamageType type, float amount) {
 		damageOnHitArray[type.ordinal()] += amount;
 	}
@@ -329,7 +359,36 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	float reducePercentShield(float amount) {
-		return currentShield *= 1 - amount;
+		return currentShield *= 1 - amount; //TODO: I don't think this is quite right, it's different from the other reduction methods
+	}
+	
+	float suppressDisruptionPercent(float amount) {
+		currentDisruptorReductionPercent += amount;
+		return updateDisruption();
+	}
+	
+	float suppressDisruptionFlat(float amount) {
+		currentDisruptorReductionFlat += amount;
+		return updateDisruption();
+	}
+	
+	float unsuppressDisruptionPercent(float amount) {
+		currentDisruptorReductionPercent -= amount;
+		return updateDisruption();
+	}
+	
+	float unsuppressDisruptionFlat(float amount) {
+		currentDisruptorReductionFlat -= amount;
+		return updateDisruption();
+	}
+	
+	float getDisruptionAmount() {
+		return currentDisruptorAmount;
+	}
+	
+	private float updateDisruption() {
+		currentDisruptorAmount = disruptorAmount - (disruptorAmount * currentDisruptorReductionPercent) - currentDisruptorReductionFlat;
+		return currentDisruptorAmount;
 	}
 	
 	float getMaxHealth() {	
@@ -371,6 +430,7 @@ final class CreepAttributes implements Updatable {
 		}
 	}
 	
+	//TODO: What is this for again? On hit effects, wealth, and 
 	void onProjectileCollision() {
 		
 	}
@@ -378,6 +438,7 @@ final class CreepAttributes implements Updatable {
 	private void updateEffects() {
 		timeUntilSnare--;
 		timeUntilDisorient--;
+		deathrattleSuppressionTimer--;
 		Iterator<ProjectileEffect> i = effects.iterator();
 		while (i.hasNext()) {
 			ProjectileEffect e = i.next();

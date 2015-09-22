@@ -1,7 +1,6 @@
 package towers;
 //TODO: Fix imports of all classes.
 //TODO: Tower targeting types that allow to target those that we can snare and disorient, etc.
-//TODO: One tower could prevent deathrattle
 import utilities.GameConstants;
 import creeps.DamageType;
 import projectiles.*;
@@ -10,6 +9,7 @@ import projectiles.*;
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
 	//TODO: Instead of using "isBase" just modify the base values directly. This way we can mix. Need to clone the attribute lists for each tower then, but no biggie.
+	//TODO: Come up with consistent wording and formatting for descriptions of upgrades
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
 		baseWidth			  	= 2;
@@ -796,74 +796,74 @@ public enum TowerType {
 		downgradeType 			= WATER;
 		baseWidth				= 2;
 		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12.3f;
-		baseDamageSplash		= 0.25f;
-		baseEffectSplash		= 0.25f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/50, /*WA*/40, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.10f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCoolDown		= 13.1f;
+		baseDamageSplash		= 0.04f;
+		baseEffectSplash		= 0.04f;
+		baseSplashRadius		= 1f;
+		baseRange				= 8.2f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Watery Grave";
+						 text 		= "Increases base WATER damage, slow, and slow duration";
+						 isBase		= true;
 						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.WATER.ordinal()]+=42; t.slowArray[DamageType.WATER.ordinal()]+=0.11f; t.slowDurationArray[DamageType.WATER.ordinal()]+=7; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2200;}
-						 public void upgrade(Tower t) { }
+						{name		= "Elemental Fury";
+						 text 		= "Reduces base attack cooldown";
+						 isBase		= true;
+						 baseCost   = 1600;}
+						 public void upgrade(Tower t) { t.attackCoolDown -= 3.1f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Clarity";
+						 text 		= "Reduces disruptor effects for a time"; //TODO: Is this too strong?
 						 isBase		= false;
-						 baseCost   = 3500;}
+						 baseCost   = 7500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Cleansing";
+						 text 		= "Increases the disruptor reduction and disables creep deathrattles for a time"; //TODO: Is this too strong?
 						 isBase		= false;
-						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 8900;}
+						 public void upgrade(Tower t) { }
 					},
 				},
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase 	= false;
-						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Boiling";
+						 text 		= "Increases base FIRE damage and reduces base attack cooldown";
+						 isBase		= true;
+						 baseCost   = 2700;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=57; t.attackCoolDown-=1.4f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Scalding";
+						 text 		= "Increases base FIRE damage and splash radius";
+						 isBase		= true;
 						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=61; t.splashRadius+=1.3f; } //TODO: Would like this to be mixed base and not
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Third Degree";
+						 text 		= "Increases base FIRE and WATER damage and base damage splash coefficient";
+						 isBase		= true;
+						 baseCost   = 6400;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=158; t.damageArray[DamageType.WATER.ordinal()]+=34; t.damageSplash+=0.075f; } //TODO: again I want to mix base and not base. Not base damage but base splash coefficient
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Superheated";
+						 text 		= "Ignores creep FIRE and WATER resistances";
 						 isBase		= false;
-						 baseCost   = 4000;}
+						 baseCost   = 5320;}
 						 public void upgrade(Tower t) {  }
 					},
 				}
@@ -871,24 +871,21 @@ public enum TowerType {
 	}}),  
 	WATER_WATER (new BaseAttributeList(){{
 		//this tower does an aoe slow/freeze
-		downgradeType 		= WATER;
-		name     			= "Cold Snap";
-		mainDamageType      = DamageType.WATER;
-		baseWidth  			= 2;
-		baseHeight   		= 2;
-		baseDamageArray  	= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		downgradeType 			= WATER;
+		name     				= "Cold Snap";
+		baseWidth  				= 2;
+		baseHeight   			= 2;
+		baseDamageArray  		= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration 	= 10;
-		baseAttackCoolDown 	= 10f;
-		baseDamageSplash 	= 0f;
-		baseEffectSplash 	= 0f;
-		baseSplashRadius 	= 1f;
-		baseRange   		= 7.5f;
-		baseSlow   			= 0.3f;
-		hitsAir    			= false;
-		hitsGround   		= true;
-		upgrades   = new Upgrade[][]{
+		baseAttackCoolDown 		= 10f;
+		baseDamageSplash 		= 0f;
+		baseEffectSplash 		= 0f;
+		baseSplashRadius 		= 1f;
+		baseRange   			= 7.5f;
+		hitsAir    				= false;
+		hitsGround   			= true;
+		upgrades   				= new Upgrade[][]{
 				{
 					 new Upgrade() {
 						 {name  	 = "First Frost";
@@ -953,24 +950,21 @@ public enum TowerType {
 	}}), 
 	WATER_WIND (new BaseAttributeList(){{
 		//this tower has a high splash effect coefficient?
-		name				= "Hail";
-		downgradeType 		= WATER;
-		mainDamageType      = DamageType.WATER;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		name					= "Hail";
+		downgradeType 			= WATER;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		baseAttackCoolDown		= 12.3f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= true;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "";
@@ -1316,8 +1310,8 @@ public enum TowerType {
 						 public void upgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Favorable Winds";
+						 text 		= "Enemies hit by this tower apply a debuff that, when hit, grants towers reduced attack cooldown";
 						 isBase		= false;
 						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }

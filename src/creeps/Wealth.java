@@ -1,9 +1,9 @@
 package creeps;
 
 import projectiles.Projectile;
-
+//TODO: Stackable?
 public class Wealth extends ProjectileEffect {
-	
+	//TODO: Add isFlat and onHit to constructor so we can do flat amounts on hit
 	public Wealth(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
 	}
