@@ -1,5 +1,7 @@
-package creeps;
+package projectileeffects;
 
+import creeps.Creep;
+import creeps.DamageType;
 import projectiles.Projectile;
 import levels.Updatable;
 

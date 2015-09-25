@@ -1,10 +1,10 @@
 package towers;
 
-import creeps.ArmorShred;
-import creeps.DamageOnHit;
 import creeps.DamageType;
-import creeps.MaxHealthDamage;
-import creeps.ToughnessShred;
+import projectileeffects.ArmorShred;
+import projectileeffects.DamageOnHit;
+import projectileeffects.MaxHealthDamage;
+import projectileeffects.ToughnessShred;
 import projectiles.ProjectileAOE;
 import projectiles.ProjectileBasic;
 import levels.Level;

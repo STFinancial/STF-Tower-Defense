@@ -2,9 +2,10 @@ package projectiles;
 
 import java.util.ArrayList;
 
+import projectileeffects.ProjectileEffect;
+
 
 import creeps.Creep;
-import creeps.ProjectileEffect;
 import levels.Level;
 import towers.Tower;
 import utilities.GameConstants;

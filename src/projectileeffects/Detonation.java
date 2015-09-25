@@ -1,6 +1,9 @@
-package creeps;
+package projectileeffects;
 
 import java.util.HashSet;
+
+import creeps.Creep;
+import creeps.DamageType;
 
 import projectiles.Projectile;
 

@@ -3,10 +3,10 @@ package towers;
 import java.util.ArrayList;
 
 import creeps.DamageType;
-import creeps.MaxHealthDamage;
-import creeps.Nullify;
-import creeps.ProjectileEffect;
 
+import projectileeffects.MaxHealthDamage;
+import projectileeffects.Nullify;
+import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
 import projectiles.ProjectilePassThrough;

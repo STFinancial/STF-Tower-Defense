@@ -1,8 +1,8 @@
 package towers;
 
-import creeps.ArmorShred;
 import creeps.DamageType;
-import creeps.PermaSlow;
+import projectileeffects.ArmorShred;
+import projectileeffects.PermaSlow;
 import projectiles.ProjectileAOE;
 import levels.Level;
 import maps.Tile;

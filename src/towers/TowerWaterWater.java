@@ -1,10 +1,10 @@
 package towers;
 
-import creeps.ArmorShred;
-import creeps.Bleed;
-import creeps.Consume;
 import creeps.DamageType;
-import creeps.Snare;
+import projectileeffects.ArmorShred;
+import projectileeffects.Bleed;
+import projectileeffects.Consume;
+import projectileeffects.Snare;
 import projectiles.ProjectileAOE;
 import levels.Level;
 import maps.Tile;

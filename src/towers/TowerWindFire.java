@@ -1,6 +1,6 @@
 package towers;
 
-import creeps.Snare;
+import projectileeffects.Snare;
 import projectiles.ProjectileChain;
 import creeps.Creep;
 import creeps.DamageType;

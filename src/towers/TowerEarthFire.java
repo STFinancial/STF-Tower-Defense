@@ -1,9 +1,9 @@
 package towers;
 
-import creeps.ArmorShred;
 import creeps.Creep;
 import creeps.DamageType;
-import creeps.Wealth;
+import projectileeffects.ArmorShred;
+import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
 import levels.Level;
 import maps.Tile;

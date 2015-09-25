@@ -10,6 +10,8 @@ public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
 	//TODO: Instead of using "isBase" just modify the base values directly. This way we can mix. Need to clone the attribute lists for each tower then, but no biggie.
 	//TODO: Come up with consistent wording and formatting for descriptions of upgrades
+	//TODO: Going to create different siphon coefficients for different stats that vary by tower
+	//TODO: Make an update in Tower that applies global effects (e.g. On one level we want all towers to have the additional projectile effect that they heal enemies on hit)
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
 		baseWidth			  	= 2;
@@ -1276,38 +1278,36 @@ public enum TowerType {
 	}}), 
 	WIND_WIND (new BaseAttributeList(){{
 		//this tower does a pushback (is this too hard?)
-		name 				= "Gale";
-		downgradeType 		= WIND;
-		mainDamageType      = DamageType.WIND;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		name 					= "Gale";
+		downgradeType 			= WIND;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/50};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		baseAttackCoolDown		= 6.9f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 2.2f;
+		baseRange				= 11f;
+		hitsAir					= true;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
+					//TODO: Can change this to siphon coefficients modification once that is implemented
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Pushback";
+						 text 		= "Increases base PHYSICAL damage";
 						 isBase		= false;
 						 baseCost   = 2700;}
 						 public void upgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Focused Attacks";
+						 text 		= "Sets the attack cooldown of this tower to 1 and removes all splash effects";
 						 isBase		= false;
-						 baseCost   = 2200;}
-						 public void upgrade(Tower t) { }
+						 baseCost   = 3000;}
+						 public void upgrade(Tower t) { t.attackCoolDown = 1; t.splashRadius = 0; }
 					},
 					new Upgrade() {
 						{name		= "Trade Winds";
@@ -1326,29 +1326,29 @@ public enum TowerType {
 				},
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase 	= false;
+						{name		= "Gale Force I";
+						 text 		= "Increases base WIND damage";
+						 isBase 	= true;
 						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]+=28; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Gale Force II";
+						 text 		= "Increases base WIND damage";
+						 isBase		= true;
+						 baseCost   = 1900;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]+=38; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Turbulence";
+						 text 		= "Attacks now ground flying creep. Creep that are grounded take extra PHYSICAL damage";
 						 isBase		= false;
 						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Wind Resistance";
+						 text 		= "Deals additional PHYSICAL and WIND damage based on speed of creep";
 						 isBase		= false;
 						 baseCost   = 4000;}
 						 public void upgrade(Tower t) {  }

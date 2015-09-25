@@ -1,4 +1,4 @@
-package creeps;
+package projectileeffects;
 
 
 public interface Stackable {

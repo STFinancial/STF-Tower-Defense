@@ -11,8 +11,24 @@ public class TowerWindWind extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		// TODO Auto-generated method stub
-		
+		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		if (progress[][])
+	}
+
+	@Override
+	public int update() {
+		currentAttackCoolDown--;
+		if (currentAttackCoolDown < 1) {
+			level.addProjectile(fireProjectile());
+			attackCarryOver += 1 - currentAttackCoolDown;
+			currentAttackCoolDown = attackCoolDown;
+			if (attackCarryOver > 1) {
+				attackCarryOver -= 1;
+				currentAttackCoolDown--;
+			}
+			return 1;
+		}
+		return 0;
 	}
 
 }

@@ -2,11 +2,11 @@ package towers;
 
 import java.util.ArrayList;
 
-import creeps.ArmorShred;
-import creeps.Bleed;
-import creeps.Damage;
 import creeps.DamageType;
-import creeps.ProjectileEffect;
+import projectileeffects.ArmorShred;
+import projectileeffects.Bleed;
+import projectileeffects.Damage;
+import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
 import levels.Level;

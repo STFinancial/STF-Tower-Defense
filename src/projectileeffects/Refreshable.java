@@ -1,4 +1,4 @@
-package creeps;
+package projectileeffects;
 
 interface Refreshable {
 	void refresh();

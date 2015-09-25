@@ -1,8 +1,8 @@
 package towers;
 
 import creeps.DamageType;
-import creeps.SuppressionDeathrattle;
-import creeps.SuppressionDisruptor;
+import projectileeffects.SuppressionDeathrattle;
+import projectileeffects.SuppressionDisruptor;
 import projectiles.ProjectileBasic;
 import levels.Level;
 import maps.Tile;

@@ -3,6 +3,8 @@ package creeps;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import projectileeffects.ProjectileEffect;
+
 import levels.Path;
 import levels.Updatable;
 import maps.DirectionType;
@@ -39,6 +41,7 @@ public class Creep implements Updatable {
 	//Fancy Effects
 	public ArrayList<Creep> children; //TODO: move to attributes?
 	
+	Creep() {};
 
 	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed, int healthCost, int goldValue, float disruptorAmount, DamageType elementType) {
 		//TODO: Need to do something about this. Possibly a creep builder class?
@@ -56,6 +59,8 @@ public class Creep implements Updatable {
 		this.elementType = elementType;
 		hitBox = new Circle(1, 1, size);
 	}
+	
+	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; }
 
 	public void addEffect(ProjectileEffect effect) {
 		if (attributes.contains(effect)) {

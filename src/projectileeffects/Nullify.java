@@ -1,5 +1,6 @@
-package creeps;
+package projectileeffects;
 
+import creeps.DamageType;
 import projectiles.Projectile;
 
 //TODO: Maybe clarify the name

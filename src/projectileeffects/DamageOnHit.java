@@ -1,5 +1,6 @@
-package creeps;
+package projectileeffects;
 
+import creeps.DamageType;
 import projectiles.Projectile;
 
 public class DamageOnHit extends ProjectileEffect {

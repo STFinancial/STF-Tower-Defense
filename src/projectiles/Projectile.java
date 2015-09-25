@@ -2,6 +2,10 @@ package projectiles;
 
 import java.util.ArrayList;
 
+import projectileeffects.Damage;
+import projectileeffects.ProjectileEffect;
+import projectileeffects.Slow;
+
 import levels.Level;
 import levels.ProjectileGuider;
 import levels.Updatable;
@@ -11,10 +15,7 @@ import towers.Tower;
 import utilities.Circle;
 import utilities.GameConstants;
 import creeps.AffixModifier;
-import creeps.Damage;
 import creeps.DamageType;
-import creeps.ProjectileEffect;
-import creeps.Slow;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
  * as well as tower that fired the projectile. lastly contains the projectile effect which happens when the projectile lands or times out
