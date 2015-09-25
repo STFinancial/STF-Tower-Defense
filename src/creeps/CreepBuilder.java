@@ -15,6 +15,7 @@ public final class CreepBuilder {
 	}
 	public void setHealthValues(float maxHealth, float maxHealthRegen) { currentAttributes.setHealthValues(maxHealth, maxHealthRegen); }
 	public void setDamageResists(float[] damageResists) { currentAttributes.setDamageResists(damageResists); }
+	void setSlowResists(float[] slowResists) { currentAttributes.setSlowResists(slowResists); }
 	public void setSpeedValues(float defaultSpeed, boolean snareImmune, int snareGrace, boolean disorientImmune, int disorientGrace) { currentAttributes.setSpeedValues(defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace); }
 	public Creep build() {
 		currentCreep.setAttributes(currentAttributes);
