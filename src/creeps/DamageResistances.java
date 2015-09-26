@@ -33,27 +33,23 @@ final class DamageResistances extends Attribute {
 		return currentResistsPercent[index];
 	}
 	
-	float reducePercentResist(DamageType type, float percentReduction) {
+	float reduceResist(DamageType type, float amount, boolean isFlat) {
 		int index = type.ordinal();
-		reductionPercent[index] += percentReduction;
+		if (isFlat) {
+			reductionFlat[index] += amount;
+		} else {
+			reductionPercent[index] += amount;
+		}
 		return updateResistPercent(index);
 	}
 	
-	float increasePercentResist(DamageType type, float percentIncrease) {
+	float increaseResist(DamageType type, float amount, boolean isFlat) {
 		int index = type.ordinal();
-		reductionPercent[index] -= percentIncrease;
-		return updateResistPercent(index);
-	}
-	
-	float reduceFlatResist(DamageType type, float amount) {
-		int index = type.ordinal();
-		reductionFlat[index] += amount;
-		return updateResistPercent(index);
-	}
-
-	float increaseFlatResist(DamageType type, float amount) {
-		int index = type.ordinal();
-		reductionFlat[index] -= amount;
+		if (isFlat) {
+			reductionFlat[index] -= amount;
+		} else {
+			reductionPercent[index] -= amount;
+		}
 		return updateResistPercent(index);
 	}
 }

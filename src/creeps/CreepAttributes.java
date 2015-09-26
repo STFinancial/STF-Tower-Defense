@@ -66,5 +66,71 @@ final class CreepAttributes implements Updatable {
 		deathrattle.update();
 		return 0;
 	}
+	public void addOnHit(DamageType type, float amount) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void consumeBleeds(float amount) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void damage(DamageType type, float amount, float penPercent,
+			float penFlat, boolean ignoresShield, float shieldDrainModifier,
+			float toughPenPercent, float toughPenFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void increaseResist(DamageType type, float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void increaseToughness(float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void nullify() {
+		// TODO Auto-generated method stub
+		
+	}
+	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void reduceResist(DamageType type, float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void reduceToughness(float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void removeOnHit(DamageType type, float amount) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void slow(DamageType type, float amount) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void snare() {
+		// TODO Auto-generated method stub
+		
+	}
+	public void suppressDeathrattle(float modifier, int lifetime) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void suppressDisruption(float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void unslow(DamageType type, float amount) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void unsuppressDisruption(float amount, boolean isFlat) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

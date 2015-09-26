@@ -39,6 +39,7 @@ final class Speed extends Attribute implements Updatable {
 	}
 	
 	float getCurrentSpeed() { return (isSnared || currentSpeed < 0 ? 0 : currentSpeed); }
+	boolean isDisoriented() { return isDisoriented; }
 	
 	void slow(float amount, DamageType type) {
 		if (amount == 1) {
@@ -70,19 +71,21 @@ final class Speed extends Attribute implements Updatable {
 		}
 	}
 	
-	void disorient(int duration) {
+	boolean disorient(int duration) {
 		if (disorientImmune) {
-			return;
+			return false;
 		} else if (timeUntilDisorient <= 0){
 			isDisoriented = true;
 			initialDisorientDuration = duration;
 			currentDisorientDuration = duration;
 			timeUntilDisorient = duration + disorientGrace;
+			return true;
 		} else if (isDisoriented && duration > initialDisorientDuration) {
 			int dif = duration - initialDisorientDuration;
 			currentDisorientDuration += dif;
 			timeUntilDisorient += dif;
 		}
+		return false;
 	}
 
 	@Override
