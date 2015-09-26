@@ -12,15 +12,19 @@ final class Health extends Attribute implements Updatable {
 	//TODO: One idea instead of doing division and multiplication is to store damage done flat and percent as values and calculate current health only as needed
 	private float maxHealth;
 	private float currentHealth;
-	private float maxHealthRegen; //Should this be split into percent and flat?
+	private float defaultHealthRegen; //Should this be split into percent and flat?
+	private float regenReductionPercent;
+	private float regenReductionFlat;
 	private float currentHealthRegen;
 	
-	Health(CreepAttributes parent, float maxHealth, float maxHealthRegen) {
+	Health(CreepAttributes parent, float maxHealth, float defaultHealthRegen) {
 		this.parent				= parent;
 		this.maxHealth 			= maxHealth;
-		this.maxHealthRegen 	= maxHealthRegen;
+		this.defaultHealthRegen 	= defaultHealthRegen;
 		this.currentHealth 		= maxHealth;
-		this.currentHealthRegen = maxHealthRegen;
+		this.currentHealthRegen = defaultHealthRegen;
+		this.regenReductionPercent = 0;
+		this.regenReductionFlat = 0;
 	}
 	
 	float getCurrentHealth() { return currentHealth; }
@@ -68,7 +72,7 @@ final class Health extends Attribute implements Updatable {
 		if (isFlat) {
 			currentHealth += amount;
 		} else {
-			currentHealth *= amount;
+			currentHealth *= 1 + amount;
 		}
 		if (currentHealth > maxHealth) { currentHealth = maxHealth; }
 		return currentHealth;
@@ -78,7 +82,7 @@ final class Health extends Attribute implements Updatable {
 		if (isFlat) {
 			maxHealth -= amount;
 		} else {
-			maxHealth += amount;
+			maxHealth *= 1 - amount;
 		}
 		if (maxHealth < currentHealth) { currentHealth = maxHealth; }
 	}
@@ -87,44 +91,31 @@ final class Health extends Attribute implements Updatable {
 		if (isFlat) {
 			maxHealth += amount;
 		} else {
-			maxHealth *= amount;
+			maxHealth *= 1 + amount;
 		}
 	}
 	
-	void reduceCurrentHealthRegen(float amount, boolean isFlat) {
-		if (isFlat) {
-			currentHealthRegen -= amount;
-		} else {
-			currentHealthRegen *= 1 - amount;
-		}
-		if (currentHealthRegen < 0) { currentHealthRegen = 0; }
+	private float updateHealthRegen() {
+		currentHealthRegen = defaultHealthRegen - (defaultHealthRegen * regenReductionPercent) - regenReductionFlat;
+		return (currentHealthRegen < 0 ? currentHealthRegen = 0 : currentHealthRegen);
 	}
 	
-	void increaseCurrentHealthRegen(float amount, boolean isFlat) {
+	void reduceHealthRegen(float amount, boolean isFlat) {
 		if (isFlat) {
-			currentHealthRegen += amount;
+			regenReductionFlat += amount;
 		} else {
-			currentHealthRegen *= amount;
+			regenReductionPercent += amount;
 		}
-		if (currentHealthRegen > maxHealthRegen) { currentHealthRegen = maxHealthRegen; }
+		updateHealthRegen();
 	}
 	
-	void reduceMaxHealthRegen(float amount, boolean isFlat) {
+	void increaseHealthRegen(float amount, boolean isFlat) {
 		if (isFlat) {
-			maxHealthRegen -= amount;
+			regenReductionFlat -= amount;
 		} else {
-			maxHealthRegen -= 1 - amount;
+			regenReductionPercent -= amount;
 		}
-		if (maxHealthRegen < 0) { maxHealthRegen = 0; }
-		if (currentHealthRegen > maxHealthRegen) { currentHealthRegen = maxHealthRegen; }
-	}
-	
-	void increaseMaxHealthRegen(float amount, boolean isFlat) {
-		if (isFlat) {
-			maxHealthRegen += amount;
-		} else {
-			maxHealthRegen *= amount;
-		}
+		updateHealthRegen();
 	}
 
 	@Override

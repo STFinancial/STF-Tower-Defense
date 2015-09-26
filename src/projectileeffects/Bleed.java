@@ -32,7 +32,7 @@ public class Bleed extends ProjectileEffect implements Stackable {
 		return new Bleed(lifetime, modifier, timing, damageType, parent);
 	}
 
-	public Damage convertToDamage(float modifier, int counter) {
+	public Damage convertToDamage(float modifier) {
 		int timeLeft = lifetime - counter;
 		int ticks = (timeLeft / timing) + 1;
 		return new Damage(modifier * ticks * this.tickDamage, damageType, parent);

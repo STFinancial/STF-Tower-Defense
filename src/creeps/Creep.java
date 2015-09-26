@@ -17,7 +17,9 @@ public class Creep implements Updatable {
 	
 	//Primary Stats
 	public int healthCost; //Damage Player takes on escape
-	public int goldValue; //Money player takes on kill
+//	public int goldValue; //Money player takes on kill
+	
+	//TODO: Move this to attributes?
 	public DamageType elementType; //FIRE AIR etc creep type 
 
 	//Current Stats
@@ -35,11 +37,11 @@ public class Creep implements Updatable {
 	public float xOff, yOff;
 	public Path path;
 	//public int pathIndex;
-	public float size = .4f; //Radius
+//	public float size = .4f; //Radius
 	public Circle hitBox;
 
 	//Fancy Effects
-	public ArrayList<Creep> children; //TODO: move to attributes?
+//	public ArrayList<Creep> children; //TODO: move to attributes?
 	
 	Creep() {};
 

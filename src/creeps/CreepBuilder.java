@@ -1,5 +1,9 @@
 package creeps;
 
+import java.util.List;
+
+import projectileeffects.ProjectileEffect;
+
 
 public final class CreepBuilder {
 	private static final CreepBuilder INSTANCE = new CreepBuilder();
@@ -13,12 +17,21 @@ public final class CreepBuilder {
 		currentCreep = new Creep();
 		currentAttributes = new CreepAttributes(currentCreep);
 	}
-	public void setHealthValues(float maxHealth, float maxHealthRegen) { currentAttributes.setHealthValues(maxHealth, maxHealthRegen); }
+	public void setHealthValues(float maxHealth, float defaultHealthRegen) { currentAttributes.setHealthValues(maxHealth, defaultHealthRegen); }
+	public void setShieldValues(float maxShield, float defaultShieldRegen) { currentAttributes.setShieldValues(maxShield, defaultShieldRegen); }
 	public void setDamageResists(float[] damageResists) { currentAttributes.setDamageResists(damageResists); }
-	void setSlowResists(float[] slowResists) { currentAttributes.setSlowResists(slowResists); }
+	public void setSlowResists(float[] slowResists) { currentAttributes.setSlowResists(slowResists); }
 	public void setSpeedValues(float defaultSpeed, boolean snareImmune, int snareGrace, boolean disorientImmune, int disorientGrace) { currentAttributes.setSpeedValues(defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace); }
+	public void setToughnessValues(float defaultToughness) { currentAttributes.setToughnessValues(defaultToughness); }
+	public void setDisruptionValues(float defaultDisruption) { currentAttributes.setDisruptionValues(defaultDisruption); }
+	public void setGoldValue(float defaultGoldValue) { currentAttributes.setGoldValue(defaultGoldValue); }
+	public void setDeathrattle(ProjectileEffect effect, List<Creep> children) { currentAttributes.setDeathrattle(effect, children); }
+	public void setOnHit(float goldOnHit, float[] damageOnHit) { currentAttributes.setOnHit(goldOnHit, damageOnHit); }
+	public void setSize(float defaultSize) { currentAttributes.setSize(defaultSize); }
+	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }
+	
 	public Creep build() {
-		currentCreep.setAttributes(currentAttributes);
+		currentCreep.setAttributes(currentAttributes.finishBuild());
 		Creep built = currentCreep;
 		currentCreep = null;
 		return built;

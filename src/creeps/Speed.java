@@ -4,8 +4,8 @@ import levels.Updatable;
 
 final class Speed extends Attribute implements Updatable {
 	//TODO: Flat speed reductions at some point in the future.
+	//TODO: Some way to handle maxSpeed reductions. If we are reducing max speed by 5, then we do currentSpeed -= defaultSpeed * 5 / currentSpeed
 	private float defaultSpeed;
-	private float reductionPercent;
 	private float currentSpeed;
 	
 	private boolean isSnared;
@@ -32,7 +32,6 @@ final class Speed extends Attribute implements Updatable {
 		this.disorientGrace  	= disorientGrace;
 		
 		this.currentSpeed 	 	= defaultSpeed;
-		this.reductionPercent	= 0;
 		this.isSnared			= false;
 		this.timeUntilSnare		= 0;
 		this.isDisoriented		= false;
@@ -41,18 +40,19 @@ final class Speed extends Attribute implements Updatable {
 	
 	float getCurrentSpeed() { return (isSnared || currentSpeed < 0 ? 0 : currentSpeed); }
 	
-	void slow(float amount) {
-		reductionPercent += amount;
-		currentSpeed *= 1 - amount;
-	}
-	
-	void unslow(float amount) {
+	void slow(float amount, DamageType type) {
 		if (amount == 1) {
-			currentSpeed = defaultSpeed * (1 - reductionPercent);
+			System.out.println("100% slow happening. Avoid this");
 			return;
 		}
-		reductionPercent -= amount;
-		currentSpeed /= 1 - amount;
+		currentSpeed *= (1 - (amount * (1 - parent.getSlowResist(type))));
+	}
+	
+	void unslow(float amount, DamageType type) {
+		if (amount == 1) {
+			return;
+		}
+		currentSpeed /= (1 - (amount * (1 - parent.getSlowResist(type))));
 	}
 	
 	void snare(int duration) {
