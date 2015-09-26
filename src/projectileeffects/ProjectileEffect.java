@@ -69,10 +69,10 @@ public abstract class ProjectileEffect implements Updatable {
 			return false;
 		}
 		ProjectileEffect p = (ProjectileEffect) o;
-		return  p.damageType == damageType &&
+		return  p.modifier == modifier &&
+				p.damageType == damageType &&
 				p.getClass() == getClass() &&
 				p.lifetime == lifetime &&
-				p.modifier == modifier &&
 				p.timing == timing && 
 				p.parent.parent.towerID == parent.parent.towerID; //TODO: Should this be part of the equality test, do we want similar debuffs from different towers to stack or not?
 	}

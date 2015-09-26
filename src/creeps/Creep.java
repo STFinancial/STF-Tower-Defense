@@ -44,43 +44,10 @@ public class Creep implements Updatable {
 //	public ArrayList<Creep> children; //TODO: move to attributes?
 	
 	Creep() {};
-
-	public Creep(float[] maxDamageResistsFlat, float[] maxSlowResists, float maxHealth, float healthRegenRate, float maxToughness, float maxShieldValue, float shieldRegenRate, boolean snareImmune, boolean disorientImmune, float maxSpeed, int healthCost, int goldValue, float disruptorAmount, DamageType elementType) {
-		//TODO: Need to do something about this. Possibly a creep builder class?
-		this.attributes = new CreepAttributes(this, maxDamageResistsFlat, maxSlowResists, maxHealth, healthRegenRate, maxToughness, maxShieldValue, shieldRegenRate, snareImmune, disorientImmune, maxSpeed, disruptorAmount);
-		this.healthCost = healthCost;
-		this.goldValue = goldValue;
-		this.elementType = elementType;
-		hitBox = new Circle(1, 1, size);
-	}
-	
-	private Creep(CreepAttributes attributes, int healthCost, int goldValue, DamageType elementType) {
-		this.attributes = attributes.clone();
-		this.healthCost = healthCost;
-		this.goldValue = goldValue;
-		this.elementType = elementType;
-		hitBox = new Circle(1, 1, size);
-	}
 	
 	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; }
 
-	public void addEffect(ProjectileEffect effect) {
-		if (attributes.contains(effect)) {
-			attributes.getEquivalent(effect).onApply();
-		} else {
-			attributes.addEffect(effect.clone());
-		}
-	}
-
-	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
-		for (ProjectileEffect e: effects) {
-			if (attributes.contains(e)) {
-				attributes.getEquivalent(e).onApply();
-			} else {
-				attributes.addEffect(e.clone());
-			}
-		}
-	}
+	
 	
 	public void onProjectileCollision() {
 		//TODO: This needs to be called by projectiles and needs to do disruption effects

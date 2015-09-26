@@ -1,5 +1,6 @@
 package creeps;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -14,10 +15,19 @@ final class Effects extends Attribute implements Updatable {
 		effects = new HashSet<ProjectileEffect>(); 
 	}
 	
-	
-	
-	private boolean contains(ProjectileEffect pe) {
-		return effects.contains(pe);
+	void addEffect(ProjectileEffect effect) {
+		if (effects.contains(effect)) {
+			getEquivalent(effect).onApply();
+		} else {
+			effect.onApply();
+			effects.add(effect.clone());
+		}
+	}
+
+	void addAllEffects(ArrayList<ProjectileEffect> effects) {
+		for (ProjectileEffect e: effects) {
+			addEffect(e);
+		}
 	}
 	
 	private ProjectileEffect getEquivalent(ProjectileEffect pe) {
