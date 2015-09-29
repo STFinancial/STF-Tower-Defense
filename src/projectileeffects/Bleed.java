@@ -11,7 +11,7 @@ public class Bleed extends ProjectileEffect implements Stackable {
 	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, timing, damageType, parent);
 		this.numStacks = 0;
-		this.maxStacks = -1;
+		this.maxStacks = 1;
 		this.tickDamage = modifier;
 	}
 

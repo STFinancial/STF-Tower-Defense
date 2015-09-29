@@ -21,12 +21,12 @@ public class DamageOnHit extends ProjectileEffect {
 
 	@Override
 	public void onExpire() {
-		creep.removeOnHit(damageType, modifier);
+		creep.removeDamageOnHit(damageType, modifier);
 	}
 
 	@Override
 	public void onApply() {
-		creep.addOnHit(damageType, modifier);
+		creep.addDamageOnHit(damageType, modifier);
 	}
 
 }

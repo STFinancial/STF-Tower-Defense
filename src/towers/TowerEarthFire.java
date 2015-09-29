@@ -27,7 +27,9 @@ public class TowerEarthFire extends Tower {
 		baseProjectile = new ProjectileBasic(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
-			baseProjectile.addSpecificCreepEffect(new Wealth(wealthDuration, wealthModifier, DamageType.EARTH, baseProjectile));
+			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.EARTH, baseProjectile, false, false);
+			w.setMaxStacks(1);
+			baseProjectile.addSpecificCreepEffect(w);
 		}
 		if (progress[1][2]) {
 			baseProjectile.resistPenPercent[DamageType.PHYSICAL.ordinal()] = 1;

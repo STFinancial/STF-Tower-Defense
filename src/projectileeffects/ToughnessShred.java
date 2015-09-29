@@ -11,7 +11,7 @@ public class ToughnessShred extends ProjectileEffect implements Stackable {
 	public ToughnessShred(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat) {
 		super(lifetime, modifier, 0, damageType, parent);
 		this.numStacks = 0;
-		this.maxStacks = -1;
+		this.maxStacks = 1;
 		this.isFlat = isFlat;
 	}
 
@@ -38,25 +38,14 @@ public class ToughnessShred extends ProjectileEffect implements Stackable {
 
 	@Override
 	protected void applyEffect() {
-		if (isFlat) {
-			creep.reduceFlatToughness(modifier);
-		} else {
-			creep.reducePercentToughness(modifier);
-		}
+		creep.reduceToughness(modifier, isFlat);
 	}
 
 	@Override
 	public void onExpire() {
-		if (isFlat) {
-			while (numStacks > 0) {
-				creep.increaseFlatToughness(modifier);
-				numStacks--;
-			}
-		} else {
-			while (numStacks > 0) {
-				creep.increasePercentToughness(modifier);
-				numStacks--;
-			}
+		while (numStacks > 0) {
+			creep.increaseToughness(modifier, isFlat);
+			numStacks--;
 		}
 	}
 

@@ -11,12 +11,12 @@ public class Snare extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.snare();
+		creep.snare(lifetime);
 	}
 
 	@Override
 	public void onExpire() {
-		creep.unsnare(); //TODO: If we implement multiple snares at once then this won't cut it.
+		return;
 	}
 
 	@Override

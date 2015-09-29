@@ -1,5 +1,6 @@
 package creeps;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import projectileeffects.ProjectileEffect;
@@ -58,12 +59,15 @@ final class CreepAttributes implements Updatable {
 	float onProjectileCollision() { return onHit.applyOnHits(); }
 	
 	//Simple delegation one liners
+	void addAllEffects(ArrayList<ProjectileEffect> effects) { this.effects.addAllEffects(effects); }
 	void addDamageOnHit(DamageType type, float amount) { onHit.increaseDamageOnHit(type, amount); }
+	void addEffect(ProjectileEffect effect) { effects.addEffect(effect); }
 	void addGoldOnHit(float amount) { onHit.increaseGoldOnHit(amount); }
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
 	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
 	boolean disorient(int duration) { return speed.disorient(duration); }
 	void increaseDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.increaseResist(type, amount, isFlat); }
+	void increaseGoldValue(float amount, boolean isFlat) { goldValue.increaseGoldValue(amount, isFlat); }
 	void increaseToughness(float amount, boolean isFlat) { toughness.increaseToughness(amount, isFlat); }
 	void nullify() { health.nullify(); shield.nullify(); }
 	void reduceCurrentShield(float amount, boolean isFlat) { shield.reduceCurrentShield(amount, isFlat); }
@@ -72,6 +76,7 @@ final class CreepAttributes implements Updatable {
 	void reduceToughness(float amount, boolean isFlat) { toughness.reduceToughness(amount, isFlat); }
 	void removeDamageOnHit(DamageType type, float amount) { onHit.decreaseDamageOnHit(type, amount); }
 	void removeGoldOnHit(float amount) { onHit.decreaseGoldOnHit(amount); }
+	void reduceGoldValue(float amount, boolean isFlat) { goldValue.reduceGoldValue(amount, isFlat); }
 	void slow(DamageType type, float amount) { speed.slow(type, amount); }
 	void snare(int duration) { speed.snare(duration); }
 	void suppressDeathrattle(float modifier, int lifetime) { deathrattle.suppressDeathrattle(modifier, lifetime); }
@@ -83,10 +88,11 @@ final class CreepAttributes implements Updatable {
 	float getCurrentDamageResist(DamageType type, boolean isFlat) { return (isFlat? damageResistances.getResistFlat(type) : damageResistances.getResistPercent(type));}
 	float getCurrentHealth() { return health.getCurrentHealth(); }
 	float getCurrentShield() { return shield.getCurrentShield(); }
+	float getCurrentSize() { return size.getCurrentSize(); }
 	float getCurrentSpeed() { return speed.getCurrentSpeed(); }
 	float getCurrentToughness() { return toughness.getCurrentToughness(); }
 	float getDisruption() { return disruption.getDisruptionAmount(); }
-	float getCurrentSize() { return size.getCurrentSize(); }
+	float getMaxHealth() { return health.getMaxHealth(); }
 	float getSlowResist(DamageType type) { return slowResistances.getResistPercent(type); }
 	boolean isDisoriented() { return speed.isDisoriented(); }
 	
@@ -119,4 +125,5 @@ final class CreepAttributes implements Updatable {
 		attributes.onHit = (OnHit) onHit.clone(this);
 		return attributes;
 	}
+	
 }

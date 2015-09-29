@@ -25,11 +25,11 @@ public class Disorient extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.disorient();
+		creep.disorient(lifetime);
 	}
 
 	@Override
 	public void onExpire() {
-		creep.undisorient();
+		return;
 	}
 }

@@ -11,7 +11,7 @@ public class ArmorShred extends ProjectileEffect implements Stackable {
 	public ArmorShred(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat) {
 		super(lifetime, modifier, 0, damageType, parent);
 		this.numStacks = 0;
-		this.maxStacks = -1;
+		this.maxStacks = 1;
 		this.isFlat = isFlat;
 	}
 
@@ -43,25 +43,14 @@ public class ArmorShred extends ProjectileEffect implements Stackable {
 	
 	@Override
 	protected void applyEffect() {
-		if (isFlat) {
-			creep.reduceFlatResist(damageType, modifier);
-		} else {
-			creep.reducePercentResist(damageType, modifier);
-		}
+		creep.reduceDamageResist(damageType, modifier, isFlat);
 	}
 
 	@Override
 	public void onExpire() {
-		if (isFlat) {
-			while (numStacks > 0) {
-				creep.increaseFlatResist(damageType, modifier);
-				numStacks--;
-			}
-		} else {
-			while (numStacks > 0) {
-				creep.increasePercentResist(damageType, modifier);
-				numStacks--;
-			}
+		while (numStacks > 0) {
+			creep.increaseDamageResist(damageType, modifier, isFlat);
+			numStacks--;
 		}
 	}
 }

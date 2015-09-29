@@ -17,12 +17,11 @@ public final class SuppressionDeathrattle extends Suppression implements Refresh
 
 	@Override
 	protected void applyEffect() {
-		creep.suppressDeathrattle(modifier, damageType, lifetime);
+		creep.suppressDeathrattle(damageType, modifier, lifetime);
 	}
 
 	@Override
 	public void onExpire() {
-		//TODO: We don't "unsuppress" the deathrattle to avoid the issue of it being unsuppressed early because there are towers with differing suppression lengths
 		return;
 	}
 	

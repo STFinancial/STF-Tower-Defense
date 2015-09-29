@@ -13,6 +13,8 @@ public class Wealth extends ProjectileEffect implements Stackable {
 	
 	public Wealth(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat, boolean onHit) {
 		super(lifetime, modifier, 0, damageType, parent);
+		this.numStacks = 0;
+		this.maxStacks = 1;
 		this.isFlat = isFlat;
 		this.onHit = onHit;
 	}
@@ -24,18 +26,22 @@ public class Wealth extends ProjectileEffect implements Stackable {
 
 	@Override
 	protected void applyEffect() {
-		//TODO if we want flat increases, we need to loop through the creep and unapply all the multipliers, decrement the gold value, then reapply them
-		//TODO if we really want flat increases we need to give it the same treatment as resistances was given
-		
-		if (modifier > 0) {
-			creep.goldValue *= modifier;
+		if (onHit) {
+			creep.addGoldOnHit(modifier);
+		} else {
+			creep.increaseGoldValue(modifier, isFlat);
 		}
 	}
 
 	@Override
 	public void onExpire() {
-		if (modifier > 0) {
-			creep.goldValue /= modifier;
+		if (lifetime == 0) {
+			return;
+		}
+		if (onHit) {
+			creep.removeGoldOnHit(modifier);
+		} else {
+			creep.reduceGoldValue(modifier, isFlat);
 		}
 	}
 

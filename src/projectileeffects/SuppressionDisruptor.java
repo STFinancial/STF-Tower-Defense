@@ -17,11 +17,11 @@ public final class SuppressionDisruptor extends Suppression{
 
 	@Override
 	protected void applyEffect() {
-		creep.suppressDisruptionPercent(modifier, damageType);
+		creep.suppressDisruption(damageType, modifier, isFlat);
 	}
 
 	@Override
 	public void onExpire() {
-		creep.unsuppressDisruptionPercent(modifier, damageType);
+		creep.unsuppressDisruption(damageType, modifier, isFlat);
 	}
 }

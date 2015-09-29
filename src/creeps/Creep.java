@@ -42,19 +42,25 @@ public class Creep implements Updatable {
 		return attributes.getDisruption();
 	}
 	
+
+	
 	//Public interface methods that simply delegate to the attributes layer.
+	public void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
 	public void addDamageOnHit(DamageType type, float amount) { attributes.addDamageOnHit(type, amount); }
-	public void addGoldOnHit(DamageType type, float amount) { attributes.addGoldOnHit(amount); }
+	public void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
+	public void addGoldOnHit(float amount) { attributes.addGoldOnHit(amount); }
 	public void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
 	public void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
 	public void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
+	public void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
 	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
 	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future
 	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
 	public void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
 	public void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
 	public void removeDamageOnHit(DamageType type, float amount) { attributes.removeDamageOnHit(type, amount); }
-	public void removeGoldOnHit(DamageType type, float amount) { attributes.removeGoldOnHit(amount); }
+	public void removeGoldOnHit(float amount) { attributes.removeGoldOnHit(amount); }
+	public void reduceGoldValue(float amount, boolean isFlat) { attributes.reduceGoldValue(amount, isFlat); }
 	public void slow(DamageType type, float amount) { attributes.slow(type, amount); }
 	public void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
 	public void suppressDeathrattle(DamageType type, float modifier, int lifetime) { attributes.suppressDeathrattle(modifier, lifetime); }
@@ -62,6 +68,9 @@ public class Creep implements Updatable {
 	public void unslow(DamageType type, float amount) { attributes.unslow(type, amount); }
 	public void unsuppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.unsuppressDisruption(amount, isFlat); }
 
+	//Public getter methods
+	public float getMaxHealth() { return attributes.getMaxHealth(); }
+	
 	public void disorient(int lifetime) { 
 		if (attributes.disorient(lifetime)) {
 			int temp = previousIndex;
