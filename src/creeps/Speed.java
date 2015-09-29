@@ -4,24 +4,32 @@ import levels.Updatable;
 
 final class Speed extends Attribute implements Updatable {
 	//TODO: Flat speed reductions at some point in the future.
+	//TODO: What if we want to modify the grace periods
 	private float defaultSpeed;
 	private float currentSpeed;
+	
+	private int gracePeriod;
 	
 	private boolean isSnared;
 	private boolean snareImmune;
 	private int initialSnareDuration;
 	private int currentSnareDuration;
-	private int snareGrace;
 	private int timeUntilSnare;
 	
 	private boolean isDisoriented;
 	private boolean disorientImmune;
 	private int initialDisorientDuration;
 	private int currentDisorientDuration;
-	private int disorientGrace;
 	private int timeUntilDisorient;
 	
-	Speed(CreepAttributes parent, float defaultSpeed, boolean snareImmune, int snareGrace, boolean disorientImmune, int disorientGrace) {
+	private boolean isKnockup;
+	private boolean knockupImmune;
+	private int initialKnockupDuration;
+	private int currentKnockupDuration;
+	private int timeUntilKnockup;
+	
+	//TODO: Consolidate all into a single grace period
+	Speed(CreepAttributes parent, float defaultSpeed, boolean snareImmune, boolean disorientImmune, boolean knockupImmune, int gracePeriod) {
 		this.parent				= parent;
 		
 		this.defaultSpeed 		= defaultSpeed;
@@ -29,16 +37,22 @@ final class Speed extends Attribute implements Updatable {
 		this.snareGrace   	 	= snareGrace;
 		this.disorientImmune 	= disorientImmune;
 		this.disorientGrace  	= disorientGrace;
+		this.knockupImmune		= knockupImmune;
+		this.knockupGrace		= knockupGrace;
 		
 		this.currentSpeed 	 	= defaultSpeed;
 		this.isSnared			= false;
 		this.timeUntilSnare		= 0;
 		this.isDisoriented		= false;
 		this.timeUntilDisorient = 0;
+		this.isKnockup			= false;
+		this.timeUntilKnockup	= 0;
 	}
 	
-	float getCurrentSpeed() { return (isSnared || currentSpeed < 0 ? 0 : currentSpeed); }
+	float getCurrentSpeed() { return (isSnared || isKnockup || currentSpeed < 0 ? 0 : currentSpeed); }
 	boolean isDisoriented() { return isDisoriented; }
+	boolean isSnared() { return isSnared; }
+	boolean isKnockup() { return isKnockup; }
 	
 	void slow(DamageType type, float amount) {
 		if (amount == 1) {
@@ -100,18 +114,31 @@ final class Speed extends Attribute implements Updatable {
 		}
 		return false;
 	}
+	
+	//TODO: I think that these need to share a grace period
+	boolean knockup(int duration) {
+		if (knockupImmune) {
+			return false;
+		} else if {
+			
+		} else if {
+			
+		}
+	}
 
 	@Override
 	public int update() {
 		timeUntilSnare--;
 		timeUntilDisorient--;
+		timeUntilKnockup--;
 		if (currentSnareDuration-- == 0) { isSnared = false; }
 		if (currentDisorientDuration-- == 0) { isDisoriented = false; }
+		if (currentKnockupDuration-- == 0) { isKnockup = false; }
 		return (isDisoriented || isSnared ? -1 : 0);
 	}
 
 	@Override
 	Attribute clone(CreepAttributes parent) {
-		return new Speed(parent, defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace);
+		return new Speed(parent, defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace, knockupImmune, knockupGrace);
 	}
 }

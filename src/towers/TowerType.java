@@ -1,6 +1,7 @@
 package towers;
 //TODO: Fix imports of all classes.
 //TODO: Tower targeting types that allow to target those that we can snare and disorient, etc.
+//TODO: Really need to normalize all the upgrade costs for the stats that they give
 import utilities.GameConstants;
 import creeps.DamageType;
 import projectiles.*;
@@ -1031,49 +1032,46 @@ public enum TowerType {
 	}}), 
 	WIND_EARTH (new BaseAttributeList(){{
 		//this tower disorients enemies and makes them walk randomly
-		name 				= "Sandstorm";
-		downgradeType 		= WIND;
-		mainDamageType      = DamageType.WIND;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		name 					= "Sandstorm";
+		downgradeType 			= WIND;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/15, /*L*/0, /*D*/0, /*P*/30};
+		baseSlowDurationArray 	= new int[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		baseAttackCoolDown		= 12.3f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.2f;
+		hitsAir					= false;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { }
+						{name		= "Convection Currents";
+						 text 		= "Reduces base ATTACK COOLDOWN";
+						 isBase		= true;
+						 baseCost   = 1200;}
+						 public void upgrade(Tower t) { t.attackCoolDown -= 1.8f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2200;}
-						 public void upgrade(Tower t) { }
+						{name		= "Desertification";
+						 text 		= "Increases base RANGE";
+						 isBase		= true;
+						 baseCost   = 800;}
+						 public void upgrade(Tower t) { t.range += 2.3f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Whipping Sands";
+						 text 		= "Attacks now knockup affected targets";
 						 isBase		= false;
 						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Cyclone";
+						 text 		= "Tower now fires in a path and hits all enemies along the way";
 						 isBase		= false;
 						 baseCost   = 6000;}
 						 public void upgrade(Tower t) {  }
@@ -1082,56 +1080,53 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
-						 isBase 	= false;
+						 text 		= "Increases base RANGE";
+						 isBase 	= true;
 						 baseCost 	= 1400;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Erosion";
+						 text 		= "Increases base EARTH damage";
 						 isBase		= false;
-						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 2000;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()]+=56f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Sand Blindness";
+						 text 		= "Attacks now disorient targets";
 						 isBase		= false;
 						 baseCost   = 3500;}
 						 public void upgrade(Tower t) {  }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Blasting Force";
+						 text 		= "Multiplies EARTH and WIND damage and creeps move faster during disorient";
 						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
-					},
+						 baseCost   = 6200;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]*=1.5f; t.damageArray[DamageType.EARTH.ordinal()]*=1.35f; }
+					}, //TODO: Not enough towers have upgrades that modify instead of adding base damage
 				}
 		};
 	}}), 
 	WIND_FIRE (new BaseAttributeList(){{
 		//this tower chains damage and removes shield (?)
-		name 				= "Lightning";
-		downgradeType 		= WIND;
-		mainDamageType      = DamageType.WIND;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
+		name 					= "Lightning";
+		downgradeType 			= WIND;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseCost			= 200;
-		baseAttackCoolDown	= 7f;
-		baseDamageSplash	= 0.10f;
-		baseEffectSplash	= 0.10f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;
-		hitsAir				= true;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		baseCost				= 200;
+		baseAttackCoolDown		= 7f;
+		baseDamageSplash		= 0.10f;
+		baseEffectSplash		= 0.10f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= true;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Forking";
@@ -1196,24 +1191,21 @@ public enum TowerType {
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		//slows enemies and reduces toughness
-		name				= "Blizzard";
-		downgradeType 		= WIND;
-		mainDamageType      = DamageType.WIND;
-		baseWidth			= 2;
-		baseHeight			= 2;
-		baseDamageArray		= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		name					= "Blizzard";
+		downgradeType 			= WIND;
+		baseWidth				= 2;
+		baseHeight				= 2;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDuration	= 0;
-		baseAttackCoolDown	= 12.3f;
-		baseDamageSplash	= 0.25f;
-		baseEffectSplash	= 0.25f;
-		baseSplashRadius	= 0f;
-		baseRange			= 8.5f;
-		baseSlow			= 0f;//TODO remove baseSlow in favor of a base slow array
-		hitsAir				= false;
-		hitsGround			= true;
-		upgrades			= new Upgrade[][]{
+		baseAttackCoolDown		= 10.7f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0.10f;
+		baseSplashRadius		= 0f;
+		baseRange				= 8.5f;
+		hitsAir					= true;
+		hitsGround				= true;
+		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "";

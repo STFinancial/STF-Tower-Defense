@@ -15,4 +15,10 @@ public class TowerWindEarth extends Tower {
 
 	}
 
+	@Override
+	public int update() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

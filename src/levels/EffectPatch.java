@@ -36,7 +36,7 @@ public class EffectPatch implements Updatable {
 			return -1;
 		} else if (timing != 0 && counter % timing == 0) {
 			//apply the effect
-			for (Creep c: level.getCreepInRange(area)) {
+			for (Creep c: level.getGroundedCreepInRange(area)) {
 				c.addAllEffects(effects);
 			}
 			return 1;
