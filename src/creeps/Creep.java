@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import projectileeffects.ProjectileEffect;
 
+import levels.Level;
 import levels.Path;
 import levels.Updatable;
 import maps.DirectionType;
@@ -31,6 +32,7 @@ public class Creep implements Updatable {
 	public int nextIndex;
 	public float xOff, yOff;
 	public Path path;
+	public Level level;
 	public Circle hitBox;
 
 	Creep() {};
@@ -42,9 +44,8 @@ public class Creep implements Updatable {
 		return attributes.getDisruption();
 	}
 	
-
-	
 	//Public interface methods that simply delegate to the attributes layer.
+	//TODO: Make consistent the naming of "reduce" and "remove" and "decrease" (I like decrease the best tbh)
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
 	public void addDamageOnHit(DamageType type, float amount) { attributes.addDamageOnHit(type, amount); }
 	public void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
@@ -53,14 +54,16 @@ public class Creep implements Updatable {
 	public void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
 	public void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
 	public void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
+	public void increaseHasting(DamageType type, float amount) { attributes.increaseCDOnHit(type, amount); }
 	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
-	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future
+	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future, or lifetime
 	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
+	public void reduceDamageOnHit(DamageType type, float amount) { attributes.reduceDamageOnHit(type, amount); }
 	public void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
-	public void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
-	public void removeDamageOnHit(DamageType type, float amount) { attributes.removeDamageOnHit(type, amount); }
-	public void removeGoldOnHit(float amount) { attributes.removeGoldOnHit(amount); }
+	public void reduceGoldOnHit(float amount) { attributes.reduceGoldOnHit(amount); }
 	public void reduceGoldValue(float amount, boolean isFlat) { attributes.reduceGoldValue(amount, isFlat); }
+	public void reduceHasting(DamageType type, float amount) { attributes.reduceCDOnHit(type, amount); }
+	public void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
 	public void slow(DamageType type, float amount) { attributes.slow(type, amount); }
 	public void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
 	public void suppressDeathrattle(DamageType type, float modifier, int lifetime) { attributes.suppressDeathrattle(modifier, lifetime); }
@@ -69,6 +72,8 @@ public class Creep implements Updatable {
 	public void unsuppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.unsuppressDisruption(amount, isFlat); }
 
 	//Public getter methods
+	public float getCurrentSize() { return attributes.getCurrentSize(); }
+	public float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
 	public float getMaxHealth() { return attributes.getMaxHealth(); }
 	
 	public void disorient(int lifetime) { 
@@ -77,6 +82,14 @@ public class Creep implements Updatable {
 			previousIndex = nextIndex;
 			nextIndex = temp;
 			updateDirection();
+		}
+	}
+	
+	public void ground() {
+		if (attributes.ground()) {
+			Path newPath = level.getGroundPath();
+			setLocation(level.getVertexBelow(currentVertex));
+			//TODO: Implement these
 		}
 	}
 	

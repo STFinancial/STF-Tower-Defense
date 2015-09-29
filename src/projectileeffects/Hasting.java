@@ -1,39 +1,39 @@
 package projectileeffects;
 
-import creeps.DamageType;
 import projectiles.Projectile;
+import creeps.DamageType;
 
-public class DamageOnHit extends ProjectileEffect implements Stackable {
+public class Hasting extends ProjectileEffect implements Stackable {
 	private int maxStacks;
 	private int numStacks;
 	
-	public DamageOnHit(int lifetime, float modifier, DamageType damageType, Projectile parent) {
+	public Hasting(int lifetime, float modifier, DamageType damageType, Projectile parent) {
 		super(lifetime, modifier, 0, damageType, parent);
-		this.maxStacks = 1;
 		this.numStacks = 0;
+		this.maxStacks = 1;
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new DamageOnHit(lifetime, modifier, damageType, parent);
-	}
-
-	@Override
-	protected void applyEffect() {
-		creep.addDamageOnHit(damageType, modifier);
-	}
-
-	@Override
-	public void onExpire() {
-		while (numStacks > 0) {
-			creep.reduceDamageOnHit(damageType, modifier);
-			numStacks--;
-		}
+		return new Hasting(lifetime, modifier, damageType, parent);
 	}
 
 	@Override
 	public void onApply() {
 		stack();
+	}
+
+	@Override
+	protected void applyEffect() {
+		creep.increaseHasting(damageType, modifier);
+	}
+
+	@Override
+	public void onExpire() {
+		while (numStacks > 0) {
+			creep.reduceHasting(damageType, modifier);
+			numStacks--;
+		}
 	}
 
 	@Override
@@ -49,5 +49,4 @@ public class DamageOnHit extends ProjectileEffect implements Stackable {
 	public void setMaxStacks(int stacks) {
 		this.maxStacks = stacks;
 	}
-
 }

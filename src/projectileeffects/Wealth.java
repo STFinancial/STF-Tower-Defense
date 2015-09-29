@@ -39,7 +39,7 @@ public class Wealth extends ProjectileEffect implements Stackable {
 			return;
 		}
 		if (onHit) {
-			creep.removeGoldOnHit(modifier);
+			creep.reduceGoldOnHit(modifier);
 		} else {
 			creep.reduceGoldValue(modifier, isFlat);
 		}

@@ -14,6 +14,7 @@ final class CreepAttributes implements Updatable {
 	private GoldValue goldValue;
 	private Size size;
 	private HealthCost healthCost;
+	private Travel travel;
 	
 	private Health health;
 	private Shield shield;
@@ -35,9 +36,10 @@ final class CreepAttributes implements Updatable {
 	void setDisruptionValues(float defaultDisruption) { disruption = new Disruption(this, defaultDisruption); }
 	void setGoldValue(float defaultGoldValue) { goldValue = new GoldValue(this, defaultGoldValue); }
 	void setDeathrattle(ProjectileEffect effect, List<Creep> children) { deathrattle = new Deathrattle(this, effect, children); }
-	void setOnHit(float goldOnHit, float[] damageOnHit) { onHit = new OnHit(this, goldOnHit, damageOnHit); }
+	void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { onHit = new OnHit(this, goldOnHit, cooldownOnHit, damageOnHit); }
 	void setSize(float defaultSize) { size = new Size(this, defaultSize); }
 	void setHealthCost(float defaultHealthCost) { healthCost = new HealthCost(this, defaultHealthCost); }
+	void setTravel(boolean defaultIsFlying, boolean groundingImmune) { travel = new Travel(this, defaultIsFlying, groundingImmune); }
 	
 	//Sets all fields that the builder forgot to
 	CreepAttributes finishBuild() {
@@ -50,9 +52,10 @@ final class CreepAttributes implements Updatable {
  		if (disruption == null) { disruption = new Disruption(this, 0); }
  		if (goldValue == null) { goldValue = new GoldValue(this, 0); }
  		if (deathrattle == null) { deathrattle = new Deathrattle(this, null, null); } //Should I pass in null values, what if we want to add something to it later?
-		if (onHit == null) { onHit = new OnHit(this, 0, new float[GameConstants.NUM_DAMAGE_TYPES]); }
+		if (onHit == null) { onHit = new OnHit(this, 0, 0, new float[GameConstants.NUM_DAMAGE_TYPES]); }
  		if (size == null) { size = new Size(this, 0); }
 		if (healthCost == null) { healthCost = new HealthCost(this, 0); }
+		if (travel == null) { travel = new Travel(this, false, false); }
 		return this;
 	}
 	
@@ -66,17 +69,20 @@ final class CreepAttributes implements Updatable {
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
 	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
 	boolean disorient(int duration) { return speed.disorient(duration); }
+	boolean ground() { return travel.ground(); }
+	void increaseCDOnHit(DamageType type, float amount) { onHit.increaseCDOnHit(amount); }
 	void increaseDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.increaseResist(type, amount, isFlat); }
 	void increaseGoldValue(float amount, boolean isFlat) { goldValue.increaseGoldValue(amount, isFlat); }
 	void increaseToughness(float amount, boolean isFlat) { toughness.increaseToughness(amount, isFlat); }
 	void nullify() { health.nullify(); shield.nullify(); }
+	void reduceCDOnHit(DamageType type, float amount) { onHit.reduceCDOnHit(amount); }
 	void reduceCurrentShield(float amount, boolean isFlat) { shield.reduceCurrentShield(amount, isFlat); }
-	void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { speed.reduceMaxSpeed(type, amount, isFlat); }
+	void reduceDamageOnHit(DamageType type, float amount) { onHit.reduceDamageOnHit(type, amount); }
 	void reduceDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.reduceResist(type, amount, isFlat); }
-	void reduceToughness(float amount, boolean isFlat) { toughness.reduceToughness(amount, isFlat); }
-	void removeDamageOnHit(DamageType type, float amount) { onHit.decreaseDamageOnHit(type, amount); }
-	void removeGoldOnHit(float amount) { onHit.decreaseGoldOnHit(amount); }
+	void reduceGoldOnHit(float amount) { onHit.reduceGoldOnHit(amount); }
 	void reduceGoldValue(float amount, boolean isFlat) { goldValue.reduceGoldValue(amount, isFlat); }
+	void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { speed.reduceMaxSpeed(type, amount, isFlat); }
+	void reduceToughness(float amount, boolean isFlat) { toughness.reduceToughness(amount, isFlat); }
 	void slow(DamageType type, float amount) { speed.slow(type, amount); }
 	void snare(int duration) { speed.snare(duration); }
 	void suppressDeathrattle(float modifier, int lifetime) { deathrattle.suppressDeathrattle(modifier, lifetime); }
@@ -123,7 +129,7 @@ final class CreepAttributes implements Updatable {
 		attributes.disruption = (Disruption) disruption.clone(this);
 		attributes.deathrattle = (Deathrattle) deathrattle.clone(this);
 		attributes.onHit = (OnHit) onHit.clone(this);
+		attributes.travel = (Travel) travel.clone(this);
 		return attributes;
 	}
-	
 }

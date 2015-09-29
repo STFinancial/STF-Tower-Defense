@@ -26,9 +26,10 @@ public final class CreepBuilder {
 	public void setDisruptionValues(float defaultDisruption) { currentAttributes.setDisruptionValues(defaultDisruption); }
 	public void setGoldValue(float defaultGoldValue) { currentAttributes.setGoldValue(defaultGoldValue); }
 	public void setDeathrattle(ProjectileEffect effect, List<Creep> children) { currentAttributes.setDeathrattle(effect, children); }
-	public void setOnHit(float goldOnHit, float[] damageOnHit) { currentAttributes.setOnHit(goldOnHit, damageOnHit); }
+	public void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { currentAttributes.setOnHit(goldOnHit, cooldownOnHit, damageOnHit); }
 	public void setSize(float defaultSize) { currentAttributes.setSize(defaultSize); }
 	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }
+	public void setTravel(boolean defaultIsFlying, boolean groundingImmune) { currentAttributes.setTravel(defaultIsFlying, groundingImmune); }
 	
 	public Creep build() {
 		currentCreep.setAttributes(currentAttributes.finishBuild()); //TODO: Change the finish build to throwing an exception?
