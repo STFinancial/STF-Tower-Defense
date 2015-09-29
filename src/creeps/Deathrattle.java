@@ -38,4 +38,14 @@ final class Deathrattle extends Attribute implements Updatable{
 	public int update() {
 		return (--deathrattleSuppressionTimer < 0 ? -1 : 1);
 	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		ArrayList<Creep> newChildren = new ArrayList<Creep>(children.size());
+		//TODO: Need to be very careful to avoid circular dependencies here and cloning in circles. How can we avoid this other than avoiding user error?
+		for (Creep c: children) {
+			newChildren.add(c.clone());
+		}
+		return new Deathrattle(parent, effect.clone(), newChildren);
+	}
 }

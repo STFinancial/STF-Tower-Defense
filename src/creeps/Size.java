@@ -1,15 +1,16 @@
 package creeps;
 
 final class Size extends Attribute {
+	private float defaultSize;
 	private float size;
-	
 	
 	Size(CreepAttributes parent, float defaultSize) {
 		this.parent = parent;
+		this.defaultSize = defaultSize;
 		this.size = defaultSize;
 	}
 	
-	float getSize() { return size; }
+	float getCurrentSize() { return size; }
 	
 	void increaseSize(float amount, boolean isFlat) {
 		size = isFlat ? size + amount : size * (1 + amount);
@@ -17,5 +18,10 @@ final class Size extends Attribute {
 	
 	void decreaseSize(float amount, boolean isFlat) {
 		size = isFlat ? size - amount : size * (1 - amount);
+	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new Size(parent, defaultSize);
 	}
 }

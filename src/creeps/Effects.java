@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import projectileeffects.Bleed;
 import projectileeffects.ProjectileEffect;
 import levels.Updatable;
 
@@ -28,6 +29,18 @@ final class Effects extends Attribute implements Updatable {
 		for (ProjectileEffect e: effects) {
 			addEffect(e);
 		}
+	}
+	
+	void consumeBleeds(float modifier) {
+		ArrayList<ProjectileEffect> s = new ArrayList<ProjectileEffect>();
+		for (Iterator<ProjectileEffect> iterator = effects.iterator(); iterator.hasNext();) {
+			ProjectileEffect e = iterator.next();
+			if (e instanceof Bleed) {
+				s.add(((Bleed) e).convertToDamage(modifier));
+				iterator.remove();
+			}
+		}
+		addAllEffects(s);
 	}
 	
 	private ProjectileEffect getEquivalent(ProjectileEffect pe) {
@@ -59,5 +72,11 @@ final class Effects extends Attribute implements Updatable {
 			}
 		}
 		return 0;
+	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		//TODO: I don't think we want anything other than a return statement but we shall see
+		return new Effects(parent);
 	}
 }

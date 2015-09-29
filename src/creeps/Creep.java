@@ -13,10 +13,9 @@ import towers.Tower;
 import utilities.Circle;
 
 public class Creep implements Updatable {
+	//TODO: Need to clone whether the creep is flying or not. (need an attribute for this even)
 	public int creepID;
-
-	//TODO: Move this to attributes?
-	public DamageType elementType; //FIRE AIR etc creep type 
+	public DamageType elementType; //FIRE AIR etc creep type //TODO: Move this to attributes?
 
 	//Current Stats
 	CreepAttributes attributes;
@@ -36,28 +35,28 @@ public class Creep implements Updatable {
 
 	Creep() {};
 	
-	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; }
-
+	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; hitBox.radius = attributes.getCurrentSize(); }
 	
-	
-	public void onProjectileCollision() {
-		//TODO: This needs to be called by projectiles and needs to do disruption effects
+	public float onProjectileCollision() {
 		attributes.onProjectileCollision();
+		return attributes.getDisruption();
 	}
 	
-	//TODO: Public interface methods that simply delegate to the attributes layer.
-	public void addDamageOnHit(DamageType type, float amount) { attributes.addOnHit(type, amount); }
+	//Public interface methods that simply delegate to the attributes layer.
+	public void addDamageOnHit(DamageType type, float amount) { attributes.addDamageOnHit(type, amount); }
+	public void addGoldOnHit(DamageType type, float amount) { attributes.addGoldOnHit(amount); }
 	public void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
 	public void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
-	public void increaseResist(DamageType type, float amount, boolean isFlat) { attributes.increaseResist(type, amount, isFlat); }
+	public void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
 	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
 	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future
 	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
-	public void reduceResist(DamageType type, float amount, boolean isFlat) { attributes.reduceResist(type, amount, isFlat); }
+	public void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
 	public void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
-	public void removeDamageOnHit(DamageType type, float amount) { attributes.removeOnHit(type, amount); }
+	public void removeDamageOnHit(DamageType type, float amount) { attributes.removeDamageOnHit(type, amount); }
+	public void removeGoldOnHit(DamageType type, float amount) { attributes.removeGoldOnHit(amount); }
 	public void slow(DamageType type, float amount) { attributes.slow(type, amount); }
-	public void snare() { attributes.snare(); } //TODO: May want to attach type if some creeps are immune to this
+	public void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
 	public void suppressDeathrattle(DamageType type, float modifier, int lifetime) { attributes.suppressDeathrattle(modifier, lifetime); }
 	public void suppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.suppressDisruption(amount, isFlat); }
 	public void unslow(DamageType type, float amount) { attributes.unslow(type, amount); }
@@ -72,9 +71,8 @@ public class Creep implements Updatable {
 		}
 	}
 	
-	
-	
 	public void addAffix(CreepType type) {
+		//TODO: Implement these
 		creepTypes.add(type);
 		if (type == CreepType.GIANT) {
 			size = .7f;
@@ -87,7 +85,7 @@ public class Creep implements Updatable {
 	}
 
 	public ArrayList<Creep> death() {
-		//TODO
+		//TODO: Implement this
 		return children;
 	}
 
@@ -197,11 +195,10 @@ public class Creep implements Updatable {
 		this.path = c.path;
 	}
 
-	/*
-	 * NOT A FULL CLONE, ONLY WORKS FOR CREEPS NOT YET SPAWNED
-	 */
+	//Clones the attributes back to their default states. Does not clone effects on the creep.
 	public Creep clone() {
-		Creep clone = new Creep(attributes, healthCost, goldValue, elementType);
+		//TODO: Need to clone the creepID.
+		Creep clone = new Creep();
 
 		clone.creepTypes = new HashSet<CreepType>();
 		for (CreepType type : this.creepTypes) {
@@ -211,13 +208,6 @@ public class Creep implements Updatable {
 		clone.size = this.size; //Radius
 		clone.hitBox.radius = this.hitBox.radius;
 
-		//Fancy Effects
-		clone.children = new ArrayList<Creep>();
-		if (this.children != null) {
-			for (Creep child : this.children) {
-				clone.children.add(child.clone());
-			}
-		}
 
 		return clone;
 	}
@@ -242,10 +232,4 @@ public class Creep implements Updatable {
         Creep c = (Creep) o;
         return c.creepID == creepID;
 	}
-
-	
-
-	
-
-	
 }

@@ -11,7 +11,9 @@ import levels.Updatable;
 final class Health extends Attribute implements Updatable {
 	//TODO: One idea instead of doing division and multiplication is to store damage done flat and percent as values and calculate current health only as needed
 	private float maxHealth;
+	private float defaultHealth;
 	private float currentHealth;
+	private float maxHealthRegen;
 	private float defaultHealthRegen; //Should this be split into percent and flat?
 	private float regenReductionPercent;
 	private float regenReductionFlat;
@@ -20,6 +22,8 @@ final class Health extends Attribute implements Updatable {
 	Health(CreepAttributes parent, float maxHealth, float defaultHealthRegen) {
 		this.parent				= parent;
 		this.maxHealth 			= maxHealth;
+		this.defaultHealth		= maxHealth;
+		this.maxHealthRegen		= defaultHealthRegen;
 		this.defaultHealthRegen 	= defaultHealthRegen;
 		this.currentHealth 		= maxHealth;
 		this.currentHealthRegen = defaultHealthRegen;
@@ -35,7 +39,7 @@ final class Health extends Attribute implements Updatable {
 	//TODO: This seems like a lot of indirection for something that happens so often
 	//TODO: Optimization - If things are too slow then we can get rid of the complex division formulas
 	float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { 
-		float flatResist = (parent.getDamageResistFlat(type) * (1 - penPercent)) - penFlat;
+		float flatResist = (parent.getCurrentDamageResist(type, true) * (1 - penPercent)) - penFlat;
 		float damageModifier = 1 - (flatResist / (GameConstants.DAMAGE_RESIST_DENOMINATOR_VALUE + flatResist));
 		float damageToDo = amount * damageModifier;
 		damageToDo = damageToDo - ((parent.getCurrentToughness() * (1 - toughPenPercent)) - toughPenFlat);
@@ -96,7 +100,7 @@ final class Health extends Attribute implements Updatable {
 	}
 	
 	private float updateHealthRegen() {
-		currentHealthRegen = defaultHealthRegen - (defaultHealthRegen * regenReductionPercent) - regenReductionFlat;
+		currentHealthRegen = maxHealthRegen - (maxHealthRegen * regenReductionPercent) - regenReductionFlat;
 		return (currentHealthRegen < 0 ? currentHealthRegen = 0 : currentHealthRegen);
 	}
 	
@@ -117,6 +121,12 @@ final class Health extends Attribute implements Updatable {
 		}
 		updateHealthRegen();
 	}
+	
+	void nullify() {
+		//TODO: Should it be done this way?
+		maxHealthRegen = 0;
+		updateHealthRegen();
+	}
 
 	@Override
 	public int update() {
@@ -124,4 +134,10 @@ final class Health extends Attribute implements Updatable {
 		currentHealth += currentHealthRegen;
 		return 1;
 	}
+
+	Attribute clone(CreepAttributes parent) {
+		return new Health(parent, defaultHealth, defaultHealthRegen);
+	}
+	
+	
 }

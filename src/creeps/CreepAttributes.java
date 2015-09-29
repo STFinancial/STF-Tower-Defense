@@ -55,6 +55,41 @@ final class CreepAttributes implements Updatable {
 		return this;
 	}
 	
+	float onProjectileCollision() { return onHit.applyOnHits(); }
+	
+	//Simple delegation one liners
+	void addDamageOnHit(DamageType type, float amount) { onHit.increaseDamageOnHit(type, amount); }
+	void addGoldOnHit(float amount) { onHit.increaseGoldOnHit(amount); }
+	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
+	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
+	boolean disorient(int duration) { return speed.disorient(duration); }
+	void increaseDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.increaseResist(type, amount, isFlat); }
+	void increaseToughness(float amount, boolean isFlat) { toughness.increaseToughness(amount, isFlat); }
+	void nullify() { health.nullify(); shield.nullify(); }
+	void reduceCurrentShield(float amount, boolean isFlat) { shield.reduceCurrentShield(amount, isFlat); }
+	void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { speed.reduceMaxSpeed(type, amount, isFlat); }
+	void reduceDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.reduceResist(type, amount, isFlat); }
+	void reduceToughness(float amount, boolean isFlat) { toughness.reduceToughness(amount, isFlat); }
+	void removeDamageOnHit(DamageType type, float amount) { onHit.decreaseDamageOnHit(type, amount); }
+	void removeGoldOnHit(float amount) { onHit.decreaseGoldOnHit(amount); }
+	void slow(DamageType type, float amount) { speed.slow(type, amount); }
+	void snare(int duration) { speed.snare(duration); }
+	void suppressDeathrattle(float modifier, int lifetime) { deathrattle.suppressDeathrattle(modifier, lifetime); }
+	void suppressDisruption(float amount, boolean isFlat) { disruption.suppressDisruption(amount, isFlat); }
+	void unslow(DamageType type, float amount) { speed.unslow(type, amount); }
+	void unsuppressDisruption(float amount, boolean isFlat) { disruption.unsuppressDisruption(amount, isFlat); }
+
+	//Getters
+	float getCurrentDamageResist(DamageType type, boolean isFlat) { return (isFlat? damageResistances.getResistFlat(type) : damageResistances.getResistPercent(type));}
+	float getCurrentHealth() { return health.getCurrentHealth(); }
+	float getCurrentShield() { return shield.getCurrentShield(); }
+	float getCurrentSpeed() { return speed.getCurrentSpeed(); }
+	float getCurrentToughness() { return toughness.getCurrentToughness(); }
+	float getDisruption() { return disruption.getDisruptionAmount(); }
+	float getCurrentSize() { return size.getCurrentSize(); }
+	float getSlowResist(DamageType type) { return slowResistances.getResistPercent(type); }
+	boolean isDisoriented() { return speed.isDisoriented(); }
+	
 	@Override
 	public int update() {
 		effects.update();
@@ -66,71 +101,22 @@ final class CreepAttributes implements Updatable {
 		deathrattle.update();
 		return 0;
 	}
-	public void addOnHit(DamageType type, float amount) {
-		// TODO Auto-generated method stub
-		
+	
+	//Clones attributes to their default states
+	public CreepAttributes clone(Creep parent) {
+		CreepAttributes attributes = new CreepAttributes(parent);
+		attributes.goldValue = (GoldValue) goldValue.clone(this);
+		attributes.size = (Size) size.clone(this);
+		attributes.healthCost = (HealthCost) healthCost.clone(this);
+		attributes.health = (Health) health.clone(this);
+		attributes.shield = (Shield) shield.clone(this);
+		attributes.damageResistances = (DamageResistances) damageResistances.clone(this);
+		attributes.slowResistances = (SlowResistances) slowResistances.clone(this);
+		attributes.speed = (Speed) speed.clone(this);
+		attributes.toughness = (Toughness) toughness.clone(this);
+		attributes.disruption = (Disruption) disruption.clone(this);
+		attributes.deathrattle = (Deathrattle) deathrattle.clone(this);
+		attributes.onHit = (OnHit) onHit.clone(this);
+		return attributes;
 	}
-	public void consumeBleeds(float amount) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void damage(DamageType type, float amount, float penPercent,
-			float penFlat, boolean ignoresShield, float shieldDrainModifier,
-			float toughPenPercent, float toughPenFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void increaseResist(DamageType type, float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void increaseToughness(float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void nullify() {
-		// TODO Auto-generated method stub
-		
-	}
-	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void reduceResist(DamageType type, float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void reduceToughness(float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void removeOnHit(DamageType type, float amount) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void slow(DamageType type, float amount) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void snare() {
-		// TODO Auto-generated method stub
-		
-	}
-	public void suppressDeathrattle(float modifier, int lifetime) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void suppressDisruption(float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void unslow(DamageType type, float amount) {
-		// TODO Auto-generated method stub
-		
-	}
-	public void unsuppressDisruption(float amount, boolean isFlat) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

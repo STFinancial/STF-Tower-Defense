@@ -34,4 +34,9 @@ final class Toughness extends Attribute {
 		}
 		return updateToughness();
 	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new Toughness(parent, defaultToughness);
+	}
 }

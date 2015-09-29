@@ -52,4 +52,9 @@ final class DamageResistances extends Attribute {
 		}
 		return updateResistPercent(index);
 	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new DamageResistances(parent, defaultResistsFlat.clone());
+	}
 }

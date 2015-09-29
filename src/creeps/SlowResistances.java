@@ -55,4 +55,9 @@ final class SlowResistances extends Attribute {
 		reductionFlat[index] -= amount;
 		return updateResistPercent(index);
 	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new SlowResistances(parent, defaultResistsFlat.clone());
+	}
 }

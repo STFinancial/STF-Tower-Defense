@@ -1,5 +1,7 @@
 package creeps;
 
+import utilities.GameConstants;
+
 final class OnHit extends Attribute {
 	private float[] damageOnHit;
 	private float goldOnHit;
@@ -10,16 +12,26 @@ final class OnHit extends Attribute {
 		this.goldOnHit = goldOnHit;
 	}
 	
+	float applyOnHits() { 
+		for (int i = 0; i < damageOnHit.length; i++) {
+			parent.damage(DamageType.values()[i], damageOnHit[i], 0, 0, false, 1, 0, 0);
+		}
+		return goldOnHit;
+	}
 	
-	//TODO: It's not *really* necessary to have two methods since I have 1 for many other methods that could use a split more
-	void increaseDamageOnHit(float amount, DamageType type) {
+	void increaseDamageOnHit(DamageType type, float amount) {
 		damageOnHit[type.ordinal()] += amount;
 	}
 	
-	void decreaseDamageOnHit(float amount, DamageType type) {
+	void decreaseDamageOnHit(DamageType type, float amount) {
 		damageOnHit[type.ordinal()] -= amount;
 	}
 	
 	void increaseGoldOnHit(float amount) { goldOnHit += amount; }
 	void decreaseGoldOnHit(float amount) { goldOnHit -= amount; }
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new OnHit(parent, 0, new float[GameConstants.NUM_DAMAGE_TYPES]);
+	}
 }

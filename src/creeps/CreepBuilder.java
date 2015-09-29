@@ -31,7 +31,7 @@ public final class CreepBuilder {
 	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }
 	
 	public Creep build() {
-		currentCreep.setAttributes(currentAttributes.finishBuild());
+		currentCreep.setAttributes(currentAttributes.finishBuild()); //TODO: Change the finish build to throwing an exception?
 		Creep built = currentCreep;
 		currentCreep = null;
 		return built;

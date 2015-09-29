@@ -37,4 +37,11 @@ final class GoldValue extends Attribute {
 		currentGoldValue = defaultGoldValue - (defaultGoldValue * reductionPercent) - reductionFlat;
 		return currentGoldValue;
 	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new GoldValue(parent, defaultGoldValue);
+	}
+	
+	
 }

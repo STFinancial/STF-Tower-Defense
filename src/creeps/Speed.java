@@ -4,7 +4,6 @@ import levels.Updatable;
 
 final class Speed extends Attribute implements Updatable {
 	//TODO: Flat speed reductions at some point in the future.
-	//TODO: Some way to handle maxSpeed reductions. If we are reducing max speed by 5, then we do currentSpeed -= defaultSpeed * 5 / currentSpeed
 	private float defaultSpeed;
 	private float currentSpeed;
 	
@@ -41,7 +40,7 @@ final class Speed extends Attribute implements Updatable {
 	float getCurrentSpeed() { return (isSnared || currentSpeed < 0 ? 0 : currentSpeed); }
 	boolean isDisoriented() { return isDisoriented; }
 	
-	void slow(float amount, DamageType type) {
+	void slow(DamageType type, float amount) {
 		if (amount == 1) {
 			System.out.println("100% slow happening. Avoid this");
 			return;
@@ -49,11 +48,25 @@ final class Speed extends Attribute implements Updatable {
 		currentSpeed *= (1 - (amount * (1 - parent.getSlowResist(type))));
 	}
 	
-	void unslow(float amount, DamageType type) {
+	void unslow(DamageType type, float amount) {
 		if (amount == 1) {
 			return;
 		}
 		currentSpeed /= (1 - (amount * (1 - parent.getSlowResist(type))));
+	}
+	
+	void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) {
+		//TODO: Do we want slow resists to mitigate this?
+		if (amount == 1) {
+			System.out.println("100% slow happening. Avoid this");
+			return;
+		}
+		if (isFlat) {
+			currentSpeed -= amount * (1 - (defaultSpeed / currentSpeed));
+		} else {
+			//reduce max speed by 20 ewe need to reduce that percent
+			currentSpeed *= (1 - (amount * (1 - (defaultSpeed / currentSpeed))));
+		}
 	}
 	
 	void snare(int duration) {
@@ -95,5 +108,10 @@ final class Speed extends Attribute implements Updatable {
 		if (currentSnareDuration-- == 0) { isSnared = false; }
 		if (currentDisorientDuration-- == 0) { isDisoriented = false; }
 		return (isDisoriented || isSnared ? -1 : 0);
+	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new Speed(parent, defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace);
 	}
 }

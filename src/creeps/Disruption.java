@@ -38,4 +38,9 @@ final class Disruption extends Attribute {
 		currentDisruptorAmount = defaultDisruptorAmount - (defaultDisruptorAmount * currentReductionPercent) - currentReductionFlat;
 		return currentDisruptorAmount;
 	}
+
+	@Override
+	Attribute clone(CreepAttributes parent) {
+		return new Disruption(parent, defaultDisruptorAmount);
+	}
 }
