@@ -31,7 +31,7 @@ final class CreepAttributes implements Updatable {
 	void setShieldValues(float maxShield, float defaultShieldRegen) { shield = new Shield(this, maxShield, defaultShieldRegen); }
 	void setDamageResists(float[] damageResists) { damageResistances = new DamageResistances(this, damageResists); }
 	void setSlowResists(float[] slowResists) { slowResistances = new SlowResistances(this, slowResists); }
-	void setSpeedValues(float defaultSpeed, boolean snareImmune, int snareGrace, boolean disorientImmune, int disorientGrace) { speed = new Speed(this, defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace); }
+	void setSpeedValues(float defaultSpeed, boolean snareImmune, boolean disorientImmune, boolean knockupImmune, int gracePeriod) { speed = new Speed(this, defaultSpeed, snareImmune, disorientImmune, knockupImmune, gracePeriod); }
 	void setToughnessValues(float defaultToughness) { toughness = new Toughness(this, defaultToughness); }
 	void setDisruptionValues(float defaultDisruption) { disruption = new Disruption(this, defaultDisruption); }
 	void setGoldValue(float defaultGoldValue) { goldValue = new GoldValue(this, defaultGoldValue); }
@@ -47,7 +47,7 @@ final class CreepAttributes implements Updatable {
 		if (shield == null) { shield = new Shield(this, 0, 0); }
 		if (damageResistances == null) { damageResistances = new DamageResistances(this, new float[GameConstants.NUM_DAMAGE_TYPES]); }
 		if (slowResistances == null) { slowResistances = new SlowResistances(this, new float[GameConstants.NUM_DAMAGE_TYPES]); }
-		if (speed == null) { speed = new Speed(this, 0, false, 0, false, 0); }
+		if (speed == null) { speed = new Speed(this, 0, false, false, false, 0); }
  		if (toughness == null) { toughness = new Toughness(this, 0); }
  		if (disruption == null) { disruption = new Disruption(this, 0); }
  		if (goldValue == null) { goldValue = new GoldValue(this, 0); }
@@ -74,6 +74,8 @@ final class CreepAttributes implements Updatable {
 	void increaseDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.increaseResist(type, amount, isFlat); }
 	void increaseGoldValue(float amount, boolean isFlat) { goldValue.increaseGoldValue(amount, isFlat); }
 	void increaseToughness(float amount, boolean isFlat) { toughness.increaseToughness(amount, isFlat); }
+	void loft() { travel.loft(); }
+	void knockup(int duration) { speed.knockup(duration); }
 	void nullify() { health.nullify(); shield.nullify(); }
 	void reduceCDOnHit(DamageType type, float amount) { onHit.reduceCDOnHit(amount); }
 	void reduceCurrentShield(float amount, boolean isFlat) { shield.reduceCurrentShield(amount, isFlat); }
@@ -83,6 +85,7 @@ final class CreepAttributes implements Updatable {
 	void reduceGoldValue(float amount, boolean isFlat) { goldValue.reduceGoldValue(amount, isFlat); }
 	void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { speed.reduceMaxSpeed(type, amount, isFlat); }
 	void reduceToughness(float amount, boolean isFlat) { toughness.reduceToughness(amount, isFlat); }
+	void setTravelToDefault() { travel.setTravelToDefault(); }
 	void slow(DamageType type, float amount) { speed.slow(type, amount); }
 	void snare(int duration) { speed.snare(duration); }
 	void suppressDeathrattle(float modifier, int lifetime) { deathrattle.suppressDeathrattle(modifier, lifetime); }

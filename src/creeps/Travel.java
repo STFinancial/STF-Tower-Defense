@@ -13,6 +13,8 @@ final class Travel extends Attribute {
 	}
 	
 	boolean isFlying() { return currentlyIsFlying; }
+	void loft() { currentlyIsFlying = true; }
+	void setTravelToDefault() { currentlyIsFlying = defaultIsFlying; }
 	
 	boolean ground() {
 		return (groundingImmune ? currentlyIsFlying : (currentlyIsFlying = false));

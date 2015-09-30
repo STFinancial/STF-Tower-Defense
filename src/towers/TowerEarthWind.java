@@ -16,9 +16,9 @@ public class TowerEarthWind extends Tower {
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][3]) {
-			baseProjectile = new ProjectileBasic(this);
-		} else {
 			baseProjectile = new ProjectileBeam(this);
+		} else {
+			baseProjectile = new ProjectileBasic(this);
 		}
 	}
 

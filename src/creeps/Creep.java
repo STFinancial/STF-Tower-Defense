@@ -56,6 +56,7 @@ public class Creep implements Updatable {
 	public void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
 	public void increaseHasting(DamageType type, float amount) { attributes.increaseCDOnHit(type, amount); }
 	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
+	public void knockup(int duration) { attributes.knockup(duration); }
 	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future, or lifetime
 	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
 	public void reduceDamageOnHit(DamageType type, float amount) { attributes.reduceDamageOnHit(type, amount); }

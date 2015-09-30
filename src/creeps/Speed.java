@@ -4,29 +4,22 @@ import levels.Updatable;
 
 final class Speed extends Attribute implements Updatable {
 	//TODO: Flat speed reductions at some point in the future.
-	//TODO: What if we want to modify the grace periods
 	private float defaultSpeed;
 	private float currentSpeed;
 	
 	private int gracePeriod;
+	private int timeUntilNextEffect;
+	private int initialEffectDuration;
+	private int currentEffectDuration;
 	
 	private boolean isSnared;
 	private boolean snareImmune;
-	private int initialSnareDuration;
-	private int currentSnareDuration;
-	private int timeUntilSnare;
 	
 	private boolean isDisoriented;
 	private boolean disorientImmune;
-	private int initialDisorientDuration;
-	private int currentDisorientDuration;
-	private int timeUntilDisorient;
 	
 	private boolean isKnockup;
 	private boolean knockupImmune;
-	private int initialKnockupDuration;
-	private int currentKnockupDuration;
-	private int timeUntilKnockup;
 	
 	//TODO: Consolidate all into a single grace period
 	Speed(CreepAttributes parent, float defaultSpeed, boolean snareImmune, boolean disorientImmune, boolean knockupImmune, int gracePeriod) {
@@ -34,19 +27,16 @@ final class Speed extends Attribute implements Updatable {
 		
 		this.defaultSpeed 		= defaultSpeed;
 		this.snareImmune 		= snareImmune;
-		this.snareGrace   	 	= snareGrace;
 		this.disorientImmune 	= disorientImmune;
-		this.disorientGrace  	= disorientGrace;
 		this.knockupImmune		= knockupImmune;
-		this.knockupGrace		= knockupGrace;
+		
+		this.gracePeriod		= gracePeriod;
 		
 		this.currentSpeed 	 	= defaultSpeed;
 		this.isSnared			= false;
-		this.timeUntilSnare		= 0;
 		this.isDisoriented		= false;
-		this.timeUntilDisorient = 0;
 		this.isKnockup			= false;
-		this.timeUntilKnockup	= 0;
+		this.timeUntilNextEffect= 0;
 	}
 	
 	float getCurrentSpeed() { return (isSnared || isKnockup || currentSpeed < 0 ? 0 : currentSpeed); }
@@ -83,62 +73,67 @@ final class Speed extends Attribute implements Updatable {
 		}
 	}
 	
-	void snare(int duration) {
+	boolean snare(int duration) {
 		if (snareImmune) { //Is immune
-			return;
-		} else if (timeUntilSnare <= 0){ //Can be snared
+			return false;
+		} else if (timeUntilNextEffect <= 0){ //Can be snared
 			isSnared = true;
-			initialSnareDuration = duration;
-			currentSnareDuration = duration;
-			timeUntilSnare = duration + snareGrace;
-		} else if (isSnared && duration > initialSnareDuration) { //Is snared but this is longer
-			int dif = duration - initialSnareDuration;
-			currentSnareDuration += dif;
-			timeUntilSnare += dif;
+			initialEffectDuration = duration;
+			currentEffectDuration = duration;
+			timeUntilNextEffect = duration + gracePeriod;
+			return true;
+		} else if (isSnared && duration > initialEffectDuration) { //Is snared but this is longer
+			int dif = duration - initialEffectDuration;
+			currentEffectDuration += dif;
+			timeUntilNextEffect += dif;
 		}
+		return false;
 	}
 	
 	boolean disorient(int duration) {
 		if (disorientImmune) {
 			return false;
-		} else if (timeUntilDisorient <= 0){
+		} else if (timeUntilNextEffect <= 0){
 			isDisoriented = true;
-			initialDisorientDuration = duration;
-			currentDisorientDuration = duration;
-			timeUntilDisorient = duration + disorientGrace;
+			initialEffectDuration = duration;
+			currentEffectDuration = duration;
+			timeUntilNextEffect = duration + gracePeriod;
 			return true;
-		} else if (isDisoriented && duration > initialDisorientDuration) {
-			int dif = duration - initialDisorientDuration;
-			currentDisorientDuration += dif;
-			timeUntilDisorient += dif;
+		} else if (isDisoriented && duration > initialEffectDuration) {
+			int dif = duration - initialEffectDuration;
+			currentEffectDuration += dif;
+			timeUntilNextEffect += dif;
 		}
 		return false;
 	}
 	
-	//TODO: I think that these need to share a grace period
 	boolean knockup(int duration) {
-		if (knockupImmune) {
+		if (knockupImmune) { //Is immune
 			return false;
-		} else if {
-			
-		} else if {
-			
+		} else if (timeUntilNextEffect <= 0){ //Can be snared
+			isKnockup = true;
+			initialEffectDuration = duration;
+			currentEffectDuration = duration;
+			timeUntilNextEffect = duration + gracePeriod;
+			parent.loft();
+			return true;
+		} else if (isKnockup && duration > initialEffectDuration) { //Is snared but this is longer
+			int dif = duration - initialEffectDuration;
+			currentEffectDuration += dif;
+			timeUntilNextEffect += dif;
 		}
+		return false;
 	}
 
 	@Override
 	public int update() {
-		timeUntilSnare--;
-		timeUntilDisorient--;
-		timeUntilKnockup--;
-		if (currentSnareDuration-- == 0) { isSnared = false; }
-		if (currentDisorientDuration-- == 0) { isDisoriented = false; }
-		if (currentKnockupDuration-- == 0) { isKnockup = false; }
+		timeUntilNextEffect--;
+		if (currentEffectDuration-- == 0) { isSnared = false; isDisoriented = false; isKnockup = false; parent.setTravelToDefault(); }
 		return (isDisoriented || isSnared ? -1 : 0);
 	}
 
 	@Override
 	Attribute clone(CreepAttributes parent) {
-		return new Speed(parent, defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace, knockupImmune, knockupGrace);
+		return new Speed(parent, defaultSpeed, snareImmune, disorientImmune, knockupImmune, gracePeriod);
 	}
 }

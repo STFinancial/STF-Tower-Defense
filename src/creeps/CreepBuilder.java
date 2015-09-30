@@ -21,7 +21,7 @@ public final class CreepBuilder {
 	public void setShieldValues(float maxShield, float defaultShieldRegen) { currentAttributes.setShieldValues(maxShield, defaultShieldRegen); }
 	public void setDamageResists(float[] damageResists) { currentAttributes.setDamageResists(damageResists); }
 	public void setSlowResists(float[] slowResists) { currentAttributes.setSlowResists(slowResists); }
-	public void setSpeedValues(float defaultSpeed, boolean snareImmune, int snareGrace, boolean disorientImmune, int disorientGrace) { currentAttributes.setSpeedValues(defaultSpeed, snareImmune, snareGrace, disorientImmune, disorientGrace); }
+	public void setSpeedValues(float defaultSpeed, boolean snareImmune, boolean disorientImmune, boolean knockupImmune, int gracePeriod) { currentAttributes.setSpeedValues(defaultSpeed, snareImmune, disorientImmune, knockupImmune, gracePeriod); }
 	public void setToughnessValues(float defaultToughness) { currentAttributes.setToughnessValues(defaultToughness); }
 	public void setDisruptionValues(float defaultDisruption) { currentAttributes.setDisruptionValues(defaultDisruption); }
 	public void setGoldValue(float defaultGoldValue) { currentAttributes.setGoldValue(defaultGoldValue); }
