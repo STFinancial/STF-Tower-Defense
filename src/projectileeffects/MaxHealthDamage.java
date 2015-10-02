@@ -14,7 +14,7 @@ public class MaxHealthDamage extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.damage(damageType, creep.getMaxHealth() * modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
+		creep.damage(damageType, creep.getMaxHealth() * modifier, parent.getResistPen(damageType, false), parent.getResistPen(damageType, true), parent.ignoresShield(), parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
 	}
 
 	@Override

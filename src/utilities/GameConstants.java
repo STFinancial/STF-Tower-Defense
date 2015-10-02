@@ -25,4 +25,6 @@ public final class GameConstants {
 	
 	public static final float SQRT_2_OVER_2 = 0.7071f;
 	public static final float SQRT_2 = 1.414f;
+	public static final int NEGATIVE_INF = Integer.MIN_VALUE;
+	public static final int POSITIVE_INF = Integer.MAX_VALUE;
 }

@@ -93,6 +93,7 @@ public abstract class Tower implements Updatable {
 			current = current.siphoningFrom;
 		}
 		BFSAdjust(current);
+		BFSFixStats(current);
 	}
 	
 	protected static void BFSAdjust(Tower root) {
@@ -105,12 +106,6 @@ public abstract class Tower implements Updatable {
 			current.adjustBaseUpgradeStats();
 			openList.addAll(current.siphoningTo);
 			current.siphon(current.siphoningFrom);
-			current.adjustTalentStats();
-			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
-			current.adjustNonBaseUpgradeStats();
-			current.adjustProjectileStats();
-			current.currentAttackCoolDown = current.attackCoolDown;
-			current.targetArea.radius = current.range;
 		}
 	}
 	
@@ -130,6 +125,22 @@ public abstract class Tower implements Updatable {
 		this.damageSplash += from.damageSplash * this.siphonBonus;
 		this.effectSplash += from.effectSplash * this.siphonBonus;
 		this.splashRadius += from.splashRadius * this.siphonBonus;
+	}
+	
+	protected static void BFSFixStats(Tower root) {
+		Queue<Tower> openList = new LinkedList<Tower>();
+		openList.addAll(root.siphoningTo);
+		Tower current;
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			openList.addAll(current.siphoningTo); //TODO: So this doesn't actually do what we want. We are still siphoning base stats
+			current.adjustTalentStats();
+			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
+			current.adjustNonBaseUpgradeStats();
+			current.adjustProjectileStats();
+			current.currentAttackCoolDown = current.attackCoolDown;
+			current.targetArea.radius = current.range;
+		}
 	}
 	
 	protected void adjustBaseStats() {

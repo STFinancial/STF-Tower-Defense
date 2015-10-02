@@ -23,48 +23,50 @@ import creeps.DamageType;
  * Also possibly a second class for passive boost from towers like attack speed in radius
  */
 public abstract class Projectile implements Updatable {
-	public Tower parent;
-	public Level level;
-	public float x, y;
-	public float currentSpeed, speed;
-	public float size = .01f;
-	public float splashRadius;
-	public Circle hitBox;
-	public float[] resistPenPercent;
-	public float[] resistPenFlat;
-	public float toughPenPercent = 0f;
-	public float toughPenFlat = 0;
-	public float shieldDrainModifier = 1;
-	public boolean ignoresShield;
+	protected Tower parent;
+	protected Level level;
+	protected float x, y;
+	protected float currentSpeed, speed;
+	protected float size;
+	protected float splashRadius;
+	protected Circle hitBox;
+	protected float[] resistPenPercent;
+	protected float[] resistPenFlat;
+	protected float toughPenPercent;
+	protected float toughPenFlat;
+	protected float shieldDrainModifier; //TODO: The value that this should be set at is a bit unclear.
+	protected boolean ignoresShield;
+	protected boolean hitsAir;
 	protected ProjectileGuider guider;
 	
-	public boolean dud; //When creep is killed by something else or escapes before contact;
-	float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
+	protected boolean dud; //When creep is killed by something else or escapes before contact;
+	protected float targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
 	
-	ArrayList<ProjectileEffect> creepEffects;
-	ArrayList<ProjectileEffect> splashEffects;
-	public AffixModifier multiplier;
-	
-	protected Projectile() {
-		//This is called from the clone method only
-		this.guider = ProjectileGuider.getInstance();
-	}
+	protected ArrayList<ProjectileEffect> creepEffects;
+	protected ArrayList<ProjectileEffect> splashEffects;
+	protected AffixModifier multiplier;
 	
 	public Projectile(Tower parent) {
-		this.dud 			= false;
-		this.parent			= parent;
-		this.level 			= parent.level;
-		this.x 				= parent.centerX;
-		this.y 				= parent.centerY;
-		this.splashRadius 	= parent.splashRadius;
-		this.guider			= ProjectileGuider.getInstance();
+		this.dud 					= false;
+		this.parent					= parent;
+		this.level 					= parent.level;
+		this.x 						= parent.centerX;
+		this.y 						= parent.centerY;
+		this.splashRadius		 	= parent.splashRadius;
+		this.hitsAir				= parent.hitsAir; //TODO: Needs to utilize this to hit the right creep
+		this.guider					= ProjectileGuider.getInstance();
 		
-		hitBox = new Circle(x, y, size);
-		resistPenPercent = new float[GameConstants.NUM_DAMAGE_TYPES];
-		resistPenFlat = new float[GameConstants.NUM_DAMAGE_TYPES];
-		creepEffects = new ArrayList<ProjectileEffect>();
-		splashEffects = new ArrayList<ProjectileEffect>();
-		multiplier = new AffixModifier();
+		this.size 					= 0.01f;
+		this.toughPenPercent		= 0;
+		this.toughPenFlat			= 0;
+		this.shieldDrainModifier 	= 0;
+		
+		this.hitBox 				= new Circle(x, y, size);
+		this.resistPenPercent 		= new float[GameConstants.NUM_DAMAGE_TYPES];
+		this.resistPenFlat 			= new float[GameConstants.NUM_DAMAGE_TYPES];
+		this.creepEffects 			= new ArrayList<ProjectileEffect>();
+		this.splashEffects 			= new ArrayList<ProjectileEffect>();
+		this.multiplier 			= new AffixModifier();
 		
 		addGeneralEffects();
 	}
@@ -111,6 +113,7 @@ public abstract class Projectile implements Updatable {
 		p.shieldDrainModifier = shieldDrainModifier;
 		p.ignoresShield = ignoresShield;
 		p.targetAngle = targetAngle;
+		p.hitsAir = hitsAir;
 	}
 	
 	public abstract Projectile clone();
@@ -121,6 +124,12 @@ public abstract class Projectile implements Updatable {
 	
 	public abstract void detonate(Level level);
 
+	public boolean ignoresShield() { return ignoresShield; }
+	public float getShieldDrainModifier() { return shieldDrainModifier; }
+	public float getToughPen(boolean isFlat) { return (isFlat ? toughPenFlat : toughPenPercent); }
+	public float getResistPen(DamageType type, boolean isFlat) { return (isFlat ? resistPenFlat[type.ordinal()] : resistPenPercent[type.ordinal()]); }
+	public Tower getParent() { return parent; }
+	
 	public void addSpecificCreepEffect(ProjectileEffect effect) {
 		creepEffects.add(effect);
 	}

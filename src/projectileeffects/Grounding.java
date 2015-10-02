@@ -22,7 +22,7 @@ public class Grounding extends ProjectileEffect {
 	@Override
 	protected void applyEffect() {
 		creep.ground();
-		creep.damage(damageType, creep.getCurrentSize() * modifier, parent.resistPenPercent[damageType.ordinal()], parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
+		creep.damage(damageType, creep.getCurrentSize() * modifier, parent.getResistPen(damageType, false), parent.getResistPen(damageType, true), parent.ignoresShield(), parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
 	}
 
 	@Override

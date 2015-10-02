@@ -74,7 +74,7 @@ public abstract class ProjectileEffect implements Updatable {
 				p.getClass() == getClass() &&
 				p.lifetime == lifetime &&
 				p.timing == timing && 
-				p.parent.parent.towerID == parent.parent.towerID; //TODO: Should this be part of the equality test, do we want similar debuffs from different towers to stack or not?
+				p.parent.getParent().towerID == parent.getParent().towerID; //TODO: Should this be part of the equality test, do we want similar debuffs from different towers to stack or not?
 	}
 	
 	@Override
@@ -85,7 +85,7 @@ public abstract class ProjectileEffect implements Updatable {
 		result = 31 * result + (int) lifetime;
 		result = 31 * result + (int) modifier;
 		result = 31 * result + timing;
-		result = 31 * result + parent.parent.towerID;
+		result = 31 * result + parent.getParent().towerID;
 		return result;
 	}
 }

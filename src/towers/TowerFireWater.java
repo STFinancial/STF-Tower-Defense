@@ -9,7 +9,7 @@ import projectileeffects.Nullify;
 import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
-import projectiles.ProjectilePassThrough;
+import projectiles.ProjectilePassThroughTarget;
 import levels.Level;
 import maps.Tile;
 
@@ -29,7 +29,7 @@ public class TowerFireWater extends Tower {
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile = new ProjectilePassThrough(this);
+			baseProjectile = new ProjectilePassThroughTarget(this);
 		} else if (progress[1][2]) {
 			ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
 			effects.add(new MaxHealthDamage(patchMaxHealth * damageArray[DamageType.WATER.ordinal()], DamageType.WATER, baseProjectile));

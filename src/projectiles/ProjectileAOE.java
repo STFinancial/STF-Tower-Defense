@@ -8,21 +8,19 @@ import towers.Tower;
 
 import creeps.Creep;
 
-//This is like the tack tower from bloons
 public class ProjectileAOE extends Projectile {
-
-	public ProjectileAOE() {
-		
-	}
+	private boolean doesSplash;
+	private boolean doesOnHit;
 	
-	public ProjectileAOE(Tower parent) {
+	public ProjectileAOE(Tower parent, boolean doesSplash, boolean doesOnHit) {
 		super(parent);
+		this.doesSplash = doesSplash;
 		speed = currentSpeed = 0f;
 	}
 
 	@Override
 	public Projectile clone() {
-		Projectile p = new ProjectileAOE();
+		Projectile p = new ProjectileAOE(parent, doesSplash, doesOnHit);
 		cloneStats(p);
 		return p;
 	}
@@ -39,10 +37,15 @@ public class ProjectileAOE extends Projectile {
 
 	@Override
 	public void detonate(Level level) {
-		//TODO: how do we want to handle splash effects with this projectile type
 		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range);
 		for (Creep c: creepInRange) {
 			c.addAllEffects(creepEffects);
+			if (doesOnHit) {
+				c.onProjectileCollision();
+			}
+			if (doesSplash) { //TODO: Are these only the creep we want to hit, those in range of the tower?
+				c.addAllEffects(splashEffects);
+			}
 		}
 	}
 

@@ -13,4 +13,9 @@ public class Circle {
 	public boolean intersects(Circle c) {
 		return (((x - c.x) * (x - c.x) + (y - c.y) * (y - c.y)) <= ((radius + c.radius) * (radius + c.radius)));
 	}
+	
+	@Override
+	public Circle clone() {
+		return new Circle(x, y, radius);
+	}
 }

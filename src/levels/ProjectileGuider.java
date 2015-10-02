@@ -7,6 +7,7 @@ import projectiles.Projectile;
 import utilities.Circle;
 import creeps.Creep;
 
+//TODO: What does this class actually do? I want to delegate the work to this class at some point instead of having level do it
 public final class ProjectileGuider {
 	private static final ProjectileGuider INSTANCE = new ProjectileGuider();
 	private Level level;
@@ -39,5 +40,9 @@ public final class ProjectileGuider {
 
 	public HashSet<Creep> getCreepAdjacentToEarth() {
 		return level.getCreepAdjacentToEarth();
+	}
+	
+	public Creep getFirstCreepRadially(float x, float y, float angle) {
+		return level.getFirstCreepRadially(x, y, angle);
 	}
 }

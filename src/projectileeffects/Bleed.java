@@ -17,9 +17,9 @@ public class Bleed extends ProjectileEffect implements Stackable {
 
 	@Override
 	protected void applyEffect() {
-		creep.damage(damageType, tickDamage, parent.resistPenPercent[damageType.ordinal()],
-				parent.resistPenFlat[damageType.ordinal()], parent.ignoresShield, 
-				parent.shieldDrainModifier, parent.toughPenPercent, parent.toughPenFlat);
+		creep.damage(damageType, tickDamage, parent.getResistPen(damageType, false),
+				parent.getResistPen(damageType, true), parent.ignoresShield(), 
+				parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
 	}
 
 	@Override

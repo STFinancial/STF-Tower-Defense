@@ -362,6 +362,7 @@ public class Level {
 		return toTarget;
 	}
 
+	//should remove this method.
 	HashSet<Creep> getCreepInRange(Projectile p, float range) {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		Circle splash = new Circle(p.x, p.y, range);
@@ -411,6 +412,14 @@ public class Level {
 			}
 		}
 		return null;
+	}
+	
+	Creep getFirstCreepRadially(float x, float y, float angle) {
+		//TODO: Is there a faster method for this? Should I check only the path intersection points
+		double xUnit = Math.cos(angle) * 0.2;
+		double yUnit = Math.sin(angle) * 0.2;
+		
+		
 	}
 	
 	HashSet<Creep> getCreepAdjacentToEarth() {

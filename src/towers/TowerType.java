@@ -637,42 +637,43 @@ public enum TowerType {
 	}}), 
 	FIRE_WIND (new BaseAttributeList(){{
 		//this tower fires a laser thing that passes through enemies and goes a fixed distance
-		name					= "";
+		name					= "Firestorm";
 		downgradeType 			= FIRE;
 		baseWidth				= 2;
 		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseDamageArray			= new float[]{/*E*/0, /*F*/40, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/20};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12.3f;
-		baseDamageSplash		= 0.25f;
-		baseEffectSplash		= 0.25f;
+		baseAttackCoolDown		= 10f;
+		baseDamageSplash		= 0f;
+		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
-		hitsAir					= false;
+		baseRange				= 8.8f;
+		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Global Warming";
+						 text 		= "Increases base RANGE";
+						 isBase		= true;
+						 baseCost   = 1250;}
+						 public void upgrade(Tower t) { t.range += 2; }
+					},
+					new Upgrade() {
+						{name		= "Dry Air";
+						 text 		= "Greatly increases RANGE";
 						 isBase		= false;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { }
+						 baseCost   = 2500;}
+						 public void upgrade(Tower t) { t.range += 7; }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2200;}
-						 public void upgrade(Tower t) { }
-					},
-					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						 text 		= "Increases base FIRE and WIND damage";
+						 isBase		= true;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						//TODO: This is a good candidate for modifying the siphon coefficients
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=67f; t.damageArray[DamageType.WIND.ordinal()]+= 34; }
 					},
 					new Upgrade() {
 						{name		= "";

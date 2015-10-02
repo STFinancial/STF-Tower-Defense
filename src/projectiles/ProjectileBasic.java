@@ -1,38 +1,22 @@
 package projectiles;
 
 import levels.Level;
-
 import creeps.Creep;
-
 import towers.Tower;
-import utilities.GameConstants;
 import utilities.TrigHelper;
 
 public class ProjectileBasic extends Projectile implements TargetsCreep {
 	protected Creep targetCreep;
 	
-	protected ProjectileBasic() {
-		
-	}
-	
 	public ProjectileBasic(Tower parent) {
 		super(parent);
-		
 	}
 
-	//TODO if something fucks up, make sure all the fields are being set properly
 	@Override
 	public Projectile clone() {
-		ProjectileBasic p = new ProjectileBasic();
+		ProjectileBasic p = new ProjectileBasic(parent);
 		cloneStats(p);
 		p.targetCreep = targetCreep;
-		//this is only safe because we clone immediately before we fire
-		p.resistPenFlat = new float[GameConstants.NUM_DAMAGE_TYPES];
-		p.resistPenPercent = new float[GameConstants.NUM_DAMAGE_TYPES];
-		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
-			p.resistPenFlat[i] = resistPenFlat[i];
-			p.resistPenPercent[i] = resistPenPercent[i];
-		}
 		return p;
 	}
 
@@ -70,6 +54,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 			return;
 		}
 		targetCreep.addAllEffects(creepEffects);
+		targetCreep.onProjectileCollision();
 		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
 			c.addAllEffects(splashEffects);
 		}
@@ -85,5 +70,4 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	public Creep getTargetCreep() {
 		return targetCreep;
 	}
-
 }
