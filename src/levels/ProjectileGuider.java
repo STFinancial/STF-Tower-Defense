@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import projectiles.Projectile;
+import towers.Tower;
 import utilities.Circle;
 import creeps.Creep;
 
-//TODO: What does this class actually do? I want to delegate the work to this class at some point instead of having level do it
 public final class ProjectileGuider {
 	private static final ProjectileGuider INSTANCE = new ProjectileGuider();
 	private Level level;
@@ -22,27 +22,139 @@ public final class ProjectileGuider {
 		this.level = level;
 	}
 	
-	public HashSet<Creep> getCreepInRange(Projectile p, float range) {
-		return level.getCreepInRange(p, range);
+	public Creep findTargetCreep(Tower tower, boolean hitsAir) {
+		Creep toTarget = null;
+		ArrayList<Creep> inRange = new ArrayList<Creep>();
+		for (Creep c : level.getCreeps()) {
+			if (c.hitBox.intersects(tower.targetZone)) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		switch (tower.targetingType) {
+		case FIRST:
+			int max = -1;
+			for (Creep c : inRange) {
+				if (c.currentIndex > max) {
+					toTarget = c;
+					max = c.currentIndex;
+				}
+			}
+			break;
+		case HIGHEST_HEALTH:
+			break;
+		case LAST:
+			break;
+		default:
+			break;
+		}
+		return toTarget;
 	}
 	
-	public HashSet<Creep> getCreepInRange(Circle area) {
-		return level.getCreepInRange(area);
+	public HashSet<Creep> getCreepInRange(Projectile p, float range, boolean hitsAir) {
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		Circle splash = new Circle(p.getX(), p.getY(), range);
+		for (Creep c : level.getCreeps()) {
+			if (c.hitBox.intersects(splash)) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		return inRange;
 	}
 	
-	public HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range) {
-		return level.getOtherCreepInSplashRange(creep, range);
+	public HashSet<Creep> getCreepInRange(Circle area, boolean hitsAir) {
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		for (Creep c: level.getCreeps()) {
+			if (c.hitBox.intersects(area)) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		return inRange;
+	}
+	
+	public HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range, boolean hitsAir) {
+		Circle splash = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		for (Creep c: level.getCreeps()) {
+			if (c.hitBox.intersects(splash) && c.creepID != creep.creepID) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		return inRange;
 	}
 
-	public Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited) {
-		return level.getSingleCreepInRange(creep, range, visited);
+	public Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited, boolean hitsAir) {
+		Circle box = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
+		if (visited == null) {
+			for (Creep c: level.getCreeps()) {
+				if (c.hitBox.intersects(box)) {
+					if (hitsAir) {
+						return c;
+					} else if (!c.isFlying()) {
+						return c;
+					}
+				}
+			}
+		} else {
+			for (Creep c: level.getCreeps()) {
+				if (c.hitBox.intersects(box) && c.creepID != creep.creepID && !visited.contains(c)) {
+					if (hitsAir) {
+						return c;
+					} else if (!c.isFlying()) {
+						return c;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
-	public HashSet<Creep> getCreepAdjacentToEarth() {
-		return level.getCreepAdjacentToEarth();
+	public HashSet<Creep> getGroundCreepAdjacentToEarth() {
+		return level.getGroundCreepAdjacentToEarth();
 	}
 	
-	public Creep getFirstCreepRadially(float x, float y, float angle) {
-		return level.getFirstCreepRadially(x, y, angle);
+	public Creep getFirstCreepRadially(float x, float y, float radius, float angle, boolean hitsAir) {
+		//TODO: Is there a faster method for this? Should I check only the path intersection points?
+		float xUnit = (float) Math.cos(angle) * 0.3f;
+		float yUnit = (float) Math.sin(angle) * 0.3f;
+		float currentX = x - xUnit;
+		float currentY = y - yUnit;
+		Creep c = null;
+		Circle missile = new Circle(currentX, currentY, radius);
+		while (level.getMap().isOutside(currentX, currentY) || (c = intersectingCreep(missile, hitsAir)) == null) { //TODO: We need to find a better than n^2 method I think, we will see.
+			currentX -= xUnit;
+			currentY -= yUnit;
+			missile.x = currentX;
+			missile.y = currentY;
+		}
+		return c;
+	}
+	
+	private Creep intersectingCreep(Circle missile, boolean hitsAir) {
+		for (Creep c: level.getCreeps()) {
+			if (c.hitBox.intersects(missile)) {
+				if (hitsAir) {
+					return c;
+				} else if (!c.isFlying()) {
+					return c;
+				}
+			}
+		}
+		return null;
 	}
 }

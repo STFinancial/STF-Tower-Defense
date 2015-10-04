@@ -38,6 +38,7 @@ final class Health extends Attribute implements Updatable {
 	//TODO: Why even have "reduce current Health"
 	//TODO: This seems like a lot of indirection for something that happens so often
 	//TODO: Optimization - If things are too slow then we can get rid of the complex division formulas
+	//TODO: I thought the idea was to increase encapsulation, is this really accomplishing that?
 	float damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { 
 		float flatResist = (parent.getCurrentDamageResist(type, true) * (1 - penPercent)) - penFlat;
 		float damageModifier = 1 - (flatResist / (GameConstants.DAMAGE_RESIST_DENOMINATOR_VALUE + flatResist));

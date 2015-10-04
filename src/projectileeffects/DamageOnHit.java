@@ -20,7 +20,7 @@ public class DamageOnHit extends ProjectileEffect implements Stackable {
 
 	@Override
 	protected void applyEffect() {
-		creep.addDamageOnHit(damageType, modifier);
+		creep.increaseDamageOnHit(damageType, modifier);
 	}
 
 	@Override

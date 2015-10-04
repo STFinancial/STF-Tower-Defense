@@ -1,22 +1,30 @@
 package projectiles;
 
-import levels.Level;
+import creeps.Creep;
 import towers.Tower;
 import utilities.Circle;
-import utilities.TrigHelper;
 
 //Stops at the first target it hits on the way to its destination
-public class ProjectileBeam extends Projectile implements TargetsArea {
+public final class ProjectileBeam extends Projectile implements TargetsArea {
 	//TODO will have to add stuff so this animates better later
-	//TODO This isn't working correctly, needs to stop at the first thing it hits
-	private Circle targetArea;
+	private boolean doesSplash;
 	
-	public ProjectileBeam(Tower parent, float targetAreaRadius) {
+	private ProjectileBeam(Tower parent, Projectile mold, float targetAreaRadius, boolean doesSplash) {
+		super(parent, mold);
+		this.targetArea = new Circle(parent.x, parent.y, targetAreaRadius);
+		this.speed = 0;
+		this.currentSpeed = 0;
+		this.targetAngle = 0;
+		this.doesSplash = doesSplash;
+	}
+	
+	public ProjectileBeam(Tower parent, float targetAreaRadius, boolean doesSplash) {
 		super(parent);
 		this.targetArea = new Circle(parent.x, parent.y, targetAreaRadius);
 		this.speed = 0;
 		this.currentSpeed = 0;
 		this.targetAngle = 0;
+		this.doesSplash = doesSplash;
 	}
 	
 	@Override
@@ -28,26 +36,32 @@ public class ProjectileBeam extends Projectile implements TargetsArea {
 	public boolean setTargetArea(float x, float y) {
 		targetArea.x = x;
 		targetArea.y = y;
-		targetAngle = TrigHelper.angleBetween(this.x, this.y, x, y);
+		updateAngle();
 		return true;
 	}
 
 	@Override
 	public Projectile clone() {
-		ProjectileBeam p = new ProjectileBeam(parent, targetArea.radius);
-		cloneStats(p);
-		p.targetArea = targetArea.clone();
+		ProjectileBeam p = new ProjectileBeam(parent, this, targetArea.radius, doesSplash);
+		p.targetArea = targetArea.clone(); //TODO: Optimization - remove this object creation and just reference the same circle
 		return p;
 	}
 
 	@Override
 	public int update() {
-		guider.getFirstCreepRadially(x, y, targetAngle);
+		return 0;
 	}
 
 	@Override
-	public void detonate(Level level) {
-		// TODO Auto-generated method stub
-		
+	public void detonate() {
+		Creep c = guider.getFirstCreepRadially(x, y, size, (float) targetAngle, parent.hitsAir);
+		if (c != null) {
+			c.addAllEffects(creepEffects);
+			if (doesSplash) {
+				for (Creep splashCreep: guider.getOtherCreepInSplashRange(c, splashRadius, parent.hitsAir)) {
+					splashCreep.addAllEffects(splashEffects);
+				}
+			}
+		}
 	}
 }

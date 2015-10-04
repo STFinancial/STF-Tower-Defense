@@ -2,8 +2,6 @@ package projectiles;
 
 import java.util.HashSet;
 
-import levels.Level;
-
 import towers.Tower;
 
 import creeps.Creep;
@@ -11,6 +9,12 @@ import creeps.Creep;
 public class ProjectileAOE extends Projectile {
 	private boolean doesSplash;
 	private boolean doesOnHit;
+	
+	protected ProjectileAOE(Tower parent, Projectile mold, boolean doesSplash, boolean doesOnHit) {
+		super(parent, mold);
+		this.doesSplash = doesSplash;
+		speed = currentSpeed = 0f;
+	}
 	
 	public ProjectileAOE(Tower parent, boolean doesSplash, boolean doesOnHit) {
 		super(parent);
@@ -20,9 +24,7 @@ public class ProjectileAOE extends Projectile {
 
 	@Override
 	public Projectile clone() {
-		Projectile p = new ProjectileAOE(parent, doesSplash, doesOnHit);
-		cloneStats(p);
-		return p;
+		return new ProjectileAOE(parent, this, doesSplash, doesOnHit);
 	}
 
 	@Override
@@ -36,8 +38,8 @@ public class ProjectileAOE extends Projectile {
 	}
 
 	@Override
-	public void detonate(Level level) {
-		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range);
+	public void detonate() {
+		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range, parent.hitsAir);
 		for (Creep c: creepInRange) {
 			c.addAllEffects(creepEffects);
 			if (doesOnHit) {

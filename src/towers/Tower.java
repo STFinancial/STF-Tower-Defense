@@ -5,12 +5,15 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import levels.Level;
+import levels.ProjectileGuider;
 import levels.Updatable;
 import maps.Tile;
 import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
+//TODO: Go through towers and make them final (?) and make all their fields private/protected depending on what I choose
+//TODO: Make strong comments for each tower type and tower (they can be the same, just make it).
 
 public abstract class Tower implements Updatable {
 	//TODO: want to implement something like "quality" so that we can continually upgrade the base stats of a tower with gold (so towers don't cap out)
@@ -19,13 +22,14 @@ public abstract class Tower implements Updatable {
 	public int x, y; //Top Left corner in Tile Coordinates
 	public Tile topLeft;
 	public float centerX, centerY;
-	public Circle targetArea;
+	public Circle targetZone;
 	public int width;
 	public int height;
 	public int cost;
 	public TowerType type;
 
 	//Targeting Details
+	public static ProjectileGuider guider = ProjectileGuider.getInstance();
 	public TargetingModeType targetingType;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
@@ -45,8 +49,8 @@ public abstract class Tower implements Updatable {
 	public float[] damageArray = new float[GameConstants.NUM_DAMAGE_TYPES];
 	public float[] slowArray = new float[GameConstants.NUM_DAMAGE_TYPES];
 	public int[] slowDurationArray = new int[GameConstants.NUM_DAMAGE_TYPES];
-	public float attackCoolDown;
-	public float currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
+	public float attackCooldown;
+	public float currentAttackCooldown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
 	public float attackCarryOver;
 	public float damageSplash;
 	public float effectSplash;
@@ -57,6 +61,7 @@ public abstract class Tower implements Updatable {
 	public boolean hitsGround;
 	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
+		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
@@ -69,7 +74,7 @@ public abstract class Tower implements Updatable {
 		this.topLeft = topLeftTile;
 		this.centerX = x + width / 2f;
 		this.centerY = y + height / 2f;
-		this.targetArea = new Circle(centerX, centerY, range);
+		this.targetZone = new Circle(centerX, centerY, range);
 		this.targetingType = TargetingModeType.FIRST;
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
@@ -109,7 +114,6 @@ public abstract class Tower implements Updatable {
 		}
 	}
 	
-	//TODO: technically we don't need to pass this as a parameter
 	protected void siphon(Tower from) {
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			this.damageArray[i] += (int) (from.damageArray[i] * this.siphonBonus);
@@ -118,10 +122,10 @@ public abstract class Tower implements Updatable {
 		}
 		//TODO find a good equation for range siphoning
 		this.range = Math.max(this.range, (this.range + from.range) / 2);//should I really max this?
-		this.targetArea.radius = this.range;
+		this.targetZone.radius = this.range;
 		
 		//TODO find a good equation for fire rate siphoning
-		this.attackCoolDown = (int) ((from.attackCoolDown + this.attackCoolDown) / 2);
+		this.attackCooldown = (int) ((from.attackCooldown + this.attackCooldown) / 2);
 		this.damageSplash += from.damageSplash * this.siphonBonus;
 		this.effectSplash += from.effectSplash * this.siphonBonus;
 		this.splashRadius += from.splashRadius * this.siphonBonus;
@@ -138,13 +142,13 @@ public abstract class Tower implements Updatable {
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustNonBaseUpgradeStats();
 			current.adjustProjectileStats();
-			current.currentAttackCoolDown = current.attackCoolDown;
-			current.targetArea.radius = current.range;
+			current.currentAttackCooldown = current.attackCooldown;
+			current.targetZone.radius = current.range;
 		}
 	}
 	
 	protected void adjustBaseStats() {
-		attackCoolDown 													= baseAttributeList.baseAttackCoolDown;
+		attackCooldown 													= baseAttributeList.baseAttackCooldown;
 		damageSplash 													= baseAttributeList.baseDamageSplash;
 		effectSplash													= baseAttributeList.baseEffectSplash;
 		splashRadius													= baseAttributeList.baseSplashRadius;
@@ -152,7 +156,7 @@ public abstract class Tower implements Updatable {
 		hitsAir															= baseAttributeList.hitsAir;
 		hitsGround														= baseAttributeList.hitsGround;
 		attackCarryOver													= 0;
-		currentAttackCoolDown											= 0;
+		currentAttackCooldown											= 0;
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			slowArray[i] = baseAttributeList.baseSlowArray[i];
 			damageArray[i] = baseAttributeList.baseDamageArray[i];
@@ -165,8 +169,8 @@ public abstract class Tower implements Updatable {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
 				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
-					if (progress[track][uNum] && baseAttributeList.upgrades[track][uNum].isBase) {
-						 baseAttributeList.upgrades[track][uNum].upgrade(this);
+					if (progress[track][uNum]) {
+						baseAttributeList.upgrades[track][uNum].baseUpgrade(this);
 					}
 				}
 			}
@@ -178,8 +182,8 @@ public abstract class Tower implements Updatable {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
 				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
-					if (progress[track][uNum] && !baseAttributeList.upgrades[track][uNum].isBase) {
-						 baseAttributeList.upgrades[track][uNum].upgrade(this);
+					if (progress[track][uNum]) {
+						baseAttributeList.upgrades[track][uNum].nonBaseUpgrade(this);
 					}
 				}
 			}
@@ -246,7 +250,7 @@ public abstract class Tower implements Updatable {
 			s.append("\t " + DamageType.values()[i] + " - " + slowArray[i] * 100 + "% for " + slowDurationArray[i] + "\n");
 		}
 		s.append("Tower Range: " + range); 
-		s.append("Attack Cooldown: " + attackCoolDown);
+		s.append("Attack Cooldown: " + attackCooldown);
 		s.append("Damage Splash Effectiveness: " + damageSplash * 100 + "%  Effect Splash Effectiveness: " + effectSplash * 100 + "%  Splash Radius: " + splashRadius);
 		return s.toString();
 	}

@@ -7,17 +7,16 @@ import projectileeffects.ProjectileEffect;
 import creeps.Creep;
 import utilities.Circle;
 
-
 public class EffectPatch implements Updatable {
-	private int lifetime;
+	//private int lifetime;
 	private int timing;
 	private int counter;
 	private Circle area;
 	private ArrayList<ProjectileEffect> effects;
-	private Level level;
+	//private Level level;
 	
-	public EffectPatch(int lifetime, int timing, float x, float y, float radius, ArrayList<ProjectileEffect> effects, Level level) {
-		this.lifetime = lifetime;
+	public EffectPatch(int lifetime, int timing, float x, float y, float radius, ArrayList<ProjectileEffect> effects) {
+		//this.lifetime = lifetime;
 		this.counter = lifetime;
 		if (timing == 0) {
 			lifetime = 0;
@@ -36,7 +35,7 @@ public class EffectPatch implements Updatable {
 			return -1;
 		} else if (timing != 0 && counter % timing == 0) {
 			//apply the effect
-			for (Creep c: level.getGroundedCreepInRange(area)) {
+			for (Creep c: ProjectileGuider.getInstance().getCreepInRange(area, false)) {
 				c.addAllEffects(effects);
 			}
 			return 1;

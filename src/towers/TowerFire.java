@@ -18,17 +18,17 @@ public class TowerFire extends Tower {
 
 	@Override
 	public int update() {
-		currentAttackCoolDown--;
-		if (currentAttackCoolDown < 1) {
-			Creep targetCreep = level.findTargetCreep(this);
+		currentAttackCooldown--;
+		if (currentAttackCooldown < 1) {
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
-				attackCarryOver += 1 - currentAttackCoolDown;
-				currentAttackCoolDown = attackCoolDown;
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {
 					attackCarryOver -= 1;
-					currentAttackCoolDown--;
+					currentAttackCooldown--;
 				}
 			}
 			return 1;

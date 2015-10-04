@@ -32,7 +32,7 @@ public class TowerEarthFire extends Tower {
 			baseProjectile.addSpecificCreepEffect(w);
 		}
 		if (progress[1][2]) {
-			baseProjectile.resistPenPercent[DamageType.PHYSICAL.ordinal()] = 1;
+			baseProjectile.setResistPenPercent(DamageType.PHYSICAL, 1);
 		}
 		if (progress[1][3]) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.PHYSICAL, baseProjectile, false);
@@ -44,18 +44,18 @@ public class TowerEarthFire extends Tower {
 
 	@Override
 	public int update() {
-		currentAttackCoolDown--;
-		if (currentAttackCoolDown < 1) {
-			Creep targetCreep = level.findTargetCreep(this);
+		currentAttackCooldown--;
+		if (currentAttackCooldown < 1) {
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
-				attackCarryOver += 1 - currentAttackCoolDown;
-				currentAttackCoolDown = attackCoolDown;
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {
 					attackCarryOver -= 1;
-					currentAttackCoolDown--;
+					currentAttackCooldown--;
 				}
 				return 1;
 			}

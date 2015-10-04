@@ -4,42 +4,43 @@ import java.util.ArrayList;
 
 import projectileeffects.ProjectileEffect;
 
-
 import creeps.Creep;
-import levels.Level;
 import towers.Tower;
-import utilities.GameConstants;
-import utilities.TrigHelper;
 
-public class ProjectileChain extends Projectile implements TargetsCreep {
-	Creep targetCreep;
-	ArrayList<Creep> chainedCreep;
-	ArrayList<ArrayList<ProjectileEffect>> chainedEffects;
-	ArrayList<ArrayList<ProjectileEffect>> chainedSplashEffects;
+public final class ProjectileChain extends Projectile implements TargetsCreep {
+	private Creep targetCreep;
+	private ArrayList<Creep> chainedCreep;
+	private ArrayList<ArrayList<ProjectileEffect>> chainedEffects;
+	private ArrayList<ArrayList<ProjectileEffect>> chainedSplashEffects;
 	/**
 	 * This number includes the first creep hit
 	 */
-	int maxChains;
-	float chainRadius;
-	float chainPenalty;
-	public boolean noDuplicates = true;
+	private int maxChains;
+	private float chainRadius;
+	private float chainPenalty;
+	private boolean noDuplicates;
 	
-	//TODO I think the speed of this projectile should be increased or is instantaneous
-	protected ProjectileChain(int maxChains, float chainRadius, float chainPenalty) {
-		super();
+	private ProjectileChain(Tower parent, Projectile mold, int maxChains, float chainRadius, float chainPenalty, boolean noDuplicates) {
+		super(parent, mold);
 		this.maxChains = maxChains;
 		this.chainRadius = chainRadius;
 		this.chainPenalty = chainPenalty;
-		chainedCreep = new ArrayList<Creep>(maxChains);
+		this.noDuplicates = noDuplicates;
+		this.chainedCreep = new ArrayList<Creep>(maxChains);
 	}
 	
-	public ProjectileChain(Tower parent, int maxChains, float chainRadius, float chainPenalty) {
+	//TODO I think the speed of this projectile should be increased or is instantaneous
+	public ProjectileChain(Tower parent, int maxChains, float chainRadius, float chainPenalty, boolean noDuplicates) {
 		super(parent);
-		chainedCreep = new ArrayList<Creep>(maxChains);
-		chainedEffects = new ArrayList<ArrayList<ProjectileEffect>>(maxChains);
-		chainedSplashEffects = new ArrayList<ArrayList<ProjectileEffect>>(maxChains);
-		chainedEffects.add(creepEffects);
-		chainedSplashEffects.add(splashEffects);
+		this.maxChains = maxChains;
+		this.chainRadius = chainRadius;
+		this.chainPenalty = chainPenalty;
+		this.noDuplicates = noDuplicates;
+		this.chainedCreep = new ArrayList<Creep>(maxChains);
+		this.chainedEffects = new ArrayList<ArrayList<ProjectileEffect>>(maxChains);
+		this.chainedSplashEffects = new ArrayList<ArrayList<ProjectileEffect>>(maxChains);
+		this.chainedEffects.add(creepEffects);
+		this.chainedSplashEffects.add(splashEffects);
 		float currentPenalty = chainPenalty;
 		ProjectileEffect e;
 		for (int i = 1; i < maxChains; i++) {
@@ -68,13 +69,13 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 	}
 	
 	@Override
-	public void detonate(Level level) {
+	public void detonate() {
 		if (dud) {
 			return;
 		}
 		int currentChains = 0;
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
+		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir)) {
 			c.addAllEffects(splashEffects);
 		}
 		chainedCreep.add(targetCreep);
@@ -84,9 +85,9 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 			Creep prevCreep = chainedCreep.get(currentChains - 1);
 			Creep newCreep;
 			if (noDuplicates) {
-				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep);
+				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep, parent.hitsAir);
 			} else {
-				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, null);
+				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, null, parent.hitsAir);
 			}
 			
 			if (newCreep == null) {
@@ -95,7 +96,7 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 			newCreep.addAllEffects(chainedEffects.get(currentChains));
 			chainedCreep.add(newCreep);
 			//TODO at some point we may change the splashRadius to splashRadius * currentPenalty
-			for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius)) {
+			for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius, parent.hitsAir)) {
 				splash.addAllEffects(chainedSplashEffects.get(currentChains));
 			}
 			currentChains++;
@@ -104,29 +105,19 @@ public class ProjectileChain extends Projectile implements TargetsCreep {
 	
 	@Override
 	public Projectile clone() {
-		ProjectileChain p = new ProjectileChain(maxChains, chainRadius, chainPenalty);
+		ProjectileChain p = new ProjectileChain(parent, this, maxChains, chainRadius, chainPenalty, noDuplicates);
 		super.cloneStats(p);
-		p.dud = false;
-		p.parent = parent;
-		p.level = level;
-		p.creepEffects = creepEffects;
-		p.splashEffects = splashEffects;
-		p.hitBox = hitBox;
-		p.splashRadius = splashRadius;
-		p.size = size;
-		p.targetAngle = targetAngle;
 		p.targetCreep = targetCreep;
 		p.chainedEffects = chainedEffects;
 		p.chainedSplashEffects = chainedSplashEffects;
-		p.noDuplicates = noDuplicates;
 		return p;
 	}
 
 	@Override
 	public void setTargetCreep(Creep c) {
 		targetCreep = c;
-		//TODO the trig helper might not be needed here since these detonate instantly
-		targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+		//TODO the trig helper might not be needed here since these detonate instantly. Only for animation purposes possibly.
+		updateAngle();
 	}
 
 	@Override

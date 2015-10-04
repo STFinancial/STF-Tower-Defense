@@ -63,15 +63,15 @@ final class CreepAttributes implements Updatable {
 	
 	//Simple delegation one liners
 	void addAllEffects(ArrayList<ProjectileEffect> effects) { this.effects.addAllEffects(effects); }
-	void addDamageOnHit(DamageType type, float amount) { onHit.increaseDamageOnHit(type, amount); }
 	void addEffect(ProjectileEffect effect) { effects.addEffect(effect); }
-	void addGoldOnHit(float amount) { onHit.increaseGoldOnHit(amount); }
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
 	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
 	boolean disorient(int duration) { return speed.disorient(duration); }
 	boolean ground() { return travel.ground(); }
 	void increaseCDOnHit(DamageType type, float amount) { onHit.increaseCDOnHit(amount); }
+	void increaseDamageOnHit(DamageType type, float amount) { onHit.increaseDamageOnHit(type, amount); }
 	void increaseDamageResist(DamageType type, float amount, boolean isFlat) { damageResistances.increaseResist(type, amount, isFlat); }
+	void increaseGoldOnHit(float amount) { onHit.increaseGoldOnHit(amount); }
 	void increaseGoldValue(float amount, boolean isFlat) { goldValue.increaseGoldValue(amount, isFlat); }
 	void increaseToughness(float amount, boolean isFlat) { toughness.increaseToughness(amount, isFlat); }
 	void loft() { travel.loft(); }
@@ -104,6 +104,7 @@ final class CreepAttributes implements Updatable {
 	float getMaxHealth() { return health.getMaxHealth(); }
 	float getSlowResist(DamageType type) { return slowResistances.getResistPercent(type); }
 	boolean isDisoriented() { return speed.isDisoriented(); }
+	boolean isFlying() { return travel.isFlying(); }
 	
 	@Override
 	public int update() {

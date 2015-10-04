@@ -17,18 +17,18 @@ public class TowerWater extends Tower{
 
 	@Override
 	public int update() {
-		currentAttackCoolDown--;
-		if (currentAttackCoolDown < 1) {
+		currentAttackCooldown--;
+		if (currentAttackCooldown < 1) {
 			Creep targetCreep = level.findTargetCreep(this);
 			if (targetCreep != null) {
 				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
-				attackCarryOver += 1 - currentAttackCoolDown;
-				currentAttackCoolDown = attackCoolDown;
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {
 					attackCarryOver -= 1;
-					currentAttackCoolDown--;
+					currentAttackCooldown--;
 				}
 			}
 			return 1;

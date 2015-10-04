@@ -30,4 +30,8 @@ public class Map {
 	public void setTile(int y, int x, TileType type){
 		map[y][x] = new Tile(y, x, type);
 	}
+	
+	public boolean isOutside(float x, float y) {
+		return x < 0 || x > width || y < 0 || y > height; 
+	}
 }

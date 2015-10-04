@@ -51,14 +51,14 @@ public class TowerWaterWater extends Tower {
 
 	@Override
 	public int update() {
-		currentAttackCoolDown--;
-		if (currentAttackCoolDown < 1) {
+		currentAttackCooldown--;
+		if (currentAttackCooldown < 1) {
 			level.addProjectile(fireProjectile());
-			attackCarryOver += 1 - currentAttackCoolDown;
-			currentAttackCoolDown = attackCoolDown;
+			attackCarryOver += 1 - currentAttackCooldown;
+			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {
 				attackCarryOver -= 1;
-				currentAttackCoolDown--;
+				currentAttackCooldown--;
 			}
 			return 1;
 		}

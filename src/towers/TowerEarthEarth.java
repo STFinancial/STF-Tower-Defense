@@ -15,6 +15,8 @@ public class TowerEarthEarth extends Tower {
 	private int maxShredStacks;
 	private int armorShredDuration;
 	private int bleedDuration; //TODO These numbers maybe will be longer, realistically the bleed lasts only the duration of a tower cooldown
+	private boolean doesOnHit;
+	private boolean doesSplash;
 	
 	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
@@ -22,13 +24,15 @@ public class TowerEarthEarth extends Tower {
 		this.shredModifier = 0.10f;
 		this.bleedModifier = 0.5f;
 		this.maxShredStacks = 5;
-		this.armorShredDuration = 12;
-		this.bleedDuration = 12;
+		this.armorShredDuration = 18;
+		this.bleedDuration = 18;
+		this.doesSplash = false;
+		this.doesOnHit = false;
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this);
+		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
 			
@@ -49,14 +53,14 @@ public class TowerEarthEarth extends Tower {
 
 	@Override
 	public int update() {
-		currentAttackCoolDown--;
-		if (currentAttackCoolDown < 1) {
+		currentAttackCooldown--;
+		if (currentAttackCooldown < 1) {
 			level.addProjectile(fireProjectile());
-			attackCarryOver += 1 - currentAttackCoolDown;
-			currentAttackCoolDown = attackCoolDown;
+			attackCarryOver += 1 - currentAttackCooldown;
+			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {
 				attackCarryOver -= 1;
-				currentAttackCoolDown--;
+				currentAttackCooldown--;
 			}
 			return 1;
 		}

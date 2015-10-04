@@ -4,7 +4,6 @@ package towers;
 //TODO: Really need to normalize all the upgrade costs for the stats that they give
 import utilities.GameConstants;
 import creeps.DamageType;
-import projectiles.*;
 //TODO can use a priority value instead of "isBase"
 //EARTH, FIRE, WATER, WIND, LIGHT, DARK, PHYSICAL;
 public enum TowerType {
@@ -13,6 +12,10 @@ public enum TowerType {
 	//TODO: Come up with consistent wording and formatting for descriptions of upgrades
 	//TODO: Going to create different siphon coefficients for different stats that vary by tower
 	//TODO: Make an update in Tower that applies global effects (e.g. On one level we want all towers to have the additional projectile effect that they heal enemies on hit)
+	//TODO: Upgrades that modify the damage against certain types of creep?
+	
+	//TODO: Review and set all slow duration and effect arrays. Make sure the effectiveness is set to fractions, not larger than 1.
+	//TODO: This can be done when we set all of the siphon coefficients.
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
 		baseWidth			  	= 2;
@@ -21,7 +24,7 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost			  	= 200;
-		baseAttackCoolDown	  	= 15f;
+		baseAttackCooldown	  	= 15f;
 		baseDamageSplash		= 0.2f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 2f;
@@ -38,7 +41,7 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 200;
-		baseAttackCoolDown		= 12f;
+		baseAttackCooldown		= 12f;
 		baseDamageSplash		= 0.25f;
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 1.5f;
@@ -55,7 +58,7 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 200;
-		baseAttackCoolDown		= 10f;
+		baseAttackCooldown		= 10f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 1f;
@@ -72,7 +75,7 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 200;
-		baseAttackCoolDown		= 5f;
+		baseAttackCooldown		= 5f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0.10f;
 		baseSplashRadius		= 0f;
@@ -91,7 +94,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/100};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 15f;
+		baseAttackCooldown		= 15f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
@@ -112,7 +115,7 @@ public enum TowerType {
 						 text 		= "Increase the base pulse rate";
 						 isBase		= true;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 3; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 3; }
 					},
 					new Upgrade() {
 						{name		= "Channel the Earth";
@@ -170,7 +173,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/10, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/50};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 13f;
+		baseAttackCooldown		= 13f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
@@ -184,7 +187,7 @@ public enum TowerType {
 						 text 		= "Reduces base ATTACK COOLDOWN";
 						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 2; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 2; }
 					},
 					new Upgrade() {
 						{name		= "Aerodynamics";
@@ -249,7 +252,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/30, /*F*/0, /*WA*/30, /*WI*/0, /*L*/0, /*D*/0, /*P*/70};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 13f;
+		baseAttackCooldown		= 13f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
@@ -329,7 +332,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/20, /*L*/0, /*D*/0, /*P*/60};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 14f;
+		baseAttackCooldown		= 14f;
 		baseDamageSplash		= 0.10f;
 		baseEffectSplash		= 0.10f;
 		baseSplashRadius		= 5f;
@@ -373,7 +376,7 @@ public enum TowerType {
 						 text 		= "Reduces ATTACK COOLDOWN";
 						 isBase 	= false;
 						 baseCost 	= 1000;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 3; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 3; }
 					},
 					new Upgrade() {
 						{name		= "Brewing Storm";
@@ -387,14 +390,14 @@ public enum TowerType {
 						 text 		= "Reduces ATTACK COOLDOWN and adds 50% of PHYSICAL damage as WIND damage";
 						 isBase		= false;
 						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 3; t.damageArray[DamageType.WIND.ordinal()] += 0.5 * t.damageArray[DamageType.PHYSICAL.ordinal()];}
+						 public void upgrade(Tower t) { t.attackCooldown -= 3; t.damageArray[DamageType.WIND.ordinal()] += 0.5 * t.damageArray[DamageType.PHYSICAL.ordinal()];}
 					},
 					new Upgrade() {
 						{name		= "Sand Blast";
 						 text 		= "Converts ATTACK COOLDOWN to PHYSICAL damage and now fires a blast of sand";
 						 isBase		= true;
 						 baseCost   = 8000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCoolDown) * 40; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCooldown) * 40; }
 					},
 				}
 		};
@@ -407,7 +410,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/20, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/35};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 14f;
+		baseAttackCooldown		= 14f;
 		baseDamageSplash		= 0.05f;
 		baseEffectSplash		= 0.05f;
 		baseSplashRadius		= 0f;
@@ -435,7 +438,7 @@ public enum TowerType {
 						 text 		= "Increases BASE damage and reduces BASE attack cooldown";
 						 isBase		= true;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 2.2; t.damageArray[DamageType.FIRE.ordinal()] += 33; t.damageArray[DamageType.PHYSICAL.ordinal()] += 33; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 2.2; t.damageArray[DamageType.FIRE.ordinal()] += 33; t.damageArray[DamageType.PHYSICAL.ordinal()] += 33; }
 					},
 					new Upgrade() {
 						{name		= "Supervolcano";
@@ -486,7 +489,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/70, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12f;
+		baseAttackCooldown		= 12f;
 		baseDamageSplash		= 0.25f;
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 0f;
@@ -565,7 +568,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/70, /*WA*/50, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12.3f;
+		baseAttackCooldown		= 12.3f;
 		baseDamageSplash		= 0.25f;
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 0f;
@@ -635,6 +638,7 @@ public enum TowerType {
 				}
 		};
 	}}), 
+	//TODO: I'm definitely sensing a power creep here. Again we need to normalize some stats I think.
 	FIRE_WIND (new BaseAttributeList(){{
 		//this tower fires a laser thing that passes through enemies and goes a fixed distance
 		name					= "Firestorm";
@@ -643,13 +647,13 @@ public enum TowerType {
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/40, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/20};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 10f;
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0.10f, /*WA*/0, /*WI*/0.10f, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown		= 10f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
 		baseRange				= 8.8f;
-		hitsAir					= true;
+		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
@@ -669,45 +673,45 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "Increases base FIRE and WIND damage";
+						 text 		= "Increases base FIRE and WIND damage and widens the laser";
 						 isBase		= true;
 						 baseCost   = 3500;}
 						//TODO: This is a good candidate for modifying the siphon coefficients
 						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=67f; t.damageArray[DamageType.WIND.ordinal()]+= 34; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
+						{name		= "Heat Column";
+						 text 		= "Increases laser width and range, hits flying, and applies splash effects to affected creep";
 						 isBase		= false;
 						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { t.hitsAir = true; t.range += 4.1; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Multiplies FIRE damage";
 						 isBase 	= false;
-						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						 baseCost 	= 2000;}
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] *= 1.5f; }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Multiply all damage types";
 						 isBase		= false;
-						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 4300;}
+						 public void upgrade(Tower t) { for(int i=0; i<GameConstants.NUM_DAMAGE_TYPES; i++) { t.damageArray[i] *= 1.2; } }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						 text 		= "Greatly increases siphon coefficients";
+						 isBase		= true;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void upgrade(Tower t) { /*//TODO */}
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
+						 text 		= "Increases siphon coefficients of all towers nearby"; //TODO: Could I increase nearby towers' siphon coefficients?
 						 isBase		= false;
 						 baseCost   = 4000;}
 						 public void upgrade(Tower t) {  }
@@ -724,7 +728,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12.3f;
+		baseAttackCooldown		= 12.3f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
@@ -745,7 +749,7 @@ public enum TowerType {
 						 text 		= "Reduces attack cooldown";
 						 isBase		= false;
 						 baseCost   = 1300;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 5; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 5; }
 					},
 					new Upgrade() {
 						{name		= "Churning River";
@@ -803,7 +807,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/50, /*WA*/40, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.10f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 13.1f;
+		baseAttackCooldown		= 13.1f;
 		baseDamageSplash		= 0.04f;
 		baseEffectSplash		= 0.04f;
 		baseSplashRadius		= 1f;
@@ -824,7 +828,7 @@ public enum TowerType {
 						 text 		= "Reduces base attack cooldown";
 						 isBase		= true;
 						 baseCost   = 1600;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 3.1f; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 3.1f; }
 					},
 					new Upgrade() {
 						{name		= "Clarity";
@@ -847,7 +851,7 @@ public enum TowerType {
 						 text 		= "Increases base FIRE damage and reduces base attack cooldown";
 						 isBase		= true;
 						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=57; t.attackCoolDown-=1.4f; }
+						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=57; t.attackCooldown-=1.4f; }
 					},
 					new Upgrade() {
 						{name		= "Scalding";
@@ -880,9 +884,9 @@ public enum TowerType {
 		baseWidth  				= 2;
 		baseHeight   			= 2;
 		baseDamageArray  		= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown 		= 10f;
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/0, /*L*/0, /*D*/0, /*P*/10};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.40f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0.10f};
+		baseAttackCooldown 		= 16f;
 		baseDamageSplash 		= 0f;
 		baseEffectSplash 		= 0f;
 		baseSplashRadius 		= 1f;
@@ -895,15 +899,15 @@ public enum TowerType {
 						 {name  	 = "First Frost";
 				          text   	 = "Increases base RANGE";
 				          isBase  	 = true;
-				          baseCost   = 400;}
+				          baseCost   = 900;}
 						  public void upgrade(Tower t) { t.range += 2; }
 				     },
 				     new Upgrade() {
 				    	 {name 	 	 = "Chilling Breath";
 				    	  text  	 = "Increases base SLOW Duration";
 				    	  isBase  	 = true;
-				    	  baseCost   = 500;}
-				    	  public void upgrade(Tower t) { t.slowDurationArray[DamageType.WATER.ordinal()] += 5; }
+				    	  baseCost   = 1400;}
+				    	  public void upgrade(Tower t) { t.slowDurationArray[DamageType.WATER.ordinal()] += 17; }
 				     },
 				     new Upgrade() {
 				    	 {name 		 = "Chilled to the Bone";
@@ -926,7 +930,7 @@ public enum TowerType {
 				      	  text   	 = "Increases base pulse rate";
 				      	  isBase	 = true;
 				      	  baseCost   = 600;}
-				      	  public void upgrade(Tower t) { t.attackCoolDown -= 3; }
+				      	  public void upgrade(Tower t) { t.attackCooldown -= 3; }
 				     },
 				     new Upgrade() {
 				    	 {name 		 = "Black Ice";
@@ -953,19 +957,19 @@ public enum TowerType {
 		};
 	}}), 
 	WATER_WIND (new BaseAttributeList(){{
-		//this tower has a high splash effect coefficient?
+		//Fires a missile that does one of three random effects. Gold, damage, slow, and additional effects
 		name					= "Hail";
 		downgradeType 			= WATER;
 		baseWidth				= 2;
 		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12.3f;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/20, /*L*/0, /*D*/0, /*P*/20};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/5, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.20f, /*WI*/0.05f, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown		= 11.1f;
 		baseDamageSplash		= 0.25f;
 		baseEffectSplash		= 0.25f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseSplashRadius		= 4f;
+		baseRange				= 7.4f;
 		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -1040,7 +1044,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/15, /*L*/0, /*D*/0, /*P*/30};
 		baseSlowDurationArray 	= new int[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 12.3f;
+		baseAttackCooldown		= 12.3f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
@@ -1054,7 +1058,7 @@ public enum TowerType {
 						 text 		= "Reduces base ATTACK COOLDOWN";
 						 isBase		= true;
 						 baseCost   = 1200;}
-						 public void upgrade(Tower t) { t.attackCoolDown -= 1.8f; }
+						 public void upgrade(Tower t) { t.attackCooldown -= 1.8f; }
 					},
 					new Upgrade() {
 						{name		= "Desertification";
@@ -1120,7 +1124,7 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 200;
-		baseAttackCoolDown		= 7f;
+		baseAttackCooldown		= 7f;
 		baseDamageSplash		= 0.10f;
 		baseEffectSplash		= 0.10f;
 		baseSplashRadius		= 0f;
@@ -1134,7 +1138,7 @@ public enum TowerType {
 						 text 		= "Increase the maximum chaining by 3";
 						 isBase		= false;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { ((TowerWindFire) t).maxChains += 3; }
+						 public void upgrade(Tower t) { ((TowerWindFire) t).maxChains += 3; } //TODO: Shouldn't be accessing this way
 					},
 					new Upgrade() {
 						{name		= "Conductivity";
@@ -1199,7 +1203,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 10.7f;
+		baseAttackCooldown		= 10.7f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0.10f;
 		baseSplashRadius		= 0f;
@@ -1278,7 +1282,7 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/50};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCoolDown		= 6.9f;
+		baseAttackCooldown		= 6.9f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 2.2f;
@@ -1300,7 +1304,7 @@ public enum TowerType {
 						 text 		= "Sets the attack cooldown of this tower to 1 and removes all splash effects";
 						 isBase		= false;
 						 baseCost   = 3000;}
-						 public void upgrade(Tower t) { t.attackCoolDown = 1; t.splashRadius = 0; }
+						 public void upgrade(Tower t) { t.attackCooldown = 1; t.splashRadius = 0; }
 					},
 					new Upgrade() {
 						{name		= "Trade Winds";

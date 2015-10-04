@@ -1,17 +1,17 @@
 package projectiles;
 
 import java.util.HashSet;
-
 import levels.Level;
-
 import towers.Tower;
-
 import creeps.Creep;
 
-//This one pulses damage as it moves along its path
-public class ProjectilePulse extends Projectile {
+//TODO: Should there be a penalty modifier.
 
-	public ProjectilePulse(Tower parent) {
+//This one pulses damage as it moves along its path
+//This differs from ProjectilePassThroughArea in that we can control it's timing and it can "explode" at the end?
+public class ProjectilePulse extends Projectile implements TargetsCreep {
+
+	public ProjectilePulse(Tower parent, int pulseTiming) {
 		super(parent);
 		// TODO Auto-generated constructor stub
 	}
@@ -35,9 +35,21 @@ public class ProjectilePulse extends Projectile {
 	}
 
 	@Override
-	public void detonate(Level level) {
+	public void detonate() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setTargetCreep(Creep c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Creep getTargetCreep() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

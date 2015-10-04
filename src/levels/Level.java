@@ -27,35 +27,34 @@ import utilities.PathFinder;
  * Executes main game logic loop
  */
 public class Level {
-
-	public final Map map;
+	private final Map map;
 	private final Player player;
 	private final ArrayList<Wave> creepWaves;
 
-	public int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
-	public int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
-	public int currentTowerID = 0;
+	private int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
+	private int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
+	private int currentTowerID = 0;
 	
-	public int gold = 500;
-	public int health = 100;
-	int nextSpawnTick = -1;
-	public Wave currentWave;
-	public boolean roundInProgress = false;
+	private int gold = 500;
+	private int health = 100;
+	private int nextSpawnTick = -1;
+	private Wave currentWave;
+	private boolean roundInProgress = false;
 
 	//Currently loaded/active units
-	public ArrayList<Tower> towers = new ArrayList<Tower>();
-	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-	public ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
-	public ArrayList<Creep> creeps = new ArrayList<Creep>();
+	private ArrayList<Tower> towers = new ArrayList<Tower>();
+	private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
+	private ArrayList<Creep> creeps = new ArrayList<Creep>();
 
-	public Path groundPath, airPath, proposedGroundPath;
+	private Path groundPath, airPath, proposedGroundPath;
 	//This will change when we create and destroy new terrain
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
 	private HashSet<Creep> creepAdjacentToEarth = new HashSet<Creep>();
 	private boolean hasEarthEarth = false;
 
-	public ArrayList<GameEvent> events = new ArrayList<GameEvent>();
-	//Temp Variables for readability
+	private ArrayList<GameEvent> events = new ArrayList<GameEvent>();
+	//Temp Variables for readability.. wat
 	Creep c;
 	int i;
 	private boolean creepLeft;
@@ -330,106 +329,17 @@ public class Level {
 		}
 	}
 
-	public Creep findTargetCreep(Tower tower) {
-		Creep toTarget = null;
-		ArrayList<Creep> inRange = new ArrayList<Creep>();
-		for (Creep c : creeps) {
-			if (c.hitBox.intersects(tower.targetArea)) {
-				inRange.add(c);
-			}
-		}
-		//System.out.println("Saw : " + inRange.size());
-		switch (tower.targetingType) {
-//		case AREA:
-//			break;
-		case FIRST:
-			int max = -1;
-			for (Creep c : inRange) {
-				if (c.currentIndex > max) {
-					toTarget = c;
-					max = c.currentIndex;
-				}
-			}
-			break;
-		case HIGHEST_HEALTH:
-			break;
-		case LAST:
-			break;
-		default:
-			break;
-
-		}
-		return toTarget;
-	}
-
-	//should remove this method.
-	HashSet<Creep> getCreepInRange(Projectile p, float range) {
-		HashSet<Creep> inRange = new HashSet<Creep>();
-		Circle splash = new Circle(p.x, p.y, range);
-		for (Creep c : creeps) {
-			if (c.hitBox.intersects(splash)) {
-				inRange.add(c);
-			}
-		}
-		return inRange;
-	}
+	public ArrayList<Creep> getCreeps() { return creeps; }
+	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this...
 	
-	HashSet<Creep> getCreepInRange(Circle area) {
-		HashSet<Creep> inRange = new HashSet<Creep>();
-		for (Creep c: creeps) {
-			if (c.hitBox.intersects(area)) {
-				inRange.add(c);
-			}
-		}
-		return inRange;
-	}
-	
-	HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range) {
-		Circle splash = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
-		HashSet<Creep> inRange = new HashSet<Creep>();
-		for (Creep c: creeps) {
-			if (c.hitBox.intersects(splash) && c.creepID != creep.creepID) {
-				inRange.add(c);
-			}
-		}
-		return inRange;
-	}
-	
-	//TODO: Reduce visibility and move access to projectileguider
-	Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited) {
-		Circle box = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
-		if (visited == null) {
-			for (Creep c: creeps) {
-				if (c.hitBox.intersects(box)) {
-					return c;
-				}
-			}
-		} else {
-			for (Creep c: creeps) {
-				if (c.hitBox.intersects(box) && c.creepID != creep.creepID && !visited.contains(c)) {
-					return c;
-				}
-			}
-		}
-		return null;
-	}
-	
-	Creep getFirstCreepRadially(float x, float y, float angle) {
-		//TODO: Is there a faster method for this? Should I check only the path intersection points
-		double xUnit = Math.cos(angle) * 0.2;
-		double yUnit = Math.sin(angle) * 0.2;
-		//Test Change
-		
-	}
-	
-	HashSet<Creep> getCreepAdjacentToEarth() {
+	HashSet<Creep> getGroundCreepAdjacentToEarth() {
 		return creepAdjacentToEarth;
 	}
 	
-	private void updateCreepAdjacentToEarth() {
+	private void updateGroundCreepAdjacentToEarth() {
 		creepAdjacentToEarth.clear();
 		for (Circle c: earthTiles) {
-			creepAdjacentToEarth.addAll(getCreepInRange(c));
+			creepAdjacentToEarth.addAll(ProjectileGuider.getInstance().getCreepInRange(c, false));
 		}
 	}
 

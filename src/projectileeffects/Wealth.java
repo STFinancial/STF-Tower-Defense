@@ -27,7 +27,7 @@ public class Wealth extends ProjectileEffect implements Stackable {
 	@Override
 	protected void applyEffect() {
 		if (onHit) {
-			creep.addGoldOnHit(modifier);
+			creep.increaseGoldOnHit(modifier);
 		} else {
 			creep.increaseGoldValue(modifier, isFlat);
 		}

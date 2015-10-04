@@ -47,12 +47,12 @@ public class Creep implements Updatable {
 	//Public interface methods that simply delegate to the attributes layer.
 	//TODO: Make consistent the naming of "reduce" and "remove" and "decrease" (I like decrease the best tbh)
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
-	public void addDamageOnHit(DamageType type, float amount) { attributes.addDamageOnHit(type, amount); }
 	public void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
-	public void addGoldOnHit(float amount) { attributes.addGoldOnHit(amount); }
 	public void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
 	public void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
+	public void increaseDamageOnHit(DamageType type, float amount) { attributes.increaseDamageOnHit(type, amount); }
 	public void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
+	public void increaseGoldOnHit(float amount) { attributes.increaseGoldOnHit(amount); }
 	public void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
 	public void increaseHasting(DamageType type, float amount) { attributes.increaseCDOnHit(type, amount); }
 	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
@@ -76,6 +76,7 @@ public class Creep implements Updatable {
 	public float getCurrentSize() { return attributes.getCurrentSize(); }
 	public float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
 	public float getMaxHealth() { return attributes.getMaxHealth(); }
+	public boolean isFlying() { return attributes.isFlying(); }
 	
 	public void disorient(int lifetime) { 
 		if (attributes.disorient(lifetime)) {

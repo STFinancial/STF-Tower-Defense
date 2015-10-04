@@ -1,12 +1,14 @@
 package projectiles;
 
-import levels.Level;
 import creeps.Creep;
 import towers.Tower;
-import utilities.TrigHelper;
 
 public class ProjectileBasic extends Projectile implements TargetsCreep {
 	protected Creep targetCreep;
+	
+	protected ProjectileBasic(Tower parent, Projectile mold) {
+		super(parent, mold);
+	}
 	
 	public ProjectileBasic(Tower parent) {
 		super(parent);
@@ -14,8 +16,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 
 	@Override
 	public Projectile clone() {
-		ProjectileBasic p = new ProjectileBasic(parent);
-		cloneStats(p);
+		ProjectileBasic p = new ProjectileBasic(parent, this);
 		p.targetCreep = targetCreep;
 		return p;
 	}
@@ -27,14 +28,14 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 				dud = true;
 				return -1;
 			} else {
-				targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+				updateAngle();
 			}
 		} else {
 			dud = true;
 			return -1;
 		}
-		x -= Math.cos(targetAngle) * currentSpeed;
-		y -= Math.sin(targetAngle) * currentSpeed;
+		x -= angleCos * currentSpeed;
+		y -= angleSin * currentSpeed;
 		hitBox.x = x;
 		hitBox.y = y;
 		return 0;
@@ -49,13 +50,13 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	}
 
 	@Override
-	public void detonate(Level level) {
+	public void detonate() {
 		if (dud) {
 			return;
 		}
 		targetCreep.addAllEffects(creepEffects);
 		targetCreep.onProjectileCollision();
-		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius)) {
+		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir)) {
 			c.addAllEffects(splashEffects);
 		}
 	}
@@ -63,7 +64,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	@Override
 	public void setTargetCreep(Creep c) {
 		targetCreep = c;
-		targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+		updateAngle();
 	}
 
 	@Override
