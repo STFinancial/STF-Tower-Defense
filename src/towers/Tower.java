@@ -61,7 +61,7 @@ public abstract class Tower implements Updatable {
 	public boolean hitsGround;
 	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		this.baseAttributeList = type.getAttributeList().clone();
+		this.baseAttributeList = type.getAttributeList().clone(); //TODO: This clone does nothing unless I change the base portion of an upgrade to apply to the list only a single time
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;

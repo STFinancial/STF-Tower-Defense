@@ -99,10 +99,10 @@ public enum TowerType {
 		damageSiphon			= 0.60f;
 		slowDurationSiphon		= 0.28f;
 		slowSiphon				= 0.28f;
-		attackCooldownSiphon	= 3;
-		damageSplashSiphon		= 0.
-		effectSplashSiphon		= 0
-		radiusSplashSiphon		= 0
+		attackCooldownSiphon	= 3; //TODO: Formula is attackCooldownSiphon - sqrt(attackCooldown)
+		damageSplashSiphon		= 0.55f;
+		effectSplashSiphon		= 0.42f;
+		radiusSplashSiphon		= 0.61f;
 		rangeSiphon				= 0.10f;
 		hitsAir					= false;
 		hitsGround				= true;
@@ -111,8 +111,8 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Fault Lines";
 						 text 		= "Increase the base RANGE";
-						 isBase		= true;
-						 baseCost   = 400;}
+						 baseCost   = 500;}
+						 public void baseUpgrade(Tower t) { t.range += 2; }
 						 public void upgrade(Tower t) { t.range += 2; }
 					},
 					new Upgrade() {
