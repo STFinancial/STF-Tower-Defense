@@ -96,6 +96,7 @@ final class CreepAttributes implements Updatable {
 	//Getters
 	float getCurrentDamageResist(DamageType type, boolean isFlat) { return (isFlat? damageResistances.getResistFlat(type) : damageResistances.getResistPercent(type));}
 	float getCurrentHealth() { return health.getCurrentHealth(); }
+	float getCurrentHealthCost() { return healthCost.getHealthCost(); }
 	float getCurrentShield() { return shield.getCurrentShield(); }
 	float getCurrentSize() { return size.getCurrentSize(); }
 	float getCurrentSpeed() { return speed.getCurrentSpeed(); }

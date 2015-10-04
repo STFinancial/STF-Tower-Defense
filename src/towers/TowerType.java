@@ -1,11 +1,8 @@
 package towers;
-//TODO: Fix imports of all classes.
-//TODO: Tower targeting types that allow to target those that we can snare and disorient, etc.
-//TODO: Really need to normalize all the upgrade costs for the stats that they give
+
 import utilities.GameConstants;
 import creeps.DamageType;
-//TODO can use a priority value instead of "isBase"
-//EARTH, FIRE, WATER, WIND, LIGHT, DARK, PHYSICAL;
+
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
 	//TODO: Instead of using "isBase" just modify the base values directly. This way we can mix. Need to clone the attribute lists for each tower then, but no biggie.
@@ -93,12 +90,20 @@ public enum TowerType {
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/100};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/8, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/8};
 		baseAttackCooldown		= 15f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
 		baseRange				= 8.5f;
+		damageSiphon			= 0.60f;
+		slowDurationSiphon		= 0.28f;
+		slowSiphon				= 0.28f;
+		attackCooldownSiphon	= 3;
+		damageSplashSiphon		= 0.
+		effectSplashSiphon		= 0
+		radiusSplashSiphon		= 0
+		rangeSiphon				= 0.10f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{

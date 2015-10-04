@@ -7,7 +7,8 @@ import levels.Level;
 import maps.Tile;
 
 public class TowerEarthWind extends Tower {
-
+	private float areaRadius;
+	
 	public TowerEarthWind(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		super(level, topLeftTile, type, towerID);
 	}
@@ -24,10 +25,9 @@ public class TowerEarthWind extends Tower {
 
 	@Override
 	public int update() {
-		
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][3]) {
-			Creep targetCreep = level.findTargetCreep(this);
+			Creep targetCreep = level.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBeam) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
@@ -36,7 +36,7 @@ public class TowerEarthWind extends Tower {
 		} else {
 			currentAttackCooldown--;
 			if (currentAttackCooldown < 1) {
-				Creep targetCreep = level.findTargetCreep(this);
+				Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 				if (targetCreep != null) {
 					//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 					((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);

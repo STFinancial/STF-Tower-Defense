@@ -42,9 +42,7 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 
 	@Override
 	public Projectile clone() {
-		ProjectileBeam p = new ProjectileBeam(parent, this, targetArea.radius, doesSplash);
-		p.targetArea = targetArea.clone(); //TODO: Optimization - remove this object creation and just reference the same circle
-		return p;
+		return new ProjectileBeam(parent, this, targetArea.radius, doesSplash);
 	}
 
 	@Override

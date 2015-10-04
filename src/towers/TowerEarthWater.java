@@ -3,7 +3,6 @@ package towers;
 import projectiles.ProjectileArea;
 import projectiles.TargetsArea;
 import utilities.Circle;
-import utilities.GameConstants;
 import levels.Level;
 import maps.Tile;
 
@@ -15,7 +14,6 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
-		//TODO this is kind of a lazy piece of code, figure out a better default position for the target area
 		areaRadius = 2f;
 		setTargetArea(x, y);
 		this.doesOnHit = false;
@@ -35,7 +33,7 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 	@Override
 	public boolean setTargetArea(float x, float y) {
 		Circle t = new Circle(x, y, 0);
-		if (t.intersects(targetZone) && !level.map.isOutside(x, y)) {
+		if (t.intersects(targetZone) && !level.getMap().isOutside(x, y)) {
 			targetArea = new Circle(x, y, areaRadius);
 			return true;
 		} else {

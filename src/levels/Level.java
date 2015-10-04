@@ -113,7 +113,8 @@ public class Level {
 			}
 		}
 		if (hasEarthEarth) {
-			updateCreepAdjacentToEarth();
+			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
+			updateGroundCreepAdjacentToEarth();
 		}
 		
 		for (i = 0; i < projectiles.size(); i++) {
@@ -154,7 +155,7 @@ public class Level {
 	}
 
 	private void detonateProjectile(Projectile p) {
-		p.detonate(this);
+		p.detonate();
 		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
 	}
 
@@ -174,7 +175,7 @@ public class Level {
 	private void escapeCreep(Creep c) {
 		//TODO
 		newEvent(GameEventType.CREEP_ESCAPED, c);
-		health -= c.healthCost;
+		health -= c.getHealthCost();
 		//Check if we lose?
 
 	}
@@ -330,7 +331,7 @@ public class Level {
 	}
 
 	public ArrayList<Creep> getCreeps() { return creeps; }
-	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this...
+	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this... I would rather have delegation methods
 	
 	HashSet<Creep> getGroundCreepAdjacentToEarth() {
 		return creepAdjacentToEarth;

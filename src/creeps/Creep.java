@@ -75,6 +75,7 @@ public class Creep implements Updatable {
 	//Public getter methods
 	public float getCurrentSize() { return attributes.getCurrentSize(); }
 	public float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
+	public float getCurrentHealthCost() { return attributes.getCurrentHealthCost(); }
 	public float getMaxHealth() { return attributes.getMaxHealth(); }
 	public boolean isFlying() { return attributes.isFlying(); }
 	
@@ -221,19 +222,7 @@ public class Creep implements Updatable {
 
 	//Clones the attributes back to their default states. Does not clone effects on the creep.
 	public Creep clone() {
-		//TODO: Need to clone the creepID.
-		Creep clone = new Creep();
-
-		clone.creepTypes = new HashSet<CreepType>();
-		for (CreepType type : this.creepTypes) {
-			clone.creepTypes.add(type);
-		}
-
-		clone.size = this.size; //Radius
-		clone.hitBox.radius = this.hitBox.radius;
-
-
-		return clone;
+		//TODO
 	}
 
 	public String toString() {

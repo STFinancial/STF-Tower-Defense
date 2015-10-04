@@ -2,7 +2,7 @@ package towers;
 
 import utilities.GameConstants;
 
-public class BaseAttributeList {
+class BaseAttributeList {
 	public abstract class Upgrade {
 		public String name;
 		public String text;
@@ -31,7 +31,7 @@ public class BaseAttributeList {
 		b.rangeSiphon = rangeSiphon;
 		b.baseRange = baseRange;
 		b.slowDurationSiphon = slowDurationSiphon;
-		b.slowEffectSiphon = slowEffectSiphon;
+		b.slowSiphon = slowSiphon;
 		b.damageSiphon = damageSiphon;
 		b.baseSlowDurationArray = new int[GameConstants.NUM_DAMAGE_TYPES];
 		b.baseSlowArray = new float[GameConstants.NUM_DAMAGE_TYPES];
@@ -64,7 +64,7 @@ public class BaseAttributeList {
 	public float baseRange;
 	public float slowDurationSiphon;
 	public int[] baseSlowDurationArray;
-	public float slowEffectSiphon;
+	public float slowSiphon;
 	public float[] baseSlowArray;
 	public float damageSiphon;
 	public float[] baseDamageArray;
