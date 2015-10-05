@@ -115,9 +115,9 @@ public enum TowerType {
 		slowDurationSiphon		= 0.28f;
 		slowSiphon				= 0.28f;
 		attackCooldownSiphon	= 4.2f;
-		damageSplashSiphon		= 0.55f;
-		effectSplashSiphon		= 0.42f;
-		radiusSplashSiphon		= 0.61f;
+		damageSplashSiphon		= 0.45f;
+		effectSplashSiphon		= 0.32f;
+		radiusSplashSiphon		= 0.51f;
 		rangeSiphon				= 0.07f;
 		hitsAir					= false;
 		hitsGround				= true;
@@ -210,9 +210,9 @@ public enum TowerType {
 		slowDurationSiphon		= 0.18f;
 		slowSiphon				= 0.21f;
 		attackCooldownSiphon	= 4.8f;
-		damageSplashSiphon		= 0.43f;
-		effectSplashSiphon		= 0.37f;
-		radiusSplashSiphon		= 0.69f;
+		damageSplashSiphon		= 0.33f;
+		effectSplashSiphon		= 0.27f;
+		radiusSplashSiphon		= 0.59f;
 		rangeSiphon				= 0.06f;
 		hitsAir					= false;
 		hitsGround				= true;
@@ -305,9 +305,9 @@ public enum TowerType {
 		slowDurationSiphon		= 0.12f;
 		slowSiphon				= 0.12f;
 		attackCooldownSiphon	= 4.0f;
-		damageSplashSiphon		= 0.43f;
-		effectSplashSiphon		= 0.37f;
-		radiusSplashSiphon		= 0.69f;
+		damageSplashSiphon		= 0.33f;
+		effectSplashSiphon		= 0.27f;
+		radiusSplashSiphon		= 0.59f;
 		rangeSiphon				= 0.06f;
 		hitsAir					= false;
 		hitsGround				= true;
@@ -404,7 +404,7 @@ public enum TowerType {
 		attackCooldownSiphon	= 5.2f;
 		damageSplashSiphon		= 0.46f;
 		effectSplashSiphon		= 0.37f;
-		radiusSplashSiphon		= 0.42f;
+		radiusSplashSiphon		= 0.39f;
 		rangeSiphon				= 0.07f;
 		hitsAir					= false;
 		hitsGround				= true;
@@ -454,9 +454,9 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Brewing Storm";
-						 text 		= "Increase base WIND damage";
-						 baseCost   = 900;}
-						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()] += 44; }
+						 text 		= "Increase base WIND damage and base RANGE";
+						 baseCost   = 1600;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()] += 44; t.baseAttributeList.baseRange += 2f;}
 						 public void midSiphonUpgrade(Tower t) { }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
@@ -472,8 +472,8 @@ public enum TowerType {
 						{name		= "Sand Blast";
 						 text 		= "Converts ATTACK COOLDOWN to PHYSICAL damage and now fires a blast of sand";
 						 baseCost   = 8000;}
-						 public void baseUpgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCooldown) * 40; }
-						 public void midSiphonUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) {  t.damageArray[DamageType.PHYSICAL.ordinal()] += (13f / t.attackCooldown) * 40; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
