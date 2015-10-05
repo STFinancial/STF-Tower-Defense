@@ -61,7 +61,7 @@ public abstract class ProjectileEffect implements Updatable {
 	
 	public void setCreep(Creep creep) {	this.creep = creep; }
 	
-	public void applyPenalty(float penalty) { modifier *= penalty; lifetime *= penalty; }
+	public ProjectileEffect applyPenalty(float penalty) { modifier *= penalty; lifetime *= penalty; return this; }
 	
 	@Override
 	public boolean equals(Object o) {
@@ -78,7 +78,7 @@ public abstract class ProjectileEffect implements Updatable {
 	}
 	
 	@Override
-	public int hashCode() { //TODO: Optimization - Shorten this.
+	public int hashCode() { //TODO: Optimization - Shorten this for hashset speed increase?
 		int result = 17;
 		result = 31 * result + damageType.ordinal();
 		result = 31 * result + getClass().hashCode();

@@ -39,15 +39,33 @@ public class ProjectileAOE extends Projectile {
 
 	@Override
 	public void detonate() {
-		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range, parent.hitsAir);
+		//TODO: This or any other detonate method DOES NOT account for the "hitsGround" variable. Should we remove that?
+		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range, true);
 		for (Creep c: creepInRange) {
-			c.addAllEffects(creepEffects);
-			if (doesOnHit) {
-				c.onProjectileCollision();
+			if (c.isFlying()) {
+				if (parent.hitsAir) {
+					c.addAllEffects(creepEffects);
+					if (doesOnHit) {
+						c.onProjectileCollision();
+					}
+					if (doesSplash) {
+						c.addAllEffects(splashEffects);
+					}
+				} else {
+					if (doesSplash && parent.splashHitsAir) {
+						c.addAllEffects(splashEffects);
+					}
+				}
+			} else {
+				c.addAllEffects(creepEffects);
+				if (doesOnHit) {
+					c.onProjectileCollision();
+				}
+				if (doesSplash) { //TODO: Are these only the creep we want to hit, those in range of the tower?
+					c.addAllEffects(splashEffects);
+				}
 			}
-			if (doesSplash) { //TODO: Are these only the creep we want to hit, those in range of the tower?
-				c.addAllEffects(splashEffects);
-			}
+			
 		}
 	}
 

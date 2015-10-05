@@ -8,9 +8,9 @@ import maps.Tile;
 
 public class TowerEarthWater extends Tower implements TargetsArea {
 	private Circle targetArea;
-	private float areaRadius;
-	private boolean doesSplash;
-	private boolean doesOnHit;
+	float areaRadius;
+	boolean doesSplash;
+	boolean doesOnHit;
 	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
@@ -22,10 +22,6 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][2]) {
-			doesSplash = true;
-		}
 		baseProjectile = new ProjectileArea(this, doesSplash, doesOnHit, areaRadius);
 		((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 	}

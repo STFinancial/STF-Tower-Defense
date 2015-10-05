@@ -14,7 +14,7 @@ import utilities.Circle;
 import utilities.GameConstants;
 //TODO: Go through towers and make them final (?) and make all their fields private/protected depending on what I choose
 //TODO: Make strong comments for each tower type and tower (they can be the same, just make it).
-
+//TODO: Should the tower classes be final?
 public abstract class Tower implements Updatable {
 	//TODO: want to implement something like "quality" so that we can continually upgrade the base stats of a tower with gold (so towers don't cap out)
 	//Positional Details
@@ -43,7 +43,7 @@ public abstract class Tower implements Updatable {
 	public boolean[][][] upgradeTracks;
 	
 	//Base Attributes
-	public BaseAttributeList baseAttributeList;
+	BaseAttributeList baseAttributeList;
 	
 	//Current Attributes
 	public float[] damageArray = new float[GameConstants.NUM_DAMAGE_TYPES];
@@ -56,19 +56,18 @@ public abstract class Tower implements Updatable {
 	public float effectSplash;
 	public float splashRadius;
 	public float range;
-	public float siphonBonus;
 	public boolean hitsAir;
+	public boolean splashHitsAir;
 	public boolean hitsGround;
 	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		this.baseAttributeList = type.getAttributeList().clone(); //TODO: This clone does nothing unless I change the base portion of an upgrade to apply to the list only a single time
+		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
 		this.level = level;
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
 		this.cost = baseAttributeList.baseCost;
-		this.type = baseAttributeList.type;
 		this.x = topLeftTile.x;
 		this.y = topLeftTile.y;
 		this.topLeft = topLeftTile;
@@ -79,7 +78,7 @@ public abstract class Tower implements Updatable {
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
-		this.siphonBonus = GameConstants.SIPHON_BONUS_MODIFIER;
+		this.splashHitsAir = false;
 		updateTowerChain();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
@@ -98,53 +97,47 @@ public abstract class Tower implements Updatable {
 			current = current.siphoningFrom;
 		}
 		BFSAdjust(current);
-		BFSFixStats(current);
 	}
 	
 	protected static void BFSAdjust(Tower root) {
 		Queue<Tower> openList = new LinkedList<Tower>();
+		root.adjustBaseStats();
 		openList.addAll(root.siphoningTo);
+		root.adjustMidSiphonUpgrades();
 		Tower current;
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			current.adjustBaseStats();
-			current.adjustBaseUpgradeStats();
 			openList.addAll(current.siphoningTo);
 			current.siphon(current.siphoningFrom);
+			current.adjustMidSiphonUpgrades();
 		}
-	}
-	
-	protected void siphon(Tower from) {
-		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
-			this.damageArray[i] += (int) (from.damageArray[i] * this.siphonBonus);
-			this.slowArray[i] += from.slowArray[i] * this.siphonBonus;
-			this.slowDurationArray[i] += (int) ((from.slowDurationArray[i] * this.siphonBonus) / 2);
-		}
-		//TODO find a good equation for range siphoning
-		this.range = Math.max(this.range, (this.range + from.range) / 2);//should I really max this?
-		this.targetZone.radius = this.range;
-		
-		//TODO find a good equation for fire rate siphoning
-		this.attackCooldown = (int) ((from.attackCooldown + this.attackCooldown) / 2);
-		this.damageSplash += from.damageSplash * this.siphonBonus;
-		this.effectSplash += from.effectSplash * this.siphonBonus;
-		this.splashRadius += from.splashRadius * this.siphonBonus;
-	}
-	
-	protected static void BFSFixStats(Tower root) {
-		Queue<Tower> openList = new LinkedList<Tower>();
-		openList.addAll(root.siphoningTo);
-		Tower current;
+		openList.add(root);
 		while (!openList.isEmpty()) {
 			current = openList.poll();
-			openList.addAll(current.siphoningTo); //TODO: So this doesn't actually do what we want. We are still siphoning base stats
-			current.adjustTalentStats();
+			openList.addAll(current.siphoningTo);
+			//TODO: current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
-			current.adjustNonBaseUpgradeStats();
+			current.adjustPostSiphonUpgrades();
 			current.adjustProjectileStats();
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone.radius = current.range;
 		}
+	}
+	
+	protected void siphon(Tower from) {
+		//TODO: Do I Want to be able to siphon siphon coefficients?
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			this.damageArray[i] += (int) (from.damageArray[i] * this.baseAttributeList.damageSiphon);
+			this.slowArray[i] += from.slowArray[i] * this.baseAttributeList.slowSiphon;
+			this.slowDurationArray[i] += (int) (from.slowDurationArray[i] * this.baseAttributeList.slowDurationSiphon);
+		}
+		this.range += from.range * this.baseAttributeList.rangeSiphon; //TODO: Decide if this is a good equation, do we want really short towers to pull down the range of others? Adds another dimension of complexity.
+		this.attackCooldown -= (int) (this.baseAttributeList.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.attackCooldownSiphon)); //TODO: This value can currently be negative, is that wanted? Should really slow towers slow those around it?
+		if (this.attackCooldown < 1) { this.attackCooldown = 1; }
+		this.damageSplash += from.damageSplash * this.baseAttributeList.damageSplashSiphon;
+		this.effectSplash += from.effectSplash * this.baseAttributeList.effectSplashSiphon;
+		this.splashRadius += from.splashRadius * this.baseAttributeList.radiusSplashSiphon;
 	}
 	
 	protected void adjustBaseStats() {
@@ -164,26 +157,26 @@ public abstract class Tower implements Updatable {
 		}
 	}
 	
-	private void adjustBaseUpgradeStats() {
+	private void adjustMidSiphonUpgrades() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
 				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
 					if (progress[track][uNum]) {
-						baseAttributeList.upgrades[track][uNum].baseUpgrade(this);
+						baseAttributeList.upgrades[track][uNum].postSiphonUpgrade(this);
 					}
 				}
 			}
 		}
 	}
 	
-	private void adjustNonBaseUpgradeStats() {
+	private void adjustPostSiphonUpgrades() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
 				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
 					if (progress[track][uNum]) {
-						baseAttributeList.upgrades[track][uNum].nonBaseUpgrade(this);
+						baseAttributeList.upgrades[track][uNum].postSiphonUpgrade(this);
 					}
 				}
 			}
@@ -204,6 +197,7 @@ public abstract class Tower implements Updatable {
 		for (int i = 0; i < GameConstants.UPGRADE_PATH_LENGTH; i++) {
 			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i]) {
 				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i] = true;
+				baseAttributeList.upgrades[track][i].baseUpgrade(this);
 				updateTowerChain();
 				return;
 			}

@@ -40,7 +40,7 @@ public final class ProjectileRandom extends ProjectileBasic {
 		if (dud) {
 			return;
 		}
-		HashSet<Creep> creeps = guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir);
+		HashSet<Creep> creeps = guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir || parent.splashHitsAir);
 		creeps.add(targetCreep);
 		ProjectileEffect e = getRandomEffect(); //We get a random effect from the list
 		for (Creep c: creeps) {

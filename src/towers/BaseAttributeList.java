@@ -8,7 +8,8 @@ class BaseAttributeList {
 		public String text;
 		public int baseCost;
 		public abstract void baseUpgrade(Tower t);
-		public abstract void nonBaseUpgrade(Tower t);
+		public abstract void midSiphonUpgrade(Tower t);
+		public abstract void postSiphonUpgrade(Tower t);
 	}
 	
 	@Override

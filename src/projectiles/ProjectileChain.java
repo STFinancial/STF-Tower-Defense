@@ -42,19 +42,14 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 		this.chainedEffects.add(creepEffects);
 		this.chainedSplashEffects.add(splashEffects);
 		float currentPenalty = chainPenalty;
-		ProjectileEffect e;
 		for (int i = 1; i < maxChains; i++) {
 			chainedEffects.add(new ArrayList<ProjectileEffect>(creepEffects.size()));
 			for (int j = 0; j < creepEffects.size(); j++) {
-				e = creepEffects.get(j).clone();
-				e.applyPenalty(currentPenalty);
-				chainedEffects.get(i).add(e);
+				chainedEffects.get(i).add(creepEffects.get(j).clone().applyPenalty(currentPenalty));
 			}
 			chainedSplashEffects.add(new ArrayList<ProjectileEffect>(splashEffects.size()));
 			for (int j = 0; j < splashEffects.size(); j++) {
-				e = splashEffects.get(j).clone();
-				e.applyPenalty(currentPenalty);
-				chainedSplashEffects.get(i).add(e);
+				chainedSplashEffects.get(i).add(splashEffects.get(j).clone().applyPenalty(currentPenalty));
 			}
 			currentPenalty *= chainPenalty;
 		}
@@ -96,7 +91,7 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 			newCreep.addAllEffects(chainedEffects.get(currentChains));
 			chainedCreep.add(newCreep);
 			//TODO at some point we may change the splashRadius to splashRadius * currentPenalty
-			for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius, parent.hitsAir)) {
+			for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius, parent.hitsAir || parent.splashHitsAir)) {
 				splash.addAllEffects(chainedSplashEffects.get(currentChains));
 			}
 			currentChains++;
@@ -106,7 +101,6 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 	@Override
 	public Projectile clone() {
 		ProjectileChain p = new ProjectileChain(parent, this, maxChains, chainRadius, chainPenalty, noDuplicates);
-		super.cloneStats(p);
 		p.targetCreep = targetCreep;
 		p.chainedEffects = chainedEffects;
 		p.chainedSplashEffects = chainedSplashEffects;
@@ -116,7 +110,6 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 	@Override
 	public void setTargetCreep(Creep c) {
 		targetCreep = c;
-		//TODO the trig helper might not be needed here since these detonate instantly. Only for animation purposes possibly.
 		updateAngle();
 	}
 

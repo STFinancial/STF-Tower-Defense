@@ -16,9 +16,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 
 	@Override
 	public Projectile clone() {
-		ProjectileBasic p = new ProjectileBasic(parent, this);
-		p.targetCreep = targetCreep;
-		return p;
+		return new ProjectileBasic(parent, this);
 	}
 
 	@Override
@@ -56,7 +54,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		}
 		targetCreep.addAllEffects(creepEffects);
 		targetCreep.onProjectileCollision();
-		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir)) {
+		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir || parent.splashHitsAir)) {
 			c.addAllEffects(splashEffects);
 		}
 	}

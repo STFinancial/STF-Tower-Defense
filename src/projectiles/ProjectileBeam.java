@@ -56,7 +56,7 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 		if (c != null) {
 			c.addAllEffects(creepEffects);
 			if (doesSplash) {
-				for (Creep splashCreep: guider.getOtherCreepInSplashRange(c, splashRadius, parent.hitsAir)) {
+				for (Creep splashCreep: guider.getOtherCreepInSplashRange(c, splashRadius, parent.hitsAir || parent.splashHitsAir)) {
 					splashCreep.addAllEffects(splashEffects);
 				}
 			}

@@ -8,24 +8,24 @@ import projectiles.ProjectileAOE;
 import levels.Level;
 import maps.Tile;
 
-public class TowerEarthEarth extends Tower {
-	private float detonationModifier;
-	private float shredModifier;
-	private float bleedModifier;
-	private int maxShredStacks;
-	private int armorShredDuration;
-	private int bleedDuration; //TODO These numbers maybe will be longer, realistically the bleed lasts only the duration of a tower cooldown
-	private boolean doesOnHit;
-	private boolean doesSplash;
+public final class TowerEarthEarth extends Tower {
+	float detonationModifier;
+	float shredModifier;
+	float bleedModifier;
+	int maxShredStacks;
+	int armorShredDuration;
+	int bleedDuration; //TODO These numbers maybe will be longer, realistically the bleed lasts only the duration of a tower cooldown
+	boolean doesOnHit;
+	boolean doesSplash;
 	
 	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
-		this.detonationModifier = 0.10f;
-		this.shredModifier = 0.10f;
-		this.bleedModifier = 0.5f;
-		this.maxShredStacks = 5;
-		this.armorShredDuration = 18;
-		this.bleedDuration = 18;
+		this.detonationModifier = 0;
+		this.shredModifier = 0;
+		this.bleedModifier = 0;
+		this.maxShredStacks = 0;
+		this.armorShredDuration = 0;
+		this.bleedDuration = 0;
 		this.doesSplash = false;
 		this.doesOnHit = false;
 	}

@@ -3,6 +3,7 @@ package towers;
 import utilities.GameConstants;
 import creeps.DamageType;
 
+//TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
 	//TODO: Instead of using "isBase" just modify the base values directly. This way we can mix. Need to clone the attribute lists for each tower then, but no biggie.
@@ -18,9 +19,9 @@ public enum TowerType {
 		baseWidth			  	= 2;
 		baseHeight			  	= 2;
 		baseDamageArray		  	= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/12, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/12};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseCost			  	= 200;
+		baseCost			  	= 750;
 		baseAttackCooldown	  	= 15f;
 		baseDamageSplash		= 0.2f;
 		baseEffectSplash		= 0f;
@@ -35,15 +36,15 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseCost				= 200;
+		baseCost				= 900;
 		baseAttackCooldown		= 12f;
 		baseDamageSplash		= 0.25f;
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 1.5f;
 		baseRange				= 7.5f;
-		hitsAir					= true;
+		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= null;
 	}}),
@@ -52,9 +53,9 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseCost				= 200;
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.15f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseCost				= 850;
 		baseAttackCooldown		= 10f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0.25f;
@@ -68,20 +69,34 @@ public enum TowerType {
 		name               	 	= "Wind";
 		baseWidth				= 2;
 		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/10};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseCost				= 200;
-		baseAttackCooldown		= 5f;
+		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/17, /*L*/0, /*D*/0, /*P*/17};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/4, /*L*/0, /*D*/0, /*P*/4};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0.05f, /*L*/0, /*D*/0, /*P*/0};
+		baseCost				= 1000;
+		baseAttackCooldown		= 8.4f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0.10f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseSplashRadius		= 2.3f;
+		baseRange				= 8.6f;
 		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= null;
 	}}),
 	//TODO should the base stats of the towers be identical to their downgrade?
+	/**
+	 * Towers of this type deal damage and slows to all creep around it. Currently does not apply splash effects or on-hit effects.
+	 * Deals primarily physical damage, barring an upgrade that converts physical damage to earth damage.
+	 * Track 1:
+	 * 	Upgrade 1:
+	 *  Upgrade 2:
+	 *  Upgrade 3:
+	 *  Upgrade 4:
+	 * Track 2:
+	 * 	Upgrade 1:
+	 *  Upgrade 2:
+	 *  Upgrade 3:
+	 *  Upgrade 4:
+	 */
 	EARTH_EARTH (new BaseAttributeList(){{
 		//does an AOE earthquake? cannot hit flying
 		name					= "Earthquake";
@@ -92,18 +107,18 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/8, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/8};
 		baseAttackCooldown		= 15f;
-		baseDamageSplash		= 0f;
+		baseDamageSplash		= 0.23f;
 		baseEffectSplash		= 0f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
-		damageSiphon			= 0.60f;
+		baseSplashRadius		= 3f;
+		baseRange				= 8.1f;
+		damageSiphon			= 0.54f; //TODO: Should this be an array of siphon coefficients?
 		slowDurationSiphon		= 0.28f;
 		slowSiphon				= 0.28f;
-		attackCooldownSiphon	= 3; //TODO: Formula is attackCooldownSiphon - sqrt(attackCooldown)
+		attackCooldownSiphon	= 4.2f;
 		damageSplashSiphon		= 0.55f;
 		effectSplashSiphon		= 0.42f;
 		radiusSplashSiphon		= 0.61f;
-		rangeSiphon				= 0.10f;
+		rangeSiphon				= 0.07f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -112,59 +127,67 @@ public enum TowerType {
 						{name		= "Fault Lines";
 						 text 		= "Increase the base RANGE";
 						 baseCost   = 500;}
-						 public void baseUpgrade(Tower t) { t.range += 2; }
-						 public void upgrade(Tower t) { t.range += 2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Tectonics";
 						 text 		= "Increase the base pulse rate";
-						 isBase		= true;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 3; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 3; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Channel the Earth";
-						 text 		= "Converts each point of PHYSICAL damage to 1.5 points of EARTH damage";
-						 isBase		= false;
+						 text 		= "Converts each point of PHYSICAL damage to 1.8 points of EARTH damage";
 						 baseCost   = 2000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[DamageType.PHYSICAL.ordinal()] * 1.5f; t.damageArray[DamageType.PHYSICAL.ordinal()] = 0; }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[DamageType.PHYSICAL.ordinal()] * 1.8f; t.damageArray[DamageType.PHYSICAL.ordinal()] = 0; } //TODO: Do we want to set the physical damage to 0?
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Living Earth";
 						 text 		= "All earth tiles deal EARTH damage in a circle around them";
-						 isBase		= false;
 						 baseCost   = 5000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthEarth) t).detonationModifier = 0.10f; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Hardened Earth";
-						 text 		= "Double the PHYSICAL Damage";
-						 isBase 	= false;
+						 text 		= "Double the PHYSICAL damage";
 						 baseCost 	= 1300;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] *= 2; }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] *= 2; }
 					},
 					new Upgrade() {
-						{name		= "Fault Lines";
-						 text 		= "Increase the base RANGE";
-						 isBase		= true;
+						{name		= "Magnitude";
+						 text 		= "Increase the base RANGE and PHYSICAL damage";
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.range += 2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 1; t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 34; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Fragmentation";
 						 text 		= "Deal additional PHYSICAL damage as a bleed";
-						 isBase		= true;
 						 baseCost   = 2500;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 50; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 50; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthEarth) t).bleedModifier = 0.50f; ((TowerEarthEarth) t).bleedDuration = 18; }
 					},
 					new Upgrade() {
 						{name		= "Grievous Wound";
-						 text 		= "Creep affected by this Tower's bleed have reduced TOUGHNESS";
-						 isBase		= false;
+						 text 		= "Creep affected by this Tower's bleed have reduced PHYSICAL damage resistance";
 						 baseCost   = 5000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthEarth) t).shredModifier = 0.04f; ((TowerEarthEarth) t).armorShredDuration = 18; ((TowerEarthEarth) t).maxShredStacks = 5; }
 					},
 				}
 		};
@@ -176,13 +199,21 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/10, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/50};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/12, /*F*/7, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/10};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 13f;
-		baseDamageSplash		= 0f;
-		baseEffectSplash		= 0f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseAttackCooldown		= 13.1f;
+		baseDamageSplash		= 0.25f;
+		baseEffectSplash		= 0.25f;
+		baseSplashRadius		= 2.2f;
+		baseRange				= 8.6f;
+		damageSiphon			= 0.60f;
+		slowDurationSiphon		= 0.18f;
+		slowSiphon				= 0.21f;
+		attackCooldownSiphon	= 4.8f;
+		damageSplashSiphon		= 0.43f;
+		effectSplashSiphon		= 0.37f;
+		radiusSplashSiphon		= 0.69f;
+		rangeSiphon				= 0.06f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -190,60 +221,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Rapid Fire";
 						 text 		= "Reduces base ATTACK COOLDOWN";
-						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 1.9; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Aerodynamics";
 						 text 		= "Increases the range";
-						 isBase		= false;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.range += 4; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 1.1; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.range += 3.1; }
 					},
 					new Upgrade() {
 						{name		= "Gather the Scraps";
 						 text 		= "Tower applies a wealth debuff to minions";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration = 30; ((TowerEarthFire) t).wealthModifier = 1.15f; }
 					},
 					new Upgrade() {
 						{name		= "Motherload";
 						 text 		= "Increases the duration and effectiveness of wealth";
-						 isBase		= false;
 						 baseCost   = 5000;}
-						 public void upgrade(Tower t) { ((TowerEarthFire) t).wealthDuration += 20; ((TowerEarthFire) t).wealthModifier += .20; }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration += 20; ((TowerEarthFire) t).wealthModifier += 0.30; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Arms Race";
 						 text 		= "Increases the base PHYSICAL damage";
-						 isBase 	= true;
 						 baseCost 	= 600;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 50; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 50; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Armory";
 						 text 		= "Increases the PHYSICAL damage";
-						 isBase		= false;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] *= 1.5; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 13; }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] *= 1.5; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "FMJ";
 						 text 		= "Attacks and splash ignores armor";
-						 isBase		= false;
 						 baseCost   = 1500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Piercing";
 						 text 		= "Attacks apply a stacking armor shred";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthFire) t).shredModifier = 0.015f; ((TowerEarthFire) t).shredDuration = 15; ((TowerEarthFire) t).maxShredStacks = 10; }
 					},
 				}
 		};
@@ -258,71 +297,87 @@ public enum TowerType {
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseAttackCooldown		= 13f;
-		baseDamageSplash		= 0f;
-		baseEffectSplash		= 0f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseDamageSplash		= 0.15f;
+		baseEffectSplash		= 0.15f;
+		baseSplashRadius		= 1.3f;
+		baseRange				= 8.6f;
+		damageSiphon			= 0.78f;
+		slowDurationSiphon		= 0.12f;
+		slowSiphon				= 0.12f;
+		attackCooldownSiphon	= 4.0f;
+		damageSplashSiphon		= 0.43f;
+		effectSplashSiphon		= 0.37f;
+		radiusSplashSiphon		= 0.69f;
+		rangeSiphon				= 0.06f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
+						{name		= "Eon";
 						 text 		= "Increases the base radius of the stalagmites";
-						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { ((TowerEarthWater) t).areaRadius += 1; }
+						 public void baseUpgrade(Tower t) { ((TowerEarthWater) t).areaRadius += 1; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
+						{name		= "Cave Building";
 						 text 		= "Increases the radius even more and the range of the tower";
-						 isBase		= true;
-						 baseCost   = 500;}
-						 public void upgrade(Tower t) { ((TowerEarthWater) t).areaRadius += 1; t.range += 1; }
+						 baseCost   = 1300;}
+						 public void baseUpgrade(Tower t) { ((TowerEarthWater) t).areaRadius += 1.2; t.baseAttributeList.baseRange += 0.4f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.range += 2.4f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "Splash Radius is added to the range of this tower, and now applies splash damage to all affected";
-						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { ((TowerEarthWater) t).areaRadius += t.splashRadius; }
+						{name		= "Echo";
+						 text 		= "Splash Radius is added to the range and hit radius of this tower, and now applies splash damage to all affected";
+						 baseCost   = 6200;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthWater) t).areaRadius += t.splashRadius / 4; t.range += t.splashRadius; ((TowerEarthWater) t).doesSplash = true; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "Siphon bonus coefficient increased to 0.75 for splash coefficients";
-						 isBase		= false;
-						 baseCost   = 3000;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Shattering";
+						 text 		= "Increases splash siphon coefficients, and now applies on hits to all affected";
+						 baseCost   = 5300;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.radiusSplashSiphon += 0.15f; t.baseAttributeList.effectSplashSiphon += 0.15f; t.baseAttributeList.damageSplashSiphon += 0.15f; }
+						 public void midSiphonUpgrade(Tower t) {  }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthWater) t).doesOnHit = true; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Power of the Earth";
 						 text 		= "Increases the base EARTH damage";
-						 isBase 	= true;
 						 baseCost 	= 600;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += 40; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.EARTH.ordinal()] += 40; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Hardening";
 						 text 		= "Increases the base PHYSICAL damage";
-						 isBase		= true;
 						 baseCost   = 400;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 40; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 40; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Elemental Balance";
 						 text 		= "Adds 40% of PHYSICAL damage as WATER damage";
-						 isBase		= false;
-						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()] += t.damageArray[DamageType.PHYSICAL.ordinal()] * .4f; }
+						 baseCost   = 2900;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.WATER.ordinal()] += t.damageArray[DamageType.PHYSICAL.ordinal()] * .4f; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Burial";
 						 text 		= "Doubles the damage of this tower";
-						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=2; } }
+						 baseCost   = 9001;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=2; } }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				}
 		};
@@ -330,18 +385,27 @@ public enum TowerType {
 	EARTH_WIND (new BaseAttributeList(){{
 		//has enormous splash radius
 		//basically "explodes" outward
+		//does not target flying but splash hits flying
 		name					= "Fragmentation";
 		downgradeType 			= EARTH;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/20, /*L*/0, /*D*/0, /*P*/60};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/9, /*F*/0, /*WA*/0, /*WI*/4, /*L*/0, /*D*/0, /*P*/8};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseAttackCooldown		= 14f;
-		baseDamageSplash		= 0.10f;
-		baseEffectSplash		= 0.10f;
+		baseDamageSplash		= 0.15f;
+		baseEffectSplash		= 0.15f;
 		baseSplashRadius		= 5f;
 		baseRange				= 9.0f;
+		damageSiphon			= 0.47f;
+		slowDurationSiphon		= 0.10f;
+		slowSiphon				= 0.10f;
+		attackCooldownSiphon	= 5.2f;
+		damageSplashSiphon		= 0.46f;
+		effectSplashSiphon		= 0.37f;
+		radiusSplashSiphon		= 0.42f;
+		rangeSiphon				= 0.07f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -349,60 +413,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Explosive Force";
 						 text 		= "Increases the splash damage and effectiveness";
-						 isBase		= true;
 						 baseCost   = 1350;}
-						 public void upgrade(Tower t) { t.damageSplash += .2; t.effectSplash += .2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageSplash += .1; t.baseAttributeList.baseEffectSplash += .1; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.damageSplash += .1; t.effectSplash += .1; }
 					},
 					new Upgrade() {
 						{name		= "Explosive Force";
 						 text 		= "Increases the splash damage and effectiveness";
-						 isBase		= true;
 						 baseCost   = 1350;}
-						 public void upgrade(Tower t) { t.damageSplash += .2; t.effectSplash += .2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageSplash += .1; t.baseAttributeList.baseEffectSplash += .1; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.damageSplash += .1; t.effectSplash += .1; }
 					},
 					new Upgrade() {
 						{name		= "Blast Zone";
 						 text 		= "Greatly increases the splash radius";
-						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { t.splashRadius += 5; }
+						 baseCost   = 2600;}
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { t.splashRadius *= 1.1f; }
+						 public void postSiphonUpgrade(Tower t) { t.splashRadius += 3; }
 					},
 					new Upgrade() {
 						{name		= "Ground Zero";
-						 text 		= "Greatly increases the base splash radius";
-						 isBase		= true;
+						 text 		= "Greatly increases the base splash radius and splash hits flying creeps";
 						 baseCost   = 5000;}
-						 public void upgrade(Tower t) { t.splashRadius += 5; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSplashRadius += 5; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.splashHitsAir = true; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Howl";
-						 text 		= "Reduces ATTACK COOLDOWN";
-						 isBase 	= false;
+						 text 		= "Reduces base and non-base ATTACK COOLDOWN";
 						 baseCost 	= 1000;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 3; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 0.7f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.attackCooldown -= 1.6f; }
 					},
 					new Upgrade() {
 						{name		= "Brewing Storm";
 						 text 		= "Increase base WIND damage";
-						 isBase		= false;
 						 baseCost   = 900;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()] += 40; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()] += 44; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Whipping Winds";
 						 text 		= "Reduces ATTACK COOLDOWN and adds 50% of PHYSICAL damage as WIND damage";
-						 isBase		= false;
-						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 3; t.damageArray[DamageType.WIND.ordinal()] += 0.5 * t.damageArray[DamageType.PHYSICAL.ordinal()];}
+						 baseCost   = 2150;}
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { t.attackCooldown -= 3; t.damageArray[DamageType.WIND.ordinal()] += 0.5 * t.damageArray[DamageType.PHYSICAL.ordinal()]; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Sand Blast";
 						 text 		= "Converts ATTACK COOLDOWN to PHYSICAL damage and now fires a blast of sand";
-						 isBase		= true;
 						 baseCost   = 8000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCooldown) * 40; }
+						 public void baseUpgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (10f / t.attackCooldown) * 40; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};

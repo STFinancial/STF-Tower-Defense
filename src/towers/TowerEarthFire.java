@@ -9,17 +9,20 @@ import levels.Level;
 import maps.Tile;
 
 public class TowerEarthFire extends Tower {
+	//TODO: Currently
 	int wealthDuration;
 	float wealthModifier;
-	private float shredModifier;
-	private int shredDuration;
+	float shredModifier;
+	int shredDuration;
+	int maxShredStacks;
 	
 	public TowerEarthFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_FIRE, towerID);
-		wealthDuration = 30;
-		wealthModifier = 1.15f;
-		shredModifier = 0.15f;
-		shredDuration = 10;
+		this.wealthDuration = 0;
+		this.wealthModifier = 0;
+		this.shredModifier = 0;
+		this.shredDuration = 0;
+		this.maxShredStacks = 0;
 	}
 
 	@Override
@@ -35,8 +38,9 @@ public class TowerEarthFire extends Tower {
 			baseProjectile.setResistPenPercent(DamageType.PHYSICAL, 1);
 		}
 		if (progress[1][3]) {
-			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.PHYSICAL, baseProjectile, false);
-			a.setMaxStacks(1);
+			//TODO: We really should have a better way of getting the damage of a certain type
+			ArmorShred a = new ArmorShred(shredDuration, shredModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile, true);
+			a.setMaxStacks(maxShredStacks);
 			baseProjectile.addSpecificCreepEffect(a);
 		}
 		
