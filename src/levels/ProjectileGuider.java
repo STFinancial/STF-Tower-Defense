@@ -22,6 +22,22 @@ public final class ProjectileGuider {
 		this.level = level;
 	}
 	
+	//TODO: Using this method ends up duplicating a ton of work.
+	//TODO: Could try keeping track of a creep that has been in range, and only when that creep is out of range or dead we search for a new one (good idea)
+	public boolean isCreepInRange(Circle area, boolean hitsAir) {
+		for (Creep c : level.getCreeps()) {
+			if (c.hitBox.intersects(area)) {
+				if (hitsAir) {
+					return true;
+				} else if (!c.isFlying()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	//TODO: I don't really want this to use tower directly
 	public Creep findTargetCreep(Tower tower, boolean hitsAir) {
 		Creep toTarget = null;
 		ArrayList<Creep> inRange = new ArrayList<Creep>();

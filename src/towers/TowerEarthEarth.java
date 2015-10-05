@@ -12,6 +12,7 @@ public final class TowerEarthEarth extends Tower {
 	float detonationModifier;
 	float shredModifier;
 	float bleedModifier;
+	int bleedTiming;
 	int maxShredStacks;
 	int armorShredDuration;
 	int bleedDuration; //TODO These numbers maybe will be longer, realistically the bleed lasts only the duration of a tower cooldown
@@ -23,6 +24,7 @@ public final class TowerEarthEarth extends Tower {
 		this.detonationModifier = 0;
 		this.shredModifier = 0;
 		this.bleedModifier = 0;
+		this.bleedTiming = 3;
 		this.maxShredStacks = 0;
 		this.armorShredDuration = 0;
 		this.bleedDuration = 0;
@@ -38,7 +40,7 @@ public final class TowerEarthEarth extends Tower {
 			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][2]) {
-			Bleed b = new Bleed(bleedDuration, (float) damageArray[DamageType.PHYSICAL.ordinal()] * bleedModifier, 3, DamageType.PHYSICAL, baseProjectile);
+			Bleed b = new Bleed(bleedDuration, (float) damageArray[DamageType.PHYSICAL.ordinal()] * bleedModifier, bleedTiming, DamageType.PHYSICAL, baseProjectile);
 			baseProjectile.addSpecificCreepEffect(b);
 		}
 		if (progress[1][3]) {
@@ -52,14 +54,16 @@ public final class TowerEarthEarth extends Tower {
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
-			attackCarryOver += 1 - currentAttackCooldown;
-			currentAttackCooldown = attackCooldown;
-			if (attackCarryOver > 1) {
-				attackCarryOver -= 1;
-				currentAttackCooldown--;
+			if (guider.isCreepInRange(targetZone, hitsAir)) {
+				level.addProjectile(fireProjectile());
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
+				if (attackCarryOver > 1) {
+					attackCarryOver -= 1;
+					currentAttackCooldown--;
+				}
+				return 1;
 			}
-			return 1;
 		}
 		return 0;
 	}

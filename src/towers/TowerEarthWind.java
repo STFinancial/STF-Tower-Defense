@@ -8,17 +8,19 @@ import maps.Tile;
 
 public class TowerEarthWind extends Tower {
 	float passThroughRadiusModifier;
+	float passThroughModifier;
 	
 	public TowerEarthWind(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		super(level, topLeftTile, type, towerID);
 		this.passThroughRadiusModifier = 0.18f;
+		this.passThroughModifier = 0.40f;
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][3]) {
-			baseProjectile = new ProjectilePassThroughTarget(this, splashRadius * passThroughRadiusModifier, false, 1);
+			baseProjectile = new ProjectilePassThroughTarget(this, splashRadius * passThroughRadiusModifier, passThroughModifier, false, 1);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
@@ -30,7 +32,6 @@ public class TowerEarthWind extends Tower {
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
-				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;

@@ -485,13 +485,21 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/20, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/35};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/11, /*F*/7, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0.05f, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0.05f};
 		baseAttackCooldown		= 14f;
 		baseDamageSplash		= 0.05f;
 		baseEffectSplash		= 0.05f;
 		baseSplashRadius		= 0f;
 		baseRange				= 8.5f;
+		damageSiphon			= 0.52f;
+		slowDurationSiphon		= 0.16f;
+		slowSiphon				= 0.18f;
+		attackCooldownSiphon	= 4.7f;
+		damageSplashSiphon		= 0.39f;
+		effectSplashSiphon		= 0.33f;
+		radiusSplashSiphon		= 0.33f;
+		rangeSiphon				= 0.08f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -499,60 +507,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Volcano";
 						 text 		= "The tower now does AoE damage";
-						 isBase		= false;
 						 baseCost   = 2500;}
-						 public void upgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Eruption Force";
 						 text 		= "Increase BASE range of the tower";
-						 isBase		= true;
 						 baseCost   = 1300;}
-						 public void upgrade(Tower t) { t.range += 2.5f; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2.5f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Pyroclastic Flow";
 						 text 		= "Increases BASE damage and reduces BASE attack cooldown";
-						 isBase		= true;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 2.2; t.damageArray[DamageType.FIRE.ordinal()] += 33; t.damageArray[DamageType.PHYSICAL.ordinal()] += 33; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 2.2; t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()] += 33; t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 33; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Supervolcano";
 						 text 		= "Dramatically increases range and fire damage. Poisons all enemies.";
-						 isBase		= false;
-						 baseCost   = 7000;}
-						 public void upgrade(Tower t) { t.range += 10f; t.damageArray[DamageType.FIRE.ordinal()] += 165; }
+						 baseCost   = 11000;}
+						 public void baseUpgrade(Tower t) {   }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=20; }
+						 public void postSiphonUpgrade(Tower t) { t.range += 10f; t.damageArray[DamageType.FIRE.ordinal()] += 145; ((TowerFireEarth) t).poisonModifier=0.10f; ((TowerFireEarth) t).poisonDuration=18; ((TowerFireEarth) t).maxPoisonStacks = 1; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Melt Armor";
 						 text 		= "Attacks reduce armor by a flat amount";
-						 isBase 	= false;
 						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).armorShredModifier = 1; ((TowerFireEarth) t).armorShredDuration = 20; ((TowerFireEarth) t).maxArmorShredStacks = 10; }
 					},
 					new Upgrade() {
 						{name		= "Sear Flesh";
 						 text 		= "Attacks reduce toughness by a flat amount";
-						 isBase		= false;
 						 baseCost   = 2400;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).toughnessShredModifier = 1; ((TowerFireEarth) t).toughnessShredDuration = 17; ((TowerFireEarth) t).maxToughnessShredStacks = 9; }
 					},
 					new Upgrade() {
 						{name		= "Swelling";
 						 text 		= "Attacks against afflicted enemies deal additional FIRE damage";
-						 isBase		= false;
 						 baseCost   = 3000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).DOHModifier = 0.05f; ((TowerFireEarth) t).DOHLifetime = 25; ((TowerFireEarth) t).maxDOHStacks = 1; ((TowerFireEarth) t).doesOnHit = true; }
 					},
 					new Upgrade() {
 						{name		= "Blood Boil";
 						 text 		= "Deals additional FIRE damage as a percent of max health";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).percentMaxHealthModifier = 0.02f; }
 					},
 				}
 		};
