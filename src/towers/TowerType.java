@@ -152,9 +152,9 @@ public enum TowerType {
 						{name		= "Living Earth";
 						 text 		= "All earth tiles deal EARTH damage in a circle around them";
 						 baseCost   = 5000;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerEarthEarth) t).detonationModifier = 0.10f; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthEarth) t).detonationModifier = 0.10f; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				},
 				{
@@ -178,17 +178,17 @@ public enum TowerType {
 						{name		= "Fragmentation";
 						 text 		= "Deal additional PHYSICAL damage as a bleed";
 						 baseCost   = 2500;}
-						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 50; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 50; ((TowerEarthEarth) t).bleedModifier = 0.50f; ((TowerEarthEarth) t).bleedDuration = 18; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthEarth) t).bleedModifier = 0.50f; ((TowerEarthEarth) t).bleedDuration = 18; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Grievous Wound";
 						 text 		= "Creep affected by this Tower's bleed have reduced PHYSICAL damage resistance";
 						 baseCost   = 5000;}
-						 public void baseUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { ((TowerEarthEarth) t).shredModifier = 0.04f; ((TowerEarthEarth) t).armorShredDuration = 18; ((TowerEarthEarth) t).maxShredStacks = 5; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthEarth) t).shredModifier = 0.04f; ((TowerEarthEarth) t).armorShredDuration = 18; ((TowerEarthEarth) t).maxShredStacks = 5; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				}
 		};
@@ -239,17 +239,17 @@ public enum TowerType {
 						{name		= "Gather the Scraps";
 						 text 		= "Tower applies a wealth debuff to minions";
 						 baseCost   = 4000;}
-						 public void baseUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration = 30; ((TowerEarthFire) t).wealthModifier = 1.15f; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration = 30; ((TowerEarthFire) t).wealthModifier = 1.15f; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Motherload";
 						 text 		= "Increases the duration and effectiveness of wealth";
 						 baseCost   = 5000;}
-						 public void baseUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration += 20; ((TowerEarthFire) t).wealthModifier += 0.30; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration += 20; ((TowerEarthFire) t).wealthModifier += 0.30; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				},
 				{
@@ -281,9 +281,9 @@ public enum TowerType {
 						{name		= "Piercing";
 						 text 		= "Attacks apply a stacking armor shred";
 						 baseCost   = 4000;}
-						 public void baseUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { ((TowerEarthFire) t).shredModifier = 0.015f; ((TowerEarthFire) t).shredDuration = 15; ((TowerEarthFire) t).maxShredStacks = 10; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthFire) t).shredModifier = 0.015f; ((TowerEarthFire) t).shredDuration = 15; ((TowerEarthFire) t).maxShredStacks = 10; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				}
 		};
@@ -332,19 +332,19 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Echo";
-						 text 		= "Splash Radius is added to the range and hit radius of this tower, and now applies splash damage to all affected";
+						 text 		= "Splash Radius is added to the hit radius of this tower, and now applies splash damage to all affected";
 						 baseCost   = 6200;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerEarthWater) t).doesSplash = true; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthWater) t).areaRadius += t.splashRadius / 4; t.range += t.splashRadius; ((TowerEarthWater) t).doesSplash = true; }
+						 public void postSiphonUpgrade(Tower t) { ((TowerEarthWater) t).areaRadius = 4.2f + t.splashRadius; } //TODO: Really not happy about this solution
 					},
 					new Upgrade() {
 						{name		= "Shattering";
 						 text 		= "Increases splash siphon coefficients, and now applies on hits to all affected";
 						 baseCost   = 5300;}
-						 public void baseUpgrade(Tower t) { t.baseAttributeList.radiusSplashSiphon += 0.15f; t.baseAttributeList.effectSplashSiphon += 0.15f; t.baseAttributeList.damageSplashSiphon += 0.15f; }
+						 public void baseUpgrade(Tower t) { ((TowerEarthWater) t).doesOnHit = true; t.baseAttributeList.radiusSplashSiphon += 0.15f; t.baseAttributeList.effectSplashSiphon += 0.15f; t.baseAttributeList.damageSplashSiphon += 0.15f; }
 						 public void midSiphonUpgrade(Tower t) {  }
-						 public void postSiphonUpgrade(Tower t) { ((TowerEarthWater) t).doesOnHit = true; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				},
 				{
@@ -474,7 +474,7 @@ public enum TowerType {
 						 text 		= "Converts ATTACK COOLDOWN to PHYSICAL damage and now fires a blast of sand";
 						 baseCost   = 8000;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) {  t.damageArray[DamageType.PHYSICAL.ordinal()] += (13f / t.attackCooldown) * 40; }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += (13f / t.attackCooldown) * 40; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
@@ -533,9 +533,9 @@ public enum TowerType {
 						{name		= "Supervolcano";
 						 text 		= "Dramatically increases range and fire damage. Poisons all enemies.";
 						 baseCost   = 11000;}
-						 public void baseUpgrade(Tower t) {   }
+						 public void baseUpgrade(Tower t) { ((TowerFireEarth) t).poisonModifier=0.10f; ((TowerFireEarth) t).poisonDuration=18; ((TowerFireEarth) t).maxPoisonStacks = 1; }
 						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=20; }
-						 public void postSiphonUpgrade(Tower t) { t.range += 10f; t.damageArray[DamageType.FIRE.ordinal()] += 145; ((TowerFireEarth) t).poisonModifier=0.10f; ((TowerFireEarth) t).poisonDuration=18; ((TowerFireEarth) t).maxPoisonStacks = 1; }
+						 public void postSiphonUpgrade(Tower t) { t.range += 10f; t.damageArray[DamageType.FIRE.ordinal()] += 145; }
 					},
 				},
 				{
@@ -543,33 +543,33 @@ public enum TowerType {
 						{name		= "Melt Armor";
 						 text 		= "Attacks reduce armor by a flat amount";
 						 baseCost 	= 1400;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireEarth) t).armorShredModifier = 1; ((TowerFireEarth) t).armorShredDuration = 20; ((TowerFireEarth) t).maxArmorShredStacks = 10; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).armorShredModifier = 1; ((TowerFireEarth) t).armorShredDuration = 20; ((TowerFireEarth) t).maxArmorShredStacks = 10; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Sear Flesh";
 						 text 		= "Attacks reduce toughness by a flat amount";
 						 baseCost   = 2400;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireEarth) t).toughnessShredModifier = 1; ((TowerFireEarth) t).toughnessShredDuration = 17; ((TowerFireEarth) t).maxToughnessShredStacks = 9; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).toughnessShredModifier = 1; ((TowerFireEarth) t).toughnessShredDuration = 17; ((TowerFireEarth) t).maxToughnessShredStacks = 9; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Swelling";
 						 text 		= "Attacks against afflicted enemies deal additional FIRE damage";
 						 baseCost   = 3000;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireEarth) t).DOHModifier = 0.05f; ((TowerFireEarth) t).DOHLifetime = 25; ((TowerFireEarth) t).maxDOHStacks = 1; ((TowerFireEarth) t).doesOnHit = true; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).DOHModifier = 0.05f; ((TowerFireEarth) t).DOHLifetime = 25; ((TowerFireEarth) t).maxDOHStacks = 1; ((TowerFireEarth) t).doesOnHit = true; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Blood Boil";
 						 text 		= "Deals additional FIRE damage as a percent of max health";
 						 baseCost   = 4000;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireEarth) t).percentMaxHealthModifier = 0.02f; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireEarth) t).percentMaxHealthModifier = 0.02f; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				}
 		};
@@ -628,9 +628,9 @@ public enum TowerType {
 						{name		= "Elemental Fire";
 						 text 		= "Applies a bleed of each element type equal to a percentage of your FIRE damage";
 						 baseCost   = 8700;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireFire) t).bleedModifier = 1; ((TowerFireFire) t).bleedDuration = 15; ((TowerFireFire) t).bleedTiming = 3; ((TowerFireFire) t).maxBleedStacks = 3; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireFire) t).bleedModifier = 1; ((TowerFireFire) t).bleedDuration = 15; ((TowerFireFire) t).bleedTiming = 3; ((TowerFireFire) t).maxBleedStacks = 3; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
 				{
@@ -654,17 +654,17 @@ public enum TowerType {
 						{name		= "Scorched Earth";
 						 text 		= "Scorches the earth around the target, damaging all enemies that pass through it";
 						 baseCost   = 5500;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireFire) t).effectPatchDuration = 12; ((TowerFireFire) t).effectPatchTiming = 3; ((TowerFireFire) t).effectPatchDamageModifier = 0.15f; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireFire) t).effectPatchDuration = 12; ((TowerFireFire) t).effectPatchTiming = 3; ((TowerFireFire) t).effectPatchDamageModifier = 0.15f; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Burning Flesh";
 						 text 		= "Scorched Earth reduces all elemental resistances";
 						 baseCost   = 7000;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireFire) t).effectPatchShredDuration = 14; ((TowerFireFire) t).effectPatchShredModifier = 0.0003f; ((TowerFireFire) t).maxShredStacks = 4; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireFire) t).effectPatchShredDuration = 14; ((TowerFireFire) t).effectPatchShredModifier = 0.0003f; ((TowerFireFire) t).maxShredStacks = 4;  }
+						 public void postSiphonUpgrade(Tower t) {   }
 					},
 				}
 		};
@@ -723,9 +723,9 @@ public enum TowerType {
 						{name		= "";
 						 text 		= "Projectile hits all creeps it passes through until reaching its target";
 						 baseCost   = 6000;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireWater) t).passThroughRadiusModifier = 0.5f; ((TowerFireWater) t).passThroughModifier = 0.4f; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireWater) t).passThroughRadiusModifier = 0.5f; ((TowerFireWater) t).passThroughModifier = 0.4f; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				},
 				{
@@ -749,9 +749,9 @@ public enum TowerType {
 						{name		= "Ground Zero";
 						 text 		= "Leaves behind a zone that, when passed through, deals damage based on max health";
 						 baseCost   = 4600;}
-						 public void baseUpgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerFireWater) t).patchLifetime = 18; ((TowerFireWater) t).patchTiming = 3; ((TowerFireWater) t).patchMaxHealthModifier = 0.00005f; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireWater) t).patchLifetime = 18; ((TowerFireWater) t).patchTiming = 3; ((TowerFireWater) t).patchMaxHealthModifier = 0.00005f; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
 						{name		= "Gamma Radiation";
@@ -811,17 +811,17 @@ public enum TowerType {
 						{name		= "";
 						 text 		= "Increases base FIRE and WIND damage and widens the laser";
 						 baseCost   = 4500;}
-						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()]+=67f; t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+= 34; t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()]+= 44; }
+						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).passThroughRadiusModifier += 0.05f; t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()]+=67f; t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+= 34; t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()]+= 44; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireWind) t).passThroughRadiusModifier += 0.05f;}
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Heat Column";
 						 text 		= "Increases laser width and range, hits flying, and applies splash effects to affected creep";
 						 baseCost   = 6000;}
-						 public void baseUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).passThroughRadiusModifier += 0.05f; ((TowerFireWind) t).doesSplash = true; t.hitsAir = true; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { ((TowerFireWind) t).passThroughRadiusModifier += 0.05f; ((TowerFireWind) t).doesSplash = true; t.hitsAir = true; t.range += 1f; }
+						 public void postSiphonUpgrade(Tower t) {  t.range += 1f; }
 					},
 				},
 				{
@@ -853,7 +853,7 @@ public enum TowerType {
 						{name		= "";
 						 text 		= "Increases siphon coefficients of all towers nearby";
 						 baseCost   = 8000;}
-						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).siphonAuraModifier = 0.02f; ((TowerFireWind) t).siphonAuraRangeModifier = 0.60f; t.guider.increaseNearbyCoefficients(((TowerFireWind) t).siphonAuraModifier, new Circle(t.centerX, t.centerY, t.range * ((TowerFireWind) t).siphonAuraRangeModifier)); } //TODO: Should I be moving away from applying these effect upgrades in postSiphon or in base, we really only need to set the value once honestly
+						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).siphonAuraModifier = 0.02f; ((TowerFireWind) t).siphonAuraRangeModifier = 0.60f; t.guider.increaseNearbyCoefficients(((TowerFireWind) t).siphonAuraModifier, new Circle(t.centerX, t.centerY, t.range * ((TowerFireWind) t).siphonAuraRangeModifier)); } //TODO: Should I be moving away from applying these effect upgrades in postSiphon to in base, we really only need to set the value once honestly
 						 public void midSiphonUpgrade(Tower t) { }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
@@ -866,75 +866,91 @@ public enum TowerType {
 		downgradeType 			= WATER;
 		baseWidth				= 2;
 		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 12.3f;
+		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDurationArray 	= new int[]{/*E*/15, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/4};
+		baseSlowArray			= new float[]{/*E*/0.10f, /*F*/0, /*WA*/0.15f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0.03f};
+		baseAttackCooldown		= 12.5f;
 		baseDamageSplash		= 0f;
-		baseEffectSplash		= 0f;
-		baseSplashRadius		= 0f;
+		baseEffectSplash		= 0.10f;
+		baseSplashRadius		= 1f;
 		baseRange				= 8.5f;
+		damageSiphon			= 0.45f;
+		slowDurationSiphon		= 0.55f;
+		slowSiphon				= 0.58f;
+		attackCooldownSiphon	= 4.8f;
+		damageSplashSiphon		= 0.60f;
+		effectSplashSiphon		= 0.60f;
+		radiusSplashSiphon		= 0.60f;
+		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Flash Flood";
-						 text 		= "Increases the base range";
-						 isBase		= true;
+						 text 		= "Increases the base and non-base range";
 						 baseCost   = 900;}
-						 public void upgrade(Tower t) { t.range += 2.7f; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 1.3f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.baseAttributeList.baseRange += 1.4f; }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "Reduces attack cooldown";
-						 isBase		= false;
+						 text 		= "Reduces base and non-base attack cooldown";
 						 baseCost   = 1300;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 5; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 1.9f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.attackCooldown -= 2.3f; }
 					},
 					new Upgrade() {
 						{name		= "Churning River";
 						 text 		= "Reduces enemy armor";
-						 isBase		= false;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWaterEarth) t).shredModifier = 0.3f; ((TowerWaterEarth) t).shredDuration = 24; ((TowerWaterEarth) t).maxShredStacks = 1; }
 					},
 					new Upgrade() {
 						{name		= "Heavy Rains";
-						 text 		= "Hits air targets, doubles base slow duration, and...";
-						 isBase		= true;
+						 text 		= "Hits air targets, doubles base slow duration, and..."; //TODO:
 						 baseCost   = 2000;}
-						 public void upgrade(Tower t) { t.hitsAir = true; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){t.slowDurationArray[i]*=2;} }
+						 public void baseUpgrade(Tower t) { t.hitsAir = true; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){t.slowDurationArray[i]*=2;} }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Thickening Mud";
 						 text 		= "Increases base slow";
-						 isBase 	= true;
-						 baseCost 	= 1900;}
-						 public void upgrade(Tower t) { t.slowArray[DamageType.WATER.ordinal()] += .2f; t.slowArray[DamageType.EARTH.ordinal()] += .2f; }
+						 baseCost 	= 1200;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSlowArray[DamageType.WATER.ordinal()] += .2f; t.baseAttributeList.baseSlowArray[DamageType.EARTH.ordinal()] += .2f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Cloud Cover";
 						 text 		= "Doubles base EARTH and WATER slow duration";
-						 isBase		= true;
 						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { t.slowDurationArray[DamageType.WATER.ordinal()]*=2; t.slowDurationArray[DamageType.EARTH.ordinal()]*=2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSlowDurationArray[DamageType.WATER.ordinal()]*=2; t.baseAttributeList.baseSlowDurationArray[DamageType.EARTH.ordinal()]*=2; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Shape the Earth";
 						 text 		= "Allows for modification of tile types"; //TODO: Implement this
-						 isBase		= true;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Petrification";
 						 text 		= "Permanently reduces maximum creep speed";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWaterEarth) t).permaSlowModifier = 0.005f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				}
 		};

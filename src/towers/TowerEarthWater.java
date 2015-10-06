@@ -8,6 +8,7 @@ import maps.Tile;
 
 public class TowerEarthWater extends Tower implements TargetsArea {
 	private Circle targetArea;
+	
 	float areaRadius;
 	boolean doesSplash;
 	boolean doesOnHit;
