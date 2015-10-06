@@ -580,13 +580,21 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/70, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/25};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/14, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0.13f, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseAttackCooldown		= 12f;
 		baseDamageSplash		= 0.25f;
 		baseEffectSplash		= 0.25f;
-		baseSplashRadius		= 0f;
+		baseSplashRadius		= 2f;
 		baseRange				= 8.5f;
+		damageSiphon			= 0.80f;
+		slowDurationSiphon		= 0.16f;
+		slowSiphon				= 0.18f;
+		attackCooldownSiphon	= 4.8f;
+		damageSplashSiphon		= 0.44f;
+		effectSplashSiphon		= 0.38f;
+		radiusSplashSiphon		= 0.37f;
+		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -594,60 +602,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Stoke the Flames";
 						 text 		= "Increases the base FIRE damage";
-						 isBase		= true;
 						 baseCost   = 500;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] += 50; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()] += 50; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Heating Up"; //TODO ugh
-						 text 		= "Doubles FIRE damage";
-						 isBase		= false;
+						 text 		= "Increases base FIRE damage then doubles FIRE damage";
 						 baseCost   = 1700;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] *= 2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()] += 22; }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] *= 2; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Intensity";
 						 text 		= "Increases then triples FIRE damage";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  t.damageArray[DamageType.FIRE.ordinal()] += 40; t.damageArray[DamageType.FIRE.ordinal()] *= 3; }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) {  t.damageArray[DamageType.FIRE.ordinal()] += 40; t.damageArray[DamageType.FIRE.ordinal()] *= 3; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Elemental Fire";
-						 text 		= "Applies a bleed of each element type equal to a percentage of your FIRE damage"; //TODO ugh
-						 isBase		= false;
-						 baseCost   = 5000;}
-						 public void upgrade(Tower t) {  }
+						 text 		= "Applies a bleed of each element type equal to a percentage of your FIRE damage";
+						 baseCost   = 8700;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireFire) t).bleedModifier = 1; ((TowerFireFire) t).bleedDuration = 15; ((TowerFireFire) t).bleedTiming = 3; ((TowerFireFire) t).maxBleedStacks = 3; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Spreading Flames";
 						 text 		= "Increase base splash range and effectiveness";
-						 isBase 	= true;
 						 baseCost 	= 1300;}
-						 public void upgrade(Tower t) { t.splashRadius += 1; t.damageSplash += .10; t.effectSplash += .10;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSplashRadius += 1; t.baseAttributeList.baseDamageSplash += .10; t.baseAttributeList.baseEffectSplash += .10;}
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Uncontained";
-						 text 		= "Increases base range and splash damage coefficient";
-						 isBase		= true;
-						 baseCost   = 1400;}
-						 public void upgrade(Tower t) { t.range += 1.2; t.damageSplash += .15; }
+						 text 		= "Increases base range, splash damage coefficient, and damage siphon coefficient";
+						 baseCost   = 1900;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 1.2; t.baseAttributeList.baseDamageSplash += .15; t.baseAttributeList.damageSiphon += 0.05; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Scorched Earth";
 						 text 		= "Scorches the earth around the target, damaging all enemies that pass through it";
-						 isBase		= false;
-						 baseCost   = 2500;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 5500;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireFire) t).effectPatchDuration = 12; ((TowerFireFire) t).effectPatchTiming = 3; ((TowerFireFire) t).effectPatchDamageModifier = 0.15f; }
 					},
 					new Upgrade() {
 						{name		= "Burning Flesh";
 						 text 		= "Scorched Earth reduces all elemental resistances";
-						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 7000;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireFire) t).effectPatchShredDuration = 14; ((TowerFireFire) t).effectPatchShredModifier = 0.0003f; ((TowerFireFire) t).maxShredStacks = 4;  }
 					},
 				}
 		};
