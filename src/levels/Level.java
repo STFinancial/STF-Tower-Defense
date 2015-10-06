@@ -332,6 +332,7 @@ public class Level {
 
 	public ArrayList<Creep> getCreeps() { return creeps; }
 	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this... I would rather have delegation methods
+	public ArrayList<Tower> getTowers() { return towers; }
 	
 	HashSet<Creep> getGroundCreepAdjacentToEarth() {
 		return creepAdjacentToEarth;

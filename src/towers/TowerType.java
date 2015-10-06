@@ -1,5 +1,6 @@
 package towers;
 
+import utilities.Circle;
 import utilities.GameConstants;
 import creeps.DamageType;
 
@@ -771,13 +772,21 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/40, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/20};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0.10f, /*WA*/0, /*WI*/0.10f, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 10f;
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/8, /*WA*/0, /*WI*/4, /*L*/0, /*D*/0, /*P*/5};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0.06f, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown		= 10.7f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
 		baseRange				= 8.8f;
+		damageSiphon			= 0.48f;
+		slowDurationSiphon		= 0.15f;
+		slowSiphon				= 0.38f;
+		attackCooldownSiphon	= 4.6f;
+		damageSplashSiphon		= 0.60f;
+		effectSplashSiphon		= 0.60f;
+		radiusSplashSiphon		= 0.60f;
+		rangeSiphon				= 0.12f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -785,61 +794,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Global Warming";
 						 text 		= "Increases base RANGE";
-						 isBase		= true;
-						 baseCost   = 1250;}
-						 public void upgrade(Tower t) { t.range += 2; }
+						 baseCost   = 550;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Dry Air";
-						 text 		= "Greatly increases RANGE";
-						 isBase		= false;
-						 baseCost   = 2500;}
-						 public void upgrade(Tower t) { t.range += 7; }
+						 text 		= "Greatly increases RANGE and base RANGE";
+						 baseCost   = 1700;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 1.2f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.range += 4.8f; }
 					},
 					new Upgrade() {
 						{name		= "";
 						 text 		= "Increases base FIRE and WIND damage and widens the laser";
-						 isBase		= true;
-						 baseCost   = 3500;}
-						//TODO: This is a good candidate for modifying the siphon coefficients
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=67f; t.damageArray[DamageType.WIND.ordinal()]+= 34; }
+						 baseCost   = 4500;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()]+=67f; t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+= 34; t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()]+= 44; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireWind) t).passThroughRadiusModifier += 0.05f;}
 					},
 					new Upgrade() {
 						{name		= "Heat Column";
 						 text 		= "Increases laser width and range, hits flying, and applies splash effects to affected creep";
-						 isBase		= false;
 						 baseCost   = 6000;}
-						 public void upgrade(Tower t) { t.hitsAir = true; t.range += 4.1; }
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerFireWind) t).passThroughRadiusModifier += 0.05f; ((TowerFireWind) t).doesSplash = true; t.hitsAir = true; t.range += 1f; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "";
 						 text 		= "Multiplies FIRE damage";
-						 isBase 	= false;
-						 baseCost 	= 2000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] *= 1.5f; }
+						 baseCost 	= 1300;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()] *= 1.5f; }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "";
 						 text 		= "Multiply all damage types";
-						 isBase		= false;
-						 baseCost   = 4300;}
-						 public void upgrade(Tower t) { for(int i=0; i<GameConstants.NUM_DAMAGE_TYPES; i++) { t.damageArray[i] *= 1.2; } }
+						 baseCost   = 2900;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { for(int i=0; i<GameConstants.NUM_DAMAGE_TYPES; i++) { t.damageArray[i] *= 1.2; } }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "";
 						 text 		= "Greatly increases siphon coefficients";
-						 isBase		= true;
-						 baseCost   = 3500;}
-						 public void upgrade(Tower t) { /*//TODO */}
+						 baseCost   = 7500;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.damageSiphon += 0.10f; t.baseAttributeList.damageSplashSiphon += 0.10f; t.baseAttributeList.slowSiphon += 0.10f; t.baseAttributeList.slowDurationSiphon += 0.10f; t.baseAttributeList.effectSplashSiphon += 0.10f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "Increases siphon coefficients of all towers nearby"; //TODO: Could I increase nearby towers' siphon coefficients?
-						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 text 		= "Increases siphon coefficients of all towers nearby";
+						 baseCost   = 8000;}
+						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).siphonAuraModifier = 0.02f; ((TowerFireWind) t).siphonAuraRangeModifier = 0.60f; t.guider.increaseNearbyCoefficients(((TowerFireWind) t).siphonAuraModifier, new Circle(t.centerX, t.centerY, t.range * ((TowerFireWind) t).siphonAuraRangeModifier)); } //TODO: Should I be moving away from applying these effect upgrades in postSiphon or in base, we really only need to set the value once honestly
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};

@@ -173,4 +173,24 @@ public final class ProjectileGuider {
 		}
 		return null;
 	}
+
+	public void increaseNearbyCoefficients(float siphonAuraModifier, Circle space) {
+		Circle c = new Circle(0,0,0);
+		for (Tower t: level.getTowers()) {
+			c.x = t.centerX;
+			c.y = t.centerY;
+			
+			//TODO: This method kind of sucks having to update the tower chain for each one
+			if (c.intersects(space)) {
+				t.baseAttributeList.damageSiphon += siphonAuraModifier;
+				t.baseAttributeList.damageSplashSiphon += siphonAuraModifier;
+				t.baseAttributeList.effectSplashSiphon += siphonAuraModifier;
+				t.baseAttributeList.rangeSplashSiphon += siphonAuraModifier / 2;
+				t.baseAttributeList.rangeSiphon += siphonAuraModifier / 4;
+				t.baseAttributeList.slowSiphon += siphonAuraModifier;
+				t.baseAttributeList.slowDurationSiphon += siphonAuraModifier;
+				t.updateTowerChain();
+			}
+		}
+	}
 }

@@ -11,7 +11,6 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 	
 	private ProjectileBeam(Tower parent, Projectile mold, float targetAreaRadius, boolean doesSplash) {
 		super(parent, mold);
-		this.targetArea = new Circle(parent.x, parent.y, targetAreaRadius);
 		this.speed = 0;
 		this.currentSpeed = 0;
 		this.targetAngle = 0;
@@ -20,7 +19,7 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 	
 	public ProjectileBeam(Tower parent, float targetAreaRadius, boolean doesSplash) {
 		super(parent);
-		this.targetArea = new Circle(parent.x, parent.y, targetAreaRadius);
+		this.targetArea = new Circle(parent.centerX, parent.centerY, targetAreaRadius);
 		this.speed = 0;
 		this.currentSpeed = 0;
 		this.targetAngle = 0;

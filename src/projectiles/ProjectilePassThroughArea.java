@@ -37,7 +37,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 	public ProjectilePassThroughArea (Tower parent, float distanceLimit, float passThroughRadius, float passThroughModifier, boolean doesSplash, int pulseTiming) {
 		super(parent);
 		this.passedThrough = new HashSet<Creep>();
-		this.targetArea = new Circle(parent.x, parent.y, 0);
+		this.targetArea = new Circle(parent.centerX, parent.centerY, 0);
 		this.distanceTraveled = 0;
 		this.distanceLimit = distanceLimit;
 		this.passThroughRadius = passThroughRadius;

@@ -23,7 +23,6 @@ public class TowerFireWater extends Tower {
 	int patchTiming;
 	float patchMaxHealthModifier;
 	
-	boolean hitsAir;
 	boolean doesSplash;
 	
 	public TowerFireWater(Level level, Tile topLeftTile, int towerID) {
