@@ -4,6 +4,8 @@ import utilities.Circle;
 import utilities.GameConstants;
 import creeps.DamageType;
 
+//TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
+//TODO: Do the same with doesSplash, honestly.
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
@@ -962,13 +964,21 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/50, /*WA*/40, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.10f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/4, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0.02f, /*WA*/0.10f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseAttackCooldown		= 13.1f;
 		baseDamageSplash		= 0.04f;
 		baseEffectSplash		= 0.04f;
 		baseSplashRadius		= 1f;
 		baseRange				= 8.2f;
+		damageSiphon			= 0.45f;
+		slowDurationSiphon		= 0.55f;
+		slowSiphon				= 0.58f;
+		attackCooldownSiphon	= 4.6f;
+		damageSplashSiphon		= 0.34f;
+		effectSplashSiphon		= 0.37f;
+		radiusSplashSiphon		= 0.33f;
+		rangeSiphon				= 0.10f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -976,60 +986,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Watery Grave";
 						 text 		= "Increases base WATER damage, slow, and slow duration";
-						 isBase		= true;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.WATER.ordinal()]+=42; t.slowArray[DamageType.WATER.ordinal()]+=0.11f; t.slowDurationArray[DamageType.WATER.ordinal()]+=7; }
+						 baseCost   = 1900;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WATER.ordinal()]+=42; t.baseAttributeList.baseSlowArray[DamageType.WATER.ordinal()]+=0.11f; t.baseAttributeList.baseSlowDurationArray[DamageType.WATER.ordinal()]+=7; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Elemental Fury";
 						 text 		= "Reduces base attack cooldown";
-						 isBase		= true;
 						 baseCost   = 1600;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 3.1f; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 3.1f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Clarity";
 						 text 		= "Reduces disruptor effects for a time"; //TODO: Is this too strong?
-						 isBase		= false;
 						 baseCost   = 7500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWaterFire) t).disruptorSuppressionLifetime = 50; ((TowerWaterFire) t).disruptorSuppressionPercent = 0.50f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Cleansing";
 						 text 		= "Increases the disruptor reduction and disables creep deathrattles for a time"; //TODO: Is this too strong?
-						 isBase		= false;
 						 baseCost   = 8900;}
-						 public void upgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { ((TowerWaterFire) t).disruptorSuppressionPercent = 1;  ((TowerWaterFire) t).deathrattleSuppressionLifetime = 43; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Boiling";
 						 text 		= "Increases base FIRE damage and reduces base attack cooldown";
-						 isBase		= true;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=57; t.attackCooldown-=1.4f; }
+						 baseCost   = 1750;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()]+=47; t.baseAttributeList.baseAttackCooldown-=1.4f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Scalding";
 						 text 		= "Increases base FIRE damage and splash radius";
-						 isBase		= true;
 						 baseCost   = 3400;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=61; t.splashRadius+=1.3f; } //TODO: Would like this to be mixed base and not
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()]+=21; t.baseAttributeList.baseSplashRadius+=0.7f; } //TODO: Would like this to be mixed base and not
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=21f; t.splashRadius+=0.7f; }
+						 public void postSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=21f; t.splashRadius+=0.7f;}
 					},
 					new Upgrade() {
-						{name		= "Third Degree";
-						 text 		= "Increases base FIRE and WATER damage and base damage splash coefficient";
-						 isBase		= true;
-						 baseCost   = 6400;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=158; t.damageArray[DamageType.WATER.ordinal()]+=34; t.damageSplash+=0.075f; } //TODO: again I want to mix base and not base. Not base damage but base splash coefficient
+						{name		= "Third Degree"; //TODO: Not really happy with this one, what about siphon coefficients or something?
+						 text 		= "Increases base and non-base FIRE and WATER damage and base damage splash coefficient";
+						 baseCost   = 7300;}
+						 public void baseUpgrade(Tower t) {  t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()]+=34; t.baseAttributeList.baseDamageArray[DamageType.WATER.ordinal()]+=34; t.baseAttributeList.baseDamageSplash+=0.075f; } //TODO: again I want to mix base and not base. Not base damage but base splash coefficient
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=158; }
 					},
 					new Upgrade() {
 						{name		= "Superheated";
-						 text 		= "Ignores creep FIRE and WATER resistances";
-						 isBase		= false;
-						 baseCost   = 5320;}
-						 public void upgrade(Tower t) {  }
+						 text 		= "Ignores creep FIRE and WATER resistances and increases damage siphon coefficient and base damage splash coefficient";
+						 baseCost   = 7300;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.damageSiphon += 0.15f; t.baseAttributeList.baseDamageSplash += 0.075f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};

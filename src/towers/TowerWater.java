@@ -19,9 +19,8 @@ public class TowerWater extends Tower{
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			Creep targetCreep = level.findTargetCreep(this);
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
-				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;

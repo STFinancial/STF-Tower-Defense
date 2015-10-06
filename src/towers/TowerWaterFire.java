@@ -1,5 +1,6 @@
 package towers;
 
+import creeps.Creep;
 import creeps.DamageType;
 import projectileeffects.SuppressionDeathrattle;
 import projectileeffects.SuppressionDisruptor;
@@ -8,27 +9,34 @@ import levels.Level;
 import maps.Tile;
 
 public class TowerWaterFire extends Tower {
-	private int deathrattleSuppressionLifetime;
-	private int disruptorSuppressionLifetime;
-	private float disruptorSuppressionPercent;
+	int deathrattleSuppressionLifetime;
+	
+	
+	int disruptorSuppressionLifetime;
+	float disruptorSuppressionPercent;
 	
 	public TowerWaterFire(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		super(level, topLeftTile, type, towerID);
-		this.deathrattleSuppressionLifetime = 43; //TODO: Move these base values to the game constants (same with all other towers) along with the quality increases?
-		this.disruptorSuppressionLifetime = 60;
-		this.disruptorSuppressionPercent = 0.5f;
+		this.disruptorSuppressionLifetime = 0;
+		this.disruptorSuppressionPercent = 0;
+		
+		this.deathrattleSuppressionLifetime = 0;
 	}
-
+	
 	@Override
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
-			attackCarryOver += 1 - currentAttackCooldown;
-			currentAttackCooldown = attackCooldown;
-			if (attackCarryOver > 1) {
-				attackCarryOver -= 1;
-				currentAttackCooldown--;
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
+			if (targetCreep != null) {
+				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
+				level.addProjectile(fireProjectile());
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
+				if (attackCarryOver > 1) {
+					attackCarryOver -= 1;
+					currentAttackCooldown--;
+				}
 			}
 			return 1;
 		}
@@ -40,7 +48,6 @@ public class TowerWaterFire extends Tower {
 		baseProjectile = new ProjectileBasic(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			disruptorSuppressionPercent = 1f;
 			baseProjectile.addSpecificCreepEffect(new SuppressionDeathrattle(deathrattleSuppressionLifetime, 1, DamageType.WATER, baseProjectile));
 		}
 		if (progress[0][2]) {
@@ -48,10 +55,8 @@ public class TowerWaterFire extends Tower {
 		}
 		
 		if (progress[1][3]) {
-			baseProjectile.resistPenPercent[DamageType.WATER.ordinal()] = 1;
-			baseProjectile.resistPenPercent[DamageType.FIRE.ordinal()] = 1;
+			baseProjectile.setResistPenPercent(DamageType.WATER, 1);
+			baseProjectile.setResistPenPercent(DamageType.FIRE, 1);
 		}
 	}
-
-
 }
