@@ -30,8 +30,8 @@ public class TowerFireEarth extends Tower {
 	boolean doesSplash;
 	boolean doesOnHit;
 
-	public TowerFireEarth(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerFireEarth(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.FIRE_EARTH, towerID);
 		this.poisonModifier = 0;
 		this.poisonDuration = 0;
 		this.poisonTiming = 3;

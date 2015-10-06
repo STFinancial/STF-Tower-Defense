@@ -158,9 +158,11 @@ public abstract class Projectile implements Updatable {
 	
 	public abstract void detonate();
 
+	public void setIgnoresShield(boolean ignoresShield) { this.ignoresShield = ignoresShield; }
 	public void setSize(float size) { if (size >= 0) { this.size = size; } }
 	public void setSpeed(float speed) { this.speed = speed; }
 	public void setResistPenPercent(DamageType type, float modifier) { resistPenPercent[type.ordinal()] = modifier; }
+	public void setToughPenPercent(float modifier) { toughPenPercent = modifier; }
 	
 	public boolean ignoresShield() { return ignoresShield; }
 	public float getShieldDrainModifier() { return shieldDrainModifier; }

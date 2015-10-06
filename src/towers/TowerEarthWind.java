@@ -10,8 +10,8 @@ public class TowerEarthWind extends Tower {
 	float passThroughRadiusModifier;
 	float passThroughModifier;
 	
-	public TowerEarthWind(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerEarthWind(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.EARTH_WIND, towerID);
 		this.passThroughRadiusModifier = 0.18f;
 		this.passThroughModifier = 0.40f;
 	}

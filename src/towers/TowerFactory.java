@@ -20,10 +20,10 @@ public class TowerFactory {
 			t = new TowerWater(level, topLeft, towerID);
 			break;
 		case WIND_WIND:
-			t = new TowerWindWind(level, topLeft, towerID);
+			t = new TowerWindWind(level, topLeft, TowerType.WIND_WIND, towerID);
 			break;
 		case WIND_EARTH:
-			t = new TowerWindEarth(level, topLeft, towerID);
+			t = new TowerWindEarth(level, topLeft, TowerType.WIND_EARTH, towerID);
 			break;
 		case WIND_FIRE:
 			t = new TowerWindFire(level, topLeft, towerID);
