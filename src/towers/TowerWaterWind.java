@@ -36,8 +36,8 @@ public final class TowerWaterWind extends Tower {
 	int maxDOHStacks;
 	int damageOnHitWeight;
 	
-	public TowerWaterWind(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWaterWind(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WATER_WIND, towerID);
 		this.toughShredDuration = 0;
 		this.toughShredModifier = 0;
 		this.maxToughShredStacks = 0;

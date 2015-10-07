@@ -35,7 +35,7 @@ final class CreepAttributes implements Updatable {
 	void setToughnessValues(float defaultToughness) { toughness = new Toughness(this, defaultToughness); }
 	void setDisruptionValues(float defaultDisruption) { disruption = new Disruption(this, defaultDisruption); }
 	void setGoldValue(float defaultGoldValue) { goldValue = new GoldValue(this, defaultGoldValue); }
-	void setDeathrattle(ProjectileEffect effect, List<Creep> children) { deathrattle = new Deathrattle(this, effect, children); }
+	void setDeathrattle(List<ProjectileEffect> effects, List<Creep> children) { deathrattle = new Deathrattle(this, effects, children); }
 	void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { onHit = new OnHit(this, goldOnHit, cooldownOnHit, damageOnHit); }
 	void setSize(float defaultSize) { size = new Size(this, defaultSize); }
 	void setHealthCost(float defaultHealthCost) { healthCost = new HealthCost(this, defaultHealthCost); }
@@ -51,7 +51,7 @@ final class CreepAttributes implements Updatable {
  		if (toughness == null) { toughness = new Toughness(this, 0); }
  		if (disruption == null) { disruption = new Disruption(this, 0); }
  		if (goldValue == null) { goldValue = new GoldValue(this, 0); }
- 		if (deathrattle == null) { deathrattle = new Deathrattle(this, null, null); } //Should I pass in null values, what if we want to add something to it later?
+ 		if (deathrattle == null) { deathrattle = new Deathrattle(this, null, null); }
 		if (onHit == null) { onHit = new OnHit(this, 0, 0, new float[GameConstants.NUM_DAMAGE_TYPES]); }
  		if (size == null) { size = new Size(this, 0); }
 		if (healthCost == null) { healthCost = new HealthCost(this, 0); }
@@ -63,6 +63,7 @@ final class CreepAttributes implements Updatable {
 	
 	//Simple delegation one liners
 	void addAllEffects(ArrayList<ProjectileEffect> effects) { this.effects.addAllEffects(effects); }
+	void addDeathrattleEffect(ProjectileEffect effect, int duration) { deathrattle.addDeathrattleEffect(effect, duration); }
 	void addEffect(ProjectileEffect effect) { effects.addEffect(effect); }
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
 	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }

@@ -21,8 +21,8 @@ public final class TowerWindEarth extends Tower {
 	
 	boolean doesSplash;
 	
-	public TowerWindEarth(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWindEarth(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WIND_EARTH, towerID);
 		this.disorientDuration = 0;
 		
 		this.knockupDuration = 0;

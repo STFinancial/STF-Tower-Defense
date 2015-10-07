@@ -9,26 +9,31 @@ import projectiles.ProjectileBasic;
 import levels.Level;
 import maps.Tile;
 
-public class TowerWindWind extends Tower {
-	private float hastingModifier;
-	private int hastingLifetime;
-	private int maxHastingStacks;
-	private float wealthModifier;
-	private int wealthLifetime;
-	private int maxWealthStacks;
-	private float groundingModifier;
-	private float speedDamageModifier;
+public final class TowerWindWind extends Tower {
+	float hastingModifier;
+	int hastingDuration;
+	int maxHastingStacks;
+	
+	float wealthModifier;
+	int wealthDuration;
+	int maxWealthStacks;
+	
+	float groundingModifier;
+	float speedDamageModifier;
 	
 	
-	public TowerWindWind(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
-		this.hastingModifier = 1f;
-		this.hastingLifetime = 20;
-		this.maxHastingStacks = 1;
-		this.wealthModifier = 6f;
-		this.wealthLifetime = 20;
-		this.maxWealthStacks = 2;
-		this.groundingModifier = 70;
+	public TowerWindWind(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WIND_WIND, towerID);
+		
+		this.hastingModifier = 0;
+		this.hastingDuration= 0;
+		this.maxHastingStacks = 0;
+		
+		this.wealthModifier = 0;
+		this.wealthDuration = 0;
+		this.maxWealthStacks = 0;
+		
+		this.groundingModifier = 0;
 		this.speedDamageModifier = 1000f;
 	}
 
@@ -37,12 +42,12 @@ public class TowerWindWind extends Tower {
 		baseProjectile = new ProjectileBasic(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
-			Hasting h = new Hasting(hastingLifetime, hastingModifier, DamageType.WIND, baseProjectile);
-			h.setMaxStacks(maxHastingStacks); //TODO: Do this for all stackables in towers
+			Hasting h = new Hasting(hastingDuration, hastingModifier, DamageType.WIND, baseProjectile);
+			h.setMaxStacks(maxHastingStacks);
 			baseProjectile.addSpecificCreepEffect(h);
 		}
 		if (progress[0][3]) {
-			Wealth w = new Wealth(wealthLifetime, wealthModifier, DamageType.WIND, baseProjectile, true, true);
+			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.WIND, baseProjectile, true, true);
 			w.setMaxStacks(maxWealthStacks);
 			baseProjectile.addSpecificCreepEffect(w);
 		}

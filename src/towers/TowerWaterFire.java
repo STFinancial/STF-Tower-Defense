@@ -15,8 +15,8 @@ public class TowerWaterFire extends Tower {
 	int disruptorSuppressionLifetime;
 	float disruptorSuppressionPercent;
 	
-	public TowerWaterFire(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWaterFire(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WATER_FIRE, towerID);
 		this.disruptorSuppressionLifetime = 0;
 		this.disruptorSuppressionPercent = 0;
 		

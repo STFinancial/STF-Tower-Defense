@@ -17,8 +17,8 @@ public class TowerWaterEarth extends Tower {
 	boolean doesSplash;
 	boolean doesOnHit;
 	
-	public TowerWaterEarth(Level level, Tile topLeftTile, TowerType type, int towerID) {
-		super(level, topLeftTile, type, towerID);
+	public TowerWaterEarth(Level level, Tile topLeftTile, int towerID) {
+		super(level, topLeftTile, TowerType.WATER_EARTH, towerID);
 		this.maxShredStacks = 0;
 		this.shredModifier = 0;
 		this.shredDuration = 0;

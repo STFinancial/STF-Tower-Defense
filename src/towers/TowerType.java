@@ -1435,79 +1435,96 @@ public enum TowerType {
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
 		//Life tower, though it doesn't really make sense with the elements involved (or does it)
-		name					= "Blizzard";
+		//Passively generates gold and siphons max health
+		name					= "Life";
 		downgradeType 			= WIND;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 10.7f;
+		baseAttackCooldown		= 15f;
 		baseDamageSplash		= 0f;
-		baseEffectSplash		= 0.10f;
+		baseEffectSplash		= 0f;
 		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseRange				= 8f;
+		damageSiphon			= 1f;
+		slowDurationSiphon		= 1f;
+		slowSiphon				= 1f;
+		attackCooldownSiphon	= 4f;
+		damageSplashSiphon		= 1f;
+		effectSplashSiphon		= 1f;
+		radiusSplashSiphon		= 1f;
+		rangeSiphon				= 0.16f;
 		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { }
+						{name		= "Flourishing I";
+						 text 		= "Increases all siphon coefficients";
+						 baseCost   = 1200;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.damageSiphon += 0.05f; t.baseAttributeList.slowDurationSiphon += 0.05f; t.baseAttributeList.slowSiphon += 0.05f; t.baseAttributeList.damageSplashSiphon += 0.05f; t.baseAttributeList.effectSplashSiphon += 0.05f; t.baseAttributeList.radiusSplashSiphon += 0.05f; t.baseAttributeList.attackCooldownSiphon += 0.50f; t.baseAttributeList.rangeSiphon += 0.03f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2200;}
-						 public void upgrade(Tower t) { }
+						{name		= "Flourishing II";
+						 text 		= "Increases all siphon coefficients";
+						 baseCost   = 2000;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.damageSiphon += 0.10f; t.baseAttributeList.slowDurationSiphon += 0.10f; t.baseAttributeList.slowSiphon += 0.10f; t.baseAttributeList.damageSplashSiphon += 0.10f; t.baseAttributeList.effectSplashSiphon += 0.10f; t.baseAttributeList.radiusSplashSiphon += 0.10f; t.baseAttributeList.attackCooldownSiphon += 1f; t.baseAttributeList.rangeSiphon += 0.06f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Lifebending";
+						 text 		= "Increases base stats of all towers in range"; //TODO: Implement this
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Eden";
+						 text 		= "Passive gold generation, siphoning from this tower costs no gold, and reduces upgrade costs by 5%"; //TODO: How can I implement this
+						 baseCost   = 10000;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase 	= false;
+						{name		= "Decay";
+						 text 		= "Increases max health damage";
 						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindWater) t).maxHealthModifier += 0.01; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Rot";
+						 text 		= "Increases max health damage";
 						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindWater) t).maxHealthModifier += 0.02; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Suffering";
+						 text 		= "Creeps deal damage to those around on death";
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindWater) t).damageOnDeathModifier = 0.10f; ((TowerWindWater) t).explosionRadiusModifier = 0.15f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
+						{name		= "Curse of Flesh"; //TODO:
 						 text 		= "";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};
@@ -1521,73 +1538,88 @@ public enum TowerType {
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/50};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 6.9f;
+		baseAttackCooldown		= 9.1f;
 		baseDamageSplash		= 0f;
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 2.2f;
 		baseRange				= 11f;
+		damageSiphon			= 0.5f;
+		slowDurationSiphon		= 0.43f;
+		slowSiphon				= 0.48f;
+		attackCooldownSiphon	= 4f;
+		damageSplashSiphon		= 0.46f;
+		effectSplashSiphon		= 0.22f;
+		radiusSplashSiphon		= 0.44f;
+		rangeSiphon				= 0.10f;
 		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
-					//TODO: Can change this to siphon coefficients modification once that is implemented
 					new Upgrade() {
 						{name		= "Pushback";
 						 text 		= "Increases base PHYSICAL damage";
-						 isBase		= false;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { }
+						 baseCost   = 1400;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 45; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Focused Attacks";
-						 text 		= "Sets the attack cooldown of this tower to 1 and removes all splash effects";
-						 isBase		= false;
-						 baseCost   = 3000;}
-						 public void upgrade(Tower t) { t.attackCooldown = 1; t.splashRadius = 0; }
+						 text 		= "Sets the attack cooldown of this tower to 1 and removes all splash and slow effects but increases siphon coefficients";
+						 baseCost   = 4500;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.effectSplashSiphon += 0.06f; t.baseAttributeList.damageSplashSiphon += 0.06f; t.baseAttributeList.slowSiphon += 0.06f; t.baseAttributeList.slowDurationSiphon += 0.06f; t.baseAttributeList.damageSiphon += 0.06f; t.baseAttributeList.radiusSplashSiphon += 0.06f; t.baseAttributeList.rangeSiphon += 0.03f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.splashRadius = 0; t.attackCooldown = 1; for (int i=0; i<GameConstants.NUM_DAMAGE_TYPES; i++) { t.slowDurationArray[i]=0; } }
 					},
 					new Upgrade() {
 						{name		= "Trade Winds";
 						 text 		= "Enemies hit by this tower apply a debuff that, when hit, grants towers reduced attack cooldown";
-						 isBase		= false;
-						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 baseCost   = 5500;}
+						 public void baseUpgrade(Tower t) { ((TowerWindWind) t).hastingModifier = 0.5f; ((TowerWindWind) t).hastingDuration = 20; ((TowerWindWind) t).maxHastingStacks = 1; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Windfall";
 						 text 		= "Applies a stacking debuff, when hit, grants gold";
-						 isBase		= false;
 						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindWind) t).wealthDuration = 20; ((TowerWindWind) t).wealthModifier = 3f; ((TowerWindWind) t).maxWealthStacks = 3; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Gale Force I";
 						 text 		= "Increases base WIND damage";
-						 isBase 	= true;
-						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]+=28; }
+						 baseCost 	= 600;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+=28; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Gale Force II";
 						 text 		= "Increases base WIND damage";
-						 isBase		= true;
-						 baseCost   = 1900;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]+=38; }
+						 baseCost   = 900;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+=38; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Turbulence";
 						 text 		= "Attacks now ground flying creep. Creep that are grounded take extra PHYSICAL damage";
-						 isBase		= false;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindWind) t).groundingModifier = 150f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Wind Resistance";
-						 text 		= "Deals additional PHYSICAL and WIND damage based on speed of creep";
-						 isBase		= false;
+						 text 		= "Deals additional PHYSICAL and WIND damage based on speed of creep and increases damage and range siphon coefficients";
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindWind) t).speedDamageModifier = 1000f; t.baseAttributeList.damageSiphon += 0.10f; t.baseAttributeList.rangeSiphon += 0.05f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};

@@ -166,6 +166,7 @@ public abstract class Projectile implements Updatable {
 	public void setSpeed(float speed) { this.speed = speed; }
 	public void setToughPenPercent(float modifier) { toughPenPercent = modifier; }
 	
+	public boolean hitsAir() { return hitsAir; }
 	public boolean ignoresShield() { return ignoresShield; }
 	public float getShieldDrainModifier() { return shieldDrainModifier; }
 	public float getToughPen(boolean isFlat) { return (isFlat ? toughPenFlat : toughPenPercent); }
@@ -173,6 +174,11 @@ public abstract class Projectile implements Updatable {
 	public Tower getParent() { return parent; }
 	public float getX() { return x; }
 	public float getY() { return y; }
+	
+	public void clearAllBasicEffects() {
+		creepEffects.clear();
+		splashEffects.clear();
+	}
 	
 	protected void updateAngle() {
 		if (targetCreep != null) {

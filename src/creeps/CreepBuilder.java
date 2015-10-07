@@ -25,7 +25,7 @@ public final class CreepBuilder {
 	public void setToughnessValues(float defaultToughness) { currentAttributes.setToughnessValues(defaultToughness); }
 	public void setDisruptionValues(float defaultDisruption) { currentAttributes.setDisruptionValues(defaultDisruption); }
 	public void setGoldValue(float defaultGoldValue) { currentAttributes.setGoldValue(defaultGoldValue); }
-	public void setDeathrattle(ProjectileEffect effect, List<Creep> children) { currentAttributes.setDeathrattle(effect, children); }
+	public void setDeathrattle(List<ProjectileEffect> effects, List<Creep> children) { currentAttributes.setDeathrattle(effects, children); }
 	public void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { currentAttributes.setOnHit(goldOnHit, cooldownOnHit, damageOnHit); }
 	public void setSize(float defaultSize) { currentAttributes.setSize(defaultSize); }
 	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }
