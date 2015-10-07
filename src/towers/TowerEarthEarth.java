@@ -85,6 +85,7 @@ public final class TowerEarthEarth extends Tower {
 		this.doesSplash = false;
 		this.doesOnHit = false;
 		
+		//TODO: Set appropriate values for all of the towers, should we do this in TowerType?
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;
 		this.qSlowDuration = 0.10f;

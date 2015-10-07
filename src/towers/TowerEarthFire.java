@@ -11,17 +11,19 @@ import maps.Tile;
 public final class TowerEarthFire extends Tower {
 	int wealthDuration;
 	float wealthModifier;
+	private float qWealthDuration;
+	private float qWealthModifier;
+	
 	float shredModifier;
 	int shredDuration;
 	int maxShredStacks;
+	private float qShredModifier;
+	private float qShredDuration;
+	private float qShredStacks;
 	
 	public TowerEarthFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_FIRE, towerID);
-		this.wealthDuration = 0;
-		this.wealthModifier = 0;
-		this.shredModifier = 0;
-		this.shredDuration = 0;
-		this.maxShredStacks = 0;
+		
 	}
 
 	@Override
@@ -64,6 +66,42 @@ public final class TowerEarthFire extends Tower {
 			}
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.wealthDuration = 0;
+		this.wealthModifier = 0;
+		this.shredModifier = 0;
+		this.shredDuration = 0;
+		this.maxShredStacks = 0;
+		
+		//TODO: Set appropriate values for all of the towers, should we do this in TowerType?
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
+		
+		this.qWealthDuration = 1;
+		this.qWealthModifier = 0.01f;
+		
+		this.qShredModifier = 0.0008f;
+		this.qShredDuration = 0.5f;
+		this.qShredStacks = 0.5f;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		shredModifier += qShredModifier * qLevel;
+		shredDuration += (int) (qShredDuration * qLevel);
+		maxShredStacks += (int) (qShredStacks * qLevel);
+		
+		wealthModifier += qWealthModifier * qLevel;
+		wealthDuration += (int) (qWealthDuration * qLevel);
 	}
 
 }
