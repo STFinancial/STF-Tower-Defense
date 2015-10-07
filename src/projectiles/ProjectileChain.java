@@ -63,6 +63,10 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 		return true;
 	}
 	
+	public void setDuplicates(boolean noDuplicates) {
+		this.noDuplicates = noDuplicates;
+	}
+	
 	@Override
 	public void detonate() {
 		if (dud) {

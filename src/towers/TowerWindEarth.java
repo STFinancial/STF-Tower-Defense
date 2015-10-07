@@ -4,14 +4,13 @@ import projectileeffects.Disorient;
 import projectileeffects.Knockup;
 import projectileeffects.Slow;
 import projectiles.ProjectileBasic;
-import projectiles.ProjectileBeam;
 import projectiles.ProjectilePassThroughTarget;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Level;
 import maps.Tile;
 
-public class TowerWindEarth extends Tower {
+public final class TowerWindEarth extends Tower {
 	int knockupDuration;
 	int disorientDuration;
 	float unslowAmount;

@@ -7,41 +7,43 @@ import creeps.DamageType;
 import levels.Level;
 import maps.Tile;
 
-public class TowerWindFire extends Tower {
+public final class TowerWindFire extends Tower {
 	int maxChains;
+	
 	float chainPenalty;
-	private int snareDuration = 4;
+	int snareDuration;
+	
+	boolean noDuplicates;
+	
+	float shieldDrainModifier;
 	
 	public TowerWindFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WIND_FIRE, towerID);
-		maxChains = 3;
-		chainPenalty = 0.75f;
+		this.maxChains = 3;
+		this.chainPenalty = 0.75f;
+		
+		this.snareDuration = 0;
+		
+		this.noDuplicates = true;
+		this.shieldDrainModifier = 1;
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileChain(this, maxChains, (float) Math.sqrt(range), chainPenalty);
+		baseProjectile = new ProjectileChain(this, maxChains, (float) Math.sqrt(range), chainPenalty, noDuplicates);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][2]) {
-			((ProjectileChain) baseProjectile).noDuplicates = false;
-		}
-		if (progress[1][2]) {
-			baseProjectile.shieldDrainModifier = 2f;
-		}
+		baseProjectile.setShieldDrainModifier(shieldDrainModifier);
 		if (progress[1][3]) {
 			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WIND, baseProjectile));
 		}
 	}
-
-	
 	
 	@Override
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			Creep targetCreep = level.findTargetCreep(this);
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
-				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileChain) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
@@ -55,5 +57,4 @@ public class TowerWindFire extends Tower {
 		}
 		return 0;
 	}
-
 }

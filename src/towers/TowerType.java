@@ -1344,14 +1344,22 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/6, /*WA*/0, /*WI*/13, /*L*/0, /*D*/0, /*P*/5};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0.06f, /*WA*/0, /*WI*/0.11f, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 200;
-		baseAttackCooldown		= 7f;
+		baseAttackCooldown		= 10.0f;
 		baseDamageSplash		= 0.10f;
 		baseEffectSplash		= 0.10f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.5f;
+		baseSplashRadius		= 2f;
+		baseRange				= 8.6f;
+		damageSiphon			= 0.58f;
+		slowDurationSiphon		= 0.41f;
+		slowSiphon				= 0.48f;
+		attackCooldownSiphon	= 4.6f;
+		damageSplashSiphon		= 0.38f;
+		effectSplashSiphon		= 0.39f;
+		radiusSplashSiphon		= 0.33f;
+		rangeSiphon				= 0.12f;
 		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
@@ -1359,60 +1367,68 @@ public enum TowerType {
 					new Upgrade() {
 						{name		= "Forking";
 						 text 		= "Increase the maximum chaining by 3";
-						 isBase		= false;
-						 baseCost   = 400;}
-						 public void upgrade(Tower t) { ((TowerWindFire) t).maxChains += 3; } //TODO: Shouldn't be accessing this way
+						 baseCost   = 900;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWindFire) t).maxChains += 3; }
 					},
 					new Upgrade() {
 						{name		= "Conductivity";
 						 text 		= "Increase all ELEMENTAL DAMAGE done by this tower";
-						 isBase		= false;
 						 baseCost   = 1400;}
-						 public void upgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "No Mercy";
-						 text 		= "The tower may chain to a target it has already hit";
-						 isBase		= false;
-						 baseCost   = 2000;}
-						 public void upgrade(Tower t) {  }
+						 text 		= "The tower may chain to a target it has already hit and increases WIND damage";
+						 baseCost   = 3700;}
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()] += 100; ((TowerWindFire) t).noDuplicates = false; }
 					},
 					new Upgrade() {
 						{name		= "Superconducting";
-						 text 		= "Removes the DAMAGE and EFFECT penalty for chaining";
-						 isBase		= false;
+						 text 		= "Damage and Effects now increase per chain";
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) { ((TowerWindFire) t).chainPenalty = 1; }
+						 public void baseUpgrade(Tower t) { ((TowerWindFire) t).chainPenalty = 1.10f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "Cloud Cover";
 						 text 		= "Increases the base RANGE";
-						 isBase 	= true;
 						 baseCost 	= 600;}
-						 public void upgrade(Tower t) { t.range += 2; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Brewing Storm";
 						 text 		= "Increase the base FIRE and WIND damage";
-						 isBase		= true;
-						 baseCost   = 1500;}
-						 public void upgrade(Tower t) { t.damageArray[1] += 30; t.damageArray[3] += 30; }
+						 baseCost   = 1650;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()] += 30; t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()] += 30; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Short Circuiting";
 						 text 		= "Drains a creep's SHIELD at twice the rate";
-						 isBase		= false;
 						 baseCost   = 2500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindFire) t).shieldDrainModifier = 2; } //TODO: Need to shift this back to post siphon so that quality on these sorts of stats can work properly
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Electrocution";
 						 text 		= "Shocks targets for a short duration";
-						 isBase		= false;
 						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWindFire) t).snareDuration = 4;  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};
