@@ -8,7 +8,7 @@ import projectiles.ProjectileBasic;
 import levels.Level;
 import maps.Tile;
 
-public class TowerWaterFire extends Tower {
+public final class TowerWaterFire extends Tower {
 	int deathrattleSuppressionLifetime;
 	
 	

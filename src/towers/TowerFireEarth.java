@@ -12,7 +12,7 @@ import projectiles.ProjectileBasic;
 import levels.Level;
 import maps.Tile;
 
-public class TowerFireEarth extends Tower {
+public final class TowerFireEarth extends Tower {
 	float poisonModifier;
 	int poisonDuration;
 	int poisonTiming;

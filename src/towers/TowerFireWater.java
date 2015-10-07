@@ -15,7 +15,7 @@ import utilities.GameConstants;
 import levels.Level;
 import maps.Tile;
 
-public class TowerFireWater extends Tower {
+public final class TowerFireWater extends Tower {
 	float passThroughRadiusModifier;
 	float passThroughModifier;
 	

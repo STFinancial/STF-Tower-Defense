@@ -12,7 +12,6 @@ public class ProjectileArea extends Projectile implements TargetsArea {
 	
 	protected ProjectileArea(Tower parent, Projectile mold, boolean doesSplash, boolean doesOnHit, float targetAreaRadius) {
 		super(parent, mold);
-		this.targetArea = new Circle(parent.x, parent.y, targetAreaRadius);
 		this.doesSplash = doesSplash;
 		this.doesOnHit = doesOnHit;
 		this.targetAngle = 0;
@@ -20,7 +19,7 @@ public class ProjectileArea extends Projectile implements TargetsArea {
 	
 	public ProjectileArea(Tower parent, boolean doesSplash, boolean doesOnHit, float targetAreaRadius) {
 		super(parent);
-		this.targetArea = new Circle(parent.x, parent.y, targetAreaRadius);
+		this.targetArea = new Circle(parent.centerX, parent.centerY, targetAreaRadius);
 		this.doesSplash = doesSplash;
 		this.doesOnHit = doesOnHit;
 		this.targetAngle = 0;

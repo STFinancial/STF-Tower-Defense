@@ -5,15 +5,12 @@ import utilities.GameConstants;
 import creeps.DamageType;
 
 //TODO: Might want to make an "adjustClassSpecificBaseValues" abstract method so that I can do areaRadius += splashRadius / 4; sort of thing because all the values will be reassigned each time. This is where we zero everything and the upgrades reassign them each time
-//TODO: Make all the towers final
 //TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
 //TODO: Do the same with doesSplash, honestly.
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
-	//TODO: Instead of using "isBase" just modify the base values directly. This way we can mix. Need to clone the attribute lists for each tower then, but no biggie.
 	//TODO: Come up with consistent wording and formatting for descriptions of upgrades
-	//TODO: Going to create different siphon coefficients for different stats that vary by tower
 	//TODO: Make an update in Tower that applies global effects (e.g. On one level we want all towers to have the additional projectile effect that they heal enemies on hit)
 	//TODO: Upgrades that modify the damage against certain types of creep?
 	
@@ -1130,7 +1127,7 @@ public enum TowerType {
 				     },
 				     new Upgrade() {
 				    	 {name  	 = "Poisoned Well";
-				    	  text  	 = "Slowed Enemies take additional damage over time and double WATER damage";
+				    	  text  	 = "Slowed Enemies take additional damage over time and halves enemy WATER resistance";
 				    	  baseCost   = 4500;}
 				    	  public void baseUpgrade(Tower t) { ((TowerWaterWater) t).bleedDuration = 12; ((TowerWaterWater) t).bleedTiming = 3; ((TowerWaterWater) t).maxBleedStacks = 5; ((TowerWaterWater) t).bleedModifier = 0.65f; ((TowerWaterWater) t).shredDuration = 8; ((TowerWaterWater) t).shredModifier = 0.5f; ((TowerWaterWater) t).maxShredStacks = 1; }
 				    	  public void midSiphonUpgrade(Tower t) { }

@@ -7,7 +7,7 @@ import projectiles.ProjectileAOE;
 import levels.Level;
 import maps.Tile;
 
-public class TowerWaterEarth extends Tower {
+public final class TowerWaterEarth extends Tower {
 	float shredModifier;
 	int shredDuration;
 	int maxShredStacks;
@@ -26,7 +26,7 @@ public class TowerWaterEarth extends Tower {
 		this.permaSlowModifier = 0.005f;
 		
 		this.doesSplash = false;
-		this.doesOnHit = false; //TODO: Not sure about this, but it makes WaterWater relatively stronger, which is what I'm going for
+		this.doesOnHit = false;
 	}
 
 	@Override

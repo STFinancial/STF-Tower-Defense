@@ -13,7 +13,7 @@ import projectiles.ProjectileEffectPatch;
 import levels.Level;
 import maps.Tile;
 
-public class TowerFireFire extends Tower {
+public final class TowerFireFire extends Tower {
 	
 	int bleedDuration;
 	float bleedModifier;
@@ -32,11 +32,11 @@ public class TowerFireFire extends Tower {
 		super(level, topLeftTile, TowerType.FIRE_FIRE, towerID);
 		this.bleedModifier = 0;
 		this.bleedDuration = 0;
-		this.bleedTiming = 3;
+		this.bleedTiming = 0;
 		this.maxBleedStacks = 0;
 		
 		this.effectPatchDuration = 0;
-		this.effectPatchTiming = 3;
+		this.effectPatchTiming = 0;
 		this.effectPatchDamageModifier = 0;
 		this.effectPatchShredModifier = 0;
 		this.effectPatchShredDuration = 0;

@@ -2,11 +2,12 @@ package towers;
 
 import levels.Level;
 import maps.Tile;
+import projectiles.ProjectileArea;
 import projectiles.ProjectilePassThroughArea;
 import projectiles.TargetsArea;
 import utilities.Circle;
 
-public class TowerFireWind extends Tower implements TargetsArea {
+public final class TowerFireWind extends Tower implements TargetsArea {
 	private Circle targetArea;
 	
 	float passThroughRadiusModifier;
@@ -19,7 +20,7 @@ public class TowerFireWind extends Tower implements TargetsArea {
 	
 	public TowerFireWind(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_WIND, towerID);
-		setTargetArea(x, y); //TODO: I think that I've been using x and y instead of center X and center Y... oops
+		setTargetArea(centerX, centerY);
 		this.passThroughModifier = 0.25f;
 		this.passThroughRadiusModifier = 0.10f;
 		
@@ -40,6 +41,7 @@ public class TowerFireWind extends Tower implements TargetsArea {
 		Circle t = new Circle(x, y, 0);
 		if (t.intersects(targetZone) && !level.getMap().isOutside(x, y)) {
 			targetArea = new Circle(x, y, 0);
+			((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 			return true;
 		} else {
 			return false;

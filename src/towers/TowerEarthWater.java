@@ -6,7 +6,7 @@ import utilities.Circle;
 import levels.Level;
 import maps.Tile;
 
-public class TowerEarthWater extends Tower implements TargetsArea {
+public final class TowerEarthWater extends Tower implements TargetsArea {
 	private Circle targetArea;
 	
 	float areaRadius;
@@ -15,8 +15,10 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
-		areaRadius = 2f;
-		setTargetArea(x, y);
+		this.areaRadius = 2f;
+		
+		setTargetArea(centerX, centerY);
+		
 		this.doesOnHit = false;
 		this.doesSplash = false;
 	}
@@ -32,6 +34,7 @@ public class TowerEarthWater extends Tower implements TargetsArea {
 		Circle t = new Circle(x, y, 0);
 		if (t.intersects(targetZone) && !level.getMap().isOutside(x, y)) {
 			targetArea = new Circle(x, y, areaRadius);
+			((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 			return true;
 		} else {
 			return false;

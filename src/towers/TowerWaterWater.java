@@ -9,11 +9,11 @@ import projectiles.ProjectileAOE;
 import levels.Level;
 import maps.Tile;
 
-public class TowerWaterWater extends Tower {
+public final class TowerWaterWater extends Tower {
 	int snareDuration;
 	
 	int shredDuration;
-	float shredModifier; //TODO We guarantee double by the description, we should change that then
+	float shredModifier;
 	int maxShredStacks;
 	
 	int bleedDuration;

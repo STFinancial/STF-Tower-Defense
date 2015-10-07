@@ -8,8 +8,7 @@ import projectiles.ProjectileBasic;
 import levels.Level;
 import maps.Tile;
 
-public class TowerEarthFire extends Tower {
-	//TODO: Currently
+public final class TowerEarthFire extends Tower {
 	int wealthDuration;
 	float wealthModifier;
 	float shredModifier;

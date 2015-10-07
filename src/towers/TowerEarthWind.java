@@ -6,7 +6,7 @@ import projectiles.ProjectilePassThroughTarget;
 import levels.Level;
 import maps.Tile;
 
-public class TowerEarthWind extends Tower {
+public final class TowerEarthWind extends Tower {
 	float passThroughRadiusModifier;
 	float passThroughModifier;
 	
