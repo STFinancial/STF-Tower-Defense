@@ -4,6 +4,8 @@ import utilities.Circle;
 import utilities.GameConstants;
 import creeps.DamageType;
 
+//TODO: Might want to make an "adjustClassSpecificBaseValues" abstract method so that I can do areaRadius += splashRadius / 4; sort of thing because all the values will be reassigned each time. This is where we zero everything and the upgrades reassign them each time
+//TODO: Make all the towers final
 //TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
 //TODO: Do the same with doesSplash, honestly.
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
@@ -15,8 +17,6 @@ public enum TowerType {
 	//TODO: Make an update in Tower that applies global effects (e.g. On one level we want all towers to have the additional projectile effect that they heal enemies on hit)
 	//TODO: Upgrades that modify the damage against certain types of creep?
 	
-	//TODO: Review and set all slow duration and effect arrays. Make sure the effectiveness is set to fractions, not larger than 1.
-	//TODO: This can be done when we set all of the siphon coefficients.
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
 		baseWidth			  	= 2;
@@ -855,14 +855,14 @@ public enum TowerType {
 						{name		= "";
 						 text 		= "Increases siphon coefficients of all towers nearby";
 						 baseCost   = 8000;}
-						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).siphonAuraModifier = 0.02f; ((TowerFireWind) t).siphonAuraRangeModifier = 0.60f; t.guider.increaseNearbyCoefficients(((TowerFireWind) t).siphonAuraModifier, new Circle(t.centerX, t.centerY, t.range * ((TowerFireWind) t).siphonAuraRangeModifier)); } //TODO: Should I be moving away from applying these effect upgrades in postSiphon to in base, we really only need to set the value once honestly
+						 public void baseUpgrade(Tower t) { ((TowerFireWind) t).siphonAuraModifier = 0.02f; ((TowerFireWind) t).siphonAuraRangeModifier = 0.60f; t.guider.increaseNearbyCoefficients(((TowerFireWind) t).siphonAuraModifier, new Circle(t.centerX, t.centerY, t.range * ((TowerFireWind) t).siphonAuraRangeModifier)); }
 						 public void midSiphonUpgrade(Tower t) { }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
 		};
 	}}), 
-	WATER_EARTH (new BaseAttributeList(){{
+	WATER_EARTH (new BaseAttributeList(){{ //TODO: If this concept sucks then we can switch to "Life" tower
 		//does large AoE slow
 		name					= "Mud";
 		downgradeType 			= WATER;
@@ -880,9 +880,9 @@ public enum TowerType {
 		slowDurationSiphon		= 0.55f;
 		slowSiphon				= 0.58f;
 		attackCooldownSiphon	= 4.8f;
-		damageSplashSiphon		= 0.60f;
-		effectSplashSiphon		= 0.60f;
-		radiusSplashSiphon		= 0.60f;
+		damageSplashSiphon		= 0.50f;
+		effectSplashSiphon		= 0.50f;
+		radiusSplashSiphon		= 0.50f;
 		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
@@ -1154,74 +1154,90 @@ public enum TowerType {
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/20, /*L*/0, /*D*/0, /*P*/20};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/5, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.20f, /*WI*/0.05f, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 11.1f;
-		baseDamageSplash		= 0.25f;
-		baseEffectSplash		= 0.25f;
-		baseSplashRadius		= 4f;
-		baseRange				= 7.4f;
+		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/5, /*L*/0, /*D*/0, /*P*/7};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.15f, /*WI*/0.05f, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown		= 11.6f;
+		baseDamageSplash		= 0.20f;
+		baseEffectSplash		= 0.20f;
+		baseSplashRadius		= 3.2f;
+		baseRange				= 7.7f;
+		damageSiphon			= 0.44f;
+		slowDurationSiphon		= 0.44f;
+		slowSiphon				= 0.44f;
+		attackCooldownSiphon	= 4.6f;
+		damageSplashSiphon		= 0.23f;
+		effectSplashSiphon		= 0.22f;
+		radiusSplashSiphon		= 0.41f;
+		rangeSiphon				= 0.09f;
 		hitsAir					= true;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2700;}
-						 public void upgrade(Tower t) { }
+						{name		= "Hypothermia";
+						 text 		= "Gives a chance to apply a percent toughness shred";
+						 baseCost   = 1000;}
+						 public void baseUpgrade(Tower t) { ((TowerWaterWind) t).toughnessWeight = 7; ((TowerWaterWind) t).toughShredDuration = 25; ((TowerWaterWind) t).toughShredModifier = 0.2f; ((TowerWaterWind) t).maxToughShredStacks = 3; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 2200;}
-						 public void upgrade(Tower t) { }
+						{name		= "Chilled";
+						 text 		= "Increases slow potencies";
+						 baseCost   = 2000;}
+						 public void baseUpgrade(Tower t) { }
+						 public void midSiphonUpgrade(Tower t) { for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){ t.slowArray[DamageType.values()[i].ordinal()]*= 1.15f;}  }
+						 public void postSiphonUpgrade(Tower t) { for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){ t.slowArray[DamageType.values()[i].ordinal()]*= 1.25f;} }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Polar Vortex";
+						 text 		= "Increases the chances of a toughness shred, its effectiveness, and increases base WATER damage";
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { ((TowerWaterWind) t).toughnessWeight = 14; ((TowerWaterWind) t).toughShredModifier = 0.3f; t.baseAttributeList.baseDamageArray[DamageType.WATER.ordinal()]+=54; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						 text 		= "Increases base splash radius and range and gives a chance to apply a snare";
+						 baseCost   = 7200;}
+						 public void baseUpgrade(Tower t) { ((TowerWaterWind) t).snareDuration = 8; ((TowerWaterWind) t).snareWeight = 5; t.baseAttributeList.baseRange += 2.1f; t.baseAttributeList.baseAttackCooldown -= 1.2f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.damageArray[DamageType.PHYSICAL.ordinal()] += 60f; }
 					},
 				},
 				{
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase 	= false;
-						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Pelting";
+						 text 		= "Increases base PHYSICAL damage";
+						 baseCost 	= 750;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 43; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
+						{name		= "Swirling Winds";
+						 text 		= "Increases base and non-base range and splash radius";
 						 baseCost   = 3400;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSplashRadius += 0.8f; t.baseAttributeList.baseRange += 0.8f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { t.splashRadius += 0.8f; t.range += 0.8f; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Preserved in Ice";
+						 text 		= "Gives a chance to grant a gold on hit buff to enemies and increases base WIND damage";
+						 baseCost   = 5500;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+=37f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWaterWind) t).goldOnHitDuration = 25; ((TowerWaterWind) t).maxGOHStacks = 3; ((TowerWaterWind) t).goldOnHitModifier = 1.3f; ((TowerWaterWind) t).goldOnHitWeight = 5; }
 					},
 					new Upgrade() {
-						{name		= "";
-						 text 		= "";
-						 isBase		= false;
-						 baseCost   = 4000;}
-						 public void upgrade(Tower t) {  }
+						{name		= "Shattering Frost";
+						 text 		= "Reduces attack cooldown and gives a chance to grant a WATER damage on hit debuff to enemies";
+						 baseCost   = 7000;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WATER.ordinal()] += 29f; }
+						 public void midSiphonUpgrade(Tower t) { t.attackCooldown /= 1.1f; }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWaterWind) t).damageOnHitDuration = 20; ((TowerWaterWind) t).damageOnHitModifier = 0.05f; ((TowerWaterWind) t).maxDOHStacks = 3; ((TowerWaterWind) t).damageOnHitWeight = 5; }
 					},
 				}
 		};
@@ -1386,7 +1402,7 @@ public enum TowerType {
 		};
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
-		//slows enemies and reduces toughness
+		//Life tower, though it doesn't really make sense with the elements involved (or does it)
 		name					= "Blizzard";
 		downgradeType 			= WIND;
 		baseWidth				= 2;

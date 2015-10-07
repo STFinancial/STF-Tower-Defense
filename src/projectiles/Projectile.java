@@ -75,6 +75,7 @@ public abstract class Projectile implements Updatable {
 					splashEffects.add(new Damage(parent.damageArray[i] * parent.damageSplash, DamageType.values()[i], this));
 				}
 			}
+			//TODO: If we implement 'doesSlow' then this will be encased in an if statement for that
 			float slow;
 			if ((slow = parent.slowArray[i]) != 0) {
 				if (slow >= 1) { slow = 0.99f; }

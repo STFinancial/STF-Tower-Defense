@@ -42,42 +42,42 @@ public final class ProjectileRandom extends ProjectileBasic {
 		}
 		HashSet<Creep> creeps = guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir || parent.splashHitsAir);
 		creeps.add(targetCreep);
-		ProjectileEffect e = getRandomEffect(); //We get a random effect from the list
+		ArrayList<ProjectileEffect> e = getRandomEffects(); //We get a random effect from the list
 		for (Creep c: creeps) {
-			c.addEffect(e);
+			c.addAllEffects(e);
 			c.onProjectileCollision();
 		}
 	}
 
-	public void addEffect(ProjectileEffect effect, float weight) {
-		Effect e = new Effect(effect, weight);
+	public void addEffect(ArrayList<ProjectileEffect> effects, float weight) {
+		Effect e = new Effect(effects, weight);
 		for (int i = 0; i < weight; i++) {
-			effects.add(e); //Can't think of a better way than adding shit to a list atm
+			this.effects.add(e); //Can't think of a better way than adding shit to a list atm
 		}
 		sum += weight;
 	}
 	
-	public void removeEffect(ProjectileEffect projectileEffect) {
+	public void removeEffect(HashSet<ProjectileEffect> projectileEffect) { //TODO: Not sure if we need this method
 		Iterator<Effect> iter = effects.iterator();
 		while (iter.hasNext()) {
 			Effect e = iter.next();
-			if (e.effect.equals(projectileEffect)) {
+			if (e.effects.equals(projectileEffect)) {
 				iter.remove();
 			}
 		}
 	}
 	
-	private ProjectileEffect getRandomEffect() {
-		return effects.get(rand.nextInt(sum)).effect;
+	private ArrayList<ProjectileEffect> getRandomEffects() {
+		return effects.get(rand.nextInt(sum)).effects;
 	}
 	
 	private class Effect {
 		//float weight;
-		ProjectileEffect effect;
+		ArrayList<ProjectileEffect> effects;
 		
-		Effect(ProjectileEffect effect, float weight) {
+		Effect(ArrayList<ProjectileEffect> effects, float weight) {
 			//this.weight = weight;
-			this.effect = effect;
+			this.effects = effects;
 		}
 	}
 }

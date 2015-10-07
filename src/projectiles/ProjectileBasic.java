@@ -6,6 +6,8 @@ import towers.Tower;
 public class ProjectileBasic extends Projectile implements TargetsCreep {
 	protected Creep targetCreep;
 	
+	
+	//TODO: I kind of want a boolean for doing splash
 	protected ProjectileBasic(Tower parent, Projectile mold) {
 		super(parent, mold);
 	}
