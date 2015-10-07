@@ -1058,14 +1058,22 @@ public enum TowerType {
 		name     				= "Cold Snap";
 		baseWidth  				= 2;
 		baseHeight   			= 2;
-		baseDamageArray  		= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
+		baseDamageArray  		= new float[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/20, /*WI*/0, /*L*/0, /*D*/0, /*P*/10};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.40f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0.10f};
-		baseAttackCooldown 		= 16f;
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.30f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0.10f};
+		baseAttackCooldown 		= 15.9f;
 		baseDamageSplash 		= 0f;
-		baseEffectSplash 		= 0f;
-		baseSplashRadius 		= 1f;
-		baseRange   			= 7.5f;
+		baseEffectSplash 		= 0.30f;
+		baseSplashRadius 		= 2f;
+		baseRange   			= 7.6f;
+		damageSiphon			= 0.36f;
+		slowDurationSiphon		= 0.60f;
+		slowSiphon				= 0.60f;
+		attackCooldownSiphon	= 5.3f;
+		damageSplashSiphon		= 0.43f;
+		effectSplashSiphon		= 0.65f;
+		radiusSplashSiphon		= 0.62f;
+		rangeSiphon				= 0.11f;
 		hitsAir    				= false;
 		hitsGround   			= true;
 		upgrades   				= new Upgrade[][]{
@@ -1073,60 +1081,68 @@ public enum TowerType {
 					 new Upgrade() {
 						 {name  	 = "First Frost";
 				          text   	 = "Increases base RANGE";
-				          isBase  	 = true;
 				          baseCost   = 900;}
-						  public void upgrade(Tower t) { t.range += 2; }
+						  public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
+						  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				     new Upgrade() {
 				    	 {name 	 	 = "Chilling Breath";
-				    	  text  	 = "Increases base SLOW Duration";
-				    	  isBase  	 = true;
+				    	  text  	 = "Increases base WATER SLOW Duration and range";
 				    	  baseCost   = 1400;}
-				    	  public void upgrade(Tower t) { t.slowDurationArray[DamageType.WATER.ordinal()] += 17; }
+				    	  public void baseUpgrade(Tower t) { t.baseAttributeList.baseSlowDurationArray[DamageType.WATER.ordinal()] += 17; }
+				    	  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				     new Upgrade() {
 				    	 {name 		 = "Chilled to the Bone";
-				    	  text  	 = "Doubles WATER Slow potency";
-				    	  isBase 	 = false;
-				    	  baseCost   = 2000;}
-				    	  public void upgrade(Tower t) { t.slowArray[DamageType.WATER.ordinal()] *= 2; }
+				    	  text  	 = "Doubles WATER Slow potency and increases base range and reduces base attack cooldown";
+				    	  baseCost   = 2700;}
+				    	  public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2; t.baseAttributeList.baseAttackCooldown -= 1.2f; }
+				    	  public void midSiphonUpgrade(Tower t) { t.slowArray[DamageType.WATER.ordinal()] *= 2; }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				     new Upgrade() {
 				    	 {name 		 = "Sheer Cold";
-				    	  text 		 = "Roots Enemies in place";
-				    	  isBase 	 = false;
+				    	  text 		 = "Roots Enemies in place and attacks apply on hit effects"; //TODO: Seems too weak, the slow is already so strong. But have to factor in slow resist
 				    	  baseCost   = 5000;}
-				    	  public void upgrade(Tower t) {  }
+				    	  public void baseUpgrade(Tower t) { ((TowerWaterWater) t).snareDuration = 12; ((TowerWaterWater) t).doesOnHit = true; }
+				    	  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { t.range += 3; t.attackCooldown -= 1; }
 				     },
 				},
 				{
 				     new Upgrade() {
 				      	 {name 		 = "Churning Waters";
 				      	  text   	 = "Increases base pulse rate";
-				      	  isBase	 = true;
 				      	  baseCost   = 600;}
-				      	  public void upgrade(Tower t) { t.attackCooldown -= 3; }
+				      	  public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 2.2f; }
+				      	  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				     new Upgrade() {
 				    	 {name 		 = "Black Ice";
 				    	  text   	 = "Increases base WATER damage";
-				    	  isBase  	 = true;
 				    	  baseCost   = 700;}
-				    	  public void upgrade(Tower t) { t.damageArray[DamageType.WATER.ordinal()] += 50; }
+				    	  public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WATER.ordinal()] += 45; }
+				    	  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				     new Upgrade() {
 				    	 {name  	 = "Poisoned Well";
 				    	  text  	 = "Slowed Enemies take additional damage over time and double WATER damage";
-				    	  isBase  	 = false;
 				    	  baseCost   = 4500;}
-				    	  public void upgrade(Tower t) {  }
+				    	  public void baseUpgrade(Tower t) { ((TowerWaterWater) t).bleedDuration = 12; ((TowerWaterWater) t).bleedTiming = 3; ((TowerWaterWater) t).maxBleedStacks = 5; ((TowerWaterWater) t).bleedModifier = 0.65f; ((TowerWaterWater) t).shredDuration = 8; ((TowerWaterWater) t).shredModifier = 0.5f; ((TowerWaterWater) t).maxShredStacks = 1; }
+				    	  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				     new Upgrade() {
 				    	 {name  	 = "Cleanse";
-				    	  text   	 = "Consumes all damage over time effects on enemies hit";
-				    	  isBase  	 = false;
+				    	  text   	 = "Consumes all damage over time effects on enemies hit and deals half their remaining damage";
 				    	  baseCost   = 5000;}
-				    	  public void upgrade(Tower t) {  }
+				    	  public void baseUpgrade(Tower t) { ((TowerWaterWater) t).consumeModifier = 0.5f; }
+				    	  public void midSiphonUpgrade(Tower t) { }
+						  public void postSiphonUpgrade(Tower t) { }
 				     },
 				}
 		};

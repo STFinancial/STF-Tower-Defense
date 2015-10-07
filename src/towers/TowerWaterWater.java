@@ -10,42 +10,58 @@ import levels.Level;
 import maps.Tile;
 
 public class TowerWaterWater extends Tower {
-	private int snareDuration;
-	private int shredDuration;
-	private float shredModifier; //TODO We guarantee double by the description, we should change that then
-	private int bleedDuration;
-	private float bleedModifier;
-	private int maxBleedStacks;
+	int snareDuration;
+	
+	int shredDuration;
+	float shredModifier; //TODO We guarantee double by the description, we should change that then
+	int maxShredStacks;
+	
+	int bleedDuration;
+	float bleedModifier;
+	int bleedTiming;
+	int maxBleedStacks;
+	
+	float consumeModifier;
+	
+	boolean doesSplash;
+	boolean doesOnHit;
 	
 	public TowerWaterWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_WATER, towerID);
-		this.snareDuration = 7;
-		this.shredDuration = 7;
-		this.shredModifier = 0.5f;
-		this.bleedDuration = 12;
-		this.bleedModifier = 1;
-		this.maxBleedStacks = 5;
+		this.snareDuration = 0;
+		
+		this.shredDuration = 0;
+		this.shredModifier = 0;
+		this.maxShredStacks = 0;
+		
+		this.bleedDuration = 0;
+		this.bleedModifier = 0;
+		this.maxBleedStacks = 0;
+		this.bleedTiming = 3;
+		
+		this.consumeModifier = 0;
+		
+		this.doesSplash = false;
+		this.doesOnHit = false;
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this);
+		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WATER, baseProjectile));
 		}
 		if (progress[1][2]) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.WATER, baseProjectile, false);
-			a.setMaxStacks(1);
+			a.setMaxStacks(maxShredStacks);
 			baseProjectile.addSpecificCreepEffect(a);
-			Bleed b = new Bleed(bleedDuration, damageArray[DamageType.WATER.ordinal()] * bleedModifier, 3, DamageType.WATER, baseProjectile);
+			Bleed b = new Bleed(bleedDuration, damageArray[DamageType.WATER.ordinal()] * bleedModifier, bleedTiming, DamageType.WATER, baseProjectile);
 			b.setMaxStacks(maxBleedStacks);
 			baseProjectile.addSpecificCreepEffect(b);
 		}
 		if (progress[1][3]) {
-			for (DamageType d: DamageType.values()) {
-				baseProjectile.addSpecificCreepEffect(new Consume(damageArray[DamageType.WATER.ordinal()] / (damageArray[DamageType.WATER.ordinal()] + 300), d, baseProjectile));
-			}
+			baseProjectile.addSpecificCreepEffect(new Consume(damageArray[DamageType.WATER.ordinal()] * consumeModifier, DamageType.WATER, baseProjectile));
 		}
 	}
 

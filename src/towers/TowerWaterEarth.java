@@ -26,7 +26,7 @@ public class TowerWaterEarth extends Tower {
 		this.permaSlowModifier = 0.005f;
 		
 		this.doesSplash = false;
-		this.doesOnHit = true;
+		this.doesOnHit = false; //TODO: Not sure about this, but it makes WaterWater relatively stronger, which is what I'm going for
 	}
 
 	@Override
