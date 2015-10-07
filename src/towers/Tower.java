@@ -108,6 +108,7 @@ public abstract class Tower implements Updatable {
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			current.adjustBaseStats();
+			current.adjustClassSpecificBaseStats();
 			openList.addAll(current.siphoningTo);
 			current.siphon(current.siphoningFrom);
 			current.adjustMidSiphonUpgrades();
@@ -188,6 +189,7 @@ public abstract class Tower implements Updatable {
 	}
 	
 	protected abstract void adjustProjectileStats();
+	protected abstract void adjustClassSpecificBaseStats();
 	
 	/**
 	 * 

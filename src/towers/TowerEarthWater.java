@@ -15,12 +15,8 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
-		this.areaRadius = 2f;
-		
 		setTargetArea(centerX, centerY);
-		
-		this.doesOnHit = false;
-		this.doesSplash = false;
+		adjustClassSpecificBaseStats();
 	}
 
 	@Override
@@ -55,6 +51,14 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 			return 1;
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.areaRadius = 2f;
+		
+		this.doesOnHit = false;
+		this.doesSplash = false;
 	}
 
 }

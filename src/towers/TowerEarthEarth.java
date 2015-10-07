@@ -24,7 +24,7 @@ public final class TowerEarthEarth extends Tower {
 		this.detonationModifier = 0;
 		this.shredModifier = 0;
 		this.bleedModifier = 0;
-		this.bleedTiming = 3;
+		this.bleedTiming = 0;
 		this.maxShredStacks = 0;
 		this.armorShredDuration = 0;
 		this.bleedDuration = 0;
