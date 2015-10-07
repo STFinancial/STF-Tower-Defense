@@ -10,12 +10,14 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	private Circle targetArea;
 	
 	float areaRadius;
+	private float qAreaRadius;
+	
 	boolean doesSplash;
 	boolean doesOnHit;
 	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
-		setTargetArea(centerX, centerY);
+		
 		adjustClassSpecificBaseStats();
 	}
 
@@ -56,9 +58,26 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	@Override
 	protected void adjustClassSpecificBaseStats() {
 		this.areaRadius = 2f;
+		setTargetArea(centerX, centerY);
+		
+		//TODO: Set appropriate values for all of the towers, should we do this in TowerType?
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.03f;
+		this.qRange = 0.10f;
+		
+		//TODO: Do I want qAreaRadius?
 		
 		this.doesOnHit = false;
 		this.doesSplash = false;
 	}
 
+	@Override
+	protected void adjustClassSpecificQuality() {
+		return;
+	}
 }

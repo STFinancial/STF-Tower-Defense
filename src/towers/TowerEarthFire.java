@@ -44,7 +44,6 @@ public final class TowerEarthFire extends Tower {
 			a.setMaxStacks(maxShredStacks);
 			baseProjectile.addSpecificCreepEffect(a);
 		}
-		
 	}
 
 	@Override
