@@ -6,8 +6,17 @@ import levels.Level;
 import maps.Tile;
 
 public class TowerEarth extends Tower {
+	
 	public TowerEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH, towerID);
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
 	}
 
 	@Override
@@ -23,7 +32,6 @@ public class TowerEarth extends Tower {
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
-				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
@@ -38,4 +46,13 @@ public class TowerEarth extends Tower {
 		return 0;
 	}
 
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		return;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		return;
+	}
 }

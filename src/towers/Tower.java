@@ -12,11 +12,8 @@ import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
-//TODO: Go through towers and make them final (?) and make all their fields private/protected depending on what I choose
 //TODO: Make strong comments for each tower type and tower (they can be the same, just make it).
-//TODO: Should the tower classes be final?
 public abstract class Tower implements Updatable {
-	//TODO: want to implement something like "quality" so that we can continually upgrade the base stats of a tower with gold (so towers don't cap out)
 	//Positional Details
 	public Level level;
 	public int x, y; //Top Left corner in Tile Coordinates
@@ -60,6 +57,17 @@ public abstract class Tower implements Updatable {
 	public boolean splashHitsAir;
 	public boolean hitsGround;
 	
+	//Quality Coefficients
+	protected int qLevel;
+	protected float qDamage;
+	protected float qSlow;
+	protected float qSlowDuration;
+	protected float qCooldown;
+	protected float qDamageSplash;
+	protected float qEffectSplash;
+	protected float qRadiusSplash;
+	protected float qRange;
+	
 	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
@@ -79,8 +87,14 @@ public abstract class Tower implements Updatable {
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
 		this.splashHitsAir = false;
+		this.qLevel = 0;
 		updateTowerChain();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
+	}
+	
+	public void increaseQuality() {
+		++qLevel;
+		updateTowerChain();
 	}
 	
 	public Projectile fireProjectile() {
@@ -120,6 +134,8 @@ public abstract class Tower implements Updatable {
 			//TODO: current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
+			current.adjustCommonQuality();
+			current.adjustClassSpecificQuality();
 			current.adjustProjectileStats();
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone.radius = current.range;
@@ -184,12 +200,26 @@ public abstract class Tower implements Updatable {
 		}
 	}
 	
+	private void adjustCommonQuality() {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			damageArray[i] *= (1 + (qDamage * qLevel));
+			slowArray[i] += qSlow * qLevel;
+			slowDurationArray[i] *= (1 + (qSlowDuration * qLevel));
+		}
+		attackCooldown -= qCooldown * qLevel;
+		damageSplash += qDamageSplash * qLevel;
+		effectSplash += qEffectSplash * qLevel;
+		splashRadius += qRadiusSplash * qLevel;
+		range *= (1 + (qRange * qLevel));
+	}
+	
 	private void adjustTalentStats() {
 		
 	}
 	
 	protected abstract void adjustProjectileStats();
 	protected abstract void adjustClassSpecificBaseStats();
+	protected abstract void adjustClassSpecificQuality();
 	
 	/**
 	 * 
