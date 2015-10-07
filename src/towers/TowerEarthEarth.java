@@ -10,26 +10,30 @@ import maps.Tile;
 
 public final class TowerEarthEarth extends Tower {
 	float detonationModifier;
+	private float qDetonation;
+	
 	float shredModifier;
-	float bleedModifier;
-	int bleedTiming;
 	int maxShredStacks;
 	int armorShredDuration;
-	int bleedDuration; //TODO These numbers maybe will be longer, realistically the bleed lasts only the duration of a tower cooldown
+	private float qShredModifier;
+	private float qShredDuration;
+	private float qShredStacks;
+	
+	float bleedModifier;
+	int bleedTiming;
+	int bleedDuration;
+	int maxBleedStacks;
+	private float qBleedModifier;
+	private float qBleedDuration;
+	private float qBleedStacks;
+	
 	boolean doesOnHit;
 	boolean doesSplash;
 	
 	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
-		this.detonationModifier = 0;
-		this.shredModifier = 0;
-		this.bleedModifier = 0;
-		this.bleedTiming = 0;
-		this.maxShredStacks = 0;
-		this.armorShredDuration = 0;
-		this.bleedDuration = 0;
-		this.doesSplash = false;
-		this.doesOnHit = false;
+		adjustClassSpecificBaseStats();
+		//TODO: Do I need to call updateTowerChain()
 	}
 
 	@Override
@@ -41,6 +45,7 @@ public final class TowerEarthEarth extends Tower {
 		}
 		if (progress[1][2]) {
 			Bleed b = new Bleed(bleedDuration, (float) damageArray[DamageType.PHYSICAL.ordinal()] * bleedModifier, bleedTiming, DamageType.PHYSICAL, baseProjectile);
+			b.setMaxStacks(maxBleedStacks);
 			baseProjectile.addSpecificCreepEffect(b);
 		}
 		if (progress[1][3]) {
@@ -66,6 +71,50 @@ public final class TowerEarthEarth extends Tower {
 			}
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.detonationModifier = 0;
+		this.shredModifier = 0;
+		this.bleedModifier = 0;
+		this.bleedTiming = 0;
+		this.maxShredStacks = 0;
+		this.armorShredDuration = 0;
+		this.bleedDuration = 0;
+		this.doesSplash = false;
+		this.doesOnHit = false;
+		
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
+		
+		this.qDetonation = 0.01f;
+		this.qShredModifier = 0.003f;
+		this.qShredDuration = 0.5f;
+		this.qShredStacks = 0.25f;
+		
+		this.qBleedModifier = 0.01f;
+		this.qBleedDuration = 0.5f;
+		this.qBleedStacks = 0.10f;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		detonationModifier += qDetonation * qLevel;
+		
+		shredModifier += qShredModifier * qLevel;
+		armorShredDuration += (int) (qShredDuration * qLevel);
+		maxShredStacks += (int) (qShredStacks * qLevel);
+		
+		bleedModifier += qBleedModifier * qLevel;
+		bleedDuration += (int) (qBleedDuration * qLevel);
+		maxBleedStacks += (int) (qBleedStacks * qLevel);
 	}
 
 }

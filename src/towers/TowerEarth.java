@@ -9,14 +9,7 @@ public class TowerEarth extends Tower {
 	
 	public TowerEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH, towerID);
-		this.qDamage = 0.05f;
-		this.qSlow = 0.10f;
-		this.qSlowDuration = 0.10f;
-		this.qCooldown = 0.10f;
-		this.qDamageSplash = 0.01f;
-		this.qEffectSplash = 0.01f;
-		this.qRadiusSplash = 0.02f;
-		this.qRange = 0f;
+		adjustClassSpecificBaseStats();
 	}
 
 	@Override
@@ -48,7 +41,14 @@ public class TowerEarth extends Tower {
 
 	@Override
 	protected void adjustClassSpecificBaseStats() {
-		return;
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
 	}
 
 	@Override

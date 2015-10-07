@@ -178,7 +178,7 @@ public enum TowerType {
 						 text 		= "Deal additional PHYSICAL damage as a bleed";
 						 baseCost   = 2500;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 50; }
-						 public void midSiphonUpgrade(Tower t) {  ((TowerEarthEarth) t).bleedModifier = 0.50f; ((TowerEarthEarth) t).bleedDuration = 18; ((TowerEarthEarth) t).bleedTiming = 3; }
+						 public void midSiphonUpgrade(Tower t) {  ((TowerEarthEarth) t).maxBleedStacks = 1; ((TowerEarthEarth) t).bleedModifier = 0.50f; ((TowerEarthEarth) t).bleedDuration = 18; ((TowerEarthEarth) t).bleedTiming = 3; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
