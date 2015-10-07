@@ -1248,75 +1248,91 @@ public enum TowerType {
 		downgradeType 			= WIND;
 		baseWidth				= 2;
 		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/15, /*L*/0, /*D*/0, /*P*/30};
-		baseSlowDurationArray 	= new int[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/30};
+		baseSlowDurationArray 	= new int[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/3};
+		baseSlowArray			= new float[]{/*E*/0.10f, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseAttackCooldown		= 12.3f;
-		baseDamageSplash		= 0f;
-		baseEffectSplash		= 0f;
+		baseDamageSplash		= 0.07f;
+		baseEffectSplash		= 0.07f;
 		baseSplashRadius		= 0f;
 		baseRange				= 8.2f;
+		damageSiphon			= 0.44f;
+		slowDurationSiphon		= 0.44f;
+		slowSiphon				= 0.44f;
+		attackCooldownSiphon	= 4.6f;
+		damageSplashSiphon		= 0.23f;
+		effectSplashSiphon		= 0.22f;
+		radiusSplashSiphon		= 0.25f;
+		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
-						{name		= "Convection Currents";
+						{name		= "";
 						 text 		= "Reduces base ATTACK COOLDOWN";
-						 isBase		= true;
-						 baseCost   = 1200;}
-						 public void upgrade(Tower t) { t.attackCooldown -= 1.8f; }
+						 baseCost   = 400;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 1.8f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Desertification";
-						 text 		= "Increases base RANGE";
-						 isBase		= true;
+						 text 		= "Increases base RANGE and ATTACK COOLDOWN";
 						 baseCost   = 800;}
-						 public void upgrade(Tower t) { t.range += 2.3f; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 0.9f; t.baseAttributeList.baseRange += 2.3f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Whipping Sands";
 						 text 		= "Attacks now knockup affected targets";
-						 isBase		= false;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWindEarth) t).knockupDuration = 24; }
 					},
 					new Upgrade() {
 						{name		= "Cyclone";
 						 text 		= "Tower now fires in a path and hits all enemies along the way";
-						 isBase		= false;
 						 baseCost   = 6000;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWindEarth) t).passThroughModifier = 1; ((TowerWindEarth) t).passThroughRadiusModifier = 0.15f; }
 					},
 				},
 				{
 					new Upgrade() {
 						{name		= "";
 						 text 		= "Increases base RANGE";
-						 isBase 	= true;
-						 baseCost 	= 1400;}
-						 public void upgrade(Tower t) {  }
+						 baseCost 	= 800;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2.3f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Erosion";
 						 text 		= "Increases base EARTH damage";
-						 isBase		= false;
-						 baseCost   = 2000;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.EARTH.ordinal()]+=56f; }
+						 baseCost   = 1450;}
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.EARTH.ordinal()]+=56f; }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
 						{name		= "Sand Blindness";
 						 text 		= "Attacks now disorient targets";
-						 isBase		= false;
 						 baseCost   = 3500;}
-						 public void upgrade(Tower t) {  }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWindEarth) t).disorientDuration = 34; }
 					},
 					new Upgrade() {
 						{name		= "Blasting Force";
 						 text 		= "Multiplies EARTH and WIND damage and creeps move faster during disorient";
-						 isBase		= false;
 						 baseCost   = 6200;}
-						 public void upgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]*=1.5f; t.damageArray[DamageType.EARTH.ordinal()]*=1.35f; }
+						 public void baseUpgrade(Tower t) {  }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]*=1.5f; t.damageArray[DamageType.EARTH.ordinal()]*=1.35f; }
+						 public void postSiphonUpgrade(Tower t) { ((TowerWindEarth) t).unslowDuration = 34; ((TowerWindEarth) t).unslowAmount = -1f; }
 					}, //TODO: Not enough towers have upgrades that modify instead of adding base damage
 				}
 		};

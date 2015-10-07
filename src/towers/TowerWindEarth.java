@@ -5,30 +5,43 @@ import projectileeffects.Knockup;
 import projectileeffects.Slow;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileBeam;
+import projectiles.ProjectilePassThroughTarget;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Level;
 import maps.Tile;
 
 public class TowerWindEarth extends Tower {
-	private int knockupDuration;
-	private int disorientDuration;
-	private float unslowAmount;
-	private int unslowDuration;
+	int knockupDuration;
+	int disorientDuration;
+	float unslowAmount;
+	int unslowDuration;
+	
+	float passThroughRadiusModifier;
+	float passThroughModifier;
+	
+	boolean doesSplash;
 	
 	public TowerWindEarth(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		super(level, topLeftTile, type, towerID);
-		this.knockupDuration = 24;
-		this.disorientDuration = 38;
-		this.unslowAmount = -1f;
-		this.unslowDuration = 38;
+		this.disorientDuration = 0;
+		
+		this.knockupDuration = 0;
+		
+		this.unslowAmount = 0;
+		this.unslowDuration = 0;
+		
+		this.passThroughModifier = 0;
+		this.passThroughRadiusModifier = 0;
+		
+		this.doesSplash = false;
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile = new ProjectileBeam(this);
+			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * range, passThroughModifier, doesSplash, 1);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
@@ -45,33 +58,22 @@ public class TowerWindEarth extends Tower {
 
 	@Override
 	public int update() {
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][3]) {
-			Creep targetCreep = level.findTargetCreep(this);
+		currentAttackCooldown--;
+		if (currentAttackCooldown < 1) {
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
-				((ProjectileBeam) baseProjectile).setTargetCreep(targetCreep);
+				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
+				if (attackCarryOver > 1) {
+					attackCarryOver -= 1;
+					currentAttackCooldown--;
+				}
 			}
 			return 1;
-		} else {
-			currentAttackCooldown--;
-			if (currentAttackCooldown < 1) {
-				Creep targetCreep = level.findTargetCreep(this);
-				if (targetCreep != null) {
-					//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
-					((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-					level.addProjectile(fireProjectile());
-					attackCarryOver += 1 - currentAttackCooldown;
-					currentAttackCooldown = attackCooldown;
-					if (attackCarryOver > 1) {
-						attackCarryOver -= 1;
-						currentAttackCooldown--;
-					}
-				}
-				return 1;
-			}
-			return 0;
 		}
+		return 0;
 	}
 
 }

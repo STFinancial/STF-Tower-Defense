@@ -17,13 +17,10 @@ public class TowerWind extends Tower {
 
 	@Override
 	public int update() {
-		//TODO need to handle attack speeds of less than 1. We will need to fire two projectiles at once then.
-		//TODO can fix this by making creep move slower and bumping up attack cooldowns if we have the resourcse
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			Creep targetCreep = level.findTargetCreep(this);
+			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
-				//TODO is there a better way than casting, perhaps changing the method signature of the fire projectile
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
