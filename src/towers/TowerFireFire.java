@@ -15,32 +15,32 @@ import maps.Tile;
 
 public final class TowerFireFire extends Tower {
 	
-	int bleedDuration;
 	float bleedModifier;
-	int bleedTiming;
+	int bleedDuration;
+	int bleedTiming; //TODO: Quality modifier?
 	int maxBleedStacks;
+	private float qBleedModifier;
+	private float qBleedDuration;
+	private float qBleedStacks;
 	
 	int effectPatchDuration;
-	int effectPatchTiming;
+	int effectPatchTiming; //TODO: Quality Modifier?
+	private float qPatchDuration;
+	
+	
 	float effectPatchDamageModifier;
+	private float qPatchDamageModifier;
+	
 	float effectPatchShredModifier;
 	int effectPatchShredDuration;
 	int maxShredStacks;
-	
+	private float qPatchShredModifier;
+	private float qPatchShredDuration;
+	private float qPatchShredStacks;
 	
 	public TowerFireFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_FIRE, towerID);
-		this.bleedModifier = 0;
-		this.bleedDuration = 0;
-		this.bleedTiming = 0;
-		this.maxBleedStacks = 0;
-		
-		this.effectPatchDuration = 0;
-		this.effectPatchTiming = 0;
-		this.effectPatchDamageModifier = 0;
-		this.effectPatchShredModifier = 0;
-		this.effectPatchShredDuration = 0;
-		this.maxShredStacks = 0;
+		adjustClassSpecificBaseStats();
 	}
 
 	@Override
@@ -93,5 +93,43 @@ public final class TowerFireFire extends Tower {
 			return 1;
 		}
 		return 0;	
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.bleedModifier = 0;
+		this.bleedDuration = 0;
+		this.bleedTiming = 0;
+		this.maxBleedStacks = 0;
+		
+		this.effectPatchDuration = 0;
+		this.effectPatchTiming = 0;
+		this.effectPatchDamageModifier = 0;
+		this.effectPatchShredModifier = 0;
+		this.effectPatchShredDuration = 0;
+		this.maxShredStacks = 0;
+		
+		this.qBleedModifier = 0.05f;
+		this.qBleedDuration = 0.06f;
+		this.qBleedStacks = 0.13f;
+		
+		this.qPatchDuration = 0.6f;
+		this.qPatchDamageModifier = 0.01f;
+		this.qPatchShredModifier = 0.00003f;
+		this.qPatchShredDuration = 0.8f;
+		this.qPatchShredStacks = 0.25f;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		bleedModifier += qBleedModifier * qLevel;
+		bleedDuration += (int) (qBleedDuration * qLevel);
+		maxBleedStacks += (int) (qBleedStacks * qLevel);
+		
+		effectPatchDuration += (int) (qPatchDuration * qLevel);
+		effectPatchDamageModifier += qPatchDamageModifier * qLevel;
+		effectPatchShredModifier += qPatchShredModifier * qLevel;
+		effectPatchShredDuration += (int) (qPatchShredDuration * qLevel);
+		maxShredStacks += (int) (qPatchShredStacks * qLevel);	
 	}
 }

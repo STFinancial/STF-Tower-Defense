@@ -125,17 +125,17 @@ public abstract class Tower implements Updatable {
 			current.adjustClassSpecificBaseStats();
 			openList.addAll(current.siphoningTo);
 			current.siphon(current.siphoningFrom);
+			current.adjustCommonQuality();
 			current.adjustMidSiphonUpgrades();
+			current.adjustClassSpecificQuality(); //I think in every case none of these would increase siphon, but siphon can increase these. This needs to be second because upgrades sets these (if there is a conflict we need to move away from the upgrades modifyong the tower values and having that happen in the "baseTowerValues" department. We would just have if statements like we did originally
 		}
-		openList.add(root);
+		openList.add(root); //Second loop is for postSiphon upgrades.
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			openList.addAll(current.siphoningTo);
 			//TODO: current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
-			current.adjustCommonQuality();
-			current.adjustClassSpecificQuality();
 			current.adjustProjectileStats();
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone.radius = current.range;
@@ -207,6 +207,7 @@ public abstract class Tower implements Updatable {
 			slowDurationArray[i] *= (1 + (qSlowDuration * qLevel));
 		}
 		attackCooldown -= qCooldown * qLevel;
+		if (attackCooldown < 1) { attackCooldown = 1; }
 		damageSplash += qDamageSplash * qLevel;
 		effectSplash += qEffectSplash * qLevel;
 		splashRadius += qRadiusSplash * qLevel;

@@ -9,6 +9,7 @@ public class TowerFire extends Tower {
 
 	public TowerFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE, towerID);
+		adjustClassSpecificBaseStats();
 	}
 
 	@Override
@@ -34,6 +35,23 @@ public class TowerFire extends Tower {
 			return 1;
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		return;
 	}
 
 }

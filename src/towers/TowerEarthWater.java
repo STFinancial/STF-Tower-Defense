@@ -71,6 +71,7 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 		this.qRange = 0.10f;
 		
 		//TODO: Do I want qAreaRadius?
+		this.qAreaRadius = 0;
 		
 		this.doesOnHit = false;
 		this.doesSplash = false;
@@ -78,6 +79,6 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 
 	@Override
 	protected void adjustClassSpecificQuality() {
-		return;
+		areaRadius += qLevel * qAreaRadius;
 	}
 }

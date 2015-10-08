@@ -17,37 +17,40 @@ public final class TowerFireEarth extends Tower {
 	int poisonDuration;
 	int poisonTiming;
 	int maxPoisonStacks;
+	private float qPoisonModifier;
+	private float qPoisonDuration;
+	private float qPoisonStacks; //TODO: Should I have a q for timings?
+	
 	float percentMaxHealthModifier;
+	private float qMaxHealth;
+	
 	float DOHModifier;
-	int DOHLifetime;
+	int DOHDuration;
 	int maxDOHStacks;
+	private float qDOHModifier;
+	private float qDOHDuration;
+	private float qDOHStacks;
+	
 	float armorShredModifier;
 	int armorShredDuration;
 	int maxArmorShredStacks;
+	private float qArmorModifier;
+	private float qArmorDuration;
+	private float qArmorStacks;
+	
 	float toughnessShredModifier;
 	int toughnessShredDuration;
 	int maxToughnessShredStacks;
+	private float qToughModifier;
+	private float qToughDuration;
+	private float qToughStacks;
+	
 	boolean doesSplash;
 	boolean doesOnHit;
 
 	public TowerFireEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_EARTH, towerID);
-		this.poisonModifier = 0;
-		this.poisonDuration = 0;
-		this.poisonTiming = 3;
-		this.maxPoisonStacks = 0;
-		this.armorShredModifier = 0;
-		this.armorShredDuration = 0;
-		this.maxArmorShredStacks = 0;
-		this.toughnessShredModifier = 0;
-		this.toughnessShredDuration = 0;
-		this.maxToughnessShredStacks = 0;
-		this.DOHModifier = 0;
-		this.DOHLifetime = 0;
-		this.maxDOHStacks = 0;
-		this.percentMaxHealthModifier = 0;
-		this.doesSplash = false;
-		this.doesOnHit = false;
+		adjustClassSpecificBaseStats();
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public final class TowerFireEarth extends Tower {
 			baseProjectile.addSpecificCreepEffect(t);
 		}
 		if (progress[1][2]) {
-			DamageOnHit d = new DamageOnHit(DOHLifetime, DOHModifier * damageArray[DamageType.FIRE.ordinal()], DamageType.FIRE, baseProjectile);
+			DamageOnHit d = new DamageOnHit(DOHDuration, DOHModifier * damageArray[DamageType.FIRE.ordinal()], DamageType.FIRE, baseProjectile);
 			d.setMaxStacks(maxDOHStacks);
 			baseProjectile.addSpecificCreepEffect(d);
 		}
@@ -115,6 +118,74 @@ public final class TowerFireEarth extends Tower {
 			}
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.poisonModifier = 0;
+		this.poisonDuration = 0;
+		this.poisonTiming = 0;
+		this.maxPoisonStacks = 0;
+		this.armorShredModifier = 0;
+		this.armorShredDuration = 0;
+		this.maxArmorShredStacks = 0;
+		this.toughnessShredModifier = 0;
+		this.toughnessShredDuration = 0;
+		this.maxToughnessShredStacks = 0;
+		this.DOHModifier = 0;
+		this.DOHDuration = 0;
+		this.maxDOHStacks = 0;
+		this.percentMaxHealthModifier = 0;
+		this.doesSplash = false;
+		this.doesOnHit = false;
+		
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;	
+		
+		this.qPoisonModifier = 0.005f;
+		this.qPoisonDuration = 0.6f;
+		this.qPoisonStacks = 0.1f;
+		
+		this.qMaxHealth = 0.001f;
+		
+		this.qDOHModifier = 0.004f;
+		this.qDOHDuration = 1;
+		this.qDOHStacks = 0.05f;
+		
+		this.qArmorModifier = 0.07f;
+		this.qArmorDuration = 1;
+		this.qArmorStacks = 1;
+		
+		this.qToughModifier = 0.07f;
+		this.qArmorDuration = 1;
+		this.qArmorStacks = 1;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		poisonModifier += qPoisonModifier * qLevel;
+		poisonDuration += (int) (qPoisonDuration * qLevel);
+		maxPoisonStacks += (int) (qPoisonStacks * qLevel);
+		
+		percentMaxHealthModifier += qMaxHealth * qLevel;
+		
+		DOHModifier += qDOHModifier * qLevel;
+		DOHDuration += (int) (qDOHDuration * qLevel);
+		maxDOHStacks += (int) (qDOHStacks * qLevel);
+		
+		armorShredModifier += qArmorModifier * qLevel;
+		armorShredDuration += (int) (qArmorDuration * qLevel);
+		maxArmorShredStacks += (int) (qArmorStacks * qLevel);
+		
+		toughnessShredModifier += qToughModifier * qLevel;
+		toughnessShredDuration += (int) (qToughDuration * qLevel);
+		maxToughnessShredStacks += (int) (qToughStacks * qLevel);
 	}
 
 }

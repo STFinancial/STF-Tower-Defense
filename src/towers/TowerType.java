@@ -341,7 +341,7 @@ public enum TowerType {
 						{name		= "Shattering";
 						 text 		= "Increases splash siphon coefficients, and now applies on hits to all affected";
 						 baseCost   = 5300;}
-						 public void baseUpgrade(Tower t) {  t.baseAttributeList.radiusSplashSiphon += 0.15f; t.baseAttributeList.effectSplashSiphon += 0.15f; t.baseAttributeList.damageSplashSiphon += 0.15f; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.radiusSplashSiphon += 0.15f; t.baseAttributeList.effectSplashSiphon += 0.15f; t.baseAttributeList.damageSplashSiphon += 0.15f; }
 						 public void midSiphonUpgrade(Tower t) { ((TowerEarthWater) t).doesOnHit = true; }
 						 public void postSiphonUpgrade(Tower t) {  }
 					},
@@ -533,7 +533,7 @@ public enum TowerType {
 						 text 		= "Dramatically increases range and fire damage. Poisons all enemies.";
 						 baseCost   = 11000;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=20; ((TowerFireEarth) t).poisonModifier=0.10f; ((TowerFireEarth) t).poisonDuration=18; ((TowerFireEarth) t).maxPoisonStacks = 1; }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.FIRE.ordinal()]+=20; ((TowerFireEarth) t).poisonModifier=0.10f; ((TowerFireEarth) t).poisonDuration=18; ((TowerFireEarth) t).maxPoisonStacks = 1; ((TowerFireEarth) t).poisonTiming = 2; }
 						 public void postSiphonUpgrade(Tower t) { t.range += 10f; t.damageArray[DamageType.FIRE.ordinal()] += 145; }
 					},
 				},
@@ -559,7 +559,7 @@ public enum TowerType {
 						 text 		= "Attacks against afflicted enemies deal additional FIRE damage";
 						 baseCost   = 3000;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerFireEarth) t).DOHModifier = 0.05f; ((TowerFireEarth) t).DOHLifetime = 25; ((TowerFireEarth) t).maxDOHStacks = 1; ((TowerFireEarth) t).doesOnHit = true; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerFireEarth) t).DOHModifier = 0.05f; ((TowerFireEarth) t).DOHDuration = 25; ((TowerFireEarth) t).maxDOHStacks = 1; ((TowerFireEarth) t).doesOnHit = true; }
 						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
