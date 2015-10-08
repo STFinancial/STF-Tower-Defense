@@ -18,25 +18,21 @@ import maps.Tile;
 public final class TowerFireWater extends Tower {
 	float passThroughRadiusModifier;
 	float passThroughModifier;
+	private float qRadiusModifier;
+	private float qPassModifier;
 	
 	int patchLifetime;
 	int patchTiming;
 	float patchMaxHealthModifier;
+	private float qPatchLifetime;
+	private float qPatchModifier;
 	
 	boolean doesSplash;
 	
 	public TowerFireWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_WATER, towerID);
+		adjustClassSpecificBaseStats();
 		
-		this.passThroughRadiusModifier = 0;
-		this.passThroughModifier = 0;
-		
-		this.patchLifetime = 0;
-		this.patchTiming = 0;
-		this.patchMaxHealthModifier = 0;
-		
-		this.hitsAir = false;
-		this.doesSplash = false;
 	}
 
 	@Override
@@ -82,5 +78,31 @@ public final class TowerFireWater extends Tower {
 			return 1;
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.passThroughRadiusModifier = 0;
+		this.passThroughModifier = 0;
+		this.qRadiusModifier = 0.02f;
+		this.qPassModifier = 0.03f;
+		
+		this.patchLifetime = 0;
+		this.patchTiming = 0;
+		this.patchMaxHealthModifier = 0;
+		this.qPatchLifetime = 0.8f;
+		this.qPatchModifier = 0.000005f;
+		
+		this.hitsAir = false;
+		this.doesSplash = false;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		passThroughRadiusModifier += qRadiusModifier * qLevel;
+		passThroughModifier += qPassModifier * qLevel;
+		
+		patchLifetime += (int) (qPatchLifetime * qLevel);
+		patchMaxHealthModifier += qPatchModifier * qLevel;
 	}
 }

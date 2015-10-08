@@ -210,7 +210,7 @@ public abstract class Tower implements Updatable {
 		if (attackCooldown < 1) { attackCooldown = 1; }
 		damageSplash += qDamageSplash * qLevel;
 		effectSplash += qEffectSplash * qLevel;
-		splashRadius += qRadiusSplash * qLevel;
+		splashRadius += (1 + (qRadiusSplash * qLevel));
 		range *= (1 + (qRange * qLevel));
 	}
 	
