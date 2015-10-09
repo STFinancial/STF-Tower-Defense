@@ -5,7 +5,7 @@ import utilities.GameConstants;
 final class OnHit extends Attribute {
 	private float[] damageOnHit;
 	private float goldOnHit;
-	private float cooldownOnHit;
+	private float cooldownOnHit; //Can implement this with disruption actually
 	
 	OnHit(CreepAttributes parent, float goldOnHit, float cooldownOnHit, float[] damageOnHit) {
 		this.parent = parent;

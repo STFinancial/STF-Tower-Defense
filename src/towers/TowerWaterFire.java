@@ -9,18 +9,17 @@ import levels.Level;
 import maps.Tile;
 
 public final class TowerWaterFire extends Tower {
-	int deathrattleSuppressionLifetime;
+	int deathrattleSuppressionDuration;
+	private float qDeathrattle;
 	
-	
-	int disruptorSuppressionLifetime;
+	int disruptorSuppressionDuration;
 	float disruptorSuppressionPercent;
+	private float qDisruptorDuration;
+	//TODO: qDisruptorPercent do I want this to be able to grant attack cooldown?
 	
 	public TowerWaterFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_FIRE, towerID);
-		this.disruptorSuppressionLifetime = 0;
-		this.disruptorSuppressionPercent = 0;
 		
-		this.deathrattleSuppressionLifetime = 0;
 	}
 	
 	@Override
@@ -48,15 +47,41 @@ public final class TowerWaterFire extends Tower {
 		baseProjectile = new ProjectileBasic(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile.addSpecificCreepEffect(new SuppressionDeathrattle(deathrattleSuppressionLifetime, 1, DamageType.WATER, baseProjectile));
+			baseProjectile.addSpecificCreepEffect(new SuppressionDeathrattle(deathrattleSuppressionDuration, 1, DamageType.WATER, baseProjectile));
 		}
 		if (progress[0][2]) {
-			baseProjectile.addSpecificCreepEffect(new SuppressionDisruptor(disruptorSuppressionLifetime, disruptorSuppressionPercent, DamageType.WATER, baseProjectile, false));
+			baseProjectile.addSpecificCreepEffect(new SuppressionDisruptor(disruptorSuppressionDuration, disruptorSuppressionPercent, DamageType.WATER, baseProjectile, false));
 		}
 		
 		if (progress[1][3]) {
 			baseProjectile.setResistPenPercent(DamageType.WATER, 1);
 			baseProjectile.setResistPenPercent(DamageType.FIRE, 1);
 		}
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.disruptorSuppressionDuration = 0;
+		this.disruptorSuppressionPercent = 0;
+		
+		this.deathrattleSuppressionDuration = 0;
+		
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
+		
+		this.qDeathrattle = 2;
+		this.qDisruptorDuration = 2.3f;
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		deathrattleSuppressionDuration += (int) (qDeathrattle * qLevel);
+		disruptorSuppressionDuration += (int) (qDisruptorDuration * qLevel);
 	}
 }

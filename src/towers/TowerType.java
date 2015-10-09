@@ -1002,7 +1002,7 @@ public enum TowerType {
 						 text 		= "Reduces disruptor effects for a time";
 						 baseCost   = 7500;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerWaterFire) t).disruptorSuppressionLifetime = 50; ((TowerWaterFire) t).disruptorSuppressionPercent = 0.50f; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerWaterFire) t).disruptorSuppressionDuration = 50; ((TowerWaterFire) t).disruptorSuppressionPercent = 0.50f; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
@@ -1010,7 +1010,7 @@ public enum TowerType {
 						 text 		= "Increases the disruptor reduction and disables creep deathrattles for a time";
 						 baseCost   = 8900;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerWaterFire) t).disruptorSuppressionPercent = 1;  ((TowerWaterFire) t).deathrattleSuppressionLifetime = 43; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerWaterFire) t).disruptorSuppressionPercent = 1;  ((TowerWaterFire) t).deathrattleSuppressionDuration = 43; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 				},
