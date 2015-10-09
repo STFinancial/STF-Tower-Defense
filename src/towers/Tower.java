@@ -166,6 +166,7 @@ public abstract class Tower implements Updatable {
 				manager.adjustAuras(t, 2);
 			}
 			current.adjustProjectileStats();
+			if (current.attackCooldown < 1) { current.attackCooldown = 1; }
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone.radius = current.range;
 		}
@@ -178,12 +179,12 @@ public abstract class Tower implements Updatable {
 			this.slowArray[i] += from.slowArray[i] * this.baseAttributeList.slowSiphon;
 			this.slowDurationArray[i] += (int) (from.slowDurationArray[i] * this.baseAttributeList.slowDurationSiphon);
 		}
-		this.range += from.range * this.baseAttributeList.rangeSiphon; //TODO: Decide if this is a good equation, do we want really short towers to pull down the range of others? Adds another dimension of complexity.
-		this.attackCooldown -= (int) (this.baseAttributeList.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.attackCooldownSiphon)); //TODO: This value can currently be negative, is that wanted? Should really slow towers slow those around it?
+		this.range += from.range * this.rangeSiphon; //TODO: Decide if this is a good equation, do we want really short towers to pull down the range of others? Adds another dimension of complexity.
+		this.attackCooldown -= (int) (this.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.attackCooldownSiphon)); //TODO: This value can currently be negative, is that wanted? Should really slow towers slow those around it?
 		if (this.attackCooldown < 1) { this.attackCooldown = 1; }
-		this.damageSplash += from.damageSplash * this.baseAttributeList.damageSplashSiphon;
-		this.effectSplash += from.effectSplash * this.baseAttributeList.effectSplashSiphon;
-		this.splashRadius += from.splashRadius * this.baseAttributeList.radiusSplashSiphon;
+		this.damageSplash += from.damageSplash * this.damageSplashSiphon;
+		this.effectSplash += from.effectSplash * this.effectSplashSiphon;
+		this.splashRadius += from.splashRadius * this.radiusSplashSiphon;
 	}
 	
 	protected void adjustBaseStats() {
