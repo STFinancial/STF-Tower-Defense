@@ -10,6 +10,7 @@ import levels.Updatable;
 import maps.Tile;
 import creeps.DamageType;
 import projectiles.*;
+import towers.TowerManager.Aura;
 import utilities.Circle;
 import utilities.GameConstants;
 //TODO: Make strong comments for each tower type and tower (they can be the same, just make it).
@@ -27,6 +28,7 @@ public abstract class Tower implements Updatable {
 
 	//Targeting Details
 	public static ProjectileGuider guider = ProjectileGuider.getInstance();
+	public static TowerManager manager = TowerManager.getInstance();
 	public TargetingModeType targetingType;
 	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
@@ -35,6 +37,7 @@ public abstract class Tower implements Updatable {
 	public Tower siphoningFrom;
 	public ArrayList<Tower> siphoningTo;
 	public Projectile baseProjectile;
+	ArrayList<Aura> auras;
 	
 	//Upgrading Information
 	public boolean[][][] upgradeTracks;
@@ -56,6 +59,14 @@ public abstract class Tower implements Updatable {
 	public boolean hitsAir;
 	public boolean splashHitsAir;
 	public boolean hitsGround;
+	public float damageSiphon;
+	public float slowDurationSiphon;
+	public float slowSiphon;
+	public float attackCooldownSiphon;
+	public float damageSplashSiphon;
+	public float effectSplashSiphon;
+	public float radiusSplashSiphon;
+	public float rangeSiphon;
 	
 	//Quality Coefficients
 	protected int qLevel;
@@ -86,6 +97,7 @@ public abstract class Tower implements Updatable {
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
+		this.auras = new ArrayList<Aura>();
 		this.splashHitsAir = false;
 		this.qLevel = 0;
 		updateTowerChain();
@@ -97,6 +109,10 @@ public abstract class Tower implements Updatable {
 		updateTowerChain();
 	}
 	
+	void addAura(Aura a) {
+		auras.add(a);
+	}
+	
 	public Projectile fireProjectile() {
 		return duplicateProjectile(baseProjectile);
 	}
@@ -106,27 +122,37 @@ public abstract class Tower implements Updatable {
 	}
 	
 	protected static void adjustSiphonChain(Tower t) {
-		Tower current = t;
-		while (current.siphoningFrom != null) {
-			current = current.siphoningFrom;
-		}
-		BFSAdjust(current);
+		BFSAdjust(manager.getRoot(t));
 	}
 	
 	protected static void BFSAdjust(Tower root) {
 		Queue<Tower> openList = new LinkedList<Tower>();
+		ArrayList<Tower> towersInChain = new ArrayList<Tower>();
+		openList.add(root);
+		towersInChain.add(root);
+		Tower current;
+		current = root;
+		while (!openList.isEmpty()) {
+			openList.addAll(current.siphoningTo);
+			towersInChain.addAll(current.siphoningTo);
+		}
 		root.adjustBaseStats();
 		openList.addAll(root.siphoningTo);
 		root.adjustMidSiphonUpgrades();
-		Tower current;
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			current.adjustBaseStats();
 			current.adjustClassSpecificBaseStats();
+			for (Tower t: towersInChain) {
+				manager.adjustAuras(t, 0);
+			}
 			openList.addAll(current.siphoningTo);
 			current.siphon(current.siphoningFrom);
 			current.adjustCommonQuality();
 			current.adjustMidSiphonUpgrades();
+			for (Tower t: towersInChain) {
+				manager.adjustAuras(t, 1);
+			}
 			current.adjustClassSpecificQuality(); //I think in every case none of these would increase siphon, but siphon can increase these. This needs to be second because upgrades sets these (if there is a conflict we need to move away from the upgrades modifyong the tower values and having that happen in the "baseTowerValues" department. We would just have if statements like we did originally
 		}
 		openList.add(root); //Second loop is for postSiphon upgrades.
@@ -136,6 +162,9 @@ public abstract class Tower implements Updatable {
 			//TODO: current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
+			for (Tower t: towersInChain) {
+				manager.adjustAuras(t, 2);
+			}
 			current.adjustProjectileStats();
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone.radius = current.range;
@@ -167,6 +196,14 @@ public abstract class Tower implements Updatable {
 		hitsGround														= baseAttributeList.hitsGround;
 		attackCarryOver													= 0;
 		currentAttackCooldown											= 0;
+		damageSiphon													= baseAttributeList.damageSiphon;
+		slowDurationSiphon												= baseAttributeList.slowDurationSiphon;
+		slowSiphon														= baseAttributeList.slowSiphon;
+		attackCooldownSiphon											= baseAttributeList.attackCooldownSiphon;
+		damageSplashSiphon												= baseAttributeList.damageSplashSiphon;
+		effectSplashSiphon												= baseAttributeList.effectSplashSiphon;
+		radiusSplashSiphon												= baseAttributeList.radiusSplashSiphon;
+		rangeSiphon														= baseAttributeList.rangeSiphon;
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			slowArray[i] = baseAttributeList.baseSlowArray[i];
 			damageArray[i] = baseAttributeList.baseDamageArray[i];
@@ -218,6 +255,8 @@ public abstract class Tower implements Updatable {
 		
 	}
 	
+	
+	
 	protected abstract void adjustProjectileStats();
 	protected abstract void adjustClassSpecificBaseStats();
 	protected abstract void adjustClassSpecificQuality();
@@ -259,6 +298,17 @@ public abstract class Tower implements Updatable {
 			return false;
 		}
 	}
+	
+	//TODO: Should this be in the manager?
+	void increaseSiphons(float modifier) {
+		damageSiphon += modifier;
+		damageSplashSiphon +=modifier;
+		effectSplashSiphon +=modifier;
+		radiusSplashSiphon +=modifier / 2;
+		rangeSiphon +=modifier / 4;
+		slowSiphon +=modifier;
+		slowDurationSiphon +=modifier;
+	}
 
 	protected Projectile duplicateProjectile(Projectile p) {
 		return p.clone();
@@ -293,6 +343,8 @@ public abstract class Tower implements Updatable {
 	
 	@Override
 	public int hashCode() {
-		return towerID;
+		return towerID; //TODO: Is this good enough?
 	}
+
+	
 }

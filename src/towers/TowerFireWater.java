@@ -82,6 +82,16 @@ public final class TowerFireWater extends Tower {
 
 	@Override
 	protected void adjustClassSpecificBaseStats() {
+		
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
+		
 		this.passThroughRadiusModifier = 0;
 		this.passThroughModifier = 0;
 		this.qRadiusModifier = 0.02f;

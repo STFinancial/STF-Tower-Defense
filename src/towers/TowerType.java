@@ -3,6 +3,7 @@ package towers;
 import utilities.Circle;
 import utilities.GameConstants;
 import creeps.DamageType;
+import towers.TowerManager.TowerEffect;
 
 //TODO: Might want to make an "adjustClassSpecificBaseValues" abstract method so that I can do areaRadius += splashRadius / 4; sort of thing because all the values will be reassigned each time. This is where we zero everything and the upgrades reassign them each time
 //TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
@@ -852,8 +853,8 @@ public enum TowerType {
 						{name		= "";
 						 text 		= "Increases siphon coefficients of all towers nearby";
 						 baseCost   = 8000;}
-						 public void baseUpgrade(Tower t) { }
-						 public void midSiphonUpgrade(Tower t) { ((TowerFireWind) t).siphonAuraModifier = 0.02f; ((TowerFireWind) t).siphonAuraRangeModifier = 0.60f; t.guider.increaseNearbyCoefficients(((TowerFireWind) t).siphonAuraModifier, new Circle(t.centerX, t.centerY, t.range * ((TowerFireWind) t).siphonAuraRangeModifier)); }
+						 public void baseUpgrade(Tower t) { t.manager.createAura(new Circle(t.centerX, t.centerY, t.range * (((TowerFireWind) t).siphonAuraRangeModifier + (t.qLevel * ((TowerFireWind) t).qSiphonRange))), (tower) -> tower.increaseSiphons(((TowerFireWind) t).siphonAuraModifier + (t.qLevel * ((TowerFireWind) t).qSiphonModifier)), 0); } //TODO: Gotta make sure that these values are correct, they are 0 when this is initialized so it could get fucked up
+						 public void midSiphonUpgrade(Tower t) {  } 
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}

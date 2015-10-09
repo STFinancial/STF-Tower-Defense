@@ -74,6 +74,8 @@ public class Level {
 			}
 		}
 		this.creepWaves = creepWaves;
+		ProjectileGuider.getInstance().setLevel(this);
+		TowerManager.getInstance().setLevel(this);
 		updatePath();
 	}
 

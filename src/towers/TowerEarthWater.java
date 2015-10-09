@@ -79,6 +79,6 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 
 	@Override
 	protected void adjustClassSpecificQuality() {
-		areaRadius += qLevel * qAreaRadius;
+		areaRadius += qLevel * qAreaRadius; //TODO: Can't I just put this in the creation of the projectile effect?
 	}
 }
