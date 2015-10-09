@@ -21,40 +21,34 @@ public final class TowerWaterWind extends Tower {
 	float toughShredModifier;
 	int toughShredDuration;
 	int maxToughShredStacks;
-	int toughnessWeight;
+	int toughnessWeight; //TODO: Should quality modify the weights? Are some more valuable than others?
+	private float qShredModifier;
+	private float qShredDuration;
+	private float qShredStacks;
 	
 	int snareDuration;
 	int snareWeight;
+	private float qSnareDuration;
 	
 	int goldOnHitDuration;
 	float goldOnHitModifier;
 	int maxGOHStacks;
 	int goldOnHitWeight;
+	private float qGoldDuration;
+	private float qGoldModifier;
+	private float qGoldStacks;
 	
 	int damageOnHitDuration;
 	float damageOnHitModifier;
 	int maxDOHStacks;
 	int damageOnHitWeight;
+	private float qDamageDuration;
+	private float qDamageModifier;
+	private float qDamageStacks;
 	
 	public TowerWaterWind(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_WIND, towerID);
-		this.toughShredDuration = 0;
-		this.toughShredModifier = 0;
-		this.maxToughShredStacks = 0;
-		this.toughnessWeight = 0;
-		
-		this.snareDuration = 0;
-		this.snareWeight = 0;
-		
-		this.goldOnHitDuration = 0;
-		this.goldOnHitModifier = 0;
-		this.maxGOHStacks = 0;
-		this.goldOnHitWeight = 0;
-		
-		this.damageOnHitDuration = 0;
-		this.damageOnHitModifier = 0;
-		this.maxDOHStacks = 0;
-		this.damageOnHitWeight = 0;
+		adjustClassSpecificBaseStats();
 	}
 
 	@Override
@@ -118,5 +112,60 @@ public final class TowerWaterWind extends Tower {
 			return 1;
 		}
 		return 0;
+	}
+
+	@Override
+	protected void adjustClassSpecificBaseStats() {
+		this.toughShredDuration = 0;
+		this.toughShredModifier = 0;
+		this.maxToughShredStacks = 0;
+		this.toughnessWeight = 0;
+		
+		this.snareDuration = 0;
+		this.snareWeight = 0;
+		
+		this.goldOnHitDuration = 0;
+		this.goldOnHitModifier = 0;
+		this.maxGOHStacks = 0;
+		this.goldOnHitWeight = 0;
+		
+		this.damageOnHitDuration = 0;
+		this.damageOnHitModifier = 0;
+		this.maxDOHStacks = 0;
+		this.damageOnHitWeight = 0;
+		
+		this.qDamage = 0.05f;
+		this.qSlow = 0.10f;
+		this.qSlowDuration = 0.10f;
+		this.qCooldown = 0.10f;
+		this.qDamageSplash = 0.01f;
+		this.qEffectSplash = 0.01f;
+		this.qRadiusSplash = 0.02f;
+		this.qRange = 0f;
+		
+		this.qShredModifier = 0.02f;
+		this.qShredDuration = 1.5f;
+		this.qShredStacks = 0.2f;
+		this.qSnareDuration = 0.4f;
+		this.qGoldDuration = 1.5f;
+		this.qGoldModifier = 0.1f;
+		this.qGoldStacks = 0.2f;
+		this.qDamageDuration = 1f;
+		this.qDamageModifier = 0.005f;
+		this.qDamageStacks = 0.2f; //TODO: I wonder if we could make things stack two at a time?
+	}
+
+	@Override
+	protected void adjustClassSpecificQuality() {
+		toughShredModifier += qShredModifier * qLevel;
+		toughShredDuration += (int) (qShredDuration * qLevel);
+		maxToughShredStacks += (int) (qShredStacks * qLevel);
+		snareDuration += (int) (qSnareDuration * qLevel);
+		goldOnHitDuration += (int) (qGoldDuration * qLevel);
+		goldOnHitModifier += qGoldModifier * qLevel;
+		maxGOHStacks += (int) (qGoldStacks * qLevel);
+		damageOnHitDuration += (int) (qDamageDuration * qLevel);
+		damageOnHitModifier += (int) (qDamageModifier * qLevel);
+		maxDOHStacks += (int) (qDamageStacks * qLevel);
 	}
 }

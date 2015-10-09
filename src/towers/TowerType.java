@@ -1287,7 +1287,7 @@ public enum TowerType {
 						 text 		= "Attacks now knockup affected targets";
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerWindEarth) t).knockupDuration = 24; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerWindEarth) t).knockupDuration = 14; } //TODO: This seems super long for what is essentially a snare
 						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
@@ -1321,7 +1321,7 @@ public enum TowerType {
 						 text 		= "Attacks now disorient targets";
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerWindEarth) t).disorientDuration = 34; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerWindEarth) t).disorientDuration = 24; }
 						 public void postSiphonUpgrade(Tower t) {  }
 					},
 					new Upgrade() {
@@ -1329,7 +1329,7 @@ public enum TowerType {
 						 text 		= "Multiplies EARTH and WIND damage and creeps move faster during disorient";
 						 baseCost   = 6200;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]*=1.5f; t.damageArray[DamageType.EARTH.ordinal()]*=1.35f; ((TowerWindEarth) t).unslowDuration = 34; ((TowerWindEarth) t).unslowAmount = -1f; }
+						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]*=1.5f; t.damageArray[DamageType.EARTH.ordinal()]*=1.35f; ((TowerWindEarth) t).unslowDuration = 24; ((TowerWindEarth) t).unslowModifier = -1f; }
 						 public void postSiphonUpgrade(Tower t) {  }
 					}, //TODO: Not enough towers have upgrades that modify instead of adding base damage
 				}
@@ -1608,7 +1608,7 @@ public enum TowerType {
 						 text 		= "Attacks now ground flying creep. Creep that are grounded take extra PHYSICAL damage";
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).groundingModifier = 150f; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).groundingModifier = 1.7f; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
@@ -1616,7 +1616,7 @@ public enum TowerType {
 						 text 		= "Deals additional PHYSICAL and WIND damage based on speed of creep and increases damage and range siphon coefficients";
 						 baseCost   = 4000;}
 						 public void baseUpgrade(Tower t) {  t.baseAttributeList.damageSiphon += 0.10f; t.baseAttributeList.rangeSiphon += 0.05f; }
-						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).speedDamageModifier = 1000f; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).speedDamageModifier = 13f; }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 				}
