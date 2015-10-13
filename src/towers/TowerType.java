@@ -853,7 +853,7 @@ public enum TowerType {
 						{name		= "";
 						 text 		= "Increases siphon coefficients of all towers nearby";
 						 baseCost   = 8000;}
-						 public void baseUpgrade(Tower t) { t.manager.createAura(new Circle(t.centerX, t.centerY, t.range * (((TowerFireWind) t).siphonAuraRangeModifier + (t.qLevel * ((TowerFireWind) t).qSiphonRange))), (tower) -> tower.increaseSiphons(((TowerFireWind) t).siphonAuraModifier + (t.qLevel * ((TowerFireWind) t).qSiphonModifier)), 0); } //TODO: Gotta make sure that these values are correct, they are 0 when this is initialized so it could get fucked up
+						 public void baseUpgrade(Tower t) { t.manager.createAura(new Circle(t.centerX, t.centerY, t.range * (0.60f + (t.qLevel * 0.04f))), (tower) -> tower.increaseSiphons(0.02f + (t.qLevel * 0.0015f)), 0); } //TODO: Gotta make sure that these values are correct, they are 0 when this is initialized so it could get fucked up, also this doesn't let us utilize siphoned stats
 						 public void midSiphonUpgrade(Tower t) {  } 
 						 public void postSiphonUpgrade(Tower t) { }
 					},

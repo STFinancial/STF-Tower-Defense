@@ -3,6 +3,8 @@ package towers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import levels.Level;
 import utilities.Circle;
@@ -14,12 +16,14 @@ public final class TowerManager {
 	
 	private ArrayList<Tower> towers;
 	private ArrayList<Aura> auras;
-	private HashMap<Tower, ArrayList<Aura>> pairs;
+	private HashMap<Tower, ArrayList<Aura>> creates;
+	private HashMap<Aura, ArrayList<Tower>> affects;
 	
 	private TowerManager() { 
 		towers = new ArrayList<Tower>();
 		auras = new ArrayList<Aura>();
-		pairs = new HashMap<Tower, ArrayList<Aura>>();
+		creates = new HashMap<Tower, ArrayList<Aura>>();
+		affects = new HashMap<Aura, ArrayList<Tower>>();
 	}
 	
 	public static TowerManager getInstance() {
@@ -51,47 +55,71 @@ public final class TowerManager {
 		return inRange;
 	}
 	
-	Aura createAura(Circle area, TowerEffect effect, int priority) {
-		Aura a = new Aura(area, effect, priority);
-		auras.add(a);
-		HashSet<Tower> roots = new HashSet<Tower>();
-		for (Tower t: getTowersInRange(area)) {
-			t.addAura(a);
-			ArrayList<Aura> towerAuras = pairs.get(t);
-			if (towerAuras == null) {
-				towerAuras = new ArrayList<Aura>();
-				towerAuras.add(a);
-				pairs.put(t, towerAuras);
-			} else {
-				towerAuras.add(a);
-			}
-			roots.add(getRoot(t));
+	void createAuraChain(Tower root) {
+		Queue<Tower> openList = new LinkedList<Tower>();
+		openList.add(root);
+		Tower current;
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			openList.addAll(current.siphoningTo);
+			current.createAuras();
 		}
-		for (Tower t: roots) {
-			Tower.adjustSiphonChain(t);
+		openList.add(root);
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			openList.addAll(current.siphoningTo);
+			ArrayList<Aura> createdAuras = creates.get(current);
+			if (createdAuras != null) {
+				for (Aura aura: createdAuras) {
+					for (Tower t: affects.get(aura)) {
+						aura.effectApplication.operation(t);
+					}
+				}
+			}
+		}
+	}
+ 	
+	Aura createAura(Tower creator, Circle area, TowerEffect effectApplication, TowerEffect effectRemoval) {
+		Aura a = new Aura(area, effectApplication, effectRemoval); //Create the aura
+		ArrayList<Tower> affectedTowers = getTowersInRange(area); //Find all the towers in range
+		affects.put(a, affectedTowers); //Set that it affects all the towers in range
+		ArrayList<Aura> creatorCreates = creates.get(creator); //get the list of auras this tower is creating
+		if (creatorCreates == null) { //if it's null, make a new list
+			creatorCreates = new ArrayList<Aura>();
+			creatorCreates.add(a);
+			creates.put(creator, creatorCreates);
+		} else {
+			creatorCreates.add(a);
 		}
 		return a;
 	}
 	
-	void adjustAuras(Tower t, int priority) { 
-		for (Aura a: pairs.get(t)) {
-			if (a.priority == priority) {
-				a.effect.operation(t);
+	void clearAuras(Tower auraGenerator) {
+		ArrayList<Aura> generatedAuras = creates.get(auraGenerator);
+		if (generatedAuras != null) {
+			for (Aura a: creates.get(auraGenerator)) {
+				for (Tower affectedTower: affects.get(a)) {
+					a.effectRemoval.operation(affectedTower);
+				}
 			}
+			generatedAuras.clear();
 		}
 	}
 	
+	/**
+	 * As a rule and to avoid circular dependencies, Auras are generated at the end of the siphoning life cycle and apply immediately when they are generated. This also helps avoid telescoping (though that may be desirable).
+	 * @author Timothy
+	 *
+	 */
 	class Aura {
-		boolean applied;
 		Circle area;
-		TowerEffect effect;
-		int priority;
+		TowerEffect effectApplication;
+		TowerEffect effectRemoval;
 		
-		private Aura(Circle area, TowerEffect effect, int priority) {
+		private Aura(Circle area, TowerEffect effectApplication, TowerEffect effectRemoval) {
 			this.area = area;
-			this.effect = effect;
-			this.priority = priority;
-			this.applied = false;
+			this.effectApplication = effectApplication;
+			this.effectRemoval = effectRemoval;
 		}
 	}
 	

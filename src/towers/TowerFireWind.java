@@ -92,4 +92,9 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 		passThroughRadiusModifier += qPassThroughRadius * qLevel;
 		passThroughModifier += qPassThrough * qLevel;
 	}
+	
+	@Override
+	protected void buildAuras() {
+		manager.createAura(area, effect, priority)
+	}
 }

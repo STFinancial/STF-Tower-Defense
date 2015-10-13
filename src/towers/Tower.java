@@ -1,6 +1,7 @@
 package towers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -37,7 +38,6 @@ public abstract class Tower implements Updatable {
 	public Tower siphoningFrom;
 	public ArrayList<Tower> siphoningTo;
 	public Projectile baseProjectile;
-	ArrayList<Aura> auras;
 	
 	//Upgrading Information
 	public boolean[][][] upgradeTracks;
@@ -97,7 +97,6 @@ public abstract class Tower implements Updatable {
 		this.attackCarryOver = 0f;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
-		this.auras = new ArrayList<Aura>();
 		this.splashHitsAir = false;
 		this.qLevel = 0;
 		updateTowerChain();
@@ -107,10 +106,6 @@ public abstract class Tower implements Updatable {
 	public void increaseQuality() {
 		++qLevel;
 		updateTowerChain();
-	}
-	
-	void addAura(Aura a) {
-		auras.add(a);
 	}
 	
 	public Projectile fireProjectile() {
@@ -127,15 +122,14 @@ public abstract class Tower implements Updatable {
 	
 	protected static void BFSAdjust(Tower root) {
 		Queue<Tower> openList = new LinkedList<Tower>();
-		ArrayList<Tower> towersInChain = new ArrayList<Tower>();
 		openList.add(root);
-		towersInChain.add(root);
 		Tower current;
-		current = root;
 		while (!openList.isEmpty()) {
+			current = openList.poll();
 			openList.addAll(current.siphoningTo);
-			towersInChain.addAll(current.siphoningTo);
+			manager.clearAuras(current);
 		}
+		current = root;
 		root.adjustBaseStats();
 		openList.addAll(root.siphoningTo);
 		root.adjustMidSiphonUpgrades();
@@ -143,29 +137,20 @@ public abstract class Tower implements Updatable {
 			current = openList.poll();
 			current.adjustBaseStats();
 			current.adjustClassSpecificBaseStats();
-			for (Tower t: towersInChain) {
-				manager.adjustAuras(t, 0);
-			}
 			openList.addAll(current.siphoningTo);
 			current.siphon(current.siphoningFrom);
 			current.adjustCommonQuality();
 			current.adjustMidSiphonUpgrades();
-			for (Tower t: towersInChain) {
-				manager.adjustAuras(t, 1);
-			}
 			current.adjustClassSpecificQuality(); //I think in every case none of these would increase siphon, but siphon can increase these. This needs to be second because upgrades sets these (if there is a conflict we need to move away from the upgrades modifyong the tower values and having that happen in the "baseTowerValues" department. We would just have if statements like we did originally
-		}
-		openList.add(root); //Second loop is for postSiphon upgrades.
-		while (!openList.isEmpty()) {
-			current = openList.poll();
-			openList.addAll(current.siphoningTo);
 			//TODO: current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
-			for (Tower t: towersInChain) {
-				manager.adjustAuras(t, 2);
-			}
-			current.adjustProjectileStats();
+			current.createAuras();
+		}
+		openList.add(root);
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			openList.addAll(current.siphoningTo);
 			if (current.attackCooldown < 1) { current.attackCooldown = 1; }
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone.radius = current.range;
@@ -253,14 +238,13 @@ public abstract class Tower implements Updatable {
 	}
 	
 	private void adjustTalentStats() {
-		
+		//TODO:
 	}
-	
-	
 	
 	protected abstract void adjustProjectileStats();
 	protected abstract void adjustClassSpecificBaseStats();
 	protected abstract void adjustClassSpecificQuality();
+	protected void createAuras() { } //Can be overridden for a tower that actually has auras
 	
 	/**
 	 * 
