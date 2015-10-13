@@ -145,8 +145,8 @@ public abstract class Tower implements Updatable {
 			//TODO: current.adjustTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
-			current.createAuras();
 		}
+		manager.createAuraChain(root);
 		openList.add(root);
 		while (!openList.isEmpty()) {
 			current = openList.poll();

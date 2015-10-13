@@ -1,11 +1,14 @@
 package towers;
 
+import creeps.DamageType;
 import levels.Level;
 import maps.Tile;
 import projectiles.ProjectileArea;
 import projectiles.ProjectilePassThroughArea;
 import projectiles.TargetsArea;
+import towers.TowerManager.TowerEffect;
 import utilities.Circle;
+import utilities.GameConstants;
 
 public final class TowerFireWind extends Tower implements TargetsArea {
 	private Circle targetArea;
@@ -14,10 +17,10 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	private float qPassThroughRadius;
 	private float qPassThrough;
 
-	float siphonAuraModifier;
-	float siphonAuraRangeModifier;
-	float qSiphonModifier;
-	float qSiphonRange;
+	float damageAuraModifier;
+	float damageAuraRangeModifier;
+	private float qDamageModifier;
+	private float qDamageRange;
 	
 	boolean doesSplash;
 	
@@ -66,8 +69,8 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 		this.passThroughModifier = 0.25f;
 		this.passThroughRadiusModifier = 0.10f;
 		
-		this.siphonAuraModifier = 0.02f;
-		this.siphonAuraRangeModifier = 0.60f;
+		this.damageAuraModifier = 0.02f;
+		this.damageAuraRangeModifier = 0.60f;
 		
 		this.doesSplash = false;
 		
@@ -83,18 +86,44 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 		this.qPassThrough = 0.02f;
 		this.qPassThroughRadius = 0.006f;
 		
-		this.qSiphonModifier = 0.0015f;
-		this.qSiphonRange = 0.04f;
+		this.qDamageModifier = 0.0015f;
+		this.qDamageRange = 0.04f;
 	}
 
 	@Override
 	protected void adjustClassSpecificQuality() {
 		passThroughRadiusModifier += qPassThroughRadius * qLevel;
 		passThroughModifier += qPassThrough * qLevel;
+		
+		damageAuraModifier += qDamageModifier * qLevel;
+		damageAuraRangeModifier += qDamageRange * qLevel;
 	}
 	
 	@Override
-	protected void buildAuras() {
-		manager.createAura(area, effect, priority)
+	protected void createAuras() {
+		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		if (progress[1][3]) {
+			float sum = 0;
+			for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+				sum += damageArray[i];
+			}
+			final float mod = damageAuraModifier * sum;
+			TowerEffect effectApplication = (t) -> { 
+				for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES;++i) {
+					if (i!=DamageType.LIGHT.ordinal() || i!=DamageType.DARK.ordinal()) {
+						t.damageArray[i] += mod; //TODO: Is this what I want or just a percentage of the damage array?
+					}
+				}
+			};
+			TowerEffect effectRemoval = (t) -> { 
+				for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES;++i) {
+					if (i!=DamageType.LIGHT.ordinal() || i!=DamageType.DARK.ordinal()) {
+						t.damageArray[i] -= mod;
+					}
+				}
+			};
+			float auraRange = range * damageAuraRangeModifier;
+			manager.createAura(this, new Circle(centerX, centerY, auraRange), effectApplication, effectRemoval);
+		}
 	}
 }
