@@ -105,6 +105,7 @@ final class CreepAttributes implements Updatable {
 	float getDisruption() { return disruption.getDisruptionAmount(); }
 	float getMaxHealth() { return health.getMaxHealth(); }
 	float getSlowResist(DamageType type) { return slowResistances.getResistPercent(type); }
+	boolean isDead() { return health.isDead(); }
 	boolean isDisoriented() { return speed.isDisoriented(); }
 	boolean isFlying() { return travel.isFlying(); }
 	

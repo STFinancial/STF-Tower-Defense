@@ -401,4 +401,8 @@ public class Level {
 	public Path getGroundPath() {
 		return groundPath;
 	}
+	
+	public Path getFlyingPath() {
+		return airPath;
+	}
 }

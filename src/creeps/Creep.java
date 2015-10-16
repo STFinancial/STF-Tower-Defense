@@ -14,7 +14,6 @@ import towers.Tower;
 import utilities.Circle;
 
 public class Creep implements Updatable {
-	//TODO: Need to clone whether the creep is flying or not. (need an attribute for this even)
 	public int creepID;
 	public DamageType elementType; //FIRE AIR etc creep type //TODO: Move this to attributes?
 
@@ -35,17 +34,26 @@ public class Creep implements Updatable {
 	public Level level;
 	public Circle hitBox;
 
-	Creep() {};
+	Creep(Level level, int id) {
+		this.level = level;
+		this.xOff = 0;
+		this.yOff = 0;
+		this.creepID = id;
+		this.hitBox = new Circle(0,0,0);
+	}
 	
-	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; hitBox.radius = attributes.getCurrentSize(); }
+	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; hitBox.radius = attributes.getCurrentSize(); setLocation(0); }
 	
 	public float onProjectileCollision() {
 		attributes.onProjectileCollision();
 		return attributes.getDisruption();
 	}
 	
+	public ArrayList<Creep> onDeath() {
+		
+	}
+	
 	//Public interface methods that simply delegate to the attributes layer.
-	//TODO: Make consistent the naming of "reduce" and "remove" and "decrease" (I like decrease the best tbh)
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
 	public void addDeathrattleEffect(ProjectileEffect effect, int duration) { attributes.addDeathrattleEffect(effect, duration); }
 	public void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
@@ -59,12 +67,12 @@ public class Creep implements Updatable {
 	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
 	public void knockup(int duration) { attributes.knockup(duration); }
 	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future, or lifetime
-	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
 	public void reduceDamageOnHit(DamageType type, float amount) { attributes.reduceDamageOnHit(type, amount); }
 	public void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
 	public void reduceGoldOnHit(float amount) { attributes.reduceGoldOnHit(amount); }
 	public void reduceGoldValue(float amount, boolean isFlat) { attributes.reduceGoldValue(amount, isFlat); }
 	public void reduceHasting(DamageType type, float amount) { attributes.reduceCDOnHit(type, amount); }
+	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
 	public void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
 	public void slow(DamageType type, float amount) { attributes.slow(type, amount); }
 	public void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
@@ -110,13 +118,10 @@ public class Creep implements Updatable {
 		}
 	}
 
-	public ArrayList<Creep> death() {
-		//TODO: Implement this
-		return children;
-	}
+	
 
 	public boolean isDead() {
-		return attributes.getCurrentHealth() <= 0;
+		return attributes.isDead();
 	}
 
 	public boolean is(CreepType type) {
@@ -145,6 +150,7 @@ public class Creep implements Updatable {
 		}
 		currentVertex = path.getVertex(currentIndex);
 		updateDirection();
+		updateHitBox();
 	}
 	
 	private void updateDirection() {
@@ -223,7 +229,8 @@ public class Creep implements Updatable {
 
 	//Clones the attributes back to their default states. Does not clone effects on the creep.
 	public Creep clone() {
-		//TODO
+		Creep c = new Creep(level, CreepBuilder.getInstance().getNextId());
+		c.setAttributes(attributes.clone(c));
 	}
 
 	public String toString() {

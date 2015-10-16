@@ -15,7 +15,6 @@ final class Deathrattle extends Attribute implements Updatable{
 	
 	Deathrattle(CreepAttributes parent, List<ProjectileEffect> effects, List<Creep> children) {
 		this.parent = parent;
-		//TODO: Should I do something to handle null values passed in if user chooses not to build deathrattle?
 		if (effects == null) {
 			effects = new ArrayList<ProjectileEffect>();
 		}
@@ -31,6 +30,7 @@ final class Deathrattle extends Attribute implements Updatable{
 	boolean hasDeathrattleChildren() { return children != null || children.size() != 0; }
 	
 	void addDeathrattleEffect(ProjectileEffect effect, int duration) {
+		//TODO: Want to implement DeathrattleEffect class so that we have an area.
 		//TODO: Something with the duration, maybe a pair class for an effect and its duration
 		if (duration < 0) {
 			effects.add(effect);
