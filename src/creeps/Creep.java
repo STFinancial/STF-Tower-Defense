@@ -93,7 +93,7 @@ public class Creep implements Updatable {
 		if (attributes.ground()) {
 			Path newPath = level.getGroundPath();
 			setLocation(level.getVertexBelow(currentVertex));
-			//TODO: Implement these
+			this.path = newPath;
 		}
 	}
 	

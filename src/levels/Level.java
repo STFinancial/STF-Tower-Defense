@@ -17,6 +17,7 @@ import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
+import projectiles.ProjectileGuider;
 import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
@@ -41,9 +42,12 @@ public class Level {
 	private Wave currentWave;
 	private boolean roundInProgress = false;
 
+	//Managers and Guiders
+	private ProjectileGuider pGuider;
+	private TowerManager tManager;
+	
 	//Currently loaded/active units
 	private ArrayList<Tower> towers = new ArrayList<Tower>();
-	private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
 	private ArrayList<Creep> creeps = new ArrayList<Creep>();
 
@@ -74,8 +78,12 @@ public class Level {
 			}
 		}
 		this.creepWaves = creepWaves;
-		ProjectileGuider.getInstance().setLevel(this);
-		TowerManager.getInstance().setLevel(this);
+		
+		pGuider = ProjectileGuider.getInstance();
+		pGuider.setLevel(this);
+		tManager = TowerManager.getInstance();
+		tManager.setLevel(this);
+		
 		updatePath();
 	}
 
@@ -119,15 +127,8 @@ public class Level {
 			updateGroundCreepAdjacentToEarth();
 		}
 		
-		for (i = 0; i < projectiles.size(); i++) {
-			Projectile p = projectiles.get(i);
-			p.update();
-			if (p.isDone()) {
-				detonateProjectile(p);
-				projectiles.remove(i);
-				i--;
-			}
-		}
+		//TODO: This should be delegated to the ProjectileGuider
+		pGuider.update();
 
 		for (i = 0; i < creeps.size(); i++) {
 			c = creeps.get(i);
@@ -141,9 +142,7 @@ public class Level {
 			}
 		}
 
-		for (Tower t : towers) {
-			t.update();
-		}
+		tManager.update();
 		
 		Iterator<EffectPatch> i = effectPatches.iterator();
 		while (i.hasNext()) {
@@ -389,4 +388,17 @@ public class Level {
 		effectPatches.add(effectPatch);
 	}
 
+	public int getVertexBelow(Vertex currentVertex) {
+		int y = currentVertex.y;
+		for (int i = 0; i < groundPath.getLength(); i++) {
+			if (groundPath.getVertex(i).y == y) {
+				return i;
+			}
+		}
+		return 0;
+	}
+
+	public Path getGroundPath() {
+		return groundPath;
+	}
 }

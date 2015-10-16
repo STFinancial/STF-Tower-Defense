@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import levels.Level;
-import levels.ProjectileGuider;
 import levels.Updatable;
 import maps.Tile;
 import creeps.DamageType;

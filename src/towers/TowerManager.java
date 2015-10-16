@@ -7,10 +7,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import levels.Level;
+import levels.Updatable;
 import utilities.Circle;
 
 //TODO: Should this just change into TowerManager?
-public final class TowerManager {
+public final class TowerManager implements Updatable {
 	private static final TowerManager INSTANCE = new TowerManager();
 	private Level level;
 	
@@ -32,7 +33,14 @@ public final class TowerManager {
 	
 	public void setLevel(Level level) {
 		this.level = level;
+		//Need to clear out all the old junk
+		towers = new ArrayList<Tower>();
+		auras = new ArrayList<Aura>();
+		creates = new HashMap<Tower, ArrayList<Aura>>();
+		affects = new HashMap<Aura, ArrayList<Tower>>();
 	}
+	
+	public void buildTower()
 	
 	Tower getRoot(Tower t) {
 		Tower current = t;
@@ -125,5 +133,13 @@ public final class TowerManager {
 	
 	interface TowerEffect {
 		void operation(Tower tower);
+	}
+
+	@Override
+	public int update() {
+		for (Tower t: towers) {
+			t.update();
+		}
+		return 0;
 	}
 }

@@ -1676,8 +1676,7 @@ public enum TowerType {
 		return null;
 	}
 
-	//TODO: Are these needed or can the attributes just be package private
-	public BaseAttributeList getAttributeList() {
+	BaseAttributeList getAttributeList() {
 		return baseAttributeList;
 	}
 	

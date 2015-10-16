@@ -7,7 +7,6 @@ import projectileeffects.ProjectileEffect;
 import projectileeffects.Slow;
 
 import levels.Level;
-import levels.ProjectileGuider;
 import levels.Updatable;
 
 

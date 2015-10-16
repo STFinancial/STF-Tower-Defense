@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import creeps.Creep;
 import creeps.DamageType;
-import levels.ProjectileGuider;
 import projectiles.Projectile;
+import projectiles.ProjectileGuider;
 import utilities.Circle;
 
 public final class Explosion extends ProjectileEffect {
