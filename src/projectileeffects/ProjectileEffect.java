@@ -42,6 +42,7 @@ public abstract class ProjectileEffect implements Updatable {
 	 */
 	public abstract void onExpire();
 	
+	public boolean hitsAir() { return parent.hitsAir(); }
 	
 	public int update() {
 		counter--;

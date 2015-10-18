@@ -21,7 +21,7 @@ final class Effects extends Attribute implements Updatable {
 			getEquivalent(effect).onApply();
 		} else {
 			effect.onApply();
-			effects.add(effect.clone());
+			effects.add(effect.clone()); //TODO: Why don't I just clone when I create the projectile?
 		}
 	}
 

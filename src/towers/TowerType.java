@@ -1,11 +1,8 @@
 package towers;
 
-import utilities.Circle;
 import utilities.GameConstants;
 import creeps.DamageType;
-import towers.TowerManager.TowerEffect;
 
-//TODO: Might want to make an "adjustClassSpecificBaseValues" abstract method so that I can do areaRadius += splashRadius / 4; sort of thing because all the values will be reassigned each time. This is where we zero everything and the upgrades reassign them each time
 //TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
 //TODO: Do the same with doesSplash, honestly.
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.

@@ -42,6 +42,4 @@ final class GoldValue extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new GoldValue(parent, defaultGoldValue);
 	}
-	
-	
 }
