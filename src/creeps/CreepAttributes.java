@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import projectileeffects.ProjectileEffect;
+import utilities.Circle;
 import utilities.GameConstants;
 import levels.Updatable;
 
@@ -63,10 +64,12 @@ final class CreepAttributes implements Updatable {
 	
 	//Simple delegation one liners
 	void addAllEffects(ArrayList<ProjectileEffect> effects) { this.effects.addAllEffects(effects); }
-	void addDeathrattleEffect(ProjectileEffect effect, int duration) { deathrattle.addDeathrattleEffect(effect, duration); }
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area) { deathrattle.addDeathrattleEffect(effect, area); }
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) { deathrattle.addDeathrattleEffect(effect, area, duration); }
 	void addEffect(ProjectileEffect effect) { effects.addEffect(effect); }
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
 	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
+	List<Creep> deathrattle() { return deathrattle.onDeath(); }
 	boolean disorient(int duration) { return speed.disorient(duration); }
 	boolean ground() { return travel.ground(); }
 	void increaseCDOnHit(DamageType type, float amount) { onHit.increaseCDOnHit(amount); }
@@ -96,6 +99,7 @@ final class CreepAttributes implements Updatable {
 
 	//Getters
 	float getCurrentDamageResist(DamageType type, boolean isFlat) { return (isFlat? damageResistances.getResistFlat(type) : damageResistances.getResistPercent(type));}
+	float getCurrentGoldValue() { return goldValue.getGoldValue(); }
 	float getCurrentHealth() { return health.getCurrentHealth(); }
 	float getCurrentHealthCost() { return healthCost.getHealthCost(); }
 	float getCurrentShield() { return shield.getCurrentShield(); }

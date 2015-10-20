@@ -50,12 +50,14 @@ public class Creep implements Updatable {
 	}
 	
 	public ArrayList<Creep> onDeath() {
-		
+		attributes.deathrattle();
+		level.addGold(attributes.getCurrentGoldValue());
 	}
 	
 	//Public interface methods that simply delegate to the attributes layer.
 	public void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
-	public void addDeathrattleEffect(ProjectileEffect effect, int duration) { attributes.addDeathrattleEffect(effect, duration); }
+	public void addDeathrattleEffect(ProjectileEffect effect, Circle area) { attributes.addDeathrattleEffect(effect, area); }
+	public void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) { attributes.addDeathrattleEffect(effect, area, duration); }
 	public void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
 	public void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
 	public void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }

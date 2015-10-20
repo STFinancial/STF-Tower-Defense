@@ -24,7 +24,7 @@ final class Deathrattle extends Attribute implements Updatable {
 			children = new ArrayList<Creep>();
 		}
 		this.children = children;
-		this.deathrattleSuppressionTimer = 0;
+		this.deathrattleSuppressionTimer = -1;
 	}
 	
 	
@@ -39,9 +39,15 @@ final class Deathrattle extends Attribute implements Updatable {
 		effects.add(new DeathrattleEffect(effect, area, duration));
 	}
 	
-	void onDeath() {
+	List<Creep> onDeath() {
 		//TODO:
-		
+		if (deathrattleSuppressionTimer < 0) {
+			for (DeathrattleEffect e: effects) {
+				e.applyEffect(1);
+			}
+			return children;
+		}
+		return new ArrayList<Creep>(1);
 	}
 	
 	void suppressDeathrattle(float modifier, int lifetime) {
