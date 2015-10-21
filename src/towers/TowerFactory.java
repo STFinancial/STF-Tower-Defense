@@ -3,6 +3,7 @@ package towers;
 import levels.Level;
 import maps.Tile;
 
+//TODO: Does this need to be public
 public class TowerFactory {
 	public static Tower generateTower(Level level, Tile topLeft, TowerType type, int towerID) {
 		Tower t = null;

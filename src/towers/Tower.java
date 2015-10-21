@@ -16,6 +16,7 @@ import utilities.GameConstants;
 //TODO: Make strong comments for each tower type and tower (they can be the same, just make it).
 public abstract class Tower implements Updatable {
 	//Positional Details
+	//TODO: Reduce visibility.
 	public Level level;
 	public int x, y; //Top Left corner in Tile Coordinates
 	public Tile topLeft;

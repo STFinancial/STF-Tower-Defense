@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import maps.Map;
@@ -34,7 +35,6 @@ public class Level {
 
 	private int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	private int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
-	private int currentTowerID = 0;
 	
 	private int gold = 500;
 	private int health = 100;
@@ -174,28 +174,27 @@ public class Level {
 	}
 
 	private void escapeCreep(Creep c) {
-		//TODO
 		newEvent(GameEventType.CREEP_ESCAPED, c);
-		health -= c.getHealthCost();
-		//Check if we lose?
-
+		health -= c.getCurrentHealthCost();
+		if (health <= 0) {
+			newEvent(GameEventType.HEALTH_ZERO, null);
+		}
 	}
 
+	public void addGold(float amount) {
+		gold += amount;
+	}
+	
 	private void killCreep(Creep c) {
-		// TODO Auto-generated method stub
-		ArrayList<Creep> deathRattleChildren;
-		deathRattleChildren = c.death();
+		List<Creep> deathRattleChildren;
+		deathRattleChildren = c.onDeath();
 		if (deathRattleChildren != null) {
 			for (Creep drc : deathRattleChildren) {
 				drc.setLocation(c);
 				creeps.add(drc);
 			}
 		}
-
 		newEvent(GameEventType.CREEP_KILLED, c);
-
-		gold += c.goldValue;
-
 	}
 	
 	public boolean canBuyTower(TowerType type) {
@@ -206,17 +205,16 @@ public class Level {
 	public Tower buyTower(TowerType type, int y, int x) {
 		Tower t = buildTower(type, y, x);
 		//TODO this needs to be affected by global talents
-		gold -= type.getCost();
+		gold -= type.getCost(); //TODO: Should this be tower.getCost?
 		return t;
 	}
 
 	private Tower buildTower(TowerType type, int y, int x) {
 		Tower t;
 		Tile tile = map.getTile(y, x);
-		t = TowerFactory.generateTower(this, tile, type, currentTowerID++);
-		constructTower(t);
-		updatePath();
-		t.updateTowerChain();
+		t = tManager.constructTower(tile, type);
+		updatePath(); //TODO: Does this need to be updated before we update the tower chain?
+		tManager.updateTowerChain(t);
 		newEvent(GameEventType.TOWER_CREATED, t);
 		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
 	}
@@ -233,6 +231,7 @@ public class Level {
 		}
 	}
 
+	//TODO: Move these to tmanager
 	public Tower unsiphonTower(Tower source, Tower destination) {
 		source.siphoningTo.remove(destination);
 		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, destination.baseAttributeList.downgradeType, destination.towerID);
@@ -281,13 +280,15 @@ public class Level {
 		}
 		razeTower(t);
 	}
-
+	
+	//TODO: Move to tmanager
 	private void razeTower(Tower t) {
 		destroyTower(t);
 		updatePath();
 		newEvent(GameEventType.TOWER_DESTROYED, t);
 	}
 	
+	//TODO: Move to tManager
 	private void destroyTower(Tower t) {
 		towers.remove(t);
 		hasEarthEarth = false;
@@ -347,7 +348,7 @@ public class Level {
 	}
 
 	public void addProjectile(Projectile p) {
-		projectiles.add(p);
+		pGuider.add(p);
 		newEvent(GameEventType.PROJECTILE_FIRED, p);
 	}
 

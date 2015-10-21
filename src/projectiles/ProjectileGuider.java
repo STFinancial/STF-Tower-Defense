@@ -29,6 +29,10 @@ public final class ProjectileGuider implements Updatable {
 		projectiles = new ArrayList<Projectile>();
 	}
 	
+	public void add(Projectile p) {
+		projectiles.add(p);
+	}
+	
 	//TODO: Using this method ends up duplicating a ton of work.
 	//TODO: Could try keeping track of a creep that has been in range, and only when that creep is out of range or dead we search for a new one (good idea)
 	public boolean isCreepInRange(Circle area, boolean hitsAir) {

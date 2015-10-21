@@ -2,6 +2,7 @@ package creeps;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import projectileeffects.ProjectileEffect;
 
@@ -49,9 +50,9 @@ public class Creep implements Updatable {
 		return attributes.getDisruption();
 	}
 	
-	public ArrayList<Creep> onDeath() {
-		attributes.deathrattle();
+	public List<Creep> onDeath() {
 		level.addGold(attributes.getCurrentGoldValue());
+		return attributes.deathrattle();
 	}
 	
 	//Public interface methods that simply delegate to the attributes layer.

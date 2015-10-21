@@ -8,6 +8,7 @@ import java.util.Queue;
 
 import levels.Level;
 import levels.Updatable;
+import maps.Map;
 import utilities.Circle;
 
 //TODO: Should this just change into TowerManager?
@@ -19,12 +20,17 @@ public final class TowerManager implements Updatable {
 	private ArrayList<Aura> auras;
 	private HashMap<Tower, ArrayList<Aura>> creates;
 	private HashMap<Aura, ArrayList<Tower>> affects;
+	private Map map;
+	
+	private int currentTowerId;
 	
 	private TowerManager() { 
 		towers = new ArrayList<Tower>();
 		auras = new ArrayList<Aura>();
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
+		map = null; //TODO: how do we deal with the null pointer exception that this will create
+		currentTowerId = 0;
 	}
 	
 	public static TowerManager getInstance() {
@@ -38,9 +44,11 @@ public final class TowerManager implements Updatable {
 		auras = new ArrayList<Aura>();
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
+		map = level.getMap();
+		currentTowerId = 0;
 	}
 	
-	public void buildTower()
+	public void constructTower()
 	
 	Tower getRoot(Tower t) {
 		Tower current = t;
