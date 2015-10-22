@@ -203,36 +203,22 @@ public class Level {
 
 	//GUI should call this method to build towers
 	public Tower buyTower(TowerType type, int y, int x) {
-		Tower t = buildTower(type, y, x);
-		//TODO this needs to be affected by global talents
-		gold -= type.getCost(); //TODO: Should this be tower.getCost?
-		return t;
-	}
-
-	private Tower buildTower(TowerType type, int y, int x) {
 		Tower t;
 		Tile tile = map.getTile(y, x);
+		//TODO this needs to be affected by global talents
+		//TODO: Should this cost be in the manager? It seems like the level is still doing too much here
+		gold -= type.getCost(); //TODO: Should this be tower.getCost?
+		
 		t = tManager.constructTower(tile, type);
-		updatePath(); //TODO: Does this need to be updated before we update the tower chain?
+		updatePath();
 		tManager.updateTowerChain(t);
 		newEvent(GameEventType.TOWER_CREATED, t);
-		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
-	}
-	
-	private void constructTower(Tower t) {
-		if (t.type == TowerType.EARTH_EARTH) {
-			hasEarthEarth = true;
-		}
-		towers.add(t);
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).addTower(t);
-			}
-		}
+		return t;
 	}
 
 	//TODO: Move these to tmanager
 	public Tower unsiphonTower(Tower source, Tower destination) {
+		if (type == TowerEarthEarth)
 		source.siphoningTo.remove(destination);
 		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, destination.baseAttributeList.downgradeType, destination.towerID);
 		newDest.upgradeTracks = destination.upgradeTracks;
@@ -247,6 +233,7 @@ public class Level {
 	}
 
 	public Tower siphonTower(Tower source, Tower destination) {
+		if (type == TowerEarthEarth)
 		source.siphoningTo.add(destination);
 		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, TowerType.getUpgrade(source.type, destination.type), destination.towerID);
 		newDest.upgradeTracks = destination.upgradeTracks;

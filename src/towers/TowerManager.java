@@ -9,6 +9,7 @@ import java.util.Queue;
 import levels.Level;
 import levels.Updatable;
 import maps.Map;
+import maps.Tile;
 import utilities.Circle;
 
 //TODO: Should this just change into TowerManager?
@@ -22,7 +23,7 @@ public final class TowerManager implements Updatable {
 	private HashMap<Aura, ArrayList<Tower>> affects;
 	private Map map;
 	
-	private int currentTowerId;
+	private int currentTowerID;
 	
 	private TowerManager() { 
 		towers = new ArrayList<Tower>();
@@ -30,7 +31,7 @@ public final class TowerManager implements Updatable {
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
 		map = null; //TODO: how do we deal with the null pointer exception that this will create
-		currentTowerId = 0;
+		currentTowerID = 0;
 	}
 	
 	public static TowerManager getInstance() {
@@ -45,10 +46,23 @@ public final class TowerManager implements Updatable {
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
 		map = level.getMap();
-		currentTowerId = 0;
+		currentTowerID = 0;
 	}
 	
-	public void constructTower()
+	public Tower constructTower(Tile tile, TowerType type) {
+		Tower t = TowerFactory.generateTower(level, tile, type, currentTowerID++);
+		towers.add(t);
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
+				map.getTile(t.y + j, t.x + i).addTower(t);
+			}
+		}
+		return t;
+	}
+	
+	public void updateTowerChain(Tower t) {
+		t.updateTowerChain();
+	}
 	
 	Tower getRoot(Tower t) {
 		Tower current = t;
