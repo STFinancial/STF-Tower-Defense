@@ -24,6 +24,7 @@ public final class TowerManager implements Updatable {
 	private Map map;
 	
 	private int currentTowerID;
+	private int earthEarth;
 	
 	private TowerManager() { 
 		towers = new ArrayList<Tower>();
@@ -32,6 +33,7 @@ public final class TowerManager implements Updatable {
 		affects = new HashMap<Aura, ArrayList<Tower>>();
 		map = null; //TODO: how do we deal with the null pointer exception that this will create
 		currentTowerID = 0;
+		earthEarth = 0;
 	}
 	
 	public static TowerManager getInstance() {
@@ -47,9 +49,14 @@ public final class TowerManager implements Updatable {
 		affects = new HashMap<Aura, ArrayList<Tower>>();
 		map = level.getMap();
 		currentTowerID = 0;
+		earthEarth = 0;
 	}
 	
+	public boolean hasEarthEarth() { return earthEarth > 0; }
+	
 	public Tower constructTower(Tile tile, TowerType type) {
+		//TODO: It needs to be type.getCost() because it needs to be consistent with "canBuyTower"
+		level.removeGold(type.getCost()); //TODO: In this method in tower should be affected by global talents
 		Tower t = TowerFactory.generateTower(level, tile, type, currentTowerID++);
 		towers.add(t);
 		for (int i = 0; i < t.width; i++) {

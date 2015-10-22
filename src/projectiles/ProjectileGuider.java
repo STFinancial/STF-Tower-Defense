@@ -3,6 +3,7 @@ package projectiles;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import towers.Tower;
 import utilities.Circle;
@@ -184,26 +185,22 @@ public final class ProjectileGuider implements Updatable {
 		}
 		return null;
 	}
-	
-	private void detonateProjectile(Projectile p) {
-		p.detonate();
-		//TODO: Something something events something something
-	}
 
 	@Override
 	public int update() {
+		LinkedList<Projectile> detonatedProj = new LinkedList<Projectile>();
 		Iterator<Projectile> i = projectiles.iterator();
 		Projectile p;
 		while (i.hasNext()) {
 			p = i.next();
 			p.update();
 			if (p.isDone()) {
-				detonateProjectile(p);
+				p.detonate();
 				i.remove();
+				detonatedProj.add(p);
 			}
 		}
+		level.createProjectileDetonationEvents(detonatedProj);
 		return 0;
 	}
-
-	
 }

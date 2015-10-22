@@ -1678,6 +1678,7 @@ public enum TowerType {
 	}
 	
 	public int getCost() {
+		//TODO: Affected by global talents somehow, use the TowerManager?
 		return baseAttributeList.baseCost;
 	}
 

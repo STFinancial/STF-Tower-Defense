@@ -47,7 +47,6 @@ public class Level {
 	private TowerManager tManager;
 	
 	//Currently loaded/active units
-	private ArrayList<Tower> towers = new ArrayList<Tower>();
 	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
 	private ArrayList<Creep> creeps = new ArrayList<Creep>();
 
@@ -55,7 +54,6 @@ public class Level {
 	//This will change when we create and destroy new terrain
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
 	private HashSet<Creep> creepAdjacentToEarth = new HashSet<Creep>();
-	private boolean hasEarthEarth = false;
 
 	private ArrayList<GameEvent> events = new ArrayList<GameEvent>();
 	//Temp Variables for readability.. wat
@@ -122,7 +120,7 @@ public class Level {
 				}
 			}
 		}
-		if (hasEarthEarth) {
+		if (tManager.hasEarthEarth()) {
 			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
 			updateGroundCreepAdjacentToEarth();
 		}
@@ -181,9 +179,8 @@ public class Level {
 		}
 	}
 
-	public void addGold(float amount) {
-		gold += amount;
-	}
+	public void addGold(float amount) { gold += amount; }
+	public void removeGold(float amount) { gold -= amount; }
 	
 	private void killCreep(Creep c) {
 		List<Creep> deathRattleChildren;
@@ -203,13 +200,8 @@ public class Level {
 
 	//GUI should call this method to build towers
 	public Tower buyTower(TowerType type, int y, int x) {
-		Tower t;
 		Tile tile = map.getTile(y, x);
-		//TODO this needs to be affected by global talents
-		//TODO: Should this cost be in the manager? It seems like the level is still doing too much here
-		gold -= type.getCost(); //TODO: Should this be tower.getCost?
-		
-		t = tManager.constructTower(tile, type);
+		Tower t = tManager.constructTower(tile, type);
 		updatePath();
 		tManager.updateTowerChain(t);
 		newEvent(GameEventType.TOWER_CREATED, t);
@@ -321,7 +313,6 @@ public class Level {
 
 	public ArrayList<Creep> getCreeps() { return creeps; }
 	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this... I would rather have delegation methods
-	public ArrayList<Tower> getTowers() { return towers; }
 	
 	HashSet<Creep> getGroundCreepAdjacentToEarth() {
 		return creepAdjacentToEarth;
@@ -392,5 +383,11 @@ public class Level {
 	
 	public Path getFlyingPath() {
 		return airPath;
+	}
+
+	public void createProjectileDetonationEvents(LinkedList<Projectile> detonatedProj) {
+		for (Projectile p: detonatedProj) {
+			newEvent(GameEventType.PROJECTILE_DETONATED, p);
+		}
 	}
 }
