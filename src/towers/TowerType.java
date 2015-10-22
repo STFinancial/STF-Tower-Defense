@@ -84,16 +84,23 @@ public enum TowerType {
 	/**
 	 * Towers of this type deal damage and slows to all creep around it. Currently does not apply splash effects or on-hit effects.
 	 * Deals primarily physical damage, barring an upgrade that converts physical damage to earth damage.
-	 * Track 1:
-	 * 	Upgrade 1:
-	 *  Upgrade 2:
-	 *  Upgrade 3:
-	 *  Upgrade 4:
+	 * <p>
+	 * <ol>
+	 * Track 1: Focuses on increasing the AoE capacity of the tower.
+	 * <ol>
+	 * <li> Increases the base range.
+	 * <li> Reduces the base attack cooldown.
+	 * <li> Converts physical damage to a greater amount of EARTH damage.
+	 * <li> Causes all EARTH tiles to deal a percentage of this tower's EARTH damage in a radius around them.
+	 * </ol>
 	 * Track 2:
-	 * 	Upgrade 1:
-	 *  Upgrade 2:
-	 *  Upgrade 3:
-	 *  Upgrade 4:
+	 * <ol>
+	 * <li> 
+	 * <li>
+	 * <li>
+	 * <li>
+	 * </ol>
+	 * </ol>
 	 */
 	EARTH_EARTH (new BaseAttributeList(){{
 		//does an AOE earthquake? cannot hit flying

@@ -1,7 +1,6 @@
 package towers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -10,63 +9,61 @@ import levels.Updatable;
 import maps.Tile;
 import creeps.DamageType;
 import projectiles.*;
-import towers.TowerManager.Aura;
 import utilities.Circle;
 import utilities.GameConstants;
-//TODO: Make strong comments for each tower type and tower (they can be the same, just make it).
 public abstract class Tower implements Updatable {
 	//Positional Details
-	//TODO: Reduce visibility.
-	public Level level;
-	public int x, y; //Top Left corner in Tile Coordinates
-	public Tile topLeft;
-	public float centerX, centerY;
-	public Circle targetZone;
-	public int width;
-	public int height;
-	public int cost;
-	public TowerType type;
+	//TODO: Reduce visibility to private?
+	protected Level level;
+	protected int x, y; //Top Left corner in Tile Coordinates
+	protected int width;
+	protected int height;
+	//int cost;
+	protected float centerX, centerY;
+	protected Tile topLeft;
+	protected Circle targetZone;
 
 	//Targeting Details
 	public static ProjectileGuider guider = ProjectileGuider.getInstance();
 	public static TowerManager manager = TowerManager.getInstance();
-	public TargetingModeType targetingType;
-	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
+	protected TargetingModeType targetingType;
+	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
 	//Misc.
-	public int towerID;
-	public Tower siphoningFrom;
-	public ArrayList<Tower> siphoningTo;
-	public Projectile baseProjectile;
+	protected TowerType type;
+	protected int towerID;
+	protected Tower siphoningFrom;
+	protected ArrayList<Tower> siphoningTo;
+	protected Projectile baseProjectile;
 	
 	//Upgrading Information
-	public boolean[][][] upgradeTracks;
+	protected boolean[][][] upgradeTracks;
 	
 	//Base Attributes
-	BaseAttributeList baseAttributeList;
+	protected BaseAttributeList baseAttributeList;
 	
 	//Current Attributes
-	public float[] damageArray = new float[GameConstants.NUM_DAMAGE_TYPES];
-	public float[] slowArray = new float[GameConstants.NUM_DAMAGE_TYPES];
-	public int[] slowDurationArray = new int[GameConstants.NUM_DAMAGE_TYPES];
-	public float attackCooldown;
-	public float currentAttackCooldown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
-	public float attackCarryOver;
-	public float damageSplash;
-	public float effectSplash;
-	public float splashRadius;
-	public float range;
-	public boolean hitsAir;
-	public boolean splashHitsAir;
-	public boolean hitsGround;
-	public float damageSiphon;
-	public float slowDurationSiphon;
-	public float slowSiphon;
-	public float attackCooldownSiphon;
-	public float damageSplashSiphon;
-	public float effectSplashSiphon;
-	public float radiusSplashSiphon;
-	public float rangeSiphon;
+	protected float[] damageArray = new float[GameConstants.NUM_DAMAGE_TYPES];
+	protected float[] slowArray = new float[GameConstants.NUM_DAMAGE_TYPES];
+	protected int[] slowDurationArray = new int[GameConstants.NUM_DAMAGE_TYPES];
+	protected float attackCooldown;
+	protected float currentAttackCooldown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
+	protected float attackCarryOver;
+	protected float damageSplash;
+	protected float effectSplash;
+	protected float splashRadius;
+	protected float range;
+	protected boolean hitsAir;
+	protected boolean splashHitsAir;
+	protected boolean hitsGround;
+	protected float damageSiphon;
+	protected float slowDurationSiphon;
+	protected float slowSiphon;
+	protected float attackCooldownSiphon;
+	protected float damageSplashSiphon;
+	protected float effectSplashSiphon;
+	protected float radiusSplashSiphon;
+	protected float rangeSiphon;
 	
 	//Quality Coefficients
 	protected int qLevel;
@@ -86,7 +83,6 @@ public abstract class Tower implements Updatable {
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
-		this.cost = baseAttributeList.baseCost;
 		this.x = topLeftTile.x;
 		this.y = topLeftTile.y;
 		this.topLeft = topLeftTile;
@@ -158,14 +154,13 @@ public abstract class Tower implements Updatable {
 	}
 	
 	protected void siphon(Tower from) {
-		//TODO: Do I Want to be able to siphon siphon coefficients?
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			this.damageArray[i] += (int) (from.damageArray[i] * this.baseAttributeList.damageSiphon);
 			this.slowArray[i] += from.slowArray[i] * this.baseAttributeList.slowSiphon;
 			this.slowDurationArray[i] += (int) (from.slowDurationArray[i] * this.baseAttributeList.slowDurationSiphon);
 		}
-		this.range += from.range * this.rangeSiphon; //TODO: Decide if this is a good equation, do we want really short towers to pull down the range of others? Adds another dimension of complexity.
-		this.attackCooldown -= (int) (this.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.attackCooldownSiphon)); //TODO: This value can currently be negative, is that wanted? Should really slow towers slow those around it?
+		this.range += from.range * this.rangeSiphon; 
+		this.attackCooldown -= (int) (this.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.attackCooldownSiphon));
 		if (this.attackCooldown < 1) { this.attackCooldown = 1; }
 		this.damageSplash += from.damageSplash * this.damageSplashSiphon;
 		this.effectSplash += from.effectSplash * this.effectSplashSiphon;
@@ -287,12 +282,12 @@ public abstract class Tower implements Updatable {
 	//TODO: Should this be in the manager?
 	void increaseSiphons(float modifier) {
 		damageSiphon += modifier;
-		damageSplashSiphon +=modifier;
-		effectSplashSiphon +=modifier;
-		radiusSplashSiphon +=modifier / 2;
-		rangeSiphon +=modifier / 4;
-		slowSiphon +=modifier;
-		slowDurationSiphon +=modifier;
+		damageSplashSiphon += modifier;
+		effectSplashSiphon += modifier;
+		radiusSplashSiphon += modifier / 2;
+		rangeSiphon += modifier / 4;
+		slowSiphon += modifier;
+		slowDurationSiphon += modifier;
 	}
 
 	protected Projectile duplicateProjectile(Projectile p) {
