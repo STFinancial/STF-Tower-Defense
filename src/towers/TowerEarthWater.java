@@ -12,7 +12,6 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	float areaRadius;
 	private float qAreaRadius;
 	
-	boolean doesSplash;
 	boolean doesOnHit;
 	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {

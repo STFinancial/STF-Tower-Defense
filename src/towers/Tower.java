@@ -54,8 +54,11 @@ public abstract class Tower implements Updatable {
 	protected float splashRadius;
 	protected float range;
 	protected boolean hitsAir;
-	protected boolean splashHitsAir;
 	protected boolean hitsGround;
+	protected boolean doesSlow;
+	protected boolean doesSplash;
+	protected boolean doesOnHit;
+	protected boolean splashHitsAir;
 	protected float damageSiphon;
 	protected float slowDurationSiphon;
 	protected float slowSiphon;
@@ -90,10 +93,8 @@ public abstract class Tower implements Updatable {
 		this.centerY = y + height / 2f;
 		this.targetZone = new Circle(centerX, centerY, range);
 		this.targetingType = TargetingModeType.FIRST;
-		this.attackCarryOver = 0f;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
-		this.splashHitsAir = false;
 		this.qLevel = 0;
 		updateTowerChain();
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
@@ -168,23 +169,27 @@ public abstract class Tower implements Updatable {
 	}
 	
 	protected void adjustBaseStats() {
-		attackCooldown 													= baseAttributeList.baseAttackCooldown;
-		damageSplash 													= baseAttributeList.baseDamageSplash;
-		effectSplash													= baseAttributeList.baseEffectSplash;
-		splashRadius													= baseAttributeList.baseSplashRadius;
-		range 															= baseAttributeList.baseRange;
-		hitsAir															= baseAttributeList.hitsAir;
-		hitsGround														= baseAttributeList.hitsGround;
-		attackCarryOver													= 0;
-		currentAttackCooldown											= 0;
-		damageSiphon													= baseAttributeList.damageSiphon;
-		slowDurationSiphon												= baseAttributeList.slowDurationSiphon;
-		slowSiphon														= baseAttributeList.slowSiphon;
-		attackCooldownSiphon											= baseAttributeList.attackCooldownSiphon;
-		damageSplashSiphon												= baseAttributeList.damageSplashSiphon;
-		effectSplashSiphon												= baseAttributeList.effectSplashSiphon;
-		radiusSplashSiphon												= baseAttributeList.radiusSplashSiphon;
-		rangeSiphon														= baseAttributeList.rangeSiphon;
+		attackCooldown 			= baseAttributeList.baseAttackCooldown;
+		damageSplash 			= baseAttributeList.baseDamageSplash;
+		effectSplash			= baseAttributeList.baseEffectSplash;
+		splashRadius			= baseAttributeList.baseSplashRadius;
+		range 					= baseAttributeList.baseRange;
+		hitsAir					= baseAttributeList.hitsAir;
+		hitsGround				= baseAttributeList.hitsGround;
+		doesSplash				= baseAttributeList.doesSplash;
+		doesSlow				= baseAttributeList.doesSlow;
+		doesOnHit				= baseAttributeList.doesOnHit;
+		splashHitsAir			= baseAttributeList.splashHitsAir;
+		attackCarryOver			= 0f;
+		currentAttackCooldown	= 0f;
+		damageSiphon			= baseAttributeList.damageSiphon;
+		slowDurationSiphon		= baseAttributeList.slowDurationSiphon;
+		slowSiphon				= baseAttributeList.slowSiphon;
+		attackCooldownSiphon	= baseAttributeList.attackCooldownSiphon;
+		damageSplashSiphon		= baseAttributeList.damageSplashSiphon;
+		effectSplashSiphon		= baseAttributeList.effectSplashSiphon;
+		radiusSplashSiphon		= baseAttributeList.radiusSplashSiphon;
+		rangeSiphon				= baseAttributeList.rangeSiphon;
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			slowArray[i] = baseAttributeList.baseSlowArray[i];
 			damageArray[i] = baseAttributeList.baseDamageArray[i];

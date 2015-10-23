@@ -3,6 +3,7 @@ package towers;
 import utilities.GameConstants;
 
 class BaseAttributeList {
+	//TODO: I'm not sure these need to be public, we will see, it might need to be for artwork and such
 	public abstract class Upgrade {
 		public String name;
 		public String text;
@@ -44,6 +45,10 @@ class BaseAttributeList {
 		}
 		b.hitsAir = hitsAir;
 		b.hitsGround = hitsGround;
+		b.doesSplash = doesSplash;
+		b.doesSlow = doesSlow;
+		b.doesOnHit = doesOnHit;
+		b.splashHitsAir = splashHitsAir;
 		b.upgrades = upgrades;
 		return b;
 	}
@@ -71,5 +76,9 @@ class BaseAttributeList {
 	public float[] baseDamageArray;
 	public boolean hitsAir;
 	public boolean hitsGround;
+	public boolean doesSplash;
+	public boolean doesSlow;
+	public boolean doesOnHit;
+	public boolean splashHitsAir;
 	public Upgrade[][] upgrades;
 }

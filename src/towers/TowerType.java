@@ -3,6 +3,8 @@ package towers;
 import utilities.GameConstants;
 import creeps.DamageType;
 
+//TODO: Working on this, need to go back through and modify slow coefficients then
+//TODO: Need to go through and remove doesOnHit and doesSplash from subclasses and maybe projectile constructors
 //TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
 //TODO: Do the same with doesSplash, honestly.
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
@@ -18,7 +20,7 @@ public enum TowerType {
 		baseHeight			  	= 2;
 		baseDamageArray		  	= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
 		baseSlowDurationArray 	= new int[]{/*E*/12, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/12};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0.10f, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0.05f};
 		baseCost			  	= 750;
 		baseAttackCooldown	  	= 15f;
 		baseDamageSplash		= 0.2f;
@@ -27,6 +29,10 @@ public enum TowerType {
 		baseRange				= 6.5f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= null;
 	}}),
 	FIRE (new BaseAttributeList(){{
@@ -35,7 +41,7 @@ public enum TowerType {
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0.10f, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 900;
 		baseAttackCooldown		= 12f;
 		baseDamageSplash		= 0.25f;
@@ -44,6 +50,10 @@ public enum TowerType {
 		baseRange				= 7.5f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= null;
 	}}),
 	WATER (new BaseAttributeList(){{
@@ -52,7 +62,7 @@ public enum TowerType {
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
 		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/10, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.15f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0.18f, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
 		baseCost				= 850;
 		baseAttackCooldown		= 10f;
 		baseDamageSplash		= 0f;
@@ -61,6 +71,10 @@ public enum TowerType {
 		baseRange				= 7.5f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= null;
 	}}),
 	WIND (new BaseAttributeList(){{
@@ -78,6 +92,10 @@ public enum TowerType {
 		baseRange				= 8.6f;
 		hitsAir					= true;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= null;
 	}}),
 	//TODO should the base stats of the towers be identical to their downgrade?
@@ -126,6 +144,9 @@ public enum TowerType {
 		rangeSiphon				= 0.07f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= false;
+		doesSlow				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -221,6 +242,9 @@ public enum TowerType {
 		rangeSiphon				= 0.06f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -316,6 +340,9 @@ public enum TowerType {
 		rangeSiphon				= 0.06f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -338,8 +365,8 @@ public enum TowerType {
 						{name		= "Echo";
 						 text 		= "Splash Radius is added to the hit radius and range of this tower, and now applies splash damage to all affected";
 						 baseCost   = 6200;}
-						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { ((TowerEarthWater) t).doesSplash = true; ((TowerEarthWater) t).areaRadius += t.splashRadius / 2; ((TowerEarthWater) t).areaRadius += t.range / 6; } //TODO: Quality affects these equations? (Somehow?)
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.doesSplash = true; }
+						 public void midSiphonUpgrade(Tower t) { ((TowerEarthWater) t).areaRadius += t.splashRadius / 2; ((TowerEarthWater) t).areaRadius += t.range / 6; } //TODO: Quality affects these equations? (Somehow?)
 						 public void postSiphonUpgrade(Tower t) {  } 
 					},
 					new Upgrade() {
@@ -443,9 +470,9 @@ public enum TowerType {
 						{name		= "Ground Zero";
 						 text 		= "Greatly increases the base splash radius and splash hits flying creeps";
 						 baseCost   = 5000;}
-						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSplashRadius += 5; }
+						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSplashRadius += 5; t.baseAttributeList.splashHitsAir = true; }
 						 public void midSiphonUpgrade(Tower t) { }
-						 public void postSiphonUpgrade(Tower t) { t.splashHitsAir = true; }
+						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				},
 				{
@@ -613,7 +640,7 @@ public enum TowerType {
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
-						{name		= "Heating Up"; //TODO ugh
+						{name		= "";
 						 text 		= "Increases base FIRE damage then doubles FIRE damage";
 						 baseCost   = 1700;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()] += 22; }

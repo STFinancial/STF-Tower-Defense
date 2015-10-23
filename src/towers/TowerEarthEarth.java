@@ -27,18 +27,13 @@ public final class TowerEarthEarth extends Tower {
 	private float qBleedDuration;
 	private float qBleedStacks;
 	
-	boolean doesOnHit;
-	boolean doesSplash;
-	
 	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
-		adjustClassSpecificBaseStats();
-		//TODO: Do I need to call updateTowerChain()
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
+		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit); //Should we pass these as values or fetch them each time? It would currently be most consistent to create them with these values once. Maybe use projectilebuilder? 
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
