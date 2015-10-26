@@ -6,7 +6,6 @@ import projectileeffects.Damage;
 import projectileeffects.ProjectileEffect;
 import projectileeffects.Slow;
 
-import levels.Level;
 import levels.Updatable;
 
 
@@ -25,7 +24,6 @@ import creeps.DamageType;
  */
 public abstract class Projectile implements Updatable {
 	protected Tower parent;
-	protected Level level;
 	protected float x, y;
 	protected float currentSpeed, speed;
 	protected float size;
@@ -38,6 +36,10 @@ public abstract class Projectile implements Updatable {
 	protected float shieldDrainModifier; //TODO: The value that this should be set at is a bit unclear.
 	protected boolean ignoresShield;
 	protected boolean hitsAir;
+	protected boolean doesSplash;
+	protected boolean doesSlow;
+	protected boolean doesOnHit;
+	protected boolean splashHitsAir;
 	protected static ProjectileGuider guider = ProjectileGuider.getInstance();
 	
 	protected boolean dud; //When creep is killed by something else or escapes before contact;
@@ -67,22 +69,26 @@ public abstract class Projectile implements Updatable {
 	
 	//TODO: This method is pretty questionable.
 	private void addGeneralEffects() {
+		DamageType[] types = DamageType.values();
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
-			if (parent.damageArray[i] != 0) {
-				creepEffects.add(new Damage(parent.damageArray[i], DamageType.values()[i], this));
-				if (parent.damageSplash != 0 && parent.splashRadius != 0) {
-					splashEffects.add(new Damage(parent.damageArray[i] * parent.damageSplash, DamageType.values()[i], this));
+			if (parent.getDamage(types[i]) != 0) {
+				creepEffects.add(new Damage(parent.getDamage(types[i]), types[i], this));
+				if (parent.getDamageSplash() != 0 && parent.getSplashRadius() != 0) {
+					splashEffects.add(new Damage(parent.getDamage(types[i]) * parent.getDamageSplash(), types[i], this));
 				}
 			}
 			//TODO: If we implement 'doesSlow' then this will be encased in an if statement for that
 			float slow;
-			if ((slow = parent.slowArray[i]) != 0) {
-				if (slow >= 1) { slow = 0.99f; }
-				creepEffects.add(new Slow(parent.slowDurationArray[i], slow, DamageType.values()[i], this));
-				if (parent.effectSplash != 0 && parent.splashRadius != 0) {
-					splashEffects.add(new Slow(parent.slowDurationArray[i], slow * parent.effectSplash, DamageType.values()[i], this));
+			if (doesSlow) {
+				if ((slow = parent.getSlow(types[i])) != 0) {
+					if (slow >= 1) { slow = 0.99f; }
+					creepEffects.add(new Slow(parent.getSlowDuration(types[i]), slow, types[i], this));
+					if (parent.getEffectSplash() != 0 && parent.getSplashRadius() != 0) {
+						splashEffects.add(new Slow(parent.getSlowDuration(types[i]), slow * parent.getEffectSplash(), types[i], this));
+					}
 				}
 			}
+			
 		}
 		//TODO this might change in baseattributelist... also we might change the size somewhere
 		currentSpeed = speed = .20f;
@@ -91,11 +97,14 @@ public abstract class Projectile implements Updatable {
 	protected void initializeStats(Tower parent) {
 		this.dud 					= false;
 		this.parent					= parent;
-		this.level 					= parent.level;
-		this.x 						= parent.centerX;
-		this.y 						= parent.centerY;
-		this.splashRadius		 	= parent.splashRadius;
-		this.hitsAir				= parent.hitsAir; //TODO: Needs to utilize this to hit the right creep
+		this.x 						= parent.getCenterX();
+		this.y 						= parent.getCenterY();
+		this.splashRadius		 	= parent.getSplashRadius();
+		this.hitsAir				= parent.hitsAir();
+		this.doesSplash				= parent.doesSplash();
+		this.doesSlow				= parent.doesSlow();
+		this.doesOnHit				= parent.doesOnHit();
+		this.splashHitsAir			= parent.splashHitsAir();
 		this.targetCreep			= null;
 		this.targetArea				= null;
 		this.angleCos				= 0;
@@ -120,11 +129,10 @@ public abstract class Projectile implements Updatable {
 		p.size = size;
 		p.speed = speed;
 		p.parent = parent;
-		p.level = level;
 		p.creepEffects = creepEffects;
 		p.splashEffects = splashEffects;
-		p.x = parent.centerX;
-		p.y = parent.centerY;
+		p.x = parent.getCenterX();
+		p.y = parent.getCenterY();
 		p.splashRadius = splashRadius;
 		p.multiplier = multiplier;
 		p.resistPenFlat = resistPenFlat;
@@ -143,6 +151,10 @@ public abstract class Projectile implements Updatable {
 		p.angleCos = angleCos;
 		p.angleSin = angleSin;
 		p.hitsAir = hitsAir;
+		p.splashHitsAir = splashHitsAir;
+		p.doesSlow = doesSlow;
+		p.doesSplash = doesSplash;
+		p.doesOnHit = doesOnHit;
 		p.hitBox = hitBox.clone();
 	}
 	

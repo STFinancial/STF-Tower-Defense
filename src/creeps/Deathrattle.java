@@ -40,10 +40,9 @@ final class Deathrattle extends Attribute implements Updatable {
 	}
 	
 	List<Creep> onDeath() {
-		//TODO:
 		if (deathrattleSuppressionTimer < 0) {
 			for (DeathrattleEffect e: effects) {
-				e.applyEffect(1);
+				e.applyEffect(1); //TODO: Could be 1 - suppression modifier or something
 			}
 			return children;
 		}

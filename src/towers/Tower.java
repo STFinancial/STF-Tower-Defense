@@ -105,6 +105,20 @@ public abstract class Tower implements Updatable {
 		updateTowerChain();
 	}
 	
+	public boolean doesOnHit() { return doesOnHit; }
+	public boolean doesSlow() { return doesSlow; }
+	public boolean doesSplash() { return doesSplash; }
+	public float getCenterX() { return centerX; }
+	public float getCenterY() { return centerY; }
+	public float getDamage(DamageType type) { return damageArray[type.ordinal()]; }
+	public float getDamageSplash() { return damageSplash; }
+	public float getEffectSplash() { return effectSplash; }
+	public float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
+	public int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
+	public float getSplashRadius() { return splashRadius; }
+	public boolean hitsAir() { return hitsAir; }
+	public boolean splashHitsAir() { return splashHitsAir; }
+	
 	public Projectile fireProjectile() {
 		return duplicateProjectile(baseProjectile);
 	}
@@ -330,6 +344,4 @@ public abstract class Tower implements Updatable {
 	public int hashCode() {
 		return towerID; //TODO: Is this good enough?
 	}
-
-	
 }

@@ -134,7 +134,7 @@ public enum TowerType {
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 3f;
 		baseRange				= 8.1f;
-		damageSiphon			= 0.43f; //TODO: Should this be an array of siphon coefficients?
+		damageSiphon			= 0.43f;
 		slowDurationSiphon		= 0.28f;
 		slowSiphon				= 0.28f;
 		attackCooldownSiphon	= 4.2f;

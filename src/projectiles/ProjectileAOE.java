@@ -7,24 +7,19 @@ import towers.Tower;
 import creeps.Creep;
 
 public class ProjectileAOE extends Projectile {
-	private boolean doesSplash;
-	private boolean doesOnHit;
-	
-	protected ProjectileAOE(Tower parent, Projectile mold, boolean doesSplash, boolean doesOnHit) {
+	protected ProjectileAOE(Tower parent, Projectile mold) {
 		super(parent, mold);
-		this.doesSplash = doesSplash;
 		speed = currentSpeed = 0f;
 	}
 	
-	public ProjectileAOE(Tower parent, boolean doesSplash, boolean doesOnHit) {
+	public ProjectileAOE(Tower parent) {
 		super(parent);
-		this.doesSplash = doesSplash;
 		speed = currentSpeed = 0f;
 	}
 
 	@Override
 	public Projectile clone() {
-		return new ProjectileAOE(parent, this, doesSplash, doesOnHit);
+		return new ProjectileAOE(parent, this);
 	}
 
 	@Override
