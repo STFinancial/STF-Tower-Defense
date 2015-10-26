@@ -116,6 +116,7 @@ public abstract class Tower implements Updatable {
 	public float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
 	public int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
 	public float getSplashRadius() { return splashRadius; }
+	public Circle getTargetZone() { return targetZone; }
 	public boolean hitsAir() { return hitsAir; }
 	public boolean splashHitsAir() { return splashHitsAir; }
 	

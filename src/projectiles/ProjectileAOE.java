@@ -3,17 +3,21 @@ package projectiles;
 import java.util.HashSet;
 
 import towers.Tower;
-
+import utilities.Circle;
 import creeps.Creep;
 
 public class ProjectileAOE extends Projectile {
+	private Circle targetZone;
+	
 	protected ProjectileAOE(Tower parent, Projectile mold) {
 		super(parent, mold);
+		this.targetZone = parent.getTargetZone();
 		speed = currentSpeed = 0f;
 	}
 	
 	public ProjectileAOE(Tower parent) {
 		super(parent);
+		this.targetZone = parent.getTargetZone();
 		speed = currentSpeed = 0f;
 	}
 
@@ -34,33 +38,23 @@ public class ProjectileAOE extends Projectile {
 
 	@Override
 	public void detonate() {
-		//TODO: This or any other detonate method DOES NOT account for the "hitsGround" variable. Should we remove that?
-		HashSet<Creep> creepInRange = guider.getCreepInRange(this, parent.range, true);
-		for (Creep c: creepInRange) {
-			if (c.isFlying()) {
-				if (parent.hitsAir) {
-					c.addAllEffects(creepEffects);
-					if (doesOnHit) {
-						c.onProjectileCollision();
-					}
-					if (doesSplash) {
-						c.addAllEffects(splashEffects);
-					}
-				} else {
-					if (doesSplash && parent.splashHitsAir) {
-						c.addAllEffects(splashEffects);
-					}
-				}
-			} else {
+		//TODO: What about hitsGround?
+		HashSet<Creep> splashCreep = guider.getCreepInRange(targetZone, splashHitsAir); //TODO: Do we only want to hit those in range of the tower with splash?
+		HashSet<Creep> nonSplashCreep = guider.getCreepInRange(targetZone, hitsAir);
+		if (doesOnHit) {
+			for (Creep c: nonSplashCreep) {
 				c.addAllEffects(creepEffects);
-				if (doesOnHit) {
-					c.onProjectileCollision();
-				}
-				if (doesSplash) { //TODO: Are these only the creep we want to hit, those in range of the tower?
-					c.addAllEffects(splashEffects);
-				}
+				c.onProjectileCollision();
 			}
-			
+		} else {
+			for (Creep c: nonSplashCreep) {
+				c.addAllEffects(creepEffects);
+			}
+		}
+		if (doesSplash) {
+			for (Creep c: splashCreep) {
+				c.addAllEffects(splashEffects);
+			}
 		}
 	}
 

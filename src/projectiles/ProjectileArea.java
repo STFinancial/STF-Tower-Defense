@@ -7,27 +7,20 @@ import towers.Tower;
 import utilities.Circle;
 
 public class ProjectileArea extends Projectile implements TargetsArea {
-	protected boolean doesSplash;
-	protected boolean doesOnHit; //TODO: Should this be a legitimate field? Or should this just apply on hits.
-	
-	protected ProjectileArea(Tower parent, Projectile mold, boolean doesSplash, boolean doesOnHit, float targetAreaRadius) {
+	protected ProjectileArea(Tower parent, Projectile mold, float targetAreaRadius) {
 		super(parent, mold);
-		this.doesSplash = doesSplash;
-		this.doesOnHit = doesOnHit;
 		this.targetAngle = 0;
 	}
 	
-	public ProjectileArea(Tower parent, boolean doesSplash, boolean doesOnHit, float targetAreaRadius) {
+	public ProjectileArea(Tower parent, float targetAreaRadius) {
 		super(parent);
-		this.targetArea = new Circle(parent.centerX, parent.centerY, targetAreaRadius);
-		this.doesSplash = doesSplash;
-		this.doesOnHit = doesOnHit;
+		this.targetArea = new Circle(parent.getCenterX(), parent.getCenterY(), targetAreaRadius);
 		this.targetAngle = 0;
 	}
 
 	@Override
 	public Projectile clone() {
-		return new ProjectileArea(parent, this, doesSplash, doesOnHit, targetArea.radius);
+		return new ProjectileArea(parent, this, targetArea.radius);
 	}
 
 	@Override
@@ -38,15 +31,20 @@ public class ProjectileArea extends Projectile implements TargetsArea {
 
 	@Override
 	public void detonate() {
-		HashSet<Creep> creepInRange = guider.getCreepInRange(targetArea, parent.hitsAir);
-		for (Creep c: creepInRange) {
-			c.addAllEffects(creepEffects);
-			if (doesOnHit) {
-				c.onProjectileCollision(); //TODO: Need to add this to all projectile types
+		HashSet<Creep> splashCreep = guider.getCreepInRange(targetArea, splashHitsAir);
+		HashSet<Creep> nonSplashCreep = guider.getCreepInRange(targetArea, hitsAir);
+		if (doesOnHit) {
+			for (Creep c: nonSplashCreep) {
+				c.addAllEffects(creepEffects);
+				c.onProjectileCollision();
 			}
-			if (doesSplash) {
-				//TODO can change this to normal splash if needed
-				//Also, is this the range we want to do or should the range be extended by the splash radius
+		} else {
+			for (Creep c: nonSplashCreep) {
+				c.addAllEffects(creepEffects);
+			}
+		}
+		if (doesSplash) {
+			for (Creep c: splashCreep) {
 				c.addAllEffects(splashEffects);
 			}
 		}

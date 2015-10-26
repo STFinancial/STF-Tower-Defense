@@ -73,17 +73,16 @@ public abstract class Projectile implements Updatable {
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			if (parent.getDamage(types[i]) != 0) {
 				creepEffects.add(new Damage(parent.getDamage(types[i]), types[i], this));
-				if (parent.getDamageSplash() != 0 && parent.getSplashRadius() != 0) {
+				if (doesSplash && parent.getDamageSplash() != 0 && parent.getSplashRadius() != 0) {
 					splashEffects.add(new Damage(parent.getDamage(types[i]) * parent.getDamageSplash(), types[i], this));
 				}
 			}
-			//TODO: If we implement 'doesSlow' then this will be encased in an if statement for that
 			float slow;
 			if (doesSlow) {
 				if ((slow = parent.getSlow(types[i])) != 0) {
 					if (slow >= 1) { slow = 0.99f; }
 					creepEffects.add(new Slow(parent.getSlowDuration(types[i]), slow, types[i], this));
-					if (parent.getEffectSplash() != 0 && parent.getSplashRadius() != 0) {
+					if (doesSplash && parent.getEffectSplash() != 0 && parent.getSplashRadius() != 0) {
 						splashEffects.add(new Slow(parent.getSlowDuration(types[i]), slow * parent.getEffectSplash(), types[i], this));
 					}
 				}

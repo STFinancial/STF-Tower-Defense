@@ -7,23 +7,20 @@ import utilities.Circle;
 //Stops at the first target it hits on the way to its destination
 public final class ProjectileBeam extends Projectile implements TargetsArea {
 	//TODO will have to add stuff so this animates better later
-	private boolean doesSplash;
 	
-	private ProjectileBeam(Tower parent, Projectile mold, float targetAreaRadius, boolean doesSplash) {
+	private ProjectileBeam(Tower parent, Projectile mold, float targetAreaRadius) {
 		super(parent, mold);
 		this.speed = 0;
 		this.currentSpeed = 0;
 		this.targetAngle = 0;
-		this.doesSplash = doesSplash;
 	}
 	
-	public ProjectileBeam(Tower parent, float targetAreaRadius, boolean doesSplash) {
+	public ProjectileBeam(Tower parent, float targetAreaRadius) {
 		super(parent);
-		this.targetArea = new Circle(parent.centerX, parent.centerY, targetAreaRadius);
+		this.targetArea = new Circle(parent.getCenterX(), parent.getCenterY(), targetAreaRadius);
 		this.speed = 0;
 		this.currentSpeed = 0;
 		this.targetAngle = 0;
-		this.doesSplash = doesSplash;
 	}
 	
 	@Override
@@ -41,7 +38,7 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 
 	@Override
 	public Projectile clone() {
-		return new ProjectileBeam(parent, this, targetArea.radius, doesSplash);
+		return new ProjectileBeam(parent, this, targetArea.radius);
 	}
 
 	@Override
@@ -51,11 +48,11 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 
 	@Override
 	public void detonate() {
-		Creep c = guider.getFirstCreepRadially(x, y, size, (float) targetAngle, parent.hitsAir);
+		Creep c = guider.getFirstCreepRadially(x, y, size, (float) targetAngle, hitsAir);
 		if (c != null) {
 			c.addAllEffects(creepEffects);
 			if (doesSplash) {
-				for (Creep splashCreep: guider.getOtherCreepInSplashRange(c, splashRadius, parent.hitsAir || parent.splashHitsAir)) {
+				for (Creep splashCreep: guider.getOtherCreepInSplashRange(c, splashRadius, splashHitsAir)) {
 					splashCreep.addAllEffects(splashEffects);
 				}
 			}
