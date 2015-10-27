@@ -14,25 +14,22 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 	private ArrayList<ProjectileEffect> passThroughSplashEffects;
 	private float passThroughRadius;
 	private float passThroughModifier;
-	private boolean doesSplash;
 	private int pulseTiming; //Does its pass through effects every "pulseTiming" ticks
 	private int counter;
 	
-	private ProjectilePassThroughTarget(Tower parent, Projectile mold, float passThroughRadius, float passThroughModifier, boolean doesSplash, int pulseTiming) {
+	private ProjectilePassThroughTarget(Tower parent, Projectile mold, float passThroughRadius, float passThroughModifier, int pulseTiming) {
 		super(parent, mold);
 		this.passedThrough = new HashSet<Creep>();
 		this.passThroughRadius = passThroughRadius;
-		this.doesSplash = doesSplash;
 		this.pulseTiming = pulseTiming;
 		this.counter = 0;
 		this.passThroughModifier = passThroughModifier;
 	}
 	
-	public ProjectilePassThroughTarget(Tower parent, float passThroughRadius, float passThroughModifier, boolean doesSplash, int pulseTiming) {
+	public ProjectilePassThroughTarget(Tower parent, float passThroughRadius, float passThroughModifier, int pulseTiming) {
 		super(parent);
 		this.passedThrough = new HashSet<Creep>();
 		this.passThroughRadius = passThroughRadius;
-		this.doesSplash = doesSplash;
 		this.pulseTiming = pulseTiming;
 		this.counter = 0;
 		this.passThroughModifier = passThroughModifier;
@@ -48,7 +45,7 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 	
 	@Override
 	public Projectile clone() {
-		ProjectilePassThroughTarget p = new ProjectilePassThroughTarget(parent, this, passThroughRadius, passThroughModifier, doesSplash, pulseTiming);
+		ProjectilePassThroughTarget p = new ProjectilePassThroughTarget(parent, this, passThroughRadius, passThroughModifier, pulseTiming);
 		p.passThroughCreepEffects = passThroughCreepEffects;
 		p.passThroughSplashEffects = passThroughSplashEffects;
 		return p;
@@ -71,16 +68,26 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 		y -= angleSin * currentSpeed;
 		hitBox.x = x;
 		hitBox.y = y;
+		//TODO: Should these if statements be modified?
 		//TODO: Do we need a more sophisticated method of checking whether we "passed through" something? (Depends how slow it is)
-		//TODO: Also does not account for splashHitsAir
 		if (++counter % pulseTiming == 0) { //Choosing not to pulse at first firing
-			for (Creep c: guider.getCreepInRange(this, passThroughRadius, parent.hitsAir)) {
+			for (Creep c: guider.getCreepInRange(this, passThroughRadius, hitsAir)) {
 				//Have to avoid hitting the target creep twice, so we have to check for that, hopefully it won't add too much time to this call.
 				if (!passedThrough.contains(c) || !c.equals(targetCreep)) {
 					c.addAllEffects(passThroughCreepEffects);
+					if (doesOnHit) {
+						c.onProjectileCollision();
+					}
 					passedThrough.add(c);
 					if (doesSplash) {
-						c.addAllEffects(passThroughSplashEffects);
+						if (!hitsAir || splashHitsAir) {
+							c.addAllEffects(passThroughSplashEffects);
+						} else {
+							if (!c.isFlying()) {
+								c.addAllEffects(passThroughSplashEffects);
+							}
+						}
+						
 					}
 				}
 			}

@@ -8,10 +8,10 @@ import java.util.LinkedList;
 import towers.Tower;
 import utilities.Circle;
 import creeps.Creep;
+import levels.EffectPatch;
 import levels.Level;
 import levels.Updatable;
 
-//TODO: Should be moved into the projectiles class?
 //TODO: Eventually this should be taking care of updating the projectiles and calling the proper functions in level
 public final class ProjectileGuider implements Updatable {
 	private static final ProjectileGuider INSTANCE = new ProjectileGuider();
@@ -49,7 +49,7 @@ public final class ProjectileGuider implements Updatable {
 		return false;
 	}
 	
-	//TODO: I don't really want this to use tower directly
+	//TODO: I don't really want this to use tower directly, should take in a targetzone and a targeting type maybe?
 	public Creep findTargetCreep(Tower tower, boolean hitsAir) {
 		Creep toTarget = null;
 		ArrayList<Creep> inRange = new ArrayList<Creep>();
@@ -184,6 +184,10 @@ public final class ProjectileGuider implements Updatable {
 			}
 		}
 		return null;
+	}
+	
+	public void addEffectPatch(EffectPatch ep) {
+		level.addEffectPatch(ep);
 	}
 
 	@Override

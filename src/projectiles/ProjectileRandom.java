@@ -40,13 +40,29 @@ public final class ProjectileRandom extends ProjectileBasic {
 		if (dud) {
 			return;
 		}
-		HashSet<Creep> creeps = guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir || parent.splashHitsAir);
-		creeps.add(targetCreep);
-		ArrayList<ProjectileEffect> e = getRandomEffects(); //We get a random effect from the list
-		for (Creep c: creeps) {
-			c.addAllEffects(e);
-			c.onProjectileCollision();
+		if (doesSplash) {
+			HashSet<Creep> creeps = guider.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir);
+			creeps.add(targetCreep);
+			ArrayList<ProjectileEffect> e = getRandomEffects(); //We get a random effect from the list
+			if (doesOnHit) {
+				for (Creep c: creeps) {
+					c.addAllEffects(e);
+					c.onProjectileCollision();		
+				}
+			} else {
+				for (Creep c: creeps) {
+					c.addAllEffects(e);		
+				}
+			}
+		} else {
+			if (doesOnHit) {
+				targetCreep.addAllEffects(getRandomEffects());
+				targetCreep.onProjectileCollision();
+			} else {
+				targetCreep.addAllEffects(getRandomEffects());
+			}
 		}
+		
 	}
 
 	public void addEffect(ArrayList<ProjectileEffect> effects, float weight) {

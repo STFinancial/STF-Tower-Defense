@@ -18,30 +18,27 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 	private float distanceTraveled;
 	private float distanceLimit;
 	private float passThroughRadius;
-	private boolean doesSplash;
 	private int pulseTiming;
 	private int counter;
 	
-	private ProjectilePassThroughArea(Tower parent, Projectile mold, float distanceLimit, float passThroughRadius, float passThroughModifier, boolean doesSplash, int pulseTiming) {
+	private ProjectilePassThroughArea(Tower parent, Projectile mold, float distanceLimit, float passThroughRadius, float passThroughModifier, int pulseTiming) {
 		super(parent, mold);
 		this.passedThrough = new HashSet<Creep>();
 		this.distanceTraveled = 0;
 		this.distanceLimit = distanceLimit;
 		this.passThroughRadius = passThroughRadius;
-		this.doesSplash = doesSplash;
 		this.passThroughModifier = passThroughModifier;
 		this.pulseTiming = pulseTiming;
 		this.counter = 0;
 	}
 	
-	public ProjectilePassThroughArea (Tower parent, float distanceLimit, float passThroughRadius, float passThroughModifier, boolean doesSplash, int pulseTiming) {
+	public ProjectilePassThroughArea (Tower parent, float distanceLimit, float passThroughRadius, float passThroughModifier, int pulseTiming) {
 		super(parent);
 		this.passedThrough = new HashSet<Creep>();
-		this.targetArea = new Circle(parent.centerX, parent.centerY, 0);
+		this.targetArea = new Circle(parent.getCenterX(), parent.getCenterY(), 0);
 		this.distanceTraveled = 0;
 		this.distanceLimit = distanceLimit;
 		this.passThroughRadius = passThroughRadius;
-		this.doesSplash = doesSplash;
 		this.passThroughModifier = passThroughModifier;
 		this.pulseTiming = pulseTiming;
 		this.counter = 0;
@@ -56,7 +53,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 	
 	@Override
 	public Projectile clone() {
-		ProjectilePassThroughArea p = new ProjectilePassThroughArea(parent, this, distanceLimit, passThroughRadius, passThroughModifier, doesSplash, pulseTiming);
+		ProjectilePassThroughArea p = new ProjectilePassThroughArea(parent, this, distanceLimit, passThroughRadius, passThroughModifier, pulseTiming);
 		p.passThroughCreepEffects = passThroughCreepEffects;
 		p.passThroughSplashEffects = passThroughSplashEffects;
 		return p;
@@ -76,14 +73,23 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		hitBox.y = y;
 		distanceTraveled += TrigHelper.pythagDistance(xOff, yOff);
 		if (++counter % pulseTiming == 0) { //Choosing not to pulse at first firing
-			for (Creep c: guider.getCreepInRange(this, passThroughRadius, parent.hitsAir)) {
+			for (Creep c: guider.getCreepInRange(this, passThroughRadius, hitsAir)) {
 				if (passedThrough.contains(c)) {
 					continue;
 				}
 				c.addAllEffects(passThroughCreepEffects);
+				if (doesOnHit) {
+					c.onProjectileCollision();
+				}
+				//TODO: Do we want the for loop to be inside this if statement instead?
 				if (doesSplash) { //TODO: Again, is this the range that we want?
-					//TODO: Does not utilize the splashHitsAir variable.
-					c.addAllEffects(passThroughSplashEffects);
+					if (splashHitsAir) {
+						c.addAllEffects(passThroughSplashEffects);
+					} else {
+						if (!c.isFlying()) {
+							c.addAllEffects(passThroughSplashEffects);
+						}
+					}
 				}
 				passedThrough.add(c);
 			}

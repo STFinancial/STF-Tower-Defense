@@ -74,29 +74,39 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 		}
 		int currentChains = 0;
 		targetCreep.addAllEffects(creepEffects);
-		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, parent.hitsAir)) {
-			c.addAllEffects(splashEffects);
+		if (doesOnHit) {
+			targetCreep.onProjectileCollision();
+		}
+		if (doesSplash) {
+			for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
+				c.addAllEffects(splashEffects);
+			}
 		}
 		chainedCreep.add(targetCreep);
 		currentChains++;
 		
+		//TODO: Should we embed the while loop inside the for loop to improve time?
 		while (currentChains < maxChains) {
 			Creep prevCreep = chainedCreep.get(currentChains - 1);
 			Creep newCreep;
 			if (noDuplicates) {
-				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep, parent.hitsAir);
+				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep, hitsAir);
 			} else {
-				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, null, parent.hitsAir);
+				newCreep = guider.getSingleCreepInRange(prevCreep, chainRadius, null, hitsAir);
 			}
-			
 			if (newCreep == null) {
 				return;
 			}
 			newCreep.addAllEffects(chainedEffects.get(currentChains));
+			if (doesOnHit) {
+				newCreep.onProjectileCollision();
+			}
 			chainedCreep.add(newCreep);
 			//TODO at some point we may change the splashRadius to splashRadius * currentPenalty
-			for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius, parent.hitsAir || parent.splashHitsAir)) {
-				splash.addAllEffects(chainedSplashEffects.get(currentChains));
+			if (doesSplash) {
+				for (Creep splash: guider.getOtherCreepInSplashRange(newCreep, splashRadius, splashHitsAir)) {
+					splash.addAllEffects(chainedSplashEffects.get(currentChains));
+				}
 			}
 			currentChains++;
 		}
