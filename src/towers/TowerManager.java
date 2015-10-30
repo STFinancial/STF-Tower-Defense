@@ -2,7 +2,6 @@ package towers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -82,7 +81,7 @@ public final class TowerManager implements Updatable {
 	private ArrayList<Tower> getTowersInRange(Circle area) {
 		Circle c = new Circle(0,0,0);
 		ArrayList<Tower> inRange = new ArrayList<Tower>();
-		for (Tower t: level.getTowers()) {
+		for (Tower t: towers) {
 			c.x = t.centerX;
 			c.y = t.centerY;
 			if (area.intersects(c)) {
