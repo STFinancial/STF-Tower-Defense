@@ -48,7 +48,6 @@ public final class TowerWaterWind extends Tower {
 	
 	public TowerWaterWind(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_WIND, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public final class TowerEarthEarth extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit); //Should we pass these as values or fetch them each time? It would currently be most consistent to create them with these values once. Maybe use projectilebuilder? 
+		baseProjectile = new ProjectileAOE(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
@@ -77,8 +77,6 @@ public final class TowerEarthEarth extends Tower {
 		this.maxShredStacks = 0;
 		this.armorShredDuration = 0;
 		this.bleedDuration = 0;
-		this.doesSplash = false;
-		this.doesOnHit = false;
 		
 		//TODO: Set appropriate values for all of the towers, should we do this in TowerType?
 		this.qDamage = 0.05f;

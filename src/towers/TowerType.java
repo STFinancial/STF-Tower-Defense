@@ -146,6 +146,7 @@ public enum TowerType {
 		hitsGround				= true;
 		doesSplash				= false;
 		doesSlow				= true;
+		doesOnHit				= false;
 		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
@@ -244,6 +245,7 @@ public enum TowerType {
 		hitsGround				= true;
 		doesSplash				= true;
 		doesSlow				= false;
+		doesOnHit				= true;
 		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
@@ -342,6 +344,7 @@ public enum TowerType {
 		hitsGround				= true;
 		doesSplash				= true;
 		doesSlow				= false;
+		doesOnHit				= true;
 		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
@@ -440,6 +443,10 @@ public enum TowerType {
 		rangeSiphon				= 0.07f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -534,13 +541,17 @@ public enum TowerType {
 		rangeSiphon				= 0.08f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Volcano";
 						 text 		= "The tower now does AoE damage";
 						 baseCost   = 2500;}
-						 public void baseUpgrade(Tower t) { }
+						 public void baseUpgrade(Tower t) { t.doesSplash = false; }
 						 public void midSiphonUpgrade(Tower t) { }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
@@ -629,6 +640,10 @@ public enum TowerType {
 		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -724,6 +739,10 @@ public enum TowerType {
 		rangeSiphon				= 0.11f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -820,6 +839,10 @@ public enum TowerType {
 		rangeSiphon				= 0.12f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= false;
+		doesSlow				= false;
+		doesOnHit				= false;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -915,6 +938,10 @@ public enum TowerType {
 		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= false;
+		doesSlow				= true;
+		doesOnHit				= false;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -945,7 +972,7 @@ public enum TowerType {
 						{name		= "Heavy Rains";
 						 text 		= "Hits air targets, doubles base slow duration, and..."; //TODO:
 						 baseCost   = 2000;}
-						 public void baseUpgrade(Tower t) { t.hitsAir = true; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){t.slowDurationArray[i]*=2;} }
+						 public void baseUpgrade(Tower t) { t.hitsAir = true; t.splashHitsAir = true; t.doesSplash = true; for(int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++){t.slowDurationArray[i]*=2;} }
 						 public void midSiphonUpgrade(Tower t) { }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
@@ -1010,6 +1037,10 @@ public enum TowerType {
 		rangeSiphon				= 0.10f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -1105,6 +1136,10 @@ public enum TowerType {
 		rangeSiphon				= 0.11f;
 		hitsAir    				= false;
 		hitsGround   			= true;
+		doesSplash				= false;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades   				= new Upgrade[][]{
 				{
 					 new Upgrade() {
@@ -1135,7 +1170,7 @@ public enum TowerType {
 				    	 {name 		 = "Sheer Cold";
 				    	  text 		 = "Roots Enemies in place and attacks apply on hit effects"; 
 				    	  baseCost   = 5000;}
-				    	  public void baseUpgrade(Tower t) {  }
+				    	  public void baseUpgrade(Tower t) { t.hitsAir = true; }
 				    	  public void midSiphonUpgrade(Tower t) { ((TowerWaterWater) t).snareDuration = 12; ((TowerWaterWater) t).doesOnHit = true; }
 						  public void postSiphonUpgrade(Tower t) { t.range += 3; t.attackCooldown -= 1; }
 				     },
@@ -1200,6 +1235,10 @@ public enum TowerType {
 		rangeSiphon				= 0.09f;
 		hitsAir					= true;
 		hitsGround				= true;
+		doesSplash				= false;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -1295,6 +1334,10 @@ public enum TowerType {
 		rangeSiphon				= 0.09f;
 		hitsAir					= false;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -1391,6 +1434,10 @@ public enum TowerType {
 		rangeSiphon				= 0.12f;
 		hitsAir					= true;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= true;
+		doesOnHit				= true;
+		splashHitsAir			= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -1487,6 +1534,10 @@ public enum TowerType {
 		rangeSiphon				= 0.16f;
 		hitsAir					= true;
 		hitsGround				= true;
+		doesSplash				= false;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= false;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {
@@ -1582,6 +1633,10 @@ public enum TowerType {
 		rangeSiphon				= 0.10f;
 		hitsAir					= true;
 		hitsGround				= true;
+		doesSplash				= true;
+		doesSlow				= false;
+		doesOnHit				= true;
+		splashHitsAir			= true;
 		upgrades				= new Upgrade[][]{
 				{
 					new Upgrade() {

@@ -31,17 +31,13 @@ public final class TowerWaterWater extends Tower {
 	float consumeModifier;
 	private float qConsume;
 	
-	boolean doesSplash;
-	boolean doesOnHit;
-	
 	public TowerWaterWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_WATER, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
+		baseProjectile = new ProjectileAOE(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WATER, baseProjectile));
@@ -89,9 +85,6 @@ public final class TowerWaterWater extends Tower {
 		this.bleedTiming = 3;
 		
 		this.consumeModifier = 0;
-		
-		this.doesSplash = false;
-		this.doesOnHit = false;
 
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;

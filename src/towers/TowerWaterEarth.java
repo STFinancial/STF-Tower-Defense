@@ -18,17 +18,13 @@ public final class TowerWaterEarth extends Tower {
 	float permaSlowModifier;
 	private float qPermaSlow;
 	
-	boolean doesSplash;
-	boolean doesOnHit;
-	
 	public TowerWaterEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_EARTH, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
+		baseProjectile = new ProjectileAOE(this);
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.PHYSICAL, baseProjectile, false);
@@ -62,8 +58,6 @@ public final class TowerWaterEarth extends Tower {
 		this.shredModifier = 0;
 		this.shredDuration = 0;
 		this.permaSlowModifier = 0.005f;
-		this.doesSplash = false;
-		this.doesOnHit = false;
 		
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;

@@ -23,18 +23,14 @@ public final class TowerWindWater extends Tower {
 	float explosionRadiusModifier;
 	private float qDODModifier;
 	private float qDODRange;
-	
-	boolean doesSplash;
-	boolean doesOnHit;
 
 	public TowerWindWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WIND_WATER, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
+		baseProjectile = new ProjectileAOE(this);
 		baseProjectile.clearAllBasicEffects();
 		baseProjectile.addSpecificCreepEffect(new SiphonLife(maxHealthModifier, DamageType.WATER, baseProjectile, goldModifier));
 	
@@ -83,9 +79,6 @@ public final class TowerWindWater extends Tower {
 		
 		this.damageOnDeathModifier = 0;
 		this.explosionRadiusModifier = 0;
-		
-		this.doesOnHit = false;
-		this.doesSplash = false;
 		
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;

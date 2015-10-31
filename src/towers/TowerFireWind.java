@@ -22,16 +22,13 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	private float qDamageModifier;
 	private float qDamageRange;
 	
-	boolean doesSplash;
-	
 	public TowerFireWind(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_WIND, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectilePassThroughArea(this, range, passThroughRadiusModifier * range, passThroughModifier, doesSplash, 1); //TODO: Timing is curently 1, but not sure if that's whta I want
+		baseProjectile = new ProjectilePassThroughArea(this, range, passThroughRadiusModifier * range, passThroughModifier, 1); //TODO: Timing is curently 1, but not sure if that's whta I want
 		((ProjectilePassThroughArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 	}
 
@@ -71,8 +68,6 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 		
 		this.damageAuraModifier = 0.02f;
 		this.damageAuraRangeModifier = 0.60f;
-		
-		this.doesSplash = false;
 		
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;

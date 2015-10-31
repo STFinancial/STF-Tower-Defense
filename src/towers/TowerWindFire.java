@@ -23,7 +23,6 @@ public final class TowerWindFire extends Tower {
 	
 	public TowerWindFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WIND_FIRE, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override

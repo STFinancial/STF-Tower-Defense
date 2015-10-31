@@ -15,14 +15,13 @@ public final class TowerEarthWind extends Tower {
 	
 	public TowerEarthWind(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WIND, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][3]) {
-			baseProjectile = new ProjectilePassThroughTarget(this, splashRadius * passThroughRadiusModifier, passThroughModifier, false, 1);
+			baseProjectile = new ProjectilePassThroughTarget(this, splashRadius * passThroughRadiusModifier, passThroughModifier, 1);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}

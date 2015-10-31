@@ -27,19 +27,15 @@ public final class TowerFireWater extends Tower {
 	private float qPatchLifetime;
 	private float qPatchModifier;
 	
-	boolean doesSplash;
-	
 	public TowerFireWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_WATER, towerID);
-		adjustClassSpecificBaseStats();
-		
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * splashRadius, passThroughModifier, doesSplash, 1);
+			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * splashRadius, passThroughModifier, 1);
 		} else if (progress[1][2]) {
 			ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
 			effects.add(new MaxHealthDamage(patchMaxHealthModifier * damageArray[DamageType.WATER.ordinal()], DamageType.WATER, baseProjectile));
@@ -102,9 +98,6 @@ public final class TowerFireWater extends Tower {
 		this.patchMaxHealthModifier = 0;
 		this.qPatchLifetime = 0.8f;
 		this.qPatchModifier = 0.000005f;
-		
-		this.hitsAir = false;
-		this.doesSplash = false;
 	}
 
 	@Override

@@ -23,7 +23,6 @@ public final class TowerEarthFire extends Tower {
 	
 	public TowerEarthFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_FIRE, towerID);
-		
 	}
 
 	@Override

@@ -19,7 +19,6 @@ public final class TowerWaterFire extends Tower {
 	
 	public TowerWaterFire(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WATER_FIRE, towerID);
-		adjustClassSpecificBaseStats();
 	}
 	
 	@Override

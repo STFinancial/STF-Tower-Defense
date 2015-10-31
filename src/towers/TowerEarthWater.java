@@ -12,17 +12,13 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	float areaRadius;
 	private float qAreaRadius;
 	
-	boolean doesOnHit;
-	
 	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
-		
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
-		baseProjectile = new ProjectileArea(this, doesSplash, doesOnHit, areaRadius);
+		baseProjectile = new ProjectileArea(this, areaRadius);
 		((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 	}
 
@@ -71,9 +67,6 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 		
 		//TODO: Do I want qAreaRadius?
 		this.qAreaRadius = 0;
-		
-		this.doesOnHit = false;
-		this.doesSplash = false;
 	}
 
 	@Override

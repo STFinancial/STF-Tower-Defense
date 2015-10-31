@@ -25,18 +25,16 @@ public final class TowerWindEarth extends Tower {
 	private float qPassModifier;
 	private float qPassRadius;
 	
-	boolean doesSplash;
 	
 	public TowerWindEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.WIND_EARTH, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * range, passThroughModifier, doesSplash, 1);
+			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * range, passThroughModifier, 1);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
@@ -79,7 +77,6 @@ public final class TowerWindEarth extends Tower {
 		this.unslowDuration = 0;
 		this.passThroughModifier = 0;
 		this.passThroughRadiusModifier = 0;
-		this.doesSplash = false;
 		
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;

@@ -44,20 +44,16 @@ public final class TowerFireEarth extends Tower {
 	private float qToughModifier;
 	private float qToughDuration;
 	private float qToughStacks;
-	
-	boolean doesSplash;
-	boolean doesOnHit;
 
 	public TowerFireEarth(Level level, Tile topLeftTile, int towerID) {
 		super(level, topLeftTile, TowerType.FIRE_EARTH, towerID);
-		adjustClassSpecificBaseStats();
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][1]) {
-			baseProjectile = new ProjectileAOE(this, doesSplash, doesOnHit);
+			baseProjectile = new ProjectileAOE(this);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
@@ -136,8 +132,6 @@ public final class TowerFireEarth extends Tower {
 		this.DOHDuration = 0;
 		this.maxDOHStacks = 0;
 		this.percentMaxHealthModifier = 0;
-		this.doesSplash = false;
-		this.doesOnHit = false;
 		
 		this.qDamage = 0.05f;
 		this.qSlow = 0.10f;

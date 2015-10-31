@@ -93,6 +93,8 @@ public abstract class Projectile implements Updatable {
 		currentSpeed = speed = .20f;
 	}
 	
+	//TOOD: Could do a method here to take care of checking for onhit, hitsAir, etc. rather than having each individual method do it
+	
 	protected void initializeStats(Tower parent) {
 		this.dud 					= false;
 		this.parent					= parent;
