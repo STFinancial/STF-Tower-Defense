@@ -11,7 +11,6 @@ import maps.Map;
 import maps.Tile;
 import utilities.Circle;
 
-//TODO: Should this just change into TowerManager?
 public final class TowerManager implements Updatable {
 	private static final TowerManager INSTANCE = new TowerManager();
 	private Level level;
@@ -54,8 +53,6 @@ public final class TowerManager implements Updatable {
 	public boolean hasEarthEarth() { return earthEarth > 0; }
 	
 	public Tower constructTower(Tile tile, TowerType type) {
-		//TODO: It needs to be type.getCost() because it needs to be consistent with "canBuyTower"
-		level.removeGold(type.getCost()); //TODO: In this method in tower should be affected by global talents
 		Tower t = TowerFactory.generateTower(level, tile, type, currentTowerID++);
 		towers.add(t);
 		for (int i = 0; i < t.width; i++) {
@@ -64,6 +61,71 @@ public final class TowerManager implements Updatable {
 			}
 		}
 		return t;
+	}
+	
+	private void constructTower(Tower t) {
+		towers.add(t);
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
+				map.getTile(t.y + j, t.x + i).addTower(t);
+			}
+		}
+	}
+	
+	public Tower destroyTower(Tower t) {
+		
+	}
+	
+	private void removeTower(Tower t) {
+		for (int i = 0; i < t.width; i++) {
+			for (int j = 0; j < t.height; j++) {
+				map.getTile(t.y + j, t.x + i).removeTower();
+			}
+		}
+		towers.remove(t);
+	}
+	
+	public Tower siphonTower(Tower source, Tower destination) {
+		TowerType newType = TowerType.getUpgrade(source.type.getDowngradeType(), destination.type);
+		if (newType == TowerType.EARTH_EARTH) {
+			earthEarth++;
+		}
+		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.towerID);
+		newDest.upgradeTracks = destination.upgradeTracks; //set upgrade tracks
+		newDest.siphoningFrom = source; //siphon from the source
+		newDest.siphoningTo = destination.siphoningTo; //maintain what we're siphoning to
+		source.siphoningTo.add(newDest); //the source is now siphoning to our new destination
+		for (Tower t: towers) {
+			if (t.siphoningFrom.towerID == destination.towerID) {
+				t.siphoningFrom = newDest; //update all towers that were siphoning from the destination to siphon from the new destination
+			}
+		}
+		removeTower(destination); //destroy the old destinatino tower
+		constructTower(newDest); //"build" the new one
+		newDest.updateTowerChain(); //update the tower chain
+		return newDest;
+	}
+	
+	public Tower unsiphonTower(Tower destination) {
+		if (destination.type == TowerType.EARTH_EARTH) {
+			earthEarth--;
+		}
+		TowerType newType = destination.type.getDowngradeType(); //get the type we downgrade to
+		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.towerID); //generate tower of that type
+		newDest.upgradeTracks = destination.upgradeTracks; //set the upgrade tracks
+		Tower siph = destination.siphoningFrom;
+		siph.siphoningTo.remove(destination); //what we were siphoningfrom is no longer siphoning to us
+		newDest.siphoningTo = destination.siphoningTo; //still siphoning to the same stuff
+		for (Tower t: towers) {
+			if (t.siphoningFrom.towerID == destination.towerID) {
+				t.siphoningFrom = newDest; //update all towers that were siphoning from dest to siphon from newDest
+			}
+		}
+		removeTower(destination); //destroy old dest
+		constructTower(newDest); //construct new dest
+		newDest.updateTowerChain();
+		siph.updateTowerChain();
+		return newDest;
 	}
 	
 	public void updateTowerChain(Tower t) {

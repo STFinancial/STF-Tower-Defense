@@ -16,6 +16,7 @@ public enum TowerType {
 	
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
+		downgradeType			= EARTH; //TODO: Is this allowed?
 		baseWidth			  	= 2;
 		baseHeight			  	= 2;
 		baseDamageArray		  	= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
@@ -37,6 +38,7 @@ public enum TowerType {
 	}}),
 	FIRE (new BaseAttributeList(){{
 		name               	 	= "Fire";
+		downgradeType			= FIRE;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
@@ -58,6 +60,7 @@ public enum TowerType {
 	}}),
 	WATER (new BaseAttributeList(){{
 		name               	 	= "Water";
+		downgradeType			= WATER;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
@@ -79,6 +82,7 @@ public enum TowerType {
 	}}),
 	WIND (new BaseAttributeList(){{
 		name               	 	= "Wind";
+		downgradeType			= WIND;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/17, /*L*/0, /*D*/0, /*P*/17};
@@ -1769,6 +1773,10 @@ public enum TowerType {
 	public int getCost() {
 		//TODO: Affected by global talents somehow, use the TowerManager?
 		return baseAttributeList.baseCost;
+	}
+	
+	public TowerType getDowngradeType() {
+		return baseAttributeList.downgradeType;
 	}
 
 	public int getWidth() {

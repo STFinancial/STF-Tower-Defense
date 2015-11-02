@@ -201,41 +201,31 @@ public class Level {
 	//GUI should call this method to build towers
 	public Tower buyTower(TowerType type, int y, int x) {
 		Tile tile = map.getTile(y, x);
+		gold -= type.getCost(); //TODO: In this method in tower should be affected by global talents
 		Tower t = tManager.constructTower(tile, type);
 		updatePath();
 		tManager.updateTowerChain(t);
 		newEvent(GameEventType.TOWER_CREATED, t);
 		return t;
 	}
+	
+	public void sellTower(Tower t) {
+		//Need to unsiphon the tower and then get the gold value
+		tManager.destroyTower(t);
+	}
 
-	//TODO: Move these to tmanager
-	public Tower unsiphonTower(Tower source, Tower destination) {
-		if (type == TowerEarthEarth)
-		source.siphoningTo.remove(destination);
-		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, destination.baseAttributeList.downgradeType, destination.towerID);
-		newDest.upgradeTracks = destination.upgradeTracks;
-		newDest.siphoningTo = destination.siphoningTo;
-		destroyTower(destination);
+	public Tower unsiphonTower(Tower destination) {
+		Tower newDest = tManager.unsiphonTower(destination);
+		//TODO: Need to refund some gold
 		newEvent(GameEventType.TOWER_DESTROYED, destination);
-		constructTower(newDest);
-		newDest.updateTowerChain();
-		source.updateTowerChain();
 		newEvent(GameEventType.TOWER_CREATED, newDest);
 		return newDest;
 	}
 
 	public Tower siphonTower(Tower source, Tower destination) {
-		if (type == TowerEarthEarth)
-		source.siphoningTo.add(destination);
-		Tower newDest = TowerFactory.generateTower(this, destination.topLeft, TowerType.getUpgrade(source.type, destination.type), destination.towerID);
-		newDest.upgradeTracks = destination.upgradeTracks;
-		newDest.siphoningFrom = source;
-		newDest.siphoningTo = destination.siphoningTo;
-		destroyTower(destination);
+		Tower newDest = tManager.siphonTower(source, destination);
+		//TODO: Need to charge some gold
 		newEvent(GameEventType.TOWER_DESTROYED, destination);
-		constructTower(newDest);
-		newDest.updateTowerChain();
-		source.updateTowerChain();
 		newEvent(GameEventType.TOWER_CREATED, newDest);
 		return newDest;
 	}
@@ -258,29 +248,6 @@ public class Level {
 			gold += t.cost * .5f;
 		}
 		razeTower(t);
-	}
-	
-	//TODO: Move to tmanager
-	private void razeTower(Tower t) {
-		destroyTower(t);
-		updatePath();
-		newEvent(GameEventType.TOWER_DESTROYED, t);
-	}
-	
-	//TODO: Move to tManager
-	private void destroyTower(Tower t) {
-		towers.remove(t);
-		hasEarthEarth = false;
-		for (Tower tow: towers) {
-			if (tow.type == TowerType.EARTH_EARTH) {
-				hasEarthEarth = true;
-			}
-		}
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).removeTower();
-			}
-		}
 	}
 
 	public void updatePath() {

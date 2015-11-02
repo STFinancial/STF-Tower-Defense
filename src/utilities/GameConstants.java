@@ -13,10 +13,14 @@ public final class GameConstants {
 	public static final float DAMAGE_RESIST_DENOMINATOR_VALUE = 100f;
 	public static final float SLOW_RESIST_DENOMINATOR_VALUE = 100f;
 	
+	public static final float BASE_TOWER_REFUND_RATE = 0.75f;
+	public static final float 
+	
+	
 	public static final int NUM_UPGRADE_PATHS = 2;
 	public static final int UPGRADE_PATH_LENGTH = 4;
 	
-	public static final int BASE_INTEREST_RATE = 3;
+	public static final int BASE_INTEREST_RATE = 3; //TODO: What was this for? Unspent gold?
 	
 	public static final float SQRT_2_OVER_2 = 0.7071f;
 	public static final float SQRT_2 = 1.414f;
