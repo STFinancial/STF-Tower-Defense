@@ -2,22 +2,30 @@ package creeps;
 
 final class Travel extends Attribute {
 	private boolean defaultIsFlying;
+	private boolean normalIsFlying; //need this because we can't change the default because that's what we use to clone
 	private boolean currentlyIsFlying;
 	private boolean groundingImmune;
 	
 	Travel(CreepAttributes parent, boolean isFlying, boolean groundingImmune) {
 		this.parent = parent;
 		this.defaultIsFlying = isFlying;
+		this.normalIsFlying = isFlying;
 		this.currentlyIsFlying = isFlying;
 		this.groundingImmune = groundingImmune;
 	}
 	
 	boolean isFlying() { return currentlyIsFlying; }
 	void loft() { currentlyIsFlying = true; }
-	void setTravelToDefault() { currentlyIsFlying = defaultIsFlying; }
+	void setTravelToNormal() { currentlyIsFlying = normalIsFlying; }
 	
 	boolean ground() {
-		return (groundingImmune ? currentlyIsFlying : (currentlyIsFlying = false));
+		if (groundingImmune) {
+			return currentlyIsFlying;
+		} else {
+			normalIsFlying = false;
+			currentlyIsFlying = false;
+			return false;
+		}
 	}
 	
 	@Override

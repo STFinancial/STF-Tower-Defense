@@ -8,6 +8,7 @@ import utilities.Circle;
 import utilities.GameConstants;
 import levels.Updatable;
 
+//TODO: Need to go through and make sure no default attributes are modified to ensure that clone works properly
 final class CreepAttributes implements Updatable {
 	private Creep parent;
 	private Effects effects;
@@ -89,7 +90,7 @@ final class CreepAttributes implements Updatable {
 	void reduceGoldValue(float amount, boolean isFlat) { goldValue.reduceGoldValue(amount, isFlat); }
 	void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { speed.reduceMaxSpeed(type, amount, isFlat); }
 	void reduceToughness(float amount, boolean isFlat) { toughness.reduceToughness(amount, isFlat); }
-	void setTravelToDefault() { travel.setTravelToDefault(); }
+	void setTravelToNormal() { travel.setTravelToNormal(); }
 	void slow(DamageType type, float amount) { speed.slow(type, amount); }
 	void snare(int duration) { speed.snare(duration); }
 	void suppressDeathrattle(float modifier, int lifetime) { deathrattle.suppressDeathrattle(modifier, lifetime); }

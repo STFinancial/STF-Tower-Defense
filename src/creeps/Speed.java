@@ -128,7 +128,7 @@ final class Speed extends Attribute implements Updatable {
 	@Override
 	public int update() {
 		timeUntilNextEffect--;
-		if (currentEffectDuration-- == 0) { isSnared = false; isDisoriented = false; isKnockup = false; parent.setTravelToDefault(); }
+		if (currentEffectDuration-- == 0) { isSnared = false; isDisoriented = false; isKnockup = false; parent.setTravelToNormal(); }
 		return (isDisoriented || isSnared ? -1 : 0);
 	}
 
