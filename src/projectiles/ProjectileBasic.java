@@ -44,7 +44,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		if (dud) {
 			return true;
 		}
-		return hitBox.intersects(targetCreep.hitBox);
+		return targetCreep.intersects(hitBox);
 	}
 
 	@Override

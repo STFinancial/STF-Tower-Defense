@@ -194,7 +194,7 @@ public abstract class Projectile implements Updatable {
 	
 	protected void updateAngle() {
 		if (targetCreep != null) {
-			targetAngle = TrigHelper.angleBetween(x, y, targetCreep.hitBox.x, targetCreep.hitBox.y);
+			targetAngle = TrigHelper.angleBetween(x, y, targetCreep.getX(), targetCreep.getY());
 			angleCos = Math.cos(targetAngle);
 			angleSin = Math.sin(targetAngle);
 		} else if (targetArea != null) {

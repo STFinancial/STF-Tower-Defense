@@ -117,7 +117,7 @@ final class Speed extends Attribute implements Updatable {
 			timeUntilNextEffect = duration + gracePeriod;
 			parent.loft();
 			return true;
-		} else if (isKnockup && duration > initialEffectDuration) { //Is snared but this is longer
+		} else if (isKnockup && duration > initialEffectDuration) { //Is knockup but this is longer
 			int dif = duration - initialEffectDuration;
 			currentEffectDuration += dif;
 			timeUntilNextEffect += dif;

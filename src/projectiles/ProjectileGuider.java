@@ -52,7 +52,7 @@ public final class ProjectileGuider implements Updatable {
 	//TODO: Could try keeping track of a creep that has been in range, and only when that creep is out of range or dead we search for a new one (good idea)
 	public boolean isCreepInRange(Circle area, boolean hitsAir) {
 		for (Creep c : level.getCreeps()) {
-			if (c.hitBox.intersects(area)) {
+			if (c.intersects(area)) {
 				if (hitsAir) {
 					return true;
 				} else if (!c.isFlying()) {
@@ -68,7 +68,7 @@ public final class ProjectileGuider implements Updatable {
 		Creep toTarget = null;
 		ArrayList<Creep> inRange = new ArrayList<Creep>();
 		for (Creep c : level.getCreeps()) {
-			if (c.hitBox.intersects(tower.getTargetZone())) {
+			if (c.intersects(tower.getTargetZone())) {
 				if (hitsAir) {
 					inRange.add(c);
 				} else if (!c.isFlying()) {
@@ -100,7 +100,7 @@ public final class ProjectileGuider implements Updatable {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		Circle splash = new Circle(p.getX(), p.getY(), range);
 		for (Creep c : level.getCreeps()) {
-			if (c.hitBox.intersects(splash)) {
+			if (c.intersects(splash)) {
 				if (hitsAir) {
 					inRange.add(c);
 				} else if (!c.isFlying()) {
@@ -114,7 +114,7 @@ public final class ProjectileGuider implements Updatable {
 	public HashSet<Creep> getCreepInRange(Circle area, boolean hitsAir) {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		for (Creep c: level.getCreeps()) {
-			if (c.hitBox.intersects(area)) {
+			if (c.intersects(area)) {
 				if (hitsAir) {
 					inRange.add(c);
 				} else if (!c.isFlying()) {
@@ -129,7 +129,7 @@ public final class ProjectileGuider implements Updatable {
 		Circle splash = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		for (Creep c: level.getCreeps()) {
-			if (c.hitBox.intersects(splash) && c.creepID != creep.creepID) {
+			if (c.intersects(splash) && c.creepID != creep.creepID) {
 				if (hitsAir) {
 					inRange.add(c);
 				} else if (!c.isFlying()) {
@@ -144,7 +144,7 @@ public final class ProjectileGuider implements Updatable {
 		Circle box = new Circle(creep.xOff + creep.currentVertex.x, creep.yOff + creep.currentVertex.y, range);
 		if (visited == null) {
 			for (Creep c: level.getCreeps()) {
-				if (c.hitBox.intersects(box)) {
+				if (c.intersects(box)) {
 					if (hitsAir) {
 						return c;
 					} else if (!c.isFlying()) {
@@ -154,7 +154,7 @@ public final class ProjectileGuider implements Updatable {
 			}
 		} else {
 			for (Creep c: level.getCreeps()) {
-				if (c.hitBox.intersects(box) && c.creepID != creep.creepID && !visited.contains(c)) {
+				if (c.intersects(box) && c.creepID != creep.creepID && !visited.contains(c)) {
 					if (hitsAir) {
 						return c;
 					} else if (!c.isFlying()) {
@@ -185,7 +185,7 @@ public final class ProjectileGuider implements Updatable {
 	
 	private Creep intersectingCreep(Circle missile, boolean hitsAir) {
 		for (Creep c: level.getCreeps()) {
-			if (c.hitBox.intersects(missile)) {
+			if (c.intersects(missile)) {
 				if (hitsAir) {
 					return c;
 				} else if (!c.isFlying()) {

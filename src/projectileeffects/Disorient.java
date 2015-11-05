@@ -20,7 +20,7 @@ public class Disorient extends ProjectileEffect {
 
 	@Override
 	public void onApply() {
-		applyEffect(); //TODO: Need to fix this. If we have multiple towers that disorient we want the largest one to be applied, so we somehow need to add additional time to the disorient if we have a better disorient
+		applyEffect();
 	}
 
 	@Override

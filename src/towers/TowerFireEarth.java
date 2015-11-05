@@ -19,7 +19,7 @@ public final class TowerFireEarth extends Tower {
 	int maxPoisonStacks;
 	private float qPoisonModifier;
 	private float qPoisonDuration;
-	private float qPoisonStacks; //TODO: Should I have a q for timings?
+	private float qPoisonStacks;
 	
 	float percentMaxHealthModifier;
 	private float qMaxHealth;

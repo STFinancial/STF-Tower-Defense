@@ -33,7 +33,7 @@ public class Creep implements Updatable {
 	public float xOff, yOff;
 	public Path path;
 	public Level level;
-	public Circle hitBox;
+	Circle hitBox;
 
 	Creep(Level level, int id) {
 		this.level = level;
@@ -89,6 +89,9 @@ public class Creep implements Updatable {
 	public float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
 	public float getCurrentHealthCost() { return attributes.getCurrentHealthCost(); }
 	public float getMaxHealth() { return attributes.getMaxHealth(); }
+	public float getX() { return hitBox.x; }
+	public float getY() { return hitBox.y; }
+	public boolean intersects(Circle area) { return hitBox.intersects(area); }
 	public boolean isFlying() { return attributes.isFlying(); }
 	
 	public void disorient(int lifetime) { 

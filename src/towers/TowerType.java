@@ -13,7 +13,7 @@ public enum TowerType {
 	
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
-		downgradeType			= EARTH; //TODO: Is this allowed?
+		downgradeType			= null;
 		baseWidth			  	= 2;
 		baseHeight			  	= 2;
 		baseDamageArray		  	= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/60};
@@ -35,7 +35,7 @@ public enum TowerType {
 	}}),
 	FIRE (new BaseAttributeList(){{
 		name               	 	= "Fire";
-		downgradeType			= FIRE;
+		downgradeType			= null;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/35, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
@@ -57,7 +57,7 @@ public enum TowerType {
 	}}),
 	WATER (new BaseAttributeList(){{
 		name               	 	= "Water";
-		downgradeType			= WATER;
+		downgradeType			= null;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/15, /*WI*/0, /*L*/0, /*D*/0, /*P*/15};
@@ -79,7 +79,7 @@ public enum TowerType {
 	}}),
 	WIND (new BaseAttributeList(){{
 		name               	 	= "Wind";
-		downgradeType			= WIND;
+		downgradeType			= null;
 		baseWidth				= 2;
 		baseHeight				= 2;
 		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/17, /*L*/0, /*D*/0, /*P*/17};
@@ -1793,6 +1793,9 @@ public enum TowerType {
 	}
 	
 	public TowerType getDowngradeType() {
+		if (isBaseType()) {
+			return this;
+		}
 		return baseAttributeList.downgradeType;
 	}
 

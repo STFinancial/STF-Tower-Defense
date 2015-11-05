@@ -9,7 +9,6 @@ import levels.Updatable;
  *
  */
 final class Health extends Attribute implements Updatable {
-	//TODO: One idea instead of doing division and multiplication is to store damage done flat and percent as values and calculate current health only as needed
 	private float maxHealth;
 	private float defaultHealth;
 	private float currentHealth;

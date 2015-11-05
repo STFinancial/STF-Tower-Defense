@@ -20,7 +20,7 @@ public final class Explosion extends ProjectileEffect {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Explosion(damageType, parent, explosionRadius, explosionEffects); //TODO: Same issue as deathrattle, do we want to clone the effects?
+		return new Explosion(damageType, parent, explosionRadius, explosionEffects);
 	}
 
 	@Override
@@ -31,8 +31,7 @@ public final class Explosion extends ProjectileEffect {
 	@Override
 	protected void applyEffect() {
 		applyEffect();
-		//TODO: Replace with getters for current creep position
-		for (Creep c: ProjectileGuider.getInstance().getCreepInRange(new Circle(creep.hitBox.x, creep.hitBox.y, explosionRadius), parent.hitsAir())) {
+		for (Creep c: ProjectileGuider.getInstance().getCreepInRange(new Circle(creep.getX(), creep.getY(), explosionRadius), parent.hitsAir())) {
 			c.addAllEffects(explosionEffects);
 		}
 	}
