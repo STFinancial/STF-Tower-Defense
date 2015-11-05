@@ -28,7 +28,7 @@ public final class TowerWindFire extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileChain(this, maxChains, (float) Math.sqrt(range), chainPenalty, noDuplicates);
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		baseProjectile.setShieldDrainModifier(shieldDrainModifier);
 		if (progress[1][3]) {
 			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WIND, baseProjectile));

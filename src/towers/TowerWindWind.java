@@ -37,7 +37,7 @@ public final class TowerWindWind extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileBasic(this);
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
 			Hasting h = new Hasting(hastingDuration, hastingModifier, DamageType.WIND, baseProjectile);
 			h.setMaxStacks(maxHastingStacks);

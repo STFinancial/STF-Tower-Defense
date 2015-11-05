@@ -5,18 +5,19 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import creeps.DamageType;
 import levels.Level;
 import levels.Updatable;
 import maps.Map;
 import maps.Tile;
 import utilities.Circle;
+import utilities.GameConstants;
 
 public final class TowerManager implements Updatable {
 	private static final TowerManager INSTANCE = new TowerManager();
 	private Level level;
 	
 	private ArrayList<Tower> towers;
-	private ArrayList<Aura> auras;
 	private HashMap<Tower, ArrayList<Aura>> creates;
 	private HashMap<Aura, ArrayList<Tower>> affects;
 	private Map map;
@@ -26,10 +27,9 @@ public final class TowerManager implements Updatable {
 	
 	private TowerManager() { 
 		towers = new ArrayList<Tower>();
-		auras = new ArrayList<Aura>();
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
-		map = null; //TODO: how do we deal with the null pointer exception that this will create
+		map = null; //TODO: how do we deal with the null pointer exception that this will create, should we force them to pass a level?
 		currentTowerID = 0;
 		earthEarth = 0;
 	}
@@ -42,7 +42,6 @@ public final class TowerManager implements Updatable {
 		this.level = level;
 		//Need to clear out all the old junk
 		towers = new ArrayList<Tower>();
-		auras = new ArrayList<Aura>();
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
 		map = level.getMap();
@@ -73,7 +72,13 @@ public final class TowerManager implements Updatable {
 	}
 	
 	public Tower destroyTower(Tower t) {
-		
+		unsiphonTower(t, false); // Remove any siphons.
+		for (Tower siph: t.siphoningTo) { // Unsiphon from all Towers which this is siphoning to
+			// We need to call the level version so that there is a game event for their changes and we can refund if needed
+			level.unsiphonTower(siph, GameConstants.DEFAULT_UNSIPHON_REFUND_OPTION);
+		}
+		removeTower(t);
+		return t;
 	}
 	
 	private void removeTower(Tower t) {
@@ -86,42 +91,60 @@ public final class TowerManager implements Updatable {
 	}
 	
 	public Tower siphonTower(Tower source, Tower destination) {
+		if (destination.siphoningFrom != null) {
+			return destination;
+		}
 		TowerType newType = TowerType.getUpgrade(source.type.getDowngradeType(), destination.type);
 		if (newType == TowerType.EARTH_EARTH) {
 			earthEarth++;
 		}
-		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.towerID);
-		newDest.upgradeTracks = destination.upgradeTracks; //set upgrade tracks
+		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.getTowerID());
 		newDest.siphoningFrom = source; //siphon from the source
 		newDest.siphoningTo = destination.siphoningTo; //maintain what we're siphoning to
+		newDest.setUpgradeTracks(destination.getUpgradeTracks());//set upgrade tracks
 		source.siphoningTo.add(newDest); //the source is now siphoning to our new destination
 		for (Tower t: towers) {
-			if (t.siphoningFrom.towerID == destination.towerID) {
+			if (t.siphoningFrom != null && t.siphoningFrom.equals(destination)) { 
 				t.siphoningFrom = newDest; //update all towers that were siphoning from the destination to siphon from the new destination
 			}
 		}
-		removeTower(destination); //destroy the old destinatino tower
+		removeTower(destination); // Remove the old destination tower.
 		constructTower(newDest); //"build" the new one
 		newDest.updateTowerChain(); //update the tower chain
 		return newDest;
 	}
 	
-	public Tower unsiphonTower(Tower destination) {
+	public Tower unsiphonTower(Tower destination, boolean refund) {
+		if (destination.siphoningFrom == null) {
+			return destination;
+		}
 		if (destination.type == TowerType.EARTH_EARTH) {
 			earthEarth--;
 		}
 		TowerType newType = destination.type.getDowngradeType(); //get the type we downgrade to
-		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.towerID); //generate tower of that type
-		newDest.upgradeTracks = destination.upgradeTracks; //set the upgrade tracks
+		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.getTowerID()); //generate tower of that type
+		
+		// If we're refunding, then we need to set the current upgrade track to false
+		boolean[][][] upgradeTracks = destination.getUpgradeTracks();
+		if (refund && !destination.getType().isBaseType()) {
+			DamageType trackType = DamageType.getDamageTypeFromTower(destination.siphoningFrom.getType().getDowngradeType());
+			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
+					upgradeTracks[trackType.ordinal()][path][uNum] = false;
+				}
+			}
+		}
+		newDest.setUpgradeTracks(destination.getUpgradeTracks());
+		
 		Tower siph = destination.siphoningFrom;
 		siph.siphoningTo.remove(destination); //what we were siphoningfrom is no longer siphoning to us
 		newDest.siphoningTo = destination.siphoningTo; //still siphoning to the same stuff
 		for (Tower t: towers) {
-			if (t.siphoningFrom.towerID == destination.towerID) {
+			if (t.siphoningFrom != null && t.siphoningFrom.equals(destination)) {
 				t.siphoningFrom = newDest; //update all towers that were siphoning from dest to siphon from newDest
 			}
 		}
-		removeTower(destination); //destroy old dest
+		removeTower(destination); //remove old dest
 		constructTower(newDest); //construct new dest
 		newDest.updateTowerChain();
 		siph.updateTowerChain();

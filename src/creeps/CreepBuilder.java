@@ -1,9 +1,8 @@
 package creeps;
 
-import java.util.List;
-
 import levels.Level;
 import projectileeffects.ProjectileEffect;
+import utilities.Circle;
 
 
 public final class CreepBuilder {
@@ -17,11 +16,15 @@ public final class CreepBuilder {
 	
 	public static CreepBuilder getInstance() { return INSTANCE; }
 	public void setInstanceLevel(Level level) { this.level = level; }
-	public int getNextId() { return idGenerator++; }
+	private int getNextId() { return idGenerator++; }
 	public void begin() {
 		currentCreep = new Creep(level, getNextId());
 		currentAttributes = new CreepAttributes(currentCreep);
 	}
+	public void addDeathrattleChild(Creep child) { currentAttributes.addDeathrattleChild(child); }
+	public void addDeathrattleEffect(ProjectileEffect effect, Circle area) { currentAttributes.addDeathrattleEffect(effect, area); }
+	public void addDeathrattleEffect(ProjectileEffect effect, Circle area, int defaultDuration) { currentAttributes.addDeathrattleEffect(effect, area, defaultDuration); }
+	public void clearDeathrattle() { currentAttributes.clearDeathrattle(); }
 	public void setHealthValues(float maxHealth, float defaultHealthRegen) { currentAttributes.setHealthValues(maxHealth, defaultHealthRegen); }
 	public void setShieldValues(float maxShield, float defaultShieldRegen) { currentAttributes.setShieldValues(maxShield, defaultShieldRegen); }
 	public void setDamageResists(float[] damageResists) { currentAttributes.setDamageResists(damageResists); }
@@ -30,7 +33,6 @@ public final class CreepBuilder {
 	public void setToughnessValues(float defaultToughness) { currentAttributes.setToughnessValues(defaultToughness); }
 	public void setDisruptionValues(float defaultDisruption) { currentAttributes.setDisruptionValues(defaultDisruption); }
 	public void setGoldValue(float defaultGoldValue) { currentAttributes.setGoldValue(defaultGoldValue); }
-	public void setDeathrattle(List<ProjectileEffect> effects, List<Creep> children) { currentAttributes.setDeathrattle(effects, children); }
 	public void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { currentAttributes.setOnHit(goldOnHit, cooldownOnHit, damageOnHit); }
 	public void setSize(float defaultSize) { currentAttributes.setSize(defaultSize); }
 	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }

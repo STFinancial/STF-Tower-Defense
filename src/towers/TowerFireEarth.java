@@ -51,7 +51,7 @@ public final class TowerFireEarth extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][1]) {
 			baseProjectile = new ProjectileAOE(this);
 		} else {
@@ -86,7 +86,7 @@ public final class TowerFireEarth extends Tower {
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+			boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			if (progress[0][1]) {
 				Creep targetCreep = guider.findTargetCreep(this, hitsAir);
 				if (targetCreep != null) {

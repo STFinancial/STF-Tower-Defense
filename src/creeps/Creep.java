@@ -112,12 +112,12 @@ public class Creep implements Updatable {
 		//TODO: Implement these
 		creepTypes.add(type);
 		if (type == CreepType.GIANT) {
-			size = .7f;
-			hitBox.radius = size;
+			//size = .7f;
+			//hitBox.radius = size;
 		}
 		if (type == CreepType.QUICK) {
-			size = .2f;
-			hitBox.radius = size;
+			//size = .2f;
+			//hitBox.radius = size;
 		}
 	}
 
@@ -232,19 +232,21 @@ public class Creep implements Updatable {
 
 	//Clones the attributes back to their default states. Does not clone effects on the creep.
 	public Creep clone() {
-		Creep c = new Creep(level, CreepBuilder.getInstance().getNextId());
+		CreepBuilder.getInstance().begin();
+		Creep c = CreepBuilder.getInstance().build();
 		c.setAttributes(attributes.clone(c));
+		return c;
 	}
 
 	public String toString() {
-		String string = "hp = " + attributes.getCurrentHealth() + ", toughness = " + attributes.getCurrentToughness() + " , speed = " + attributes.getCurrentSpeed();
-		string += "\nelement = " + elementType + ", Modifiers: ";
-		for (CreepType type : creepTypes) {
-			string += " " + type;
-			if (type == CreepType.DEATH_RATTLE) {
-				string += "\n  " + children.size() + " Children: " + children.get(0).toString();
-			}
-		}
+		String string = "HP = " + attributes.getCurrentHealth() + ", Toughness = " + attributes.getCurrentToughness() + " , Speed = " + attributes.getCurrentSpeed();
+//		string += "\nelement = " + elementType + ", Modifiers: ";
+//		for (CreepType type : creepTypes) {
+//			string += " " + type;
+//			if (type == CreepType.DEATH_RATTLE) {
+//				string += "\n  " + children.size() + " Children: " + children.get(0).toString();
+//			}
+//		}
 		return string;
 	}
 	

@@ -8,7 +8,7 @@ import utilities.Circle;
 import utilities.GameConstants;
 import levels.Updatable;
 
-//TODO: Need to go through and make sure no default attributes are modified to ensure that clone works properly
+//TODO: Need to go through and make sure no default attribute values are modified to ensure that clone works properly
 final class CreepAttributes implements Updatable {
 	private Creep parent;
 	private Effects effects;
@@ -28,7 +28,7 @@ final class CreepAttributes implements Updatable {
 	private Deathrattle deathrattle;
 	private OnHit onHit;
 	
-	CreepAttributes(Creep parent) { this.parent = parent; effects = new Effects(this); }
+	CreepAttributes(Creep parent) { this.parent = parent; effects = new Effects(this); deathrattle = new Deathrattle(this, null, null); }
 	void setHealthValues(float maxHealth, float defaultHealthRegen) { health = new Health(this, maxHealth, defaultHealthRegen); }
 	void setShieldValues(float maxShield, float defaultShieldRegen) { shield = new Shield(this, maxShield, defaultShieldRegen); }
 	void setDamageResists(float[] damageResists) { damageResistances = new DamageResistances(this, damageResists); }
@@ -37,7 +37,6 @@ final class CreepAttributes implements Updatable {
 	void setToughnessValues(float defaultToughness) { toughness = new Toughness(this, defaultToughness); }
 	void setDisruptionValues(float defaultDisruption) { disruption = new Disruption(this, defaultDisruption); }
 	void setGoldValue(float defaultGoldValue) { goldValue = new GoldValue(this, defaultGoldValue); }
-	void setDeathrattle(List<ProjectileEffect> effects, List<Creep> children) { deathrattle = new Deathrattle(this, effects, children); }
 	void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { onHit = new OnHit(this, goldOnHit, cooldownOnHit, damageOnHit); }
 	void setSize(float defaultSize) { size = new Size(this, defaultSize); }
 	void setHealthCost(float defaultHealthCost) { healthCost = new HealthCost(this, defaultHealthCost); }
@@ -65,9 +64,11 @@ final class CreepAttributes implements Updatable {
 	
 	//Simple delegation one liners
 	void addAllEffects(ArrayList<ProjectileEffect> effects) { this.effects.addAllEffects(effects); }
+	void addDeathrattleChild(Creep child) { deathrattle.addDeathrattleChild(child); }
 	void addDeathrattleEffect(ProjectileEffect effect, Circle area) { deathrattle.addDeathrattleEffect(effect, area); }
-	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) { deathrattle.addDeathrattleEffect(effect, area, duration); }
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int defaultDuration) { deathrattle.addDeathrattleEffect(effect, area, defaultDuration); }
 	void addEffect(ProjectileEffect effect) { effects.addEffect(effect); }
+	void clearDeathrattle() { deathrattle = new Deathrattle(this, null, null); }
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }
 	void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { health.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
 	List<Creep> deathrattle() { return deathrattle.onDeath(); }

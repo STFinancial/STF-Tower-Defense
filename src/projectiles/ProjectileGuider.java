@@ -11,14 +11,19 @@ import creeps.Creep;
 import levels.EffectPatch;
 import levels.Level;
 import levels.Updatable;
+import maps.Map;
 
 //TODO: Eventually this should be taking care of updating the projectiles and calling the proper functions in level
 public final class ProjectileGuider implements Updatable {
 	private static final ProjectileGuider INSTANCE = new ProjectileGuider();
 	private Level level;
 	private ArrayList<Projectile> projectiles;
+	private Map map;
 	
-	private ProjectileGuider() { projectiles = new ArrayList<Projectile>(); }
+	private ProjectileGuider() { 
+		projectiles = new ArrayList<Projectile>(); 
+		map = null;
+	}
 	
 	public static ProjectileGuider getInstance() {
 		return ProjectileGuider.INSTANCE;
@@ -28,10 +33,19 @@ public final class ProjectileGuider implements Updatable {
 		this.level = level;
 		//Need to clear out all the old junk
 		projectiles = new ArrayList<Projectile>();
+		map = level.getMap();
 	}
 	
 	public void add(Projectile p) {
 		projectiles.add(p);
+	}
+	
+	public boolean isOutside(float x, float y) {
+		return map.isOutside(x, y);
+	}
+	
+	public void addGold(float amount) {
+		level.addGold(amount);
 	}
 	
 	//TODO: Using this method ends up duplicating a ton of work.
@@ -54,7 +68,7 @@ public final class ProjectileGuider implements Updatable {
 		Creep toTarget = null;
 		ArrayList<Creep> inRange = new ArrayList<Creep>();
 		for (Creep c : level.getCreeps()) {
-			if (c.hitBox.intersects(tower.targetZone)) {
+			if (c.hitBox.intersects(tower.getTargetZone())) {
 				if (hitsAir) {
 					inRange.add(c);
 				} else if (!c.isFlying()) {
@@ -62,7 +76,7 @@ public final class ProjectileGuider implements Updatable {
 				}
 			}
 		}
-		switch (tower.targetingType) {
+		switch (tower.getTargetingMode()) {
 		case FIRST:
 			int max = -1;
 			for (Creep c : inRange) {
@@ -151,10 +165,6 @@ public final class ProjectileGuider implements Updatable {
 		}
 		return null;
 	}
-
-	public HashSet<Creep> getGroundCreepAdjacentToEarth() {
-		return level.getGroundCreepAdjacentToEarth();
-	}
 	
 	public Creep getFirstCreepRadially(float x, float y, float radius, float angle, boolean hitsAir) {
 		//TODO: Is there a faster method for this? Should I check only the path intersection points?
@@ -164,7 +174,7 @@ public final class ProjectileGuider implements Updatable {
 		float currentY = y - yUnit;
 		Creep c = null;
 		Circle missile = new Circle(currentX, currentY, radius);
-		while (level.getMap().isOutside(currentX, currentY) || (c = intersectingCreep(missile, hitsAir)) == null) { //TODO: We need to find a better than n^2 method I think, we will see.
+		while (map.isOutside(currentX, currentY) || (c = intersectingCreep(missile, hitsAir)) == null) { //TODO: We need to find a better than n^2 method I think, we will see.
 			currentX -= xUnit;
 			currentY -= yUnit;
 			missile.x = currentX;
@@ -206,5 +216,9 @@ public final class ProjectileGuider implements Updatable {
 		}
 		level.createProjectileDetonationEvents(detonatedProj);
 		return 0;
+	}
+
+	public HashSet<Creep> getCreepAdjacentToEarth(boolean isFlying) {
+		return level.getCreepAdjacentToEarth(isFlying);
 	}
 }

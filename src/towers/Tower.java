@@ -13,7 +13,7 @@ import utilities.Circle;
 import utilities.GameConstants;
 public abstract class Tower implements Updatable {
 	//Positional Details
-	//TODO: Reduce visibility to private?
+	//TODO: Reduce visibility to private or package private, protected allows this to be extended elsewhere? Couldn't someone just extend in this package anyway?
 	protected Level level;
 	protected int x, y; //Top Left corner in Tile Coordinates
 	protected int width;
@@ -26,18 +26,18 @@ public abstract class Tower implements Updatable {
 	//Targeting Details
 	public static ProjectileGuider guider = ProjectileGuider.getInstance();
 	public static TowerManager manager = TowerManager.getInstance();
-	protected TargetingModeType targetingType;
+	protected TargetingModeType targetingMode;
 	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
 	//Misc.
 	protected TowerType type;
-	protected int towerID;
+	private int towerID;
 	protected Tower siphoningFrom;
 	protected ArrayList<Tower> siphoningTo;
 	protected Projectile baseProjectile;
 	
 	//Upgrading Information
-	protected boolean[][][] upgradeTracks;
+	private boolean[][][] upgradeTracks;
 	
 	//Base Attributes
 	protected BaseAttributeList baseAttributeList;
@@ -92,7 +92,7 @@ public abstract class Tower implements Updatable {
 		this.centerX = x + width / 2f;
 		this.centerY = y + height / 2f;
 		this.targetZone = new Circle(centerX, centerY, range);
-		this.targetingType = TargetingModeType.FIRST;
+		this.targetingMode = TargetingModeType.FIRST;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
 		this.qLevel = 0;
@@ -116,16 +116,78 @@ public abstract class Tower implements Updatable {
 	public float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
 	public int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
 	public float getSplashRadius() { return splashRadius; }
+	public TargetingModeType getTargetingMode() { return targetingMode; }
 	public Circle getTargetZone() { return targetZone; }
 	public TowerType getType() { return type; }
 	public boolean hitsAir() { return hitsAir; }
 	public boolean splashHitsAir() { return splashHitsAir; }
 	
+	public float getTrackGoldValue() {
+		float goldValue = 0;
+		if (type.isBaseType()) { 
+			return 0;
+		} else {
+			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+					goldValue += TowerType.getUpgradeCost(type, path, level) * GameConstants.BASE_TRACK_UPGRADE_REFUND_RATE;
+				}
+			}
+		}
+		return goldValue;
+	}
+	
+	public float getTotalGoldValue() {
+		float goldValue = type.getDowngradeType().getCost() * GameConstants.BASE_TOWER_REFUND_RATE; //TODO: There should be costs for all tower types
+		DamageType d;
+		TowerType upgradeType;
+		for (int dtype = 0; dtype < GameConstants.NUM_DAMAGE_TYPES; dtype++) {
+			d = DamageType.values()[dtype];
+			if (d.isBaseElemental()) { //if its a base elemental type
+				for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+					for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+						upgradeType = TowerType.getUpgrade(TowerType.getTowerTypeFromDamage(d), type.getDowngradeType());
+						if (upgradeTracks[dtype][path][level]) { //if we've bought this upgrade at some time
+							goldValue += TowerType.getUpgradeCost(upgradeType, path, level) * GameConstants.BASE_TOTAL_UPGRADE_REFUND_RATE;
+						}
+					}
+				}
+			}
+		}
+		return goldValue;
+	}
+	
+	public int getTowerID() { return towerID; }
+	boolean[][][] getUpgradeTracks() { return upgradeTracks; }
+	
+	void setUpgradeTracks(boolean[][][] upgradeTracks) {
+		this.upgradeTracks = upgradeTracks;
+		if (type.isBaseType()) {
+			return;
+		} else {
+			DamageType trackType = DamageType.getDamageTypeFromTower(siphoningFrom.getType().getDowngradeType());
+			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+					if (upgradeTracks[trackType.ordinal()][path][level]) {
+						baseAttributeList.upgrades[path][level].baseUpgrade(this);
+					}
+				}
+			}
+		}
+	}
+	
+	void removeTrackUpgrades() {
+		if (type.isBaseType()) {
+			return;
+		} else {
+			
+		}
+	}
+	
 	public Projectile fireProjectile() {
 		return duplicateProjectile(baseProjectile);
 	}
 
-	public void updateTowerChain() {
+	void updateTowerChain() {
 		adjustSiphonChain(this);
 	}
 	
@@ -216,10 +278,10 @@ public abstract class Tower implements Updatable {
 	private void adjustMidSiphonUpgrades() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
-				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
-					if (progress[track][uNum]) {
-						baseAttributeList.upgrades[track][uNum].postSiphonUpgrade(this);
+			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+					if (progress[path][level]) {
+						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
 					}
 				}
 			}
@@ -229,10 +291,10 @@ public abstract class Tower implements Updatable {
 	private void adjustPostSiphonUpgrades() {
 		if (siphoningFrom != null) {
 			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int track = 0; track < GameConstants.NUM_UPGRADE_PATHS; track++) {
-				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
-					if (progress[track][uNum]) {
-						baseAttributeList.upgrades[track][uNum].postSiphonUpgrade(this);
+			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+					if (progress[path][level]) {
+						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
 					}
 				}
 			}
@@ -266,11 +328,11 @@ public abstract class Tower implements Updatable {
 	 * 
 	 * @param path - 1 or 0 depending on the upgrade path
 	 */
-	public void upgrade(int track) {
-		for (int i = 0; i < GameConstants.UPGRADE_PATH_LENGTH; i++) {
-			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i]) {
-				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][track][i] = true;
-				baseAttributeList.upgrades[track][i].baseUpgrade(this);
+	public void upgrade(int path) {
+		for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level]) {
+				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level] = true;
+				baseAttributeList.upgrades[path][level].baseUpgrade(this);
 				updateTowerChain();
 				return;
 			}
@@ -279,18 +341,18 @@ public abstract class Tower implements Updatable {
 	
 	/**
 	 * 
-	 * @param track - Each tower has two upgrade tracks, and this specifies whether it is the upper (0), or lower (1) track that we want to upgrade
+	 * @param path - Each tower has two upgrade paths, and this specifies whether it is the upper (0), or lower (1) path that we want to upgrade
 	 * @param playerGold - This is the amount of gold that the player has. This is passed in to be more clear about what the boolean returned from this function will mean
-	 * @return A boolean value specifying whether the given track can be upgraded both in terms of whether the upgrade is available, and if the player has enough gold
+	 * @return A boolean value specifying whether the given path can be upgraded both in terms of whether the upgrade is available, and if the player has enough gold
 	 */
-	public boolean canUpgrade(int track, int playerGold) {
+	public boolean canUpgrade(int path, int playerGold) { //TODO: Should we really pass player gold?
 		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
 			return false;
 		} else {
 			int sfType = siphoningFrom.baseAttributeList.downgradeType.ordinal();
 			for (int i = 0; i < GameConstants.UPGRADE_PATH_LENGTH; i++) {
-				if (!upgradeTracks[sfType][track][i]) {
-					if (baseAttributeList.upgrades[track][i].baseCost <= playerGold) {
+				if (!upgradeTracks[sfType][path][i]) {
+					if (baseAttributeList.upgrades[path][i].baseCost <= playerGold) {
 						return true;
 					}
 					return false;

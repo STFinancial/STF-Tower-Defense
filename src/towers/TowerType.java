@@ -4,9 +4,6 @@ import utilities.GameConstants;
 import creeps.DamageType;
 
 //TODO: Working on this, need to go back through and modify slow coefficients then
-//TODO: Need to go through and remove doesOnHit and doesSplash from subclasses and maybe projectile constructors
-//TODO: Implement a "doesSlow" field for towers so that some towers can be a conduit of slows and splashes but not actually utilzie the stats. This prevents towers from doing things out of flavor
-//TODO: Do the same with doesSplash, honestly.
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
 public enum TowerType {
 	//TODO: I want to properly comment each of the enums so they are working for the javadoc and you can get information about each tower.
@@ -415,7 +412,7 @@ public enum TowerType {
 						 text 		= "Doubles the damage of this tower";
 						 baseCost   = 9001;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=2; } }
+						 public void midSiphonUpgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++) { t.damageArray[i]*=2; } }
 						 public void postSiphonUpgrade(Tower t) {  }
 					},
 				}
@@ -1457,7 +1454,7 @@ public enum TowerType {
 						 text 		= "Increase all ELEMENTAL DAMAGE done by this tower";
 						 baseCost   = 1400;}
 						 public void baseUpgrade(Tower t) {  }
-						 public void midSiphonUpgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES-1;i++) { t.damageArray[i]*=1.25; } }
+						 public void midSiphonUpgrade(Tower t) { for (int i=0;i<GameConstants.NUM_DAMAGE_TYPES;i++) { if(DamageType.values()[i] != DamageType.PHYSICAL) { t.damageArray[i]*=1.25; } } }
 						 public void postSiphonUpgrade(Tower t) { }
 					},
 					new Upgrade() {
@@ -1514,6 +1511,7 @@ public enum TowerType {
 		};
 	}}),  
 	WIND_WATER (new BaseAttributeList(){{
+		//TODO: Something about interest rate maybe?
 		//Life tower, though it doesn't really make sense with the elements involved (or does it)
 		//Passively generates gold and siphons max health
 		name					= "Life";
@@ -1720,7 +1718,7 @@ public enum TowerType {
 		baseAttributeList.type = this;
 		this.baseAttributeList = baseAttributeList;
 	}
-	
+	//TODO: Reduce visibility of this and other getters?
 	public static TowerType getUpgrade(TowerType source, TowerType destination) {
 		if (source == WIND) {
 			if (destination == WIND) {
@@ -1764,6 +1762,25 @@ public enum TowerType {
 			}
 		}
 		return null;
+	}
+	
+	public static TowerType getTowerTypeFromDamage(DamageType d) {
+		switch (d) {
+		case EARTH:
+			return EARTH;
+		case FIRE:
+			return FIRE;
+		case WATER:
+			return WATER;
+		case WIND:
+			return WIND;
+		default:
+			return null;	
+		}
+	}
+	
+	public static float getUpgradeCost(TowerType type, int path, int level) {
+		return type.baseAttributeList.upgrades[path][level].baseCost;
 	}
 
 	BaseAttributeList getAttributeList() {

@@ -44,7 +44,7 @@ public final class TowerFireFire extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][2]) {
 			ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
 			effects.add(new Damage(damageArray[DamageType.FIRE.ordinal()] * 0.2f, DamageType.FIRE, baseProjectile));

@@ -65,7 +65,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		double yOff = angleSin * currentSpeed;
 		x -= xOff;
 		y -= yOff;
-		if (level.getMap().isOutside(x, y)) {
+		if (guider.isOutside(x, y)) {
 			dud = true;
 			return -1;
 		}

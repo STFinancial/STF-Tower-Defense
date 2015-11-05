@@ -44,7 +44,7 @@ public final class TowerWaterFire extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileBasic(this);
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile.addSpecificCreepEffect(new SuppressionDeathrattle(deathrattleSuppressionDuration, 1, DamageType.WATER, baseProjectile));
 		}

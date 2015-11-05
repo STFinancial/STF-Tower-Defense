@@ -34,7 +34,7 @@ public final class TowerWindWater extends Tower {
 		baseProjectile.clearAllBasicEffects();
 		baseProjectile.addSpecificCreepEffect(new SiphonLife(maxHealthModifier, DamageType.WATER, baseProjectile, goldModifier));
 	
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
 			
 		}

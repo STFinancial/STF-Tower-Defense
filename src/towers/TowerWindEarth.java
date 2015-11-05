@@ -32,7 +32,7 @@ public final class TowerWindEarth extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * range, passThroughModifier, 1);
 		} else {

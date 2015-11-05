@@ -96,7 +96,7 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	
 	@Override
 	protected void createAuras() {
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[1][3]) {
 			float sum = 0;
 			for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {

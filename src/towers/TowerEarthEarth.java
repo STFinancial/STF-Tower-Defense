@@ -34,7 +34,7 @@ public final class TowerEarthEarth extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileAOE(this);
-		boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
 			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
 		}

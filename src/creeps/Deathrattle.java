@@ -31,6 +31,10 @@ final class Deathrattle extends Attribute implements Updatable {
 	boolean hasDeathrattleEffect() { return effects != null || effects.size() != 0; }
 	boolean hasDeathrattleChildren() { return children != null || children.size() != 0; }
 	
+	void addDeathrattleChild(Creep child) {
+		children.add(child);
+	}
+	
 	void addDeathrattleEffect(ProjectileEffect effect, Circle area) {
 		effects.add(new DeathrattleEffect(effect, area, -1));
 	}
@@ -41,7 +45,7 @@ final class Deathrattle extends Attribute implements Updatable {
 	
 	List<Creep> onDeath() {
 		if (deathrattleSuppressionTimer < 0) {
-			for (DeathrattleEffect e: effects) {
+			for (DeathrattleEffect e: effects) { //TODO: Do I want to use the defaultDuration?
 				e.applyEffect(1); //TODO: Could be 1 - suppression modifier or something
 			}
 			return children;

@@ -36,11 +36,12 @@ public class Level {
 	private int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	private int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
 	
-	private int gold = 500;
+	private float gold = 500;
 	private int health = 100;
 	private int nextSpawnTick = -1;
 	private Wave currentWave;
 	private boolean roundInProgress = false;
+	private boolean creepLeft;
 
 	//Managers and Guiders
 	private ProjectileGuider pGuider;
@@ -52,14 +53,12 @@ public class Level {
 
 	private Path groundPath, airPath, proposedGroundPath;
 	//This will change when we create and destroy new terrain
+	//TODO: I think having some of these as hash sets is sub-optimal.
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
-	private HashSet<Creep> creepAdjacentToEarth = new HashSet<Creep>();
+	private HashSet<Creep> groundCreepAdjacentToEarth = new HashSet<Creep>();
+	private HashSet<Creep> allCreepAdjacentToEarth = new HashSet<Creep>();
 
 	private ArrayList<GameEvent> events = new ArrayList<GameEvent>();
-	//Temp Variables for readability.. wat
-	Creep c;
-	int i;
-	private boolean creepLeft;
 
 	public Level() {
 		this(new Player(), (new MapGenerator()).generateMap(), (new CreepWaveGenerator()).generateCreepWaves());
@@ -99,6 +98,8 @@ public class Level {
 	}
 
 	public void gameTick() {
+		int i;
+		Creep c;
 		//Check for new spawns from creep wave;
 		if (tick == nextSpawnTick) {
 			spawnCreeps(currentWave.getNextCreeps());
@@ -142,11 +143,11 @@ public class Level {
 
 		tManager.update();
 		
-		Iterator<EffectPatch> i = effectPatches.iterator();
-		while (i.hasNext()) {
-			EffectPatch e = i.next();
+		Iterator<EffectPatch> it = effectPatches.iterator();
+		while (it.hasNext()) {
+			EffectPatch e = it.next();
 			if (e.update() == -1) {
-				i.remove();
+				it.remove();
 			}
 		}
 
@@ -214,8 +215,11 @@ public class Level {
 		tManager.destroyTower(t);
 	}
 
-	public Tower unsiphonTower(Tower destination) {
-		Tower newDest = tManager.unsiphonTower(destination);
+	public Tower unsiphonTower(Tower destination, boolean refund) {
+		if (refund) {
+			gold += destination.getTrackGoldValue();
+		}
+		Tower newDest = tManager.unsiphonTower(destination, refund);
 		//TODO: Need to refund some gold
 		newEvent(GameEventType.TOWER_DESTROYED, destination);
 		newEvent(GameEventType.TOWER_CREATED, newDest);
@@ -238,17 +242,6 @@ public class Level {
 //	public boolean canSellTower(Tower t) {
 //		return t.siphoningTo == null;
 //	}
-	
-	//GUI should call this method
-	//TODO this method needs to be more sophistocated if we've bought upgrades
-	public void sellTower(Tower t) {
-		if (t.siphoningFrom == null) {
-			gold += t.cost * .75f;
-		} else {
-			gold += t.cost * .5f;
-		}
-		razeTower(t);
-	}
 
 	public void updatePath() {
 		VertexGraph vg = new VertexGraph();
@@ -281,14 +274,20 @@ public class Level {
 	public ArrayList<Creep> getCreeps() { return creeps; }
 	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this... I would rather have delegation methods
 	
-	HashSet<Creep> getGroundCreepAdjacentToEarth() {
-		return creepAdjacentToEarth;
+	public HashSet<Creep> getCreepAdjacentToEarth(boolean isFlying) {
+		if (isFlying) {
+			return allCreepAdjacentToEarth;
+		} else {
+			return groundCreepAdjacentToEarth;
+		}
 	}
 	
 	private void updateGroundCreepAdjacentToEarth() {
-		creepAdjacentToEarth.clear();
+		groundCreepAdjacentToEarth.clear();
+		allCreepAdjacentToEarth.clear();
 		for (Circle c: earthTiles) {
-			creepAdjacentToEarth.addAll(ProjectileGuider.getInstance().getCreepInRange(c, false));
+			groundCreepAdjacentToEarth.addAll(ProjectileGuider.getInstance().getCreepInRange(c, false));
+			allCreepAdjacentToEarth.addAll(ProjectileGuider.getInstance().getCreepInRange(c, true));
 		}
 	}
 
