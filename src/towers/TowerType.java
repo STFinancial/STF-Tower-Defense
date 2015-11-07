@@ -1793,7 +1793,7 @@ public enum TowerType {
 	}
 	
 	public TowerType getDowngradeType() {
-		if (isBaseType()) {
+		if (isBaseType()) { //TODO: Should we really have to check this here?
 			return this;
 		}
 		return baseAttributeList.downgradeType;

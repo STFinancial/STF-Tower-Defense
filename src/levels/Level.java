@@ -36,7 +36,7 @@ public class Level {
 	private int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	private int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
 	
-	private float gold = 500;
+	private float gold = 10000;
 	private int health = 100;
 	private int nextSpawnTick = -1;
 	private Wave currentWave;
@@ -125,8 +125,6 @@ public class Level {
 			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
 			updateGroundCreepAdjacentToEarth();
 		}
-		
-		//TODO: This should be delegated to the ProjectileGuider
 		pGuider.update();
 
 		for (i = 0; i < creeps.size(); i++) {
@@ -181,6 +179,7 @@ public class Level {
 	}
 
 	public void addGold(float amount) { gold += amount; }
+	public float getGold() { return gold; }
 	public void removeGold(float amount) { gold -= amount; }
 	
 	private void killCreep(Creep c) {
