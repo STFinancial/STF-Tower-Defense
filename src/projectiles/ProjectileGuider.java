@@ -22,6 +22,7 @@ public final class ProjectileGuider implements Updatable {
 	
 	private ProjectileGuider() { 
 		projectiles = new ArrayList<Projectile>(); 
+		level = null;
 		map = null;
 	}
 	
@@ -35,6 +36,8 @@ public final class ProjectileGuider implements Updatable {
 		projectiles = new ArrayList<Projectile>();
 		map = level.getMap();
 	}
+	
+	public boolean isLevelSet() { return level != null; } 
 	
 	public void add(Projectile p) {
 		projectiles.add(p);

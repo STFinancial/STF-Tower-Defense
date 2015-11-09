@@ -119,8 +119,8 @@ public class PathFinder {
 	}
 
 	public static VertexGraph mapToVertexGraph(VertexGraph vg, Map map) {
-		int effHeight = map.height - 1;
-		int effWidth = map.width - 1;
+		int effHeight = map.getHeight() - 1;
+		int effWidth = map.getWidth() - 1;
 		vg.effHeight = effHeight;
 		vg.effWidth = effWidth;
 		vg.endingVertices = new ArrayList<Vertex>();

@@ -3,11 +3,11 @@ package maps;
  * Essentially the level data of a game, contains information about the Size, Tiles, Money, and Creeps (Possibly more as we expand)
  */
 public class Map {
-	public MapType type;
+	MapType type;
 	
-	public Tile[][] map;
-	public int width;
-	public int height;
+	Tile[][] map;
+	private int width;
+	private int height;
 	
 	public Map(int width, int height){
 		map = new Tile[height][width];
@@ -19,12 +19,20 @@ public class Map {
 		return map[y][x].type.buildable;
 	}
 	
+	public int getHeight() {
+		return height;
+	}
+	
 	public TileType getTileType(int y, int x) {
 		return map[y][x].type;
 	}
 	
 	public Tile getTile(int y, int x) {
 		return map[y][x];
+	}
+	
+	public int getWidth() { 
+		return width;
 	}
 	
 	public void setTile(int y, int x, TileType type){

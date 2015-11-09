@@ -18,6 +18,7 @@ public final class TowerManager implements Updatable {
 	private Level level;
 	
 	private ArrayList<Tower> towers;
+	private HashMap<Tile, Tower> towerPositions;
 	private HashMap<Tower, ArrayList<Aura>> creates;
 	private HashMap<Aura, ArrayList<Tower>> affects;
 	private Map map;
@@ -29,6 +30,8 @@ public final class TowerManager implements Updatable {
 		towers = new ArrayList<Tower>();
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
+		towerPositions = new HashMap<Tile, Tower>();
+		level = null;
 		map = null; //TODO: how do we deal with the null pointer exception that this will create, should we force them to pass a level?
 		currentTowerID = 0;
 		earthEarth = 0;
@@ -44,16 +47,28 @@ public final class TowerManager implements Updatable {
 		towers = new ArrayList<Tower>();
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
+		towerPositions = new HashMap<Tile, Tower>();
 		map = level.getMap();
 		currentTowerID = 0;
 		earthEarth = 0;
 	}
 	
+	public boolean isLevelSet() { return level != null; } 
+	
 	public boolean hasEarthEarth() { return earthEarth > 0; }
+	
+	public Tower getTower(Tile tile) {
+		return towerPositions.get(tile);
+	}
+	
+	public Tower getTower(int x, int y) {
+		return towerPositions.get(map.getTile(y, x));
+	}
 	
 	public Tower constructTower(Tile tile, TowerType type) {
 		Tower t = TowerFactory.generateTower(level, tile, type, currentTowerID++);
 		towers.add(t);
+		towerPositions.put(tile, t);
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).addTower(t);
@@ -64,6 +79,7 @@ public final class TowerManager implements Updatable {
 	
 	private void constructTower(Tower t) {
 		towers.add(t);
+		
 		for (int i = 0; i < t.width; i++) {
 			for (int j = 0; j < t.height; j++) {
 				map.getTile(t.y + j, t.x + i).addTower(t);
@@ -110,6 +126,7 @@ public final class TowerManager implements Updatable {
 		}
 		removeTower(destination); // Remove the old destination tower.
 		constructTower(newDest); //"build" the new one
+		towerPositions.put(newDest.topLeft, newDest);
 		newDest.updateTowerChain(); //update the tower chain
 		return newDest;
 	}
@@ -146,6 +163,7 @@ public final class TowerManager implements Updatable {
 		}
 		removeTower(destination); //remove old dest
 		constructTower(newDest); //construct new dest
+		towerPositions.put(newDest.topLeft, newDest);
 		newDest.updateTowerChain();
 		siph.updateTowerChain();
 		return newDest;

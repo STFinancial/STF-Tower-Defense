@@ -67,8 +67,8 @@ public class Level {
 	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
 		this.player = player;
 		this.map = map;
-		for (int y = 0; y < map.height; y++) {
-			for (int x = 0; x < map.width; x++) {
+		for (int y = 0; y < map.getHeight(); y++) {
+			for (int x = 0; x < map.getWidth(); x++) {
 				if (map.getTileType(y, x) == TileType.EARTH) { 
 					earthTiles.add(new Circle(x + 0.5f, y + 0.5f, 1.5f));
 				}
@@ -296,12 +296,12 @@ public class Level {
 	}
 
 	public boolean canBuild(TowerType type, int y, int x) {
-		if (type.getCost() > gold) {
+		if (!type.isBaseType() || type.getCost() > gold) {
 			return false;
 		}
 		int width = type.getWidth();
 		int height = type.getHeight();
-		if (x < 0 || y < 0 || x + width >= map.width || y + height >= map.height) {
+		if (x < 0 || y < 0 || x + width >= map.getWidth() || y + height >= map.getHeight()) {
 			proposedGroundPath = null;
 			return false;
 		}
