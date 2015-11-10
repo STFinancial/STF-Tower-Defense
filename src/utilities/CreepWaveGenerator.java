@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Random;
 
 import creeps.Creep;
+import creeps.CreepBuilder;
 import creeps.CreepType;
 import creeps.DamageType;
 import creeps.Wave;
+import levels.Level;
 
 public class CreepWaveGenerator {
 
@@ -41,6 +43,7 @@ public class CreepWaveGenerator {
 	public static float FLYING_HEALTH_PENALTY = .5f;
 	public static float FLYING_SPEED_PENALTY = .7f;
 
+	Level level;
 	Random r = new Random();
 	int numberOfWaves = 10;
 	float baseDifficulty = 1f, linearDifficulty = .25f, exponentialDifficulty = 1.05f, difficulty;
@@ -52,8 +55,27 @@ public class CreepWaveGenerator {
 	float[] typeChances = { .05f, .05f, 0f, .1f, .1f, 0f, 0f, 0f }; // Out of 1, matches indexs of creeps.CreepType
 	float[] elementalChances = { .25f, .25f, .25f, .25f }; // Add to 1, matchesindex of creeps.ElementType
 
+	public CreepWaveGenerator(Level level) {
+		this.level = level;
+	}
+	
 	public ArrayList<Wave> generateCreepWaves() {
-		return new ArrayList<Wave>();
+		ArrayList<Wave> waves = new ArrayList<Wave>();
+		CreepBuilder cb = CreepBuilder.getInstance();
+		cb.setInstanceLevel(level);
+		cb.begin();
+		cb.setDamageResists(new float[]{0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
+		cb.setGoldValue(25);
+		cb.setHealthCost(1);
+		cb.setHealthValues(300, 0);
+		cb.setSize(0.3f);
+		Creep c = cb.build();
+		Wave w = new Wave();
+		for (int i = 0; i < 5; i++) {
+			w.addCreep(c.clone(), i*25);
+		}
+		waves.add(w);
+		return waves;
 	}
 	
 //	public ArrayList<Wave> generateCreepWaves() {

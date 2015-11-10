@@ -8,7 +8,7 @@ import java.util.HashSet;
  * Methods to grab next creep(s), and get time for creep after
  */
 public class Wave {
-
+	//TODO: Should switch this to a queue tbh
 	public ArrayList<Creep> creeps; // List of creeps that we will spawn
 	public ArrayList<Integer> timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
 	public int size;

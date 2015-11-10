@@ -15,7 +15,8 @@ public final class CreepBuilder {
 	private CreepBuilder() {}
 	
 	public static CreepBuilder getInstance() { return INSTANCE; }
-	public void setInstanceLevel(Level level) { this.level = level; }
+	//TODO: Thinking maybe I should have getInstance take level (all singletons) and make sure that it's set
+	public void setInstanceLevel(Level level) { this.level = level; } //TODO: Why is this named differently than for the other singletons?
 	private int getNextId() { return idGenerator++; }
 	public void begin() {
 		currentCreep = new Creep(level, getNextId());

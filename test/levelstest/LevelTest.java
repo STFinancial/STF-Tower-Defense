@@ -81,12 +81,9 @@ public class LevelTest {
 	}
 	
 	@Test
-	public void testSiphonTower() {
-		Tower t1 = towers.get(0);
-		Tower t2 = towers.get(1);
-		Tower newDest = l.siphonTower(t1, t2);
-		TowerType type = newDest.getType();
-		assertFalse(type.isBaseType());
-		assertEquals(type, TowerType.FIRE_EARTH);
+	public void testKillCreeps() {
+		search: {
+		
+		}
 	}
 }
