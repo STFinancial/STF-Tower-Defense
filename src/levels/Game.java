@@ -27,7 +27,15 @@ public class Game {
 		this.player = player;
 		this.map = map;
 		level = new Level(this, player, map);
-		
+		this.projManager = ProjectileManager.getInstance();
+		this.towerManager = TowerManager.getInstance();
+		this.creepManager = CreepManager.getInstance();
+		this.creepBuilder = CreepBuilder.getInstance();
+		this.creepBuilder.setInstanceLevel(level);
+		this.waveGenerator = CreepWaveGenerator.getInstance();
+		this.waveGenerator.setLevel(level);
 	}
+	
+	public Player getPlayer() { return player; }
 	
 }
