@@ -6,7 +6,7 @@ import creeps.Creep;
 import creeps.DamageType;
 
 import projectiles.Projectile;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 
 public class Detonation extends ProjectileEffect {
 	public Detonation(float modifier, DamageType damageType, Projectile parent) {
@@ -16,7 +16,7 @@ public class Detonation extends ProjectileEffect {
 	@Override
 	protected void applyEffect() {
 		//TODO: Optimization - For this and many methods we call the getters on the parents many times rather than once when the effects are created.
-		HashSet<Creep> inRange = ProjectileGuider.getInstance().getCreepAdjacentToEarth(parent.hitsAir()); // Maybe there should be a separate variable for that, who knows.
+		HashSet<Creep> inRange = ProjectileManager.getInstance().getCreepAdjacentToEarth(parent.hitsAir()); // Maybe there should be a separate variable for that, who knows.
 		for (Creep c: inRange) {
 			c.damage(damageType, modifier, parent.getResistPen(damageType, false), parent.getResistPen(damageType, true), parent.ignoresShield(), parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
 		}

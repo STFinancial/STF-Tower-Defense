@@ -24,7 +24,7 @@ public abstract class Tower implements Updatable {
 	protected Circle targetZone;
 
 	//Targeting Details
-	public static ProjectileGuider guider = ProjectileGuider.getInstance();
+	public static ProjectileManager guider = ProjectileManager.getInstance();
 	public static TowerManager manager = TowerManager.getInstance();
 	protected TargetingModeType targetingMode;
 	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates

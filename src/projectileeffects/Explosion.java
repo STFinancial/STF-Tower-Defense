@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import creeps.Creep;
 import creeps.DamageType;
 import projectiles.Projectile;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 import utilities.Circle;
 
 public final class Explosion extends ProjectileEffect {
@@ -31,7 +31,7 @@ public final class Explosion extends ProjectileEffect {
 	@Override
 	protected void applyEffect() {
 		applyEffect();
-		for (Creep c: ProjectileGuider.getInstance().getCreepInRange(new Circle(creep.getX(), creep.getY(), explosionRadius), parent.hitsAir())) {
+		for (Creep c: ProjectileManager.getInstance().getCreepInRange(new Circle(creep.getX(), creep.getY(), explosionRadius), parent.hitsAir())) {
 			c.addAllEffects(explosionEffects);
 		}
 	}

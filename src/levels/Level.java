@@ -12,13 +12,14 @@ import maps.TileType;
 import maps.Vertex;
 import maps.VertexGraph;
 import creeps.Creep;
+import creeps.CreepManager;
 import creeps.CreepType;
 import creeps.Wave;
 import creeps.DamageType;
 import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
@@ -29,9 +30,10 @@ import utilities.PathFinder;
  * Executes main game logic loop
  */
 public class Level {
-	private final Map map;
-	private final Player player;
-	private final ArrayList<Wave> creepWaves;
+	private Game game;
+	private Map map;
+	private Player player;
+	private ArrayList<Wave> creepWaves;
 
 	private int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
 	private int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
@@ -43,9 +45,10 @@ public class Level {
 	private boolean roundInProgress = false;
 	private boolean creepLeft;
 
-	//Managers and Guiders
-	private ProjectileGuider pGuider;
-	private TowerManager tManager;
+	//Managers
+	private ProjectileManager projManager;
+	private TowerManager towerManager;
+	private CreepManager creepManager;
 	
 	//Currently loaded/active units
 	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
@@ -59,14 +62,17 @@ public class Level {
 	private HashSet<Creep> allCreepAdjacentToEarth = new HashSet<Creep>();
 
 	private ArrayList<GameEvent> events = new ArrayList<GameEvent>();
-
-	public Level() {
-		this(new Player(), (new MapGenerator()).generateMap(), (new CreepWaveGenerator()).generateCreepWaves());
-	}
-
-	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
+	
+	Level(Game game, Player player, Map map) {
+		this.game = game;
 		this.player = player;
 		this.map = map;
+		this.projManager = ProjectileManager.getInstance();
+		this.projManager.setLevel(this);
+		this.towerManager = TowerManager.getInstance();
+		this.towerManager.setLevel(this);
+		this.creepManager = CreepManager.getInstance();
+		this.creepManager.setLevel(this);
 		for (int y = 0; y < map.getHeight(); y++) {
 			for (int x = 0; x < map.getWidth(); x++) {
 				if (map.getTileType(y, x) == TileType.EARTH) { 
@@ -74,14 +80,11 @@ public class Level {
 				}
 			}
 		}
-		this.creepWaves = creepWaves;
-		
-		pGuider = ProjectileGuider.getInstance();
-		pGuider.setLevel(this);
-		tManager = TowerManager.getInstance();
-		tManager.setLevel(this);
-		
 		updatePath();
+	}
+	
+	void setCreepWaves(ArrayList<Wave> creepWaves) { 
+		this.creepWaves = creepWaves;
 	}
 
 	//Can be called from App
@@ -121,11 +124,11 @@ public class Level {
 				}
 			}
 		}
-		if (tManager.hasEarthEarth()) {
+		if (towerManager.hasEarthEarth()) {
 			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
 			updateGroundCreepAdjacentToEarth();
 		}
-		pGuider.update();
+		projManager.update();
 
 		for (i = 0; i < creeps.size(); i++) {
 			c = creeps.get(i);
@@ -139,7 +142,7 @@ public class Level {
 			}
 		}
 
-		tManager.update();
+		towerManager.update();
 		
 		Iterator<EffectPatch> it = effectPatches.iterator();
 		while (it.hasNext()) {
@@ -202,23 +205,23 @@ public class Level {
 	public Tower buyTower(TowerType type, int y, int x) {
 		Tile tile = map.getTile(y, x);
 		gold -= type.getCost(); //TODO: In this method in tower should be affected by global talents
-		Tower t = tManager.constructTower(tile, type);
+		Tower t = towerManager.constructTower(tile, type);
 		updatePath();
-		tManager.updateTowerChain(t);
+		towerManager.updateTowerChain(t);
 		newEvent(GameEventType.TOWER_CREATED, t);
 		return t;
 	}
 	
 	public void sellTower(Tower t) {
 		//Need to unsiphon the tower and then get the gold value
-		tManager.destroyTower(t);
+		towerManager.destroyTower(t);
 	}
 
 	public Tower unsiphonTower(Tower destination, boolean refund) {
 		if (refund) {
 			gold += destination.getTrackGoldValue();
 		}
-		Tower newDest = tManager.unsiphonTower(destination, refund);
+		Tower newDest = towerManager.unsiphonTower(destination, refund);
 		//TODO: Need to refund some gold
 		newEvent(GameEventType.TOWER_DESTROYED, destination);
 		newEvent(GameEventType.TOWER_CREATED, newDest);
@@ -226,7 +229,7 @@ public class Level {
 	}
 
 	public Tower siphonTower(Tower source, Tower destination) {
-		Tower newDest = tManager.siphonTower(source, destination);
+		Tower newDest = towerManager.siphonTower(source, destination);
 		//TODO: Need to charge some gold
 		newEvent(GameEventType.TOWER_DESTROYED, destination);
 		newEvent(GameEventType.TOWER_CREATED, newDest);
@@ -285,13 +288,13 @@ public class Level {
 		groundCreepAdjacentToEarth.clear();
 		allCreepAdjacentToEarth.clear();
 		for (Circle c: earthTiles) {
-			groundCreepAdjacentToEarth.addAll(ProjectileGuider.getInstance().getCreepInRange(c, false));
-			allCreepAdjacentToEarth.addAll(ProjectileGuider.getInstance().getCreepInRange(c, true));
+			groundCreepAdjacentToEarth.addAll(ProjectileManager.getInstance().getCreepInRange(c, false));
+			allCreepAdjacentToEarth.addAll(ProjectileManager.getInstance().getCreepInRange(c, true));
 		}
 	}
 
 	public void addProjectile(Projectile p) {
-		pGuider.add(p);
+		projManager.add(p);
 		newEvent(GameEventType.PROJECTILE_FIRED, p);
 	}
 

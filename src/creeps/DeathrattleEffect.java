@@ -2,7 +2,7 @@ package creeps;
 
 import levels.Updatable;
 import projectileeffects.ProjectileEffect;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 import utilities.Circle;
 
 class DeathrattleEffect implements Updatable {
@@ -25,7 +25,7 @@ class DeathrattleEffect implements Updatable {
 	}
 	
 	void applyEffect(float modifier) { //TODO: Should this take a modifier?
-		for (Creep c: ProjectileGuider.getInstance().getCreepInRange(areaOfEffect, effect.hitsAir())) {
+		for (Creep c: ProjectileManager.getInstance().getCreepInRange(areaOfEffect, effect.hitsAir())) {
 			c.addEffect(effect);
 		}
 	}

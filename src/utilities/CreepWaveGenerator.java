@@ -13,6 +13,8 @@ import levels.Level;
 
 public class CreepWaveGenerator {
 
+	private final static CreepWaveGenerator INSTANCE = new CreepWaveGenerator();
+	
 	/*
 	 * Creep waves have difficulty and length each wave is broken into "Chunks"
 	 * which consist of multiple copies of the same creep The creeps stats are
@@ -55,7 +57,13 @@ public class CreepWaveGenerator {
 	float[] typeChances = { .05f, .05f, 0f, .1f, .1f, 0f, 0f, 0f }; // Out of 1, matches indexs of creeps.CreepType
 	float[] elementalChances = { .25f, .25f, .25f, .25f }; // Add to 1, matchesindex of creeps.ElementType
 
-	public CreepWaveGenerator(Level level) {
+	private CreepWaveGenerator() {}
+	
+	public static CreepWaveGenerator getInstance() {
+		return INSTANCE;
+	}
+	
+	public void setLevel(Level level) {
 		this.level = level;
 	}
 	

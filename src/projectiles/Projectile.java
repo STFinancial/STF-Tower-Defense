@@ -40,7 +40,7 @@ public abstract class Projectile implements Updatable {
 	protected boolean doesSlow;
 	protected boolean doesOnHit;
 	protected boolean splashHitsAir;
-	protected static ProjectileGuider guider = ProjectileGuider.getInstance();
+	protected static ProjectileManager guider = ProjectileManager.getInstance();
 	
 	protected boolean dud; //When creep is killed by something else or escapes before contact;
 	protected double targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up

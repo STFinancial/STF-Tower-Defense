@@ -11,7 +11,7 @@ import org.junit.Test;
 import levels.Level;
 import maps.Map;
 import maps.Tile;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 import towers.Tower;
 import towers.TowerManager;
 import towers.TowerType;
@@ -20,14 +20,14 @@ public class LevelTest {
 	static Level l;
 	static Map m;
 	static TowerManager t;
-	static ProjectileGuider p;
+	static ProjectileManager p;
 	static ArrayList<Tower> towers;
 	static HashMap<Tile, Tower> towerPositions;
 	
 	@BeforeClass
 	public static void initialize() {
 		l = new Level();
-		p = ProjectileGuider.getInstance();
+		p = ProjectileManager.getInstance();
 		t = TowerManager.getInstance();
 		m = l.getMap();
 		towers = new ArrayList<Tower>();
@@ -82,8 +82,6 @@ public class LevelTest {
 	
 	@Test
 	public void testKillCreeps() {
-		search: {
 		
-		}
 	}
 }

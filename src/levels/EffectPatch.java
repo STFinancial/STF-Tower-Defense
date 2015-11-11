@@ -3,7 +3,7 @@ package levels;
 import java.util.ArrayList;
 
 import projectileeffects.ProjectileEffect;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 import creeps.Creep;
 import utilities.Circle;
 
@@ -35,7 +35,7 @@ public class EffectPatch implements Updatable {
 			return -1;
 		} else if (timing != 0 && counter % timing == 0) {
 			//apply the effect
-			for (Creep c: ProjectileGuider.getInstance().getCreepInRange(area, false)) {
+			for (Creep c: ProjectileManager.getInstance().getCreepInRange(area, false)) {
 				c.addAllEffects(effects);
 			}
 			return 1;

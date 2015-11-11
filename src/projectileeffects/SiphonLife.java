@@ -2,7 +2,7 @@ package projectileeffects;
 
 import creeps.DamageType;
 import projectiles.Projectile;
-import projectiles.ProjectileGuider;
+import projectiles.ProjectileManager;
 
 public final class SiphonLife extends ProjectileEffect {
 	private float goldModifier;
@@ -26,7 +26,7 @@ public final class SiphonLife extends ProjectileEffect {
 	protected void applyEffect() {
 		float maxHealth = creep.getMaxHealth();
 		creep.damage(damageType, maxHealth * modifier, parent.getResistPen(damageType, false), parent.getResistPen(damageType, true), parent.ignoresShield(), parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
-		ProjectileGuider.getInstance().addGold(maxHealth * goldModifier);
+		ProjectileManager.getInstance().addGold(maxHealth * goldModifier);
 	}
 
 	@Override

@@ -42,15 +42,17 @@ public final class TowerManager implements Updatable {
 	}
 	
 	public void setLevel(Level level) {
-		this.level = level;
-		//Need to clear out all the old junk
-		towers = new ArrayList<Tower>();
-		creates = new HashMap<Tower, ArrayList<Aura>>();
-		affects = new HashMap<Aura, ArrayList<Tower>>();
-		towerPositions = new HashMap<Tile, Tower>();
-		map = level.getMap();
-		currentTowerID = 0;
-		earthEarth = 0;
+		if (this.level == null || !this.level.equals(level)) {
+			this.level = level;
+			//Need to clear out all the old junk
+			towers = new ArrayList<Tower>();
+			creates = new HashMap<Tower, ArrayList<Aura>>();
+			affects = new HashMap<Aura, ArrayList<Tower>>();
+			towerPositions = new HashMap<Tile, Tower>();
+			map = level.getMap();
+			currentTowerID = 0;
+			earthEarth = 0;
+		}
 	}
 	
 	public boolean isLevelSet() { return level != null; } 
