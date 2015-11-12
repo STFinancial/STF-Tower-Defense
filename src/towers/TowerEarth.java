@@ -23,7 +23,7 @@ public class TowerEarth extends Tower {
 		//TODO can fix this by making creep move slower and bumping up attack cooldowns if we have the resourcse
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
+			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());

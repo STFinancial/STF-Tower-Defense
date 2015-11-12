@@ -54,7 +54,7 @@ public final class TowerEarthEarth extends Tower {
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			if (guider.isCreepInRange(targetZone, hitsAir)) {
+			if (projManager.isCreepInRange(targetZone, hitsAir)) {
 				level.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;

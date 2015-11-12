@@ -60,7 +60,7 @@ public final class TowerFireWater extends Tower {
 	public int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			Creep targetCreep = guider.findTargetCreep(this, hitsAir);
+			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				level.addProjectile(fireProjectile());

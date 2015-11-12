@@ -1792,22 +1792,22 @@ public enum TowerType {
 		return baseAttributeList.baseCost;
 	}
 	
-	public TowerType getDowngradeType() {
+	TowerType getDowngradeType() {
 		if (isBaseType()) { //TODO: Should we really have to check this here?
 			return this;
 		}
 		return baseAttributeList.downgradeType;
 	}
 
-	public int getWidth() {
+	int getWidth() {
 		return baseAttributeList.baseWidth;
 	}
 
-	public int getHeight() {
+	int getHeight() {
 		return baseAttributeList.baseHeight;
 	}
 
-	public float getRange() {
+	float getRange() {
 		return baseAttributeList.baseRange;
 	}
 	

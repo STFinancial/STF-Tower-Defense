@@ -88,7 +88,7 @@ public final class TowerFireEarth extends Tower {
 		if (currentAttackCooldown < 1) {
 			boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 			if (progress[0][1]) {
-				Creep targetCreep = guider.findTargetCreep(this, hitsAir);
+				Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 				if (targetCreep != null) {
 					((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 					level.addProjectile(fireProjectile());
@@ -101,7 +101,7 @@ public final class TowerFireEarth extends Tower {
 					return 1;
 				}
 			} else {
-				if (guider.isCreepInRange(targetZone, hitsAir)) {
+				if (projManager.isCreepInRange(targetZone, hitsAir)) {
 					level.addProjectile(fireProjectile());
 					attackCarryOver += 1 - currentAttackCooldown;
 					currentAttackCooldown = attackCooldown;

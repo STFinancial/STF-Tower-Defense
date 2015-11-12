@@ -118,7 +118,7 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 				}
 			};
 			float auraRange = range * damageAuraRangeModifier;
-			manager.createAura(this, new Circle(centerX, centerY, auraRange), effectApplication, effectRemoval);
+			towerManager.createAura(this, new Circle(centerX, centerY, auraRange), effectApplication, effectRemoval);
 		}
 	}
 }

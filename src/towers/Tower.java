@@ -13,7 +13,6 @@ import utilities.Circle;
 import utilities.GameConstants;
 public abstract class Tower implements Updatable {
 	//Positional Details
-	//TODO: Reduce visibility to private or package private, protected allows this to be extended elsewhere? Couldn't someone just extend in this package anyway?
 	protected Level level;
 	protected int x, y; //Top Left corner in Tile Coordinates
 	protected int width;
@@ -24,8 +23,8 @@ public abstract class Tower implements Updatable {
 	protected Circle targetZone;
 
 	//Targeting Details
-	public static ProjectileManager guider = ProjectileManager.getInstance();
-	public static TowerManager manager = TowerManager.getInstance();
+	protected static ProjectileManager projManager = ProjectileManager.getInstance();
+	protected static TowerManager towerManager = TowerManager.getInstance();
 	protected TargetingModeType targetingMode;
 	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
@@ -79,7 +78,7 @@ public abstract class Tower implements Updatable {
 	protected float qRadiusSplash;
 	protected float qRange;
 	
-	public Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
+	protected Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
 		this.level = level;
@@ -100,29 +99,29 @@ public abstract class Tower implements Updatable {
 		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
 	
-	public void increaseQuality() {
+	protected void increaseQuality() {
 		++qLevel;
 		updateTowerChain();
 	}
 	
-	public boolean doesOnHit() { return doesOnHit; }
-	public boolean doesSlow() { return doesSlow; }
-	public boolean doesSplash() { return doesSplash; }
-	public float getCenterX() { return centerX; }
-	public float getCenterY() { return centerY; }
-	public float getDamage(DamageType type) { return damageArray[type.ordinal()]; }
-	public float getDamageSplash() { return damageSplash; }
-	public float getEffectSplash() { return effectSplash; }
-	public float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
-	public int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
-	public float getSplashRadius() { return splashRadius; }
-	public TargetingModeType getTargetingMode() { return targetingMode; }
-	public Circle getTargetZone() { return targetZone; }
-	public TowerType getType() { return type; }
-	public boolean hitsAir() { return hitsAir; }
-	public boolean splashHitsAir() { return splashHitsAir; }
+	protected boolean doesOnHit() { return doesOnHit; }
+	protected boolean doesSlow() { return doesSlow; }
+	protected boolean doesSplash() { return doesSplash; }
+	protected float getCenterX() { return centerX; }
+	protected float getCenterY() { return centerY; }
+	protected float getDamage(DamageType type) { return damageArray[type.ordinal()]; }
+	protected float getDamageSplash() { return damageSplash; }
+	protected float getEffectSplash() { return effectSplash; }
+	protected float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
+	protected int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
+	protected float getSplashRadius() { return splashRadius; }
+	protected TargetingModeType getTargetingMode() { return targetingMode; }
+	protected Circle getTargetZone() { return targetZone; }
+	protected TowerType getType() { return type; }
+	protected boolean hitsAir() { return hitsAir; }
+	protected boolean splashHitsAir() { return splashHitsAir; }
 	
-	public float getTrackGoldValue() {
+	protected float getTrackGoldValue() {
 		float goldValue = 0;
 		if (type.isBaseType()) { 
 			return 0;
@@ -136,7 +135,7 @@ public abstract class Tower implements Updatable {
 		return goldValue;
 	}
 	
-	public float getTotalGoldValue() {
+	protected float getTotalGoldValue() {
 		float goldValue = type.getDowngradeType().getCost() * GameConstants.BASE_TOWER_REFUND_RATE; //TODO: There should be costs for all tower types
 		DamageType d;
 		TowerType upgradeType;
@@ -156,10 +155,10 @@ public abstract class Tower implements Updatable {
 		return goldValue;
 	}
 	
-	public int getTowerID() { return towerID; }
-	boolean[][][] getUpgradeTracks() { return upgradeTracks; }
+	protected int getTowerID() { return towerID; }
+	protected boolean[][][] getUpgradeTracks() { return upgradeTracks; }
 	
-	void setUpgradeTracks(boolean[][][] upgradeTracks) {
+	protected void setUpgradeTracks(boolean[][][] upgradeTracks) {
 		this.upgradeTracks = upgradeTracks;
 		if (type.isBaseType()) {
 			return;
@@ -175,7 +174,7 @@ public abstract class Tower implements Updatable {
 		}
 	}
 	
-	void removeTrackUpgrades() {
+	protected void removeTrackUpgrades() {
 		if (type.isBaseType()) {
 			return;
 		} else {
@@ -183,16 +182,16 @@ public abstract class Tower implements Updatable {
 		}
 	}
 	
-	public Projectile fireProjectile() {
+	protected Projectile fireProjectile() {
 		return duplicateProjectile(baseProjectile);
 	}
 
-	void updateTowerChain() {
+	protected void updateTowerChain() {
 		adjustSiphonChain(this);
 	}
 	
 	protected static void adjustSiphonChain(Tower t) {
-		BFSAdjust(manager.getRoot(t));
+		BFSAdjust(towerManager.getRoot(t));
 	}
 	
 	protected static void BFSAdjust(Tower root) {
@@ -202,7 +201,7 @@ public abstract class Tower implements Updatable {
 		while (!openList.isEmpty()) {
 			current = openList.poll();
 			openList.addAll(current.siphoningTo);
-			manager.clearAuras(current);
+			towerManager.clearAuras(current);
 		}
 		current = root;
 		root.adjustBaseStats();
@@ -221,7 +220,7 @@ public abstract class Tower implements Updatable {
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
 		}
-		manager.createAuraChain(root);
+		towerManager.createAuraChain(root);
 		openList.add(root);
 		while (!openList.isEmpty()) {
 			current = openList.poll();
@@ -328,7 +327,7 @@ public abstract class Tower implements Updatable {
 	 * 
 	 * @param path - 1 or 0 depending on the upgrade path
 	 */
-	public void upgrade(int path) {
+	protected void upgrade(int path) {
 		for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
 			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level]) {
 				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level] = true;
@@ -345,7 +344,7 @@ public abstract class Tower implements Updatable {
 	 * @param playerGold - This is the amount of gold that the player has. This is passed in to be more clear about what the boolean returned from this function will mean
 	 * @return A boolean value specifying whether the given path can be upgraded both in terms of whether the upgrade is available, and if the player has enough gold
 	 */
-	public boolean canUpgrade(int path, int playerGold) { //TODO: Should we really pass player gold?
+	protected boolean canUpgrade(int path, int playerGold) { //TODO: Should we really pass player gold?
 		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
 			return false;
 		} else {
@@ -363,7 +362,7 @@ public abstract class Tower implements Updatable {
 	}
 	
 	//TODO: Should this be in the manager?
-	void increaseSiphons(float modifier) {
+	protected void increaseSiphons(float modifier) {
 		damageSiphon += modifier;
 		damageSplashSiphon += modifier;
 		effectSplashSiphon += modifier;
@@ -406,6 +405,12 @@ public abstract class Tower implements Updatable {
 	
 	@Override
 	public int hashCode() {
-		return towerID; //TODO: Is this good enough?
+		int result = 17;
+		result = 31 * result + towerID;
+		result = 31 * result + x;
+		result = 31 * result + y;
+		result = 31 * result + type.ordinal();
+		result = 31 * result + (int) damageArray[result % 4];
+		return result;
 	}
 }

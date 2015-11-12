@@ -237,8 +237,8 @@ public class Level {
 	}
 
 	//Can be called from App
-	public void upgradeTower(Tower t, int track) {
-		t.upgrade(track);
+	public void upgradeTower(Tower t, int path) {
+		towerManager.upgrade(t, path);
 	}
 
 //	public boolean canSellTower(Tower t) {
