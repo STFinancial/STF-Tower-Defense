@@ -6,12 +6,10 @@ import projectileeffects.Damage;
 import projectileeffects.ProjectileEffect;
 import projectileeffects.Slow;
 
-import levels.Updatable;
-
-
 import towers.Tower;
 import utilities.Circle;
 import utilities.GameConstants;
+import utilities.GameObject;
 import utilities.TrigHelper;
 import creeps.AffixModifier;
 import creeps.Creep;
@@ -22,7 +20,7 @@ import creeps.DamageType;
  * PERHAPS an additional item for stuff like points (bullets) vs rings (aoe circle) vs cones (Flamethrower), or seperate class?
  * Also possibly a second class for passive boost from towers like attack speed in radius
  */
-public abstract class Projectile implements Updatable {
+public abstract class Projectile extends GameObject {
 	protected Tower parent;
 	protected float x, y;
 	protected float currentSpeed, speed;
@@ -40,7 +38,7 @@ public abstract class Projectile implements Updatable {
 	protected boolean doesSlow;
 	protected boolean doesOnHit;
 	protected boolean splashHitsAir;
-	protected static ProjectileManager guider = ProjectileManager.getInstance();
+	protected static ProjectileManager projManager = ProjectileManager.getInstance();
 	
 	protected boolean dud; //When creep is killed by something else or escapes before contact;
 	protected double targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
@@ -62,7 +60,7 @@ public abstract class Projectile implements Updatable {
 		mold.cloneStats(this);
 	}
 	
-	public Projectile(Tower parent) {
+	protected Projectile(Tower parent) {
 		initializeStats(parent);
 		addGeneralEffects();
 	}
@@ -93,7 +91,7 @@ public abstract class Projectile implements Updatable {
 		currentSpeed = speed = .20f;
 	}
 	
-	//TOOD: Could do a method here to take care of checking for onhit, hitsAir, etc. rather than having each individual method do it
+	//TODO: Could do a method here to take care of checking for onhit, hitsAir, etc. rather than having each individual method do it
 	
 	protected void initializeStats(Tower parent) {
 		this.dud 					= false;
@@ -163,31 +161,32 @@ public abstract class Projectile implements Updatable {
 	 * Does a shallow clone. Object references still point to those of the baseProjectile from which this is cloned.
 	 * This means that each time the projectile has changes made to what it does, we need to re-set the baseProjectile field in a tower because cloned projectiles will still reference old values otherwise.
 	 */
+	@Override
 	public abstract Projectile clone();
 	
-	public abstract int update();
+	protected abstract int update();
 	
-	public abstract boolean isDone();
+	protected abstract boolean isDone();
 	
-	public abstract void detonate();
+	protected abstract void detonate();
 
-	public void setIgnoresShield(boolean ignoresShield) { this.ignoresShield = ignoresShield; }
-	public void setResistPenPercent(DamageType type, float modifier) { resistPenPercent[type.ordinal()] = modifier; }
-	public void setShieldDrainModifier(float modifier) { this.shieldDrainModifier = modifier; }
-	public void setSize(float size) { if (size >= 0) { this.size = size; } }
-	public void setSpeed(float speed) { this.speed = speed; }
-	public void setToughPenPercent(float modifier) { toughPenPercent = modifier; }
+	protected void setIgnoresShield(boolean ignoresShield) { this.ignoresShield = ignoresShield; }
+	protected void setResistPenPercent(DamageType type, float modifier) { resistPenPercent[type.ordinal()] = modifier; }
+	protected void setShieldDrainModifier(float modifier) { this.shieldDrainModifier = modifier; }
+	protected void setSize(float size) { if (size >= 0) { this.size = size; } }
+	protected void setSpeed(float speed) { this.speed = speed; }
+	protected void setToughPenPercent(float modifier) { toughPenPercent = modifier; }
 	
-	public boolean hitsAir() { return hitsAir; }
-	public boolean ignoresShield() { return ignoresShield; }
-	public float getShieldDrainModifier() { return shieldDrainModifier; }
-	public float getToughPen(boolean isFlat) { return (isFlat ? toughPenFlat : toughPenPercent); }
-	public float getResistPen(DamageType type, boolean isFlat) { return (isFlat ? resistPenFlat[type.ordinal()] : resistPenPercent[type.ordinal()]); }
-	public Tower getParent() { return parent; }
-	public float getX() { return x; }
-	public float getY() { return y; }
+	protected boolean hitsAir() { return hitsAir; }
+	protected boolean ignoresShield() { return ignoresShield; }
+	protected float getShieldDrainModifier() { return shieldDrainModifier; }
+	protected float getToughPen(boolean isFlat) { return (isFlat ? toughPenFlat : toughPenPercent); }
+	protected float getResistPen(DamageType type, boolean isFlat) { return (isFlat ? resistPenFlat[type.ordinal()] : resistPenPercent[type.ordinal()]); }
+	protected Tower getParent() { return parent; }
+	protected float getX() { return x; }
+	protected float getY() { return y; }
 	
-	public void clearAllBasicEffects() {
+	protected void clearAllBasicEffects() {
 		creepEffects.clear();
 		splashEffects.clear();
 	}
@@ -208,11 +207,11 @@ public abstract class Projectile implements Updatable {
 		}
 	}
 	
-	public void addSpecificCreepEffect(ProjectileEffect effect) {
+	protected void addSpecificCreepEffect(ProjectileEffect effect) {
 		creepEffects.add(effect);
 	}
 	
-	public void addSpecificSplashEffect(ProjectileEffect effect) {
+	protected void addSpecificSplashEffect(ProjectileEffect effect) {
 		splashEffects.add(effect);
 	}
 }

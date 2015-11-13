@@ -41,7 +41,7 @@ public final class ProjectileRandom extends ProjectileBasic {
 			return;
 		}
 		if (doesSplash) {
-			HashSet<Creep> creeps = guider.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir);
+			HashSet<Creep> creeps = projManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir);
 			creeps.add(targetCreep);
 			ArrayList<ProjectileEffect> e = getRandomEffects(); //We get a random effect from the list
 			if (doesOnHit) {

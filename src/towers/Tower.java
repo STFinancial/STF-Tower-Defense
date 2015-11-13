@@ -5,13 +5,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import levels.Level;
-import levels.Updatable;
 import maps.Tile;
 import creeps.DamageType;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
-public abstract class Tower implements Updatable {
+import utilities.GameObject;
+public abstract class Tower extends GameObject {
 	//Positional Details
 	protected Level level;
 	protected int x, y; //Top Left corner in Tile Coordinates

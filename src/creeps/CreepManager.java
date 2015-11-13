@@ -1,30 +1,46 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import levels.GameEventType;
 import levels.Level;
-import levels.Updatable;
 
-public class CreepManager implements Updatable {
+public class CreepManager {
 	private final static CreepManager INSTANCE = new CreepManager();
 	private Level level;
-	private ArrayList<Creep> creeps;
+	private LinkedList<Creep> creeps;
+	private ArrayList<Wave> creepWaves;
+	private Wave currentWave;
 	
 	private CreepManager() {
-		creeps = new ArrayList<Creep>();
+		creeps = new LinkedList<Creep>();
 	}
 	public static CreepManager getInstance() { return INSTANCE; }
 	
 	public void setLevel(Level level) {
 		if (this.level == null || this.level.equals(level)) {
 			this.level = level;
-			creeps = new ArrayList<Creep>();
+			creeps = new LinkedList<Creep>();
 		}
 	}
 	
-	@Override
-	public int update() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void startRound(int round) {
+		currentWave = creepWaves.get(round);
 	}
+	
+	public void updateCreepSpawn(int gameTick) {
+		List<Creep> creepsToSpawn = currentWave.getNextCreeps(gameTick);
+		for (Creep c: creepsToSpawn) {
+			creeps.add(c);
+			c.setPath(levelManager.assignPath(c, c.isFlying()));
+			game.newEvent(GameEventType.CREEP_SPAWNED, c);
+		}
+	}
+	
+	public void updateCreepMovement() {
+		
+	}
+	
 }

@@ -24,4 +24,9 @@ final class Size extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new Size(parent, defaultSize);
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

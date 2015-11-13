@@ -7,6 +7,7 @@ final class GoldValue extends Attribute {
 	private float currentGoldValue;
 	
 	GoldValue(CreepAttributes parent, float defaultGoldValue) {
+		this.parent = parent;
 		this.defaultGoldValue = defaultGoldValue;
 		this.reductionFlat = 0;
 		this.reductionPercent = 0;
@@ -41,5 +42,10 @@ final class GoldValue extends Attribute {
 	@Override
 	Attribute clone(CreepAttributes parent) {
 		return new GoldValue(parent, defaultGoldValue);
+	}
+
+	@Override
+	protected int update() {
+		return 0;
 	}
 }

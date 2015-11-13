@@ -1,14 +1,13 @@
 package creeps;
 
 import utilities.GameConstants;
-import levels.Updatable;
 
 /**
  * Keeps track of all health related values of the creep.
  * @author Timothy
  *
  */
-final class Health extends Attribute implements Updatable {
+final class Health extends Attribute {
 	private float maxHealth;
 	private float defaultHealth;
 	private float currentHealth;

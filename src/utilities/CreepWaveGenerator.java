@@ -70,7 +70,7 @@ public class CreepWaveGenerator {
 	public ArrayList<Wave> generateCreepWaves() {
 		ArrayList<Wave> waves = new ArrayList<Wave>();
 		CreepBuilder cb = CreepBuilder.getInstance();
-		cb.setInstanceLevel(level);
+		cb.setLevel(level);
 		cb.begin();
 		cb.setDamageResists(new float[]{0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f});
 		cb.setGoldValue(25);

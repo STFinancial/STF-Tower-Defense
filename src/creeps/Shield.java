@@ -1,8 +1,6 @@
 package creeps;
 
-import levels.Updatable;
-
-final class Shield extends Attribute implements Updatable {
+final class Shield extends Attribute {
 	//TODO: Do we want to wait a period of time before shield starts to regenerate?
 	private float defaultShield;
 	private float maxShield; //TODO: Should we have a max shield value? What if we want something that grants shield to creeps all around it (we can just increase max shield it seems)

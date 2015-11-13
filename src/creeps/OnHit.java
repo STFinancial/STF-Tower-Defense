@@ -39,4 +39,9 @@ final class OnHit extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new OnHit(parent, 0, cooldownOnHit, new float[GameConstants.NUM_DAMAGE_TYPES]);
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

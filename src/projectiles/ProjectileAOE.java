@@ -39,8 +39,8 @@ public class ProjectileAOE extends Projectile {
 	@Override
 	public void detonate() {
 		//TODO: What about hitsGround?
-		HashSet<Creep> splashCreep = guider.getCreepInRange(targetZone, splashHitsAir); //TODO: Do we only want to hit those in range of the tower with splash?
-		HashSet<Creep> nonSplashCreep = guider.getCreepInRange(targetZone, hitsAir);
+		HashSet<Creep> splashCreep = projManager.getCreepInRange(targetZone, splashHitsAir); //TODO: Do we only want to hit those in range of the tower with splash?
+		HashSet<Creep> nonSplashCreep = projManager.getCreepInRange(targetZone, hitsAir);
 		if (doesOnHit) {
 			for (Creep c: nonSplashCreep) {
 				c.addAllEffects(creepEffects);

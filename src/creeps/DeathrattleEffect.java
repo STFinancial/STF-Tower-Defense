@@ -1,11 +1,11 @@
 package creeps;
 
-import levels.Updatable;
 import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileManager;
 import utilities.Circle;
+import utilities.GameObject;
 
-class DeathrattleEffect implements Updatable {
+class DeathrattleEffect extends GameObject {
 	private ProjectileEffect effect;
 	private Circle areaOfEffect;
 	private int defaultDuration; //TODO: Implement some ability to refresh shit

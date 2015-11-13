@@ -6,9 +6,8 @@ import java.util.Iterator;
 
 import projectileeffects.Bleed;
 import projectileeffects.ProjectileEffect;
-import levels.Updatable;
 
-final class Effects extends Attribute implements Updatable {
+final class Effects extends Attribute {
 	private HashSet<ProjectileEffect> effects;
 	
 	Effects(CreepAttributes parent) { 

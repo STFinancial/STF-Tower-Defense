@@ -65,7 +65,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		double yOff = angleSin * currentSpeed;
 		x -= xOff;
 		y -= yOff;
-		if (guider.isOutside(x, y)) {
+		if (projManager.isOutside(x, y)) {
 			dud = true;
 			return -1;
 		}
@@ -73,7 +73,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		hitBox.y = y;
 		distanceTraveled += TrigHelper.pythagDistance(xOff, yOff);
 		if (++counter % pulseTiming == 0) { //Choosing not to pulse at first firing
-			for (Creep c: guider.getCreepInRange(this, passThroughRadius, hitsAir)) {
+			for (Creep c: projManager.getCreepInRange(this, passThroughRadius, hitsAir)) {
 				if (passedThrough.contains(c)) {
 					continue;
 				}

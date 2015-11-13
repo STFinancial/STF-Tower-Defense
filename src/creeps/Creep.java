@@ -8,34 +8,34 @@ import projectileeffects.ProjectileEffect;
 
 import levels.Level;
 import levels.Path;
-import levels.Updatable;
 import maps.DirectionType;
 import maps.Vertex;
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameObject;
 
-public class Creep implements Updatable {
-	public int creepID;
-	public DamageType elementType; //FIRE AIR etc creep type //TODO: Move this to attributes?
+public class Creep extends GameObject {
+	private int creepID;
+	protected DamageType elementType; //FIRE AIR etc creep type //TODO: Move this to attributes?
 
 	//Current Stats
-	CreepAttributes attributes;
+	protected CreepAttributes attributes;
 
 	//Secondary Stats
-	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
+	protected HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
 	//Movement
-	public Vertex currentVertex;
-	public DirectionType direction;
-	public int previousIndex;
-	public int currentIndex;
-	public int nextIndex;
-	public float xOff, yOff;
-	public Path path;
-	public Level level;
-	Circle hitBox;
+	protected Vertex currentVertex;
+	protected DirectionType direction;
+	protected int previousIndex;
+	protected int currentIndex;
+	protected int nextIndex;
+	protected float xOff, yOff;
+	protected Path path;
+	protected Level level;
+	protected Circle hitBox;
 
-	Creep(Level level, int id) {
+	protected Creep(Level level, int id) {
 		this.level = level;
 		this.xOff = 0;
 		this.yOff = 0;
@@ -43,58 +43,63 @@ public class Creep implements Updatable {
 		this.hitBox = new Circle(0,0,0);
 	}
 	
-	void setAttributes(CreepAttributes attributes) { this.attributes = attributes; hitBox.radius = attributes.getCurrentSize(); setLocation(0); }
+	protected void setAttributes(CreepAttributes attributes) { 
+		this.attributes = attributes;
+		//At some point in the future we might want to set the attributes: attributes.setParentCreep(this);
+		hitBox.radius = attributes.getCurrentSize();
+		setLocation(0); 
+	}
 	
-	public float onProjectileCollision() {
+	protected float onProjectileCollision() {
 		attributes.onProjectileCollision();
 		return attributes.getDisruption();
 	}
 	
-	public List<Creep> onDeath() {
+	protected List<Creep> onDeath() {
 		level.addGold(attributes.getCurrentGoldValue());
 		return attributes.deathrattle();
 	}
 	
 	//Public interface methods that simply delegate to the attributes layer.
-	public void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
-	public void addDeathrattleEffect(ProjectileEffect effect, Circle area) { attributes.addDeathrattleEffect(effect, area); }
-	public void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) { attributes.addDeathrattleEffect(effect, area, duration); }
-	public void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
-	public void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
-	public void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
-	public void increaseDamageOnHit(DamageType type, float amount) { attributes.increaseDamageOnHit(type, amount); }
-	public void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
-	public void increaseGoldOnHit(float amount) { attributes.increaseGoldOnHit(amount); }
-	public void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
-	public void increaseHasting(DamageType type, float amount) { attributes.increaseCDOnHit(type, amount); }
-	public void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
-	public void knockup(int duration) { attributes.knockup(duration); }
-	public void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future, or lifetime
-	public void reduceDamageOnHit(DamageType type, float amount) { attributes.reduceDamageOnHit(type, amount); }
-	public void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
-	public void reduceGoldOnHit(float amount) { attributes.reduceGoldOnHit(amount); }
-	public void reduceGoldValue(float amount, boolean isFlat) { attributes.reduceGoldValue(amount, isFlat); }
-	public void reduceHasting(DamageType type, float amount) { attributes.reduceCDOnHit(type, amount); }
-	public void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
-	public void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
-	public void slow(DamageType type, float amount) { attributes.slow(type, amount); }
-	public void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
-	public void suppressDeathrattle(DamageType type, float modifier, int lifetime) { attributes.suppressDeathrattle(modifier, lifetime); }
-	public void suppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.suppressDisruption(amount, isFlat); }
-	public void unslow(DamageType type, float amount) { attributes.unslow(type, amount); }
-	public void unsuppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.unsuppressDisruption(amount, isFlat); }
+	protected void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
+	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area) { attributes.addDeathrattleEffect(effect, area); }
+	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) { attributes.addDeathrattleEffect(effect, area, duration); }
+	protected void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
+	protected void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
+	protected void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
+	protected void increaseDamageOnHit(DamageType type, float amount) { attributes.increaseDamageOnHit(type, amount); }
+	protected void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
+	protected void increaseGoldOnHit(float amount) { attributes.increaseGoldOnHit(amount); }
+	protected void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
+	protected void increaseHasting(DamageType type, float amount) { attributes.increaseCDOnHit(type, amount); }
+	protected void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
+	protected void knockup(int duration) { attributes.knockup(duration); }
+	protected void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future, or lifetime
+	protected void reduceDamageOnHit(DamageType type, float amount) { attributes.reduceDamageOnHit(type, amount); }
+	protected void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
+	protected void reduceGoldOnHit(float amount) { attributes.reduceGoldOnHit(amount); }
+	protected void reduceGoldValue(float amount, boolean isFlat) { attributes.reduceGoldValue(amount, isFlat); }
+	protected void reduceHasting(DamageType type, float amount) { attributes.reduceCDOnHit(type, amount); }
+	protected void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
+	protected void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
+	protected void slow(DamageType type, float amount) { attributes.slow(type, amount); }
+	protected void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
+	protected void suppressDeathrattle(DamageType type, float modifier, int lifetime) { attributes.suppressDeathrattle(modifier, lifetime); }
+	protected void suppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.suppressDisruption(amount, isFlat); }
+	protected void unslow(DamageType type, float amount) { attributes.unslow(type, amount); }
+	protected void unsuppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.unsuppressDisruption(amount, isFlat); }
 
 	//Public getter methods
-	public float getCurrentSize() { return attributes.getCurrentSize(); }
-	public float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
-	public float getCurrentHealthCost() { return attributes.getCurrentHealthCost(); }
-	public float getMaxHealth() { return attributes.getMaxHealth(); }
-	public float getX() { return hitBox.x; }
-	public float getY() { return hitBox.y; }
-	public boolean intersects(Circle area) { return hitBox.intersects(area); }
-	public boolean isFlying() { return attributes.isFlying(); }
+	protected float getCurrentSize() { return attributes.getCurrentSize(); }
+	protected float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
+	protected float getCurrentHealthCost() { return attributes.getCurrentHealthCost(); }
+	protected float getMaxHealth() { return attributes.getMaxHealth(); }
+	protected float getX() { return hitBox.x; }
+	protected float getY() { return hitBox.y; }
+	protected boolean intersects(Circle area) { return hitBox.intersects(area); }
+	protected boolean isFlying() { return attributes.isFlying(); }
 	
-	public void disorient(int lifetime) { 
+	protected void disorient(int lifetime) { 
 		if (attributes.disorient(lifetime)) {
 			int temp = previousIndex;
 			previousIndex = nextIndex;
@@ -103,7 +108,7 @@ public class Creep implements Updatable {
 		}
 	}
 	
-	public void ground() {
+	protected void ground() {
 		if (attributes.ground()) {
 			Path newPath = level.getGroundPath();
 			setLocation(level.getVertexBelow(currentVertex));
@@ -111,7 +116,7 @@ public class Creep implements Updatable {
 		}
 	}
 	
-	public void addAffix(CreepType type) {
+	protected void addAffix(CreepType type) {
 		//TODO: Implement these
 		creepTypes.add(type);
 		if (type == CreepType.GIANT) {
@@ -126,11 +131,11 @@ public class Creep implements Updatable {
 
 	
 
-	public boolean isDead() {
+	protected boolean isDead() {
 		return attributes.isDead();
 	}
 
-	public boolean is(CreepType type) {
+	protected boolean is(CreepType type) {
 		return creepTypes.contains(type);
 	}
 
@@ -138,7 +143,7 @@ public class Creep implements Updatable {
 	 * Sets the creep's location at the beginning of the path. This assumes that the path cannot be updated mid-round.
 	 * @param path - The path that the creep will follow.
 	 */
-	public void setPath(Path path) {
+	protected void setPath(Path path) {
 		this.path = path;
 		setLocation(0);
 	}
@@ -209,12 +214,12 @@ public class Creep implements Updatable {
 		}
 	}
 	
-	public void updateHitBox() {
+	protected void updateHitBox() {
 		hitBox.x = currentVertex.x + xOff + 1;
 		hitBox.y = currentVertex.y + yOff + 1;
 	}
 
-	public void setLocation(Creep c) {
+	protected void setLocation(Creep c) {
 		//Update freshly spawned deathrattle creep with parent's path
 		this.currentVertex = c.currentVertex;
 		this.nextIndex = c.nextIndex;
@@ -237,7 +242,7 @@ public class Creep implements Updatable {
 	public Creep clone() {
 		CreepBuilder.getInstance().begin();
 		Creep c = CreepBuilder.getInstance().build();
-		c.setAttributes(attributes.clone(c));
+		c.setAttributes(attributes.clone());
 		return c;
 	}
 

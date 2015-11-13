@@ -43,4 +43,9 @@ final class Disruption extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new Disruption(parent, defaultDisruptorAmount);
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

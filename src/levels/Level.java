@@ -40,9 +40,7 @@ public class Level {
 	
 	private float gold = 10000;
 	private int health = 100;
-	private int nextSpawnTick = -1;
 	private Wave currentWave;
-	private boolean roundInProgress = false;
 	private boolean creepLeft;
 
 	//Managers
@@ -88,7 +86,7 @@ public class Level {
 	}
 
 	//Can be called from App
-	public void startRound() {
+	void startRound() {
 		if (!roundInProgress) {
 			roundInProgress = true;
 			creepLeft = true;
@@ -104,13 +102,7 @@ public class Level {
 		int i;
 		Creep c;
 		//Check for new spawns from creep wave;
-		if (tick == nextSpawnTick) {
-			spawnCreeps(currentWave.getNextCreeps());
-			nextSpawnTick = tick + currentWave.getDelayForNextCreep();
-			if (nextSpawnTick < tick) {
-				creepLeft = false;
-			}
-		}
+		
 
 		for (i = 0; i < creeps.size(); i++) {
 			c = creeps.get(i);
@@ -162,7 +154,6 @@ public class Level {
 
 	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
 		for (Creep c : creepsToSpawn) {
-
 			if (c.is(CreepType.FLYING)) {
 				c.setPath(airPath);
 			} else {

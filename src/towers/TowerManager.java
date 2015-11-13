@@ -7,13 +7,12 @@ import java.util.Queue;
 
 import creeps.DamageType;
 import levels.Level;
-import levels.Updatable;
 import maps.Map;
 import maps.Tile;
 import utilities.Circle;
 import utilities.GameConstants;
 
-public final class TowerManager implements Updatable {
+public final class TowerManager {
 	private static final TowerManager INSTANCE = new TowerManager();
 	private Level level;
 	
@@ -268,11 +267,9 @@ public final class TowerManager implements Updatable {
 		void operation(Tower tower);
 	}
 
-	@Override
-	public int update() {
+	public void updateTowers() {
 		for (Tower t: towers) {
 			t.update();
 		}
-		return 0;
 	}
 }

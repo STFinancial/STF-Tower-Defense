@@ -48,11 +48,11 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 
 	@Override
 	public void detonate() {
-		Creep c = guider.getFirstCreepRadially(x, y, size, (float) targetAngle, hitsAir);
+		Creep c = projManager.getFirstCreepRadially(x, y, size, (float) targetAngle, hitsAir);
 		if (c != null) {
 			c.addAllEffects(creepEffects);
 			if (doesSplash) {
-				for (Creep splashCreep: guider.getOtherCreepInSplashRange(c, splashRadius, splashHitsAir)) {
+				for (Creep splashCreep: projManager.getOtherCreepInSplashRange(c, splashRadius, splashHitsAir)) {
 					splashCreep.addAllEffects(splashEffects);
 				}
 			}

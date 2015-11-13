@@ -71,7 +71,7 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 		//TODO: Should these if statements be modified?
 		//TODO: Do we need a more sophisticated method of checking whether we "passed through" something? (Depends how slow it is)
 		if (++counter % pulseTiming == 0) { //Choosing not to pulse at first firing
-			for (Creep c: guider.getCreepInRange(this, passThroughRadius, hitsAir)) {
+			for (Creep c: projManager.getCreepInRange(this, passThroughRadius, hitsAir)) {
 				//Have to avoid hitting the target creep twice, so we have to check for that, hopefully it won't add too much time to this call.
 				if (!passedThrough.contains(c) || !c.equals(targetCreep)) {
 					c.addAllEffects(passThroughCreepEffects);

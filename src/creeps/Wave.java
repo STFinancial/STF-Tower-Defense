@@ -1,51 +1,65 @@
 package creeps;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
 
 /*
- * Collection of Creep and their relative spawn times
+ * Collection of Creep and their absolute spawn times
  * Methods to grab next creep(s), and get time for creep after
  */
-public class Wave {
-	//TODO: Should switch this to a queue tbh
-	public ArrayList<Creep> creeps; // List of creeps that we will spawn
-	public ArrayList<Integer> timings; // time to wait before spawning creep, typically timings[0] is zero as we spawn the first creep(s) at the round start
-	public int size;
-	public int counter;
+public final class Wave {
+	private ArrayList<Spawn> spawns;
+	private int size;
+	private int spawnCounter;
+	private int nextSpawnTick;
 
 	public Wave() {
 		size = 0;
-		counter = 0;
-		creeps = new ArrayList<Creep>();
-		timings = new ArrayList<Integer>();
+		spawnCounter = 0;
+		spawns = new ArrayList<Spawn>();
 	}
 
 	public void addCreep(Creep c, int timing) {
-		creeps.add(c);
-		timings.add(timing);
+		spawns.add(new Spawn(c, timing));
+		Collections.sort(spawns); //Could be unnecessary if this is called right, but to be safe
+		nextSpawnTick = spawns.get(0).timing;
 		size++;
 	}
 
-	public HashSet<Creep> getNextCreeps() {
-		HashSet<Creep> toReturn = new HashSet<Creep>(); // What do i call this in standard conventions?
-
-		do {
-			toReturn.add(creeps.get(counter));
-			counter++;
-		} while (counter < size && timings.get(counter) == 0);
-
+	public List<Creep> getNextCreeps(int tick) {
+		List<Creep> toReturn = Collections.emptyList(); // What do i call this in standard conventions?
+		if (tick == nextSpawnTick) {
+			toReturn = new ArrayList<Creep>();
+			do {
+				toReturn.add(spawns.get(spawnCounter++).creep);
+			} while (spawnCounter < size && (nextSpawnTick = spawns.get(spawnCounter).timing) == tick);
+		}
 		return toReturn;
 	}
 
-	public int getDelayForNextCreep() {
-		if (counter >= size) {
-			return -1;
-		}
-		return timings.get(counter);
-	}
-
 	public boolean stillSpawning() {
-		return (counter < size);
+		return (spawnCounter < size);
+	}
+	
+	private class Spawn implements Comparable<Spawn> {
+		private Creep creep;
+		private int timing;
+		
+		Spawn (Creep creep, int timing) {
+			this.creep = creep;
+			this.timing = timing;
+		}
+
+		@Override
+		public int compareTo(Spawn s) {
+			if (timing < s.timing) {
+				return -1;
+			} else if (timing > s.timing) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
 	}
 }

@@ -54,7 +54,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		}
 		targetCreep.addAllEffects(creepEffects);
 		targetCreep.onProjectileCollision();
-		for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
+		for (Creep c: projManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
 			c.addAllEffects(splashEffects);
 		}
 	}

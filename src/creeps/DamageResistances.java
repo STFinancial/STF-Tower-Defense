@@ -57,4 +57,9 @@ final class DamageResistances extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new DamageResistances(parent, defaultResistsFlat.clone());
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

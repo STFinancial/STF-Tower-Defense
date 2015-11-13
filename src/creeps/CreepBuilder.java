@@ -16,11 +16,11 @@ public final class CreepBuilder {
 	
 	public static CreepBuilder getInstance() { return INSTANCE; }
 	//TODO: Thinking maybe I should have getInstance take level (all singletons) and make sure that it's set
-	public void setInstanceLevel(Level level) { this.level = level; } //TODO: Why is this named differently than for the other singletons?
+	public void setLevel(Level level) { this.level = level; }
 	private int getNextId() { return idGenerator++; }
 	public void begin() {
 		currentCreep = new Creep(level, getNextId());
-		currentAttributes = new CreepAttributes(currentCreep);
+		currentAttributes = new CreepAttributes();
 	}
 	public void addDeathrattleChild(Creep child) { currentAttributes.addDeathrattleChild(child); }
 	public void addDeathrattleEffect(ProjectileEffect effect, Circle area) { currentAttributes.addDeathrattleEffect(effect, area); }

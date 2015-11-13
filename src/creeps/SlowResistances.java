@@ -60,4 +60,9 @@ final class SlowResistances extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new SlowResistances(parent, defaultResistsFlat.clone());
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

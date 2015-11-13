@@ -24,4 +24,9 @@ final class HealthCost extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new HealthCost(parent, defaultHealthCost);
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

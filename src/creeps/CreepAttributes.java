@@ -6,11 +6,10 @@ import java.util.List;
 import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 import utilities.GameConstants;
-import levels.Updatable;
+import utilities.GameObject;
 
 //TODO: Need to go through and make sure no default attribute values are modified to ensure that clone works properly
-final class CreepAttributes implements Updatable {
-	private Creep parent;
+final class CreepAttributes extends GameObject {
 	private Effects effects;
 	
 	private GoldValue goldValue;
@@ -28,7 +27,7 @@ final class CreepAttributes implements Updatable {
 	private Deathrattle deathrattle;
 	private OnHit onHit;
 	
-	CreepAttributes(Creep parent) { this.parent = parent; effects = new Effects(this); deathrattle = new Deathrattle(this, null, null); }
+	CreepAttributes() { effects = new Effects(this); deathrattle = new Deathrattle(this, null, null); }
 	void setHealthValues(float maxHealth, float defaultHealthRegen) { health = new Health(this, maxHealth, defaultHealthRegen); }
 	void setShieldValues(float maxShield, float defaultShieldRegen) { shield = new Shield(this, maxShield, defaultShieldRegen); }
 	void setDamageResists(float[] damageResists) { damageResistances = new DamageResistances(this, damageResists); }
@@ -128,21 +127,21 @@ final class CreepAttributes implements Updatable {
 	}
 	
 	//Clones attributes to their default states
-	public CreepAttributes clone(Creep parent) {
-		CreepAttributes attributes = new CreepAttributes(parent);
-		attributes.goldValue = (GoldValue) goldValue.clone(this);
-		attributes.size = (Size) size.clone(this);
-		attributes.healthCost = (HealthCost) healthCost.clone(this);
-		attributes.health = (Health) health.clone(this);
-		attributes.shield = (Shield) shield.clone(this);
-		attributes.damageResistances = (DamageResistances) damageResistances.clone(this);
-		attributes.slowResistances = (SlowResistances) slowResistances.clone(this);
-		attributes.speed = (Speed) speed.clone(this);
-		attributes.toughness = (Toughness) toughness.clone(this);
-		attributes.disruption = (Disruption) disruption.clone(this);
-		attributes.deathrattle = (Deathrattle) deathrattle.clone(this);
-		attributes.onHit = (OnHit) onHit.clone(this);
-		attributes.travel = (Travel) travel.clone(this);
+	public CreepAttributes clone() {
+		CreepAttributes attributes = new CreepAttributes();
+		attributes.goldValue = (GoldValue) goldValue.clone(attributes);
+		attributes.size = (Size) size.clone(attributes);
+		attributes.healthCost = (HealthCost) healthCost.clone(attributes);
+		attributes.health = (Health) health.clone(attributes);
+		attributes.shield = (Shield) shield.clone(attributes);
+		attributes.damageResistances = (DamageResistances) damageResistances.clone(attributes);
+		attributes.slowResistances = (SlowResistances) slowResistances.clone(attributes);
+		attributes.speed = (Speed) speed.clone(attributes);
+		attributes.toughness = (Toughness) toughness.clone(attributes);
+		attributes.disruption = (Disruption) disruption.clone(attributes);
+		attributes.deathrattle = (Deathrattle) deathrattle.clone(attributes);
+		attributes.onHit = (OnHit) onHit.clone(attributes);
+		attributes.travel = (Travel) travel.clone(attributes);
 		return attributes;
 	}
 }

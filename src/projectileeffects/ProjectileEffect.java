@@ -3,14 +3,13 @@ package projectileeffects;
 import creeps.Creep;
 import creeps.DamageType;
 import projectiles.Projectile;
-import levels.Updatable;
-
+import utilities.GameObject;
 
 /*
  * An on hit effect that can be applied from a projectile
  * information such as chance to hit, duration and effect are included
  */
-public abstract class ProjectileEffect implements Updatable {
+public abstract class ProjectileEffect extends GameObject {
 	protected float modifier;
 	protected int lifetime;
 	protected int timing;

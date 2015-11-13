@@ -32,4 +32,9 @@ final class Travel extends Attribute {
 	Attribute clone(CreepAttributes parent) {
 		return new Travel(parent, defaultIsFlying, groundingImmune);
 	}
+
+	@Override
+	protected int update() {
+		return 0;
+	}
 }

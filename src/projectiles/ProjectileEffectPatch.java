@@ -47,12 +47,12 @@ public final class ProjectileEffectPatch extends ProjectileBasic {
 			targetCreep.onProjectileCollision();
 		}
 		if (doesSplash) {
-			for (Creep c: guider.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
+			for (Creep c: projManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
 				c.addAllEffects(splashEffects);
 			}
 		}
 		if (patchRadius > 0) {
-			guider.addEffectPatch(new EffectPatch(lifetime, timing, this.x, this.y, this.patchRadius, effects));
+			projManager.addEffectPatch(new EffectPatch(lifetime, timing, this.x, this.y, this.patchRadius, effects));
 		}
 	}
 

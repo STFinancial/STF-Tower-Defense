@@ -1,8 +1,6 @@
 package creeps;
 
-import levels.Updatable;
-
-final class Speed extends Attribute implements Updatable {
+final class Speed extends Attribute {
 	//TODO: Flat speed reductions at some point in the future.
 	private float defaultSpeed;
 	private float currentSpeed;

@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import levels.Updatable;
-
 import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 
-final class Deathrattle extends Attribute implements Updatable {
+final class Deathrattle extends Attribute {
 	private int deathrattleSuppressionTimer;
 	private List<DeathrattleEffect> effects;
 	private List<Creep> children;
