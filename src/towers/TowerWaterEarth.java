@@ -5,7 +5,7 @@ import projectileeffects.ArmorShred;
 import projectileeffects.PermaSlow;
 import projectiles.ProjectileAOE;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerWaterEarth extends Tower {
 	float shredModifier;

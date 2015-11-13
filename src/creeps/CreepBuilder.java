@@ -1,13 +1,15 @@
 package creeps;
 
+import game.Game;
 import levels.Level;
+import levels.LevelManager;
 import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 
 
 public final class CreepBuilder {
 	private static final CreepBuilder INSTANCE = new CreepBuilder();
-	private Level level;
+	private Game game;
 	private int idGenerator = 0;;
 	
 	private Creep currentCreep;
@@ -16,10 +18,10 @@ public final class CreepBuilder {
 	
 	public static CreepBuilder getInstance() { return INSTANCE; }
 	//TODO: Thinking maybe I should have getInstance take level (all singletons) and make sure that it's set
-	public void setLevel(Level level) { this.level = level; }
+	public void initialize(Game game) { this.game = game; }
 	private int getNextId() { return idGenerator++; }
 	public void begin() {
-		currentCreep = new Creep(level, getNextId());
+		currentCreep = new Creep(getNextId());
 		currentAttributes = new CreepAttributes();
 	}
 	public void addDeathrattleChild(Creep child) { currentAttributes.addDeathrattleChild(child); }
@@ -37,7 +39,7 @@ public final class CreepBuilder {
 	public void setOnHit(float goldOnHit, float cooldownOnHit, float[] damageOnHit) { currentAttributes.setOnHit(goldOnHit, cooldownOnHit, damageOnHit); }
 	public void setSize(float defaultSize) { currentAttributes.setSize(defaultSize); }
 	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }
-	public void setTravel(boolean defaultIsFlying, boolean groundingImmune) { currentAttributes.setTravel(defaultIsFlying, groundingImmune); if (defaultIsFlying) { currentCreep.setPath(currentCreep.level.getFlyingPath()); } else { currentCreep.setPath(currentCreep.level.getGroundPath()); }}
+	public void setTravel(boolean defaultIsFlying, boolean groundingImmune) { currentAttributes.setTravel(defaultIsFlying, groundingImmune); currentCreep.setPath(LevelManager.getInstance().getPath(defaultIsFlying)); }
 	public Creep build() {
 		currentCreep.setAttributes(currentAttributes.finishBuild()); //TODO: Change the finish build to throwing an exception?
 		Creep built = currentCreep;

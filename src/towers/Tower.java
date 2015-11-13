@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 import creeps.DamageType;
+import game.GameObject;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
-import utilities.GameObject;
 public abstract class Tower extends GameObject {
 	//Positional Details
 	protected Level level;

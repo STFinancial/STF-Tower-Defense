@@ -6,7 +6,7 @@ import projectileeffects.SuppressionDeathrattle;
 import projectileeffects.SuppressionDisruptor;
 import projectiles.ProjectileBasic;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerWaterFire extends Tower {
 	int deathrattleSuppressionDuration;

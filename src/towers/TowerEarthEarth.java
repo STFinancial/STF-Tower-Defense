@@ -6,7 +6,7 @@ import projectileeffects.Bleed;
 import projectileeffects.Detonation;
 import projectiles.ProjectileAOE;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerEarthEarth extends Tower {
 	float detonationModifier;

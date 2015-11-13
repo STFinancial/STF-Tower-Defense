@@ -2,8 +2,8 @@ package projectileeffects;
 
 import creeps.Creep;
 import creeps.DamageType;
+import game.GameObject;
 import projectiles.Projectile;
-import utilities.GameObject;
 
 /*
  * An on hit effect that can be applied from a projectile

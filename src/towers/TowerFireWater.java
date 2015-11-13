@@ -13,7 +13,7 @@ import projectiles.ProjectileEffectPatch;
 import projectiles.ProjectilePassThroughTarget;
 import utilities.GameConstants;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerFireWater extends Tower {
 	float passThroughRadiusModifier;

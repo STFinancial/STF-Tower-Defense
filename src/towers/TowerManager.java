@@ -6,21 +6,21 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import creeps.DamageType;
+import game.Game;
 import levels.Level;
-import maps.Map;
-import maps.Tile;
+import levels.Map;
+import levels.Tile;
 import utilities.Circle;
 import utilities.GameConstants;
 
 public final class TowerManager {
 	private static final TowerManager INSTANCE = new TowerManager();
-	private Level level;
+	private Game game;
 	
 	private ArrayList<Tower> towers;
 	private HashMap<Tile, Tower> towerPositions;
 	private HashMap<Tower, ArrayList<Aura>> creates;
 	private HashMap<Aura, ArrayList<Tower>> affects;
-	private Map map;
 	
 	private int currentTowerID;
 	private int earthEarth;
@@ -30,8 +30,6 @@ public final class TowerManager {
 		creates = new HashMap<Tower, ArrayList<Aura>>();
 		affects = new HashMap<Aura, ArrayList<Tower>>();
 		towerPositions = new HashMap<Tile, Tower>();
-		level = null;
-		map = null; //TODO: how do we deal with the null pointer exception that this will create, should we force them to pass a level?
 		currentTowerID = 0;
 		earthEarth = 0;
 	}
@@ -40,21 +38,15 @@ public final class TowerManager {
 		return INSTANCE;
 	}
 	
-	public void setLevel(Level level) {
-		if (this.level == null || !this.level.equals(level)) {
-			this.level = level;
-			//Need to clear out all the old junk
-			towers = new ArrayList<Tower>();
-			creates = new HashMap<Tower, ArrayList<Aura>>();
-			affects = new HashMap<Aura, ArrayList<Tower>>();
-			towerPositions = new HashMap<Tile, Tower>();
-			map = level.getMap();
-			currentTowerID = 0;
-			earthEarth = 0;
-		}
+	public void initialize(Game game) {
+		this.game = game;
+		towers = new ArrayList<Tower>();
+		creates = new HashMap<Tower, ArrayList<Aura>>();
+		affects = new HashMap<Aura, ArrayList<Tower>>();
+		towerPositions = new HashMap<Tile, Tower>();
+		currentTowerID = 0;
+		earthEarth = 0;
 	}
-	
-	public boolean isLevelSet() { return level != null; } 
 	
 	public boolean hasEarthEarth() { return earthEarth > 0; }
 	

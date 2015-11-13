@@ -11,7 +11,7 @@ import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerFireFire extends Tower {
 	

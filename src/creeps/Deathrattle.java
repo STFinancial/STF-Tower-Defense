@@ -1,7 +1,9 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import projectileeffects.ProjectileEffect;
@@ -15,19 +17,19 @@ final class Deathrattle extends Attribute {
 	Deathrattle(CreepAttributes parent, List<DeathrattleEffect> effects, List<Creep> children) {
 		this.parent = parent;
 		if (effects == null) {
-			effects = new ArrayList<DeathrattleEffect>();
+			effects = new LinkedList<DeathrattleEffect>();
 		}
 		this.effects = effects;
 		if (children == null) {
-			children = new ArrayList<Creep>();
+			children = new LinkedList<Creep>();
 		}
 		this.children = children;
 		this.deathrattleSuppressionTimer = -1;
 	}
 	
 	
-	boolean hasDeathrattleEffect() { return effects != null || effects.size() != 0; }
-	boolean hasDeathrattleChildren() { return children != null || children.size() != 0; }
+	boolean hasDeathrattleEffect() { return effects != null && effects.size() != 0; }
+	boolean hasDeathrattleChildren() { return children != null && children.size() != 0; }
 	
 	void addDeathrattleChild(Creep child) {
 		children.add(child);

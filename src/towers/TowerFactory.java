@@ -1,7 +1,7 @@
 package towers;
 
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 //TODO: Does this need to be public
 public class TowerFactory {

@@ -1,4 +1,4 @@
-package levels;
+package game;
 
 /*
  * Detailed information when certain things (See GameEventType) happen in game, for both logging and animation

@@ -7,7 +7,7 @@ import projectileeffects.Consume;
 import projectileeffects.Snare;
 import projectiles.ProjectileAOE;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerWaterWater extends Tower {
 	int snareDuration;

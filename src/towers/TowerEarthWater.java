@@ -4,7 +4,7 @@ import projectiles.ProjectileArea;
 import projectiles.TargetsArea;
 import utilities.Circle;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerEarthWater extends Tower implements TargetsArea {
 	private Circle targetArea;

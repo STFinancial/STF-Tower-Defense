@@ -8,38 +8,29 @@ import java.util.LinkedList;
 import towers.Tower;
 import utilities.Circle;
 import creeps.Creep;
+import game.Game;
 import levels.EffectPatch;
 import levels.Level;
-import levels.Updatable;
-import maps.Map;
+import levels.Map;
 
 //TODO: Eventually this should be taking care of updating the projectiles and calling the proper functions in level
-public final class ProjectileManager implements Updatable {
+public final class ProjectileManager {
 	private static final ProjectileManager INSTANCE = new ProjectileManager();
-	private Level level;
-	private ArrayList<Projectile> projectiles;
-	private Map map;
+	private LinkedList<Projectile> projectiles;
+	private Game game;
 	
 	private ProjectileManager() { 
-		projectiles = new ArrayList<Projectile>(); 
-		level = null;
-		map = null;
+		projectiles = new LinkedList<Projectile>();
 	}
 	
 	public static ProjectileManager getInstance() {
 		return ProjectileManager.INSTANCE;
 	}
 	
-	public void setLevel(Level level) {
-		if (this.level == null || !this.level.equals(level)) {
-			this.level = level;
-			//Need to clear out all the old junk
-			projectiles = new ArrayList<Projectile>();
-			map = level.getMap();
-		}
+	public void initialize(Game game) {
+		this.projectiles = new LinkedList<Projectile>();
+		this.game = game;
 	}
-	
-	public boolean isLevelSet() { return level != null; } 
 	
 	public void add(Projectile p) {
 		projectiles.add(p);

@@ -6,7 +6,7 @@ import projectileeffects.ArmorShred;
 import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerEarthFire extends Tower {
 	int wealthDuration;

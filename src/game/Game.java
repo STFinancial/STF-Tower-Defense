@@ -1,8 +1,10 @@
-package levels;
+package game;
 
 import creeps.CreepBuilder;
 import creeps.CreepManager;
-import maps.Map;
+import levels.Level;
+import levels.LevelManager;
+import levels.Map;
 import players.Player;
 import projectiles.ProjectileManager;
 import towers.TowerManager;
@@ -10,9 +12,10 @@ import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
 
 public class Game {
+	//TODO: Should I have player and map in here or let level take care of that? Maybe just player?
 	private Player player;
-	private Level level; //TODO: Could level be a singleton too? LevelManager maybe?
 	private Map map;
+	private LevelManager levelManager;
 	private ProjectileManager projManager;
 	private TowerManager towerManager;
 	private CreepManager creepManager;
@@ -30,14 +33,18 @@ public class Game {
 	public Game(Player player, Map map) {
 		this.player = player;
 		this.map = map;
-		this.level = new Level(this, player, map);
+		this.levelManager = LevelManager.getInstance();
+		this.levelManager.initialize(this, player, map);
 		this.projManager = ProjectileManager.getInstance();
+		this.projManager.initialize(this);
 		this.towerManager = TowerManager.getInstance();
+		this.towerManager.initialize(this);
 		this.creepManager = CreepManager.getInstance();
+		this.creepManager.initialize(this);
 		this.creepBuilder = CreepBuilder.getInstance();
-		this.creepBuilder.setLevel(level);
+		this.creepBuilder.initialize(this);
 		this.waveGenerator = CreepWaveGenerator.getInstance();
-		this.waveGenerator.setLevel(level);
+		this.waveGenerator.initialize(this);
 		this.round = 0;
 		this.gameTick = 0;
 		this.roundInProgress = false;
@@ -48,7 +55,7 @@ public class Game {
 	public void startRound() {
 		if (!roundInProgress) {
 			roundInProgress = true;
-			level.startRound(round);
+			levelManager.startRound(round);
 			towerManager.startRound(round);
 			creepManager.startRound(round);
 			projManager.startRound(round);
@@ -62,16 +69,17 @@ public class Game {
 		creepManager.updateCreepSpawn(gameTick);
 		//Update creep movement
 		creepManager.updateCreepMovement();
+		//Check if round is over?
 		//Update adjacent to earth
-		level.updateCreepAdjacentToEarth();
+		levelManager.updateCreepAdjacentToEarth();
 		//Update towers
 		towerManager.updateTowers();
 		//Update projectiles
 		projManager.updateProjectiles();
+		//Update effect patches
+		levelManager.updateEffectPatches();
 		//Check if creeps are dead
 		creepManager.updateDeadCreep();
-		//Update effect patches
-		level.updateEffectPatches();
 		//Update game tick
 		gameTick++;
 	}

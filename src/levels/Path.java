@@ -2,13 +2,10 @@ package levels;
 
 import java.util.LinkedList;
 
-import maps.DirectionType;
-import maps.Vertex;
-
 /**
  * List of vertices that a creep will follow on a given level, with helper functions as needed
  */
-public class Path {
+public final class Path {
 	/**
 	 * Contains a sequence of Vertexes that constitutes the path that each creep will walk during the round.
 	 */
@@ -19,14 +16,14 @@ public class Path {
 	private LinkedList<DirectionType> directions;
 	private int size;
 	
-	public Path(LinkedList<Vertex> path, LinkedList<DirectionType> directions) {
+	Path(LinkedList<Vertex> path, LinkedList<DirectionType> directions) {
 		this.path = path;
 		this.directions = directions;
 		this.size = path.size();
 		//TODO: Write an exception for if this size is less than 0?
 	}
 	
-	public int getLength() { return size; }
+	int getLength() { return size; }
 	
 	public Vertex getVertex(int pathIndex) {
 		if (pathIndex >= size) {
@@ -59,11 +56,11 @@ public class Path {
 		}
 	}
 
-	public Vertex getFinish() {
+	Vertex getFinish() {
 		return path.getLast();
 	}
 	
-	public Vertex getFirst() {
+	Vertex getFirst() {
 		return path.getFirst();
 	}
 }

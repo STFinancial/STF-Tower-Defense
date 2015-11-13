@@ -1,4 +1,4 @@
-package levels;
+package game;
 
 /*
  * Different events we need to log for animation

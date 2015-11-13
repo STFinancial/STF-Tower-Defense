@@ -2,7 +2,7 @@ package towers;
 
 import creeps.Creep;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 import projectiles.ProjectileBasic;
 
 public class TowerWater extends Tower{

@@ -9,11 +9,11 @@ import projectileeffects.Slow;
 import towers.Tower;
 import utilities.Circle;
 import utilities.GameConstants;
-import utilities.GameObject;
 import utilities.TrigHelper;
 import creeps.AffixModifier;
 import creeps.Creep;
 import creeps.DamageType;
+import game.GameObject;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
  * as well as tower that fired the projectile. lastly contains the projectile effect which happens when the projectile lands or times out

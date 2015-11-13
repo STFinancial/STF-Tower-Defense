@@ -3,10 +3,11 @@ package utilities;
 import java.util.ArrayList;
 import java.util.Random;
 
+import levels.Map;
 import levels.Path;
-import maps.Map;
-import maps.TileType;
-import maps.VertexGraph;
+import levels.PathFinder;
+import levels.TileType;
+import levels.VertexGraph;
 
 public class MapGenerator {
 

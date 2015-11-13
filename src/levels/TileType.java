@@ -1,4 +1,4 @@
-package maps;
+package levels;
 /*
  * functional classification of map tiles;
  */

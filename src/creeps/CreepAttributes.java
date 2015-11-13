@@ -1,12 +1,13 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import game.GameObject;
 import projectileeffects.ProjectileEffect;
 import utilities.Circle;
 import utilities.GameConstants;
-import utilities.GameObject;
 
 //TODO: Need to go through and make sure no default attribute values are modified to ensure that clone works properly
 final class CreepAttributes extends GameObject {

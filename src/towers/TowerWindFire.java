@@ -5,7 +5,7 @@ import projectiles.ProjectileChain;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerWindFire extends Tower {
 	int maxChains;

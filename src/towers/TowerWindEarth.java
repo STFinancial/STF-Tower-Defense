@@ -8,7 +8,7 @@ import projectiles.ProjectilePassThroughTarget;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerWindEarth extends Tower {
 	int knockupDuration;

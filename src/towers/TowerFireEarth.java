@@ -10,7 +10,7 @@ import projectileeffects.ToughnessShred;
 import projectiles.ProjectileAOE;
 import projectiles.ProjectileBasic;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerFireEarth extends Tower {
 	float poisonModifier;

@@ -4,7 +4,7 @@ import creeps.Creep;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectilePassThroughTarget;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerEarthWind extends Tower {
 	float passThroughRadiusModifier;

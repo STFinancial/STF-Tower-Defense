@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import creeps.DamageType;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 import projectileeffects.Damage;
 import projectileeffects.Explosion;
 import projectileeffects.ProjectileEffect;

@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import levels.Level;
-import maps.Map;
-import maps.Tile;
+import levels.Map;
+import levels.Tile;
 import projectiles.ProjectileManager;
 import towers.Tower;
 import towers.TowerManager;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 import projectileeffects.Damage;
 import projectileeffects.DamageOnHit;
 import projectileeffects.ProjectileEffect;

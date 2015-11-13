@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import game.GameObject;
 import projectileeffects.ProjectileEffect;
-
-import levels.Level;
+import levels.DirectionType;
+import levels.LevelManager;
 import levels.Path;
-import maps.DirectionType;
-import maps.Vertex;
+import levels.Vertex;
 import towers.Tower;
 import utilities.Circle;
-import utilities.GameObject;
 
 public class Creep extends GameObject {
 	private int creepID;
@@ -25,6 +24,7 @@ public class Creep extends GameObject {
 	protected HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
 	//Movement
+	protected LevelManager levelManager;
 	protected Vertex currentVertex;
 	protected DirectionType direction;
 	protected int previousIndex;
@@ -32,11 +32,10 @@ public class Creep extends GameObject {
 	protected int nextIndex;
 	protected float xOff, yOff;
 	protected Path path;
-	protected Level level;
 	protected Circle hitBox;
 
-	protected Creep(Level level, int id) {
-		this.level = level;
+	protected Creep(int id) {
+		this.levelManager = LevelManager.getInstance();
 		this.xOff = 0;
 		this.yOff = 0;
 		this.creepID = id;
@@ -56,7 +55,7 @@ public class Creep extends GameObject {
 	}
 	
 	protected List<Creep> onDeath() {
-		level.addGold(attributes.getCurrentGoldValue());
+		levelManager.addGold(attributes.getCurrentGoldValue());
 		return attributes.deathrattle();
 	}
 	
@@ -110,8 +109,8 @@ public class Creep extends GameObject {
 	
 	protected void ground() {
 		if (attributes.ground()) {
-			Path newPath = level.getGroundPath();
-			setLocation(level.getVertexBelow(currentVertex));
+			Path newPath = levelManager.getPath(false);
+			setLocation(levelManager.getVertexBelow(currentVertex));
 			this.path = newPath;
 		}
 	}
@@ -148,6 +147,11 @@ public class Creep extends GameObject {
 		setLocation(0);
 	}
 	
+	protected void setPath(Path path, int currentIndex) {
+		this.path = path;
+		setLocation(currentIndex);
+	}
+	
 	private void setLocation(int newLocation) {
 		xOff = 0;
 		yOff = 0;
@@ -168,7 +172,7 @@ public class Creep extends GameObject {
 		direction = path.getDirection(currentIndex, nextIndex);
 	}
 
-	public int update() {
+	protected int update() {
 		updateMovement();
 		updateHitBox();
 		updateEffects();
@@ -215,28 +219,31 @@ public class Creep extends GameObject {
 	}
 	
 	protected void updateHitBox() {
-		hitBox.x = currentVertex.x + xOff + 1;
-		hitBox.y = currentVertex.y + yOff + 1;
+		hitBox.x = currentVertex.getX() + xOff + 1;
+		hitBox.y = currentVertex.getY() + yOff + 1;
 	}
 
-	protected void setLocation(Creep c) {
-		//Update freshly spawned deathrattle creep with parent's path
-		this.currentVertex = c.currentVertex;
-		this.nextIndex = c.nextIndex;
-		//Creep can't be disoriented when they come out so we need to work around that
-		if (c.attributes.isDisoriented()) {
-			this.nextIndex = c.previousIndex;
-			this.previousIndex = c.nextIndex;
-			this.direction = c.direction.getOpposite();
-		} else {
-			this.nextIndex = c.nextIndex;
-			this.previousIndex = c.previousIndex;
-			this.direction = c.direction;
-		}
-		this.xOff = c.xOff;
-		this.yOff = c.yOff;
-		this.path = c.path;
-	}
+	
+	
+	
+//	protected void setLocation(Creep c) {
+//		//Update freshly spawned deathrattle creep with parent's path
+//		this.currentVertex = c.currentVertex;
+//		this.nextIndex = c.nextIndex;
+//		//Creep can't be disoriented when they come out so we need to work around that
+//		if (c.attributes.isDisoriented()) {
+//			this.nextIndex = c.previousIndex;
+//			this.previousIndex = c.nextIndex;
+//			this.direction = c.direction.getOpposite();
+//		} else {
+//			this.nextIndex = c.nextIndex;
+//			this.previousIndex = c.previousIndex;
+//			this.direction = c.direction;
+//		}
+//		this.xOff = c.xOff;
+//		this.yOff = c.yOff;
+//		this.path = c.path;
+//	}
 
 	//Clones the attributes back to their default states. Does not clone effects on the creep.
 	public Creep clone() {

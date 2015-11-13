@@ -7,7 +7,7 @@ import projectileeffects.SpeedDamage;
 import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
 public final class TowerWindWind extends Tower {
 	float hastingModifier;

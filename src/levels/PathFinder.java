@@ -1,4 +1,4 @@
-package utilities;
+package levels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,13 +6,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import towers.Tower;
-import levels.Path;
-import maps.DirectionType;
-import maps.Tile;
-import maps.TileType;
-import maps.Vertex;
-import maps.Map;
-import maps.VertexGraph;
+import utilities.GameConstants;
 
 /*
  * Tool to grab the path for a certain level, will need to be run anytime a tower is built

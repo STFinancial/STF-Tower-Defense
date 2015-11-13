@@ -1,6 +1,6 @@
 package creeps;
 
-import utilities.GameObject;
+import game.GameObject;
 
 abstract class Attribute extends GameObject {
 	protected CreepAttributes parent;

@@ -1,4 +1,4 @@
-package maps;
+package levels;
 
 import utilities.GameConstants;
 

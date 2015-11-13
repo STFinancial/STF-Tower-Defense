@@ -2,7 +2,7 @@ package towers;
 
 import creeps.DamageType;
 import levels.Level;
-import maps.Tile;
+import levels.Tile;
 import projectiles.ProjectileArea;
 import projectiles.ProjectilePassThroughArea;
 import projectiles.TargetsArea;

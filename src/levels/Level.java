@@ -7,16 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import maps.Map;
-import maps.TileType;
-import maps.Vertex;
-import maps.VertexGraph;
 import creeps.Creep;
 import creeps.CreepManager;
 import creeps.CreepType;
 import creeps.Wave;
+import game.Game;
+import game.GameEvent;
+import game.GameEventType;
 import creeps.DamageType;
-import maps.Tile;
 import players.Player;
 import projectiles.Projectile;
 import projectiles.ProjectileManager;
@@ -24,23 +22,16 @@ import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
 import utilities.MapGenerator;
-import utilities.PathFinder;
 
 /*
  * Executes main game logic loop
  */
 public class Level {
-	private Game game;
 	private Map map;
 	private Player player;
-	private ArrayList<Wave> creepWaves;
 
-	private int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
-	private int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
-	
 	private float gold = 10000;
 	private int health = 100;
-	private Wave currentWave;
 	private boolean creepLeft;
 
 	//Managers
@@ -50,9 +41,8 @@ public class Level {
 	
 	//Currently loaded/active units
 	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
-	private ArrayList<Creep> creeps = new ArrayList<Creep>();
 
-	private Path groundPath, airPath, proposedGroundPath;
+	private Path groundPath, flyingPath, proposedGroundPath;
 	//This will change when we create and destroy new terrain
 	//TODO: I think having some of these as hash sets is sub-optimal.
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
@@ -61,16 +51,12 @@ public class Level {
 
 	private ArrayList<GameEvent> events = new ArrayList<GameEvent>();
 	
-	Level(Game game, Player player, Map map) {
-		this.game = game;
+	Level(Player player, Map map) {
 		this.player = player;
 		this.map = map;
 		this.projManager = ProjectileManager.getInstance();
-		this.projManager.setLevel(this);
 		this.towerManager = TowerManager.getInstance();
-		this.towerManager.setLevel(this);
 		this.creepManager = CreepManager.getInstance();
-		this.creepManager.setLevel(this);
 		for (int y = 0; y < map.getHeight(); y++) {
 			for (int x = 0; x < map.getWidth(); x++) {
 				if (map.getTileType(y, x) == TileType.EARTH) { 
@@ -81,9 +67,11 @@ public class Level {
 		updatePath();
 	}
 	
-	void setCreepWaves(ArrayList<Wave> creepWaves) { 
-		this.creepWaves = creepWaves;
+	void reduceHealth(float amount) {
+		health -= amount;
 	}
+	
+	float getHealth() { return health; }
 
 	//Can be called from App
 	void startRound() {
@@ -104,35 +92,14 @@ public class Level {
 		//Check for new spawns from creep wave;
 		
 
-		for (i = 0; i < creeps.size(); i++) {
-			c = creeps.get(i);
-			c.update();
-			if (c.currentVertex.equals(groundPath.getFinish())) {
-				escapeCreep(c);
-				creeps.remove(i);
-				i--;
-				if (creeps.size() == 0 && creepLeft == false) {
-					roundInProgress = false;
-				}
-			}
-		}
+		
 		if (towerManager.hasEarthEarth()) {
 			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
 			updateGroundCreepAdjacentToEarth();
 		}
 		projManager.update();
 
-		for (i = 0; i < creeps.size(); i++) {
-			c = creeps.get(i);
-			if (c.isDead()) {
-				killCreep(c);
-				creeps.remove(c);
-				i--;
-				if (creeps.size() == 0 && creepLeft == false) {
-					roundInProgress = false;
-				}
-			}
-		}
+		
 
 		towerManager.update();
 		
@@ -152,41 +119,11 @@ public class Level {
 		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
 	}
 
-	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
-		for (Creep c : creepsToSpawn) {
-			if (c.is(CreepType.FLYING)) {
-				c.setPath(airPath);
-			} else {
-				c.setPath(groundPath);
-			}
-			creeps.add(c);
-			newEvent(GameEventType.CREEP_SPAWNED, c);
-		}
-	}
-
-	private void escapeCreep(Creep c) {
-		newEvent(GameEventType.CREEP_ESCAPED, c);
-		health -= c.getCurrentHealthCost();
-		if (health <= 0) {
-			newEvent(GameEventType.HEALTH_ZERO, null);
-		}
-	}
-
 	public void addGold(float amount) { gold += amount; }
 	public float getGold() { return gold; }
 	public void removeGold(float amount) { gold -= amount; }
 	
-	private void killCreep(Creep c) {
-		List<Creep> deathRattleChildren;
-		deathRattleChildren = c.onDeath();
-		if (deathRattleChildren != null) {
-			for (Creep drc : deathRattleChildren) {
-				drc.setLocation(c);
-				creeps.add(drc);
-			}
-		}
-		newEvent(GameEventType.CREEP_KILLED, c);
-	}
+	
 	
 	public boolean canBuyTower(TowerType type) {
 		return gold >= type.getCost();
@@ -240,7 +177,7 @@ public class Level {
 		VertexGraph vg = new VertexGraph();
 		vg = PathFinder.mapToVertexGraph(vg, map);
 		groundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
-		airPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
+		flyingPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
 	}
 
 	public void proposePath(int x, int y, int width, int height) {
@@ -264,7 +201,6 @@ public class Level {
 		}
 	}
 
-	public ArrayList<Creep> getCreeps() { return creeps; }
 	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this... I would rather have delegation methods
 	
 	public HashSet<Creep> getCreepAdjacentToEarth(boolean isFlying) {
@@ -336,12 +272,8 @@ public class Level {
 		return 0;
 	}
 
-	public Path getGroundPath() {
-		return groundPath;
-	}
-	
-	public Path getFlyingPath() {
-		return airPath;
+	public Path getPath(boolean isFlying) {
+		return (isFlying ? flyingPath : groundPath);
 	}
 
 	public void createProjectileDetonationEvents(LinkedList<Projectile> detonatedProj) {
