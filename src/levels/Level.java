@@ -30,9 +30,9 @@ public class Level {
 	private Map map;
 	private Player player;
 
+	//TODO: This shit drives me nuts, fix it.
 	private float gold = 10000;
 	private int health = 100;
-	private boolean creepLeft;
 
 	//Managers
 	private ProjectileManager projManager;
@@ -87,10 +87,6 @@ public class Level {
 	}
 
 	public void gameTick() {
-		int i;
-		Creep c;
-		//Check for new spawns from creep wave;
-		
 
 		
 		if (towerManager.hasEarthEarth()) {
@@ -110,8 +106,6 @@ public class Level {
 				it.remove();
 			}
 		}
-
-		tick++;
 	}
 
 	private void detonateProjectile(Projectile p) {

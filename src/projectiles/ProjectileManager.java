@@ -12,6 +12,7 @@ import game.Game;
 import levels.EffectPatch;
 import levels.Level;
 import levels.Map;
+import projectileeffects.ProjectileEffect;
 
 //TODO: Eventually this should be taking care of updating the projectiles and calling the proper functions in level
 public final class ProjectileManager {
@@ -40,8 +41,12 @@ public final class ProjectileManager {
 		return map.isOutside(x, y);
 	}
 	
-	public void addGold(float amount) {
-		level.addGold(amount);
+	public void addProjectileEffect(Projectile p, ProjectileEffect effect, boolean isSplash) {
+		if (isSplash) {
+			p.addSpecificSplashEffect(effect);
+		} else {
+			p.addSpecificCreepEffect(effect);
+		}
 	}
 	
 	//TODO: Using this method ends up duplicating a ton of work.
