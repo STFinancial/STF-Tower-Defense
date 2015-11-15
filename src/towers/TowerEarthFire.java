@@ -5,7 +5,6 @@ import creeps.DamageType;
 import projectileeffects.ArmorShred;
 import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerEarthFire extends Tower {
@@ -21,8 +20,8 @@ public final class TowerEarthFire extends Tower {
 	private float qShredDuration;
 	private float qShredStacks;
 	
-	public TowerEarthFire(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.EARTH_FIRE, towerID);
+	TowerEarthFire(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.EARTH_FIRE, towerID);
 	}
 
 	@Override
@@ -32,27 +31,28 @@ public final class TowerEarthFire extends Tower {
 		if (progress[0][2]) {
 			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.EARTH, baseProjectile, false, false);
 			w.setMaxStacks(1);
-			baseProjectile.addSpecificCreepEffect(w);
+			projManager.addProjectileEffect(false, baseProjectile, w);
 		}
 		if (progress[1][2]) {
-			baseProjectile.setResistPenPercent(DamageType.PHYSICAL, 1);
+			//TODO: I don't exactly like it being called this way.
+			projManager.setResistPenPercent(baseProjectile, DamageType.PHYSICAL, 1);
 		}
 		if (progress[1][3]) {
 			//TODO: We really should have a better way of getting the damage of a certain type
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile, true);
 			a.setMaxStacks(maxShredStacks);
-			baseProjectile.addSpecificCreepEffect(a);
+			projManager.addProjectileEffect(false, baseProjectile, a);
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

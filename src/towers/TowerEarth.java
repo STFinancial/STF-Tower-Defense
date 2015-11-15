@@ -2,13 +2,12 @@ package towers;
 
 import creeps.Creep;
 import projectiles.ProjectileBasic;
-import levels.Level;
 import levels.Tile;
 
 public class TowerEarth extends Tower {
 	
-	public TowerEarth(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.EARTH, towerID);
+	TowerEarth(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.EARTH, towerID);
 		adjustClassSpecificBaseStats();
 	}
 
@@ -18,7 +17,7 @@ public class TowerEarth extends Tower {
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		//TODO need to handle attack speeds of less than 1. We will need to fire two projectiles at once then.
 		//TODO can fix this by making creep move slower and bumping up attack cooldowns if we have the resourcse
 		currentAttackCooldown--;
@@ -26,7 +25,7 @@ public class TowerEarth extends Tower {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

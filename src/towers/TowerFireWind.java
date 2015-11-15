@@ -1,7 +1,6 @@
 package towers;
 
 import creeps.DamageType;
-import levels.Level;
 import levels.Tile;
 import projectiles.ProjectileArea;
 import projectiles.ProjectilePassThroughArea;
@@ -22,8 +21,8 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	private float qDamageModifier;
 	private float qDamageRange;
 	
-	public TowerFireWind(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.FIRE_WIND, towerID);
+	TowerFireWind(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.FIRE_WIND, towerID);
 	}
 
 	@Override
@@ -35,7 +34,7 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	@Override
 	public boolean setTargetArea(float x, float y) {
 		Circle t = new Circle(x, y, 0);
-		if (t.intersects(targetZone) && !level.getMap().isOutside(x, y)) {
+		if (t.intersects(targetZone) && !levelManager.isOutside(x, y)) {
 			targetArea = new Circle(x, y, 0);
 			((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 			return true;
@@ -45,10 +44,10 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	}
 	
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
+			projManager.addProjectile(fireProjectile());
 			attackCarryOver += 1 - currentAttackCooldown;
 			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {

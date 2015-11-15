@@ -8,7 +8,9 @@ import java.util.LinkedList;
 import towers.Tower;
 import utilities.Circle;
 import creeps.Creep;
+import creeps.DamageType;
 import game.Game;
+import game.GameEventType;
 import levels.EffectPatch;
 import levels.Level;
 import levels.Map;
@@ -33,20 +35,37 @@ public final class ProjectileManager {
 		this.game = game;
 	}
 	
-	public void add(Projectile p) {
+	public void addProjectile(Projectile p) {
 		projectiles.add(p);
+		game.newEvent(GameEventType.PROJECTILE_FIRED, p);
 	}
 	
-	public boolean isOutside(float x, float y) {
-		return map.isOutside(x, y);
-	}
-	
-	public void addProjectileEffect(Projectile p, ProjectileEffect effect, boolean isSplash) {
+	public void addProjectileEffect(boolean isSplash, Projectile p, ProjectileEffect effect) {
 		if (isSplash) {
 			p.addSpecificSplashEffect(effect);
 		} else {
 			p.addSpecificCreepEffect(effect);
 		}
+	}
+	
+	public void clearAllBasicEffects(Projectile p) {
+		p.clearAllBasicEffects();
+	}
+	
+	public void setResistPenPercent(Projectile p, DamageType type, float amount) {
+		p.setResistPenPercent(type, amount);
+	}
+	
+	public void setIgnoresShield(Projectile p, boolean ignoresShield) {
+		p.setIgnoresShield(ignoresShield);
+	}
+	
+	public void setShieldDrainModifier(Projectile p, float amount) {
+		p.setShieldDrainModifier(amount);
+	}
+	
+	public void setToughPenPercent(Projectile p, float amount) {
+		p.setToughPenPercent(amount);
 	}
 	
 	//TODO: Using this method ends up duplicating a ton of work.

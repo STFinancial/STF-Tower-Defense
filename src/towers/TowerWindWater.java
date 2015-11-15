@@ -3,7 +3,6 @@ package towers;
 import java.util.ArrayList;
 
 import creeps.DamageType;
-import levels.Level;
 import levels.Tile;
 import projectileeffects.Damage;
 import projectileeffects.Explosion;
@@ -24,15 +23,15 @@ public final class TowerWindWater extends Tower {
 	private float qDODModifier;
 	private float qDODRange;
 
-	public TowerWindWater(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WIND_WATER, towerID);
+	TowerWindWater(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WIND_WATER, towerID);
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileAOE(this);
-		baseProjectile.clearAllBasicEffects();
-		baseProjectile.addSpecificCreepEffect(new SiphonLife(maxHealthModifier, DamageType.WATER, baseProjectile, goldModifier));
+		projManager.clearAllBasicEffects(baseProjectile);
+		projManager.addProjectileEffect(false, baseProjectile, new SiphonLife(maxHealthModifier, DamageType.WATER, baseProjectile, goldModifier));
 	
 		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
@@ -47,7 +46,7 @@ public final class TowerWindWater extends Tower {
 				Damage d = new Damage(damageOnDeathModifier * damageArray[type.ordinal()], type, baseProjectile);
 				dod.add(d);
 			}
-			baseProjectile.addSpecificCreepEffect(new Explosion(DamageType.PHYSICAL, baseProjectile, explosionRadiusModifier * range, dod));
+			projManager.addProjectileEffect(false, baseProjectile, new Explosion(DamageType.PHYSICAL, baseProjectile, explosionRadiusModifier * range, dod));
 		}
 		if (progress[1][3]) {
 			
@@ -55,11 +54,11 @@ public final class TowerWindWater extends Tower {
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			if (projManager.isCreepInRange(targetZone, hitsAir)) {
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

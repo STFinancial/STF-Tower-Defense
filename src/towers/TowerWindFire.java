@@ -4,7 +4,6 @@ import projectileeffects.Snare;
 import projectiles.ProjectileChain;
 import creeps.Creep;
 import creeps.DamageType;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerWindFire extends Tower {
@@ -21,28 +20,28 @@ public final class TowerWindFire extends Tower {
 	float shieldDrainModifier;
 	private float qShieldDrain;
 	
-	public TowerWindFire(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WIND_FIRE, towerID);
+	TowerWindFire(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WIND_FIRE, towerID);
 	}
 
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileChain(this, maxChains, (float) Math.sqrt(range), chainPenalty, noDuplicates);
 		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		baseProjectile.setShieldDrainModifier(shieldDrainModifier);
+		projManager.setShieldDrainModifier(baseProjectile, shieldDrainModifier);
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WIND, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Snare(snareDuration, DamageType.WIND, baseProjectile));
 		}
 	}
 	
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileChain) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import levels.Level;
+import levels.LevelManager;
 import levels.Tile;
 import creeps.DamageType;
 import game.GameObject;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
+
 public abstract class Tower extends GameObject {
 	//Positional Details
-	protected Level level;
-	protected int x, y; //Top Left corner in Tile Coordinates
-	protected int width;
-	protected int height;
+	private int width;
+	private int height;
 	//int cost;
 	protected float centerX, centerY;
-	protected Tile topLeft;
+	private Tile topLeft;
 	protected Circle targetZone;
 
 	//Targeting Details
 	protected static ProjectileManager projManager = ProjectileManager.getInstance();
 	protected static TowerManager towerManager = TowerManager.getInstance();
+	protected static LevelManager levelManager = LevelManager.getInstance();
 	protected TargetingModeType targetingMode;
 	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
@@ -78,25 +78,23 @@ public abstract class Tower extends GameObject {
 	protected float qRadiusSplash;
 	protected float qRange;
 	
-	protected Tower(Level level, Tile topLeftTile, TowerType type, int towerID) {
+	protected Tower (Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
-		this.level = level;
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
-		this.x = topLeftTile.x;
-		this.y = topLeftTile.y;
 		this.topLeft = topLeftTile;
-		this.centerX = x + width / 2f;
-		this.centerY = y + height / 2f;
+		this.targetZone = levelManager.getCenter(topLeftTile, width, height);
+		this.targetZone.radius = range;
+		this.centerX = targetZone.x;
+		this.centerY = targetZone.y;
 		this.targetZone = new Circle(centerX, centerY, range);
 		this.targetingMode = TargetingModeType.FIRST;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
 		this.qLevel = 0;
 		updateTowerChain();
-		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
 	}
 	
 	protected void increaseQuality() {
@@ -112,12 +110,15 @@ public abstract class Tower extends GameObject {
 	protected float getDamage(DamageType type) { return damageArray[type.ordinal()]; }
 	protected float getDamageSplash() { return damageSplash; }
 	protected float getEffectSplash() { return effectSplash; }
+	protected int getHeight() { return height; }
 	protected float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
 	protected int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
 	protected float getSplashRadius() { return splashRadius; }
 	protected TargetingModeType getTargetingMode() { return targetingMode; }
 	protected Circle getTargetZone() { return targetZone; }
+	protected Tile getTopLeftTile() { return topLeft; }
 	protected TowerType getType() { return type; }
+	protected int getWidth() { return width; }
 	protected boolean hitsAir() { return hitsAir; }
 	protected boolean splashHitsAir() { return splashHitsAir; }
 	
@@ -314,14 +315,16 @@ public abstract class Tower extends GameObject {
 		range *= (1 + (qRange * qLevel));
 	}
 	
-	private void adjustTalentStats() {
-		//TODO:
-	}
+//	private void adjustTalentStats() {
+//		//TODO:
+//	}
+	
 	
 	protected abstract void adjustProjectileStats();
 	protected abstract void adjustClassSpecificBaseStats();
 	protected abstract void adjustClassSpecificQuality();
 	protected void createAuras() { } //Can be overridden for a tower that actually has auras
+	@Override protected abstract int update();
 	
 	/**
 	 * 
@@ -378,7 +381,7 @@ public abstract class Tower extends GameObject {
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s = s.append("Tower of Type " + type + " at position " + x + ", " + y + "\n");
+		s = s.append("Tower of Type " + type + " at position " + topLeft.toString() + "\n");
 		s = s.append("TowerID: " + towerID);
 		s = s.append("Damage: \n");
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
@@ -394,6 +397,8 @@ public abstract class Tower extends GameObject {
 		return s.toString();
 	}
 	
+	
+	
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Tower)) {
@@ -407,8 +412,8 @@ public abstract class Tower extends GameObject {
 	public int hashCode() {
 		int result = 17;
 		result = 31 * result + towerID;
-		result = 31 * result + x;
-		result = 31 * result + y;
+		result = 31 * result + (int) targetZone.x;
+		result = 31 * result + (int) targetZone.y;
 		result = 31 * result + type.ordinal();
 		result = 31 * result + (int) damageArray[result % 4];
 		return result;

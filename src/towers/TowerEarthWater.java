@@ -3,7 +3,6 @@ package towers;
 import projectiles.ProjectileArea;
 import projectiles.TargetsArea;
 import utilities.Circle;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerEarthWater extends Tower implements TargetsArea {
@@ -12,8 +11,8 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	float areaRadius;
 	private float qAreaRadius;
 	
-	public TowerEarthWater(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.EARTH_WATER, towerID);
+	TowerEarthWater(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.EARTH_WATER, towerID);
 	}
 
 	@Override
@@ -25,7 +24,7 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	@Override
 	public boolean setTargetArea(float x, float y) {
 		Circle t = new Circle(x, y, 0);
-		if (t.intersects(targetZone) && !level.getMap().isOutside(x, y)) {
+		if (t.intersects(targetZone) && !levelManager.isOutside(x, y)) {
 			targetArea = new Circle(x, y, areaRadius);
 			((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
 			return true;
@@ -35,10 +34,10 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
+			projManager.addProjectile(fireProjectile());
 			attackCarryOver += 1 - currentAttackCooldown;
 			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {

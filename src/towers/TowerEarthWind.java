@@ -3,7 +3,6 @@ package towers;
 import creeps.Creep;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectilePassThroughTarget;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerEarthWind extends Tower {
@@ -13,8 +12,8 @@ public final class TowerEarthWind extends Tower {
 	private float qRadiusModifier;
 	private float qModifier;
 	
-	public TowerEarthWind(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.EARTH_WIND, towerID);
+	TowerEarthWind(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.EARTH_WIND, towerID);
 	}
 
 	@Override
@@ -28,13 +27,13 @@ public final class TowerEarthWind extends Tower {
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import creeps.Creep;
 import creeps.DamageType;
-import levels.Level;
 import levels.Tile;
 import projectileeffects.Damage;
 import projectileeffects.DamageOnHit;
@@ -46,8 +45,8 @@ public final class TowerWaterWind extends Tower {
 	private float qDamageModifier;
 	private float qDamageStacks;
 	
-	public TowerWaterWind(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WATER_WIND, towerID);
+	TowerWaterWind(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WATER_WIND, towerID);
 	}
 
 	@Override
@@ -55,6 +54,9 @@ public final class TowerWaterWind extends Tower {
 		baseProjectile = new ProjectileRandom(this);
 		ArrayList<ProjectileEffect> damages = new ArrayList<ProjectileEffect>(GameConstants.NUM_DAMAGE_TYPES);
 		ArrayList<ProjectileEffect> slows = new ArrayList<ProjectileEffect>(GameConstants.NUM_DAMAGE_TYPES);
+		//TODO: Look at this 7.
+		((ProjectileRandom) baseProjectile).addEffect(damages, 7);
+		((ProjectileRandom) baseProjectile).addEffect(slows, 7);
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			damages.add(new Damage(damageArray[i], DamageType.values()[i], baseProjectile));
 			slows.add(new Slow(slowDurationArray[i], slowArray[i], DamageType.values()[i], baseProjectile));
@@ -94,13 +96,13 @@ public final class TowerWaterWind extends Tower {
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

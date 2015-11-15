@@ -12,7 +12,6 @@ import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
 import projectiles.ProjectilePassThroughTarget;
 import utilities.GameConstants;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerFireWater extends Tower {
@@ -27,8 +26,8 @@ public final class TowerFireWater extends Tower {
 	private float qPatchLifetime;
 	private float qPatchModifier;
 	
-	public TowerFireWater(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.FIRE_WATER, towerID);
+	TowerFireWater(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.FIRE_WATER, towerID);
 	}
 
 	@Override
@@ -48,22 +47,22 @@ public final class TowerFireWater extends Tower {
 			baseProjectile = new ProjectileBasic(this);
 		}
 		if (progress[0][2]) {
-			baseProjectile.setIgnoresShield(true);
+			projManager.setIgnoresShield(baseProjectile, true);
 			for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
-				baseProjectile.setResistPenPercent(DamageType.values()[i], 1);
+				projManager.setResistPenPercent(baseProjectile, DamageType.values()[i], 1);
 			}
-			baseProjectile.setToughPenPercent(1);
+			projManager.setToughPenPercent(baseProjectile, 1);
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

@@ -6,7 +6,6 @@ import projectileeffects.Hasting;
 import projectileeffects.SpeedDamage;
 import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerWindWind extends Tower {
@@ -30,8 +29,8 @@ public final class TowerWindWind extends Tower {
 	private float qSpeedDamage;
 	
 	
-	public TowerWindWind(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WIND_WIND, towerID);
+	TowerWindWind(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WIND_WIND, towerID);
 	}
 
 	@Override
@@ -41,27 +40,27 @@ public final class TowerWindWind extends Tower {
 		if (progress[0][2]) {
 			Hasting h = new Hasting(hastingDuration, hastingModifier, DamageType.WIND, baseProjectile);
 			h.setMaxStacks(maxHastingStacks);
-			baseProjectile.addSpecificCreepEffect(h);
+			projManager.addProjectileEffect(false, baseProjectile, h);
 		}
 		if (progress[0][3]) {
 			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.WIND, baseProjectile, true, true);
 			w.setMaxStacks(maxWealthStacks);
-			baseProjectile.addSpecificCreepEffect(w);
+			projManager.addProjectileEffect(false, baseProjectile, w);
 		}
 		if (progress[1][2]) {
-			baseProjectile.addSpecificCreepEffect(new Grounding(groundingModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Grounding(groundingModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new SpeedDamage(speedDamageModifier * damageArray[DamageType.WIND.ordinal()], DamageType.WIND, baseProjectile));
-			baseProjectile.addSpecificCreepEffect(new SpeedDamage(speedDamageModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new SpeedDamage(speedDamageModifier * damageArray[DamageType.WIND.ordinal()], DamageType.WIND, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new SpeedDamage(speedDamageModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile));
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
+			projManager.addProjectile(fireProjectile());
 			attackCarryOver += 1 - currentAttackCooldown;
 			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {

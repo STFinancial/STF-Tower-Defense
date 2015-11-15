@@ -4,7 +4,6 @@ import creeps.DamageType;
 import projectileeffects.ArmorShred;
 import projectileeffects.PermaSlow;
 import projectiles.ProjectileAOE;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerWaterEarth extends Tower {
@@ -18,8 +17,8 @@ public final class TowerWaterEarth extends Tower {
 	float permaSlowModifier;
 	private float qPermaSlow;
 	
-	public TowerWaterEarth(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WATER_EARTH, towerID);
+	TowerWaterEarth(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WATER_EARTH, towerID);
 	}
 
 	@Override
@@ -29,18 +28,18 @@ public final class TowerWaterEarth extends Tower {
 		if (progress[0][2]) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.PHYSICAL, baseProjectile, false);
 			a.setMaxStacks(maxShredStacks);
-			baseProjectile.addSpecificCreepEffect(a);
+			projManager.addProjectileEffect(false, baseProjectile, a);
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new PermaSlow(permaSlowModifier, DamageType.EARTH, baseProjectile, true));
+			projManager.addProjectileEffect(false, baseProjectile, new PermaSlow(permaSlowModifier, DamageType.EARTH, baseProjectile, true));
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
+			projManager.addProjectile(fireProjectile());
 			attackCarryOver += 1 - currentAttackCooldown;
 			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {

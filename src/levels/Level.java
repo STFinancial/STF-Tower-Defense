@@ -21,7 +21,6 @@ import projectiles.ProjectileManager;
 import towers.*;
 import utilities.Circle;
 import utilities.CreepWaveGenerator;
-import utilities.MapGenerator;
 
 /*
  * Executes main game logic loop
@@ -134,28 +133,10 @@ public class Level {
 		return t;
 	}
 	
-	public void sellTower(Tower t) {
-		//Need to unsiphon the tower and then get the gold value
-		towerManager.destroyTower(t);
-	}
+	
 
 	public Tower unsiphonTower(Tower destination, boolean refund) {
-		if (refund) {
-			gold += destination.getTrackGoldValue();
-		}
-		Tower newDest = towerManager.unsiphonTower(destination, refund);
-		//TODO: Need to refund some gold
-		newEvent(GameEventType.TOWER_DESTROYED, destination);
-		newEvent(GameEventType.TOWER_CREATED, newDest);
-		return newDest;
-	}
-
-	public Tower siphonTower(Tower source, Tower destination) {
-		Tower newDest = towerManager.siphonTower(source, destination);
-		//TODO: Need to charge some gold
-		newEvent(GameEventType.TOWER_DESTROYED, destination);
-		newEvent(GameEventType.TOWER_CREATED, newDest);
-		return newDest;
+		
 	}
 
 	//Can be called from App
@@ -214,11 +195,6 @@ public class Level {
 		}
 	}
 
-	public void addProjectile(Projectile p) {
-		projManager.add(p);
-		newEvent(GameEventType.PROJECTILE_FIRED, p);
-	}
-
 	public boolean canBuild(TowerType type, int y, int x) {
 		if (!type.isBaseType() || type.getCost() > gold) {
 			return false;
@@ -239,10 +215,6 @@ public class Level {
 		}
 		proposePath(x, y, width, height);
 		return proposedGroundPath != null;
-	}
-
-	private void newEvent(GameEventType t, Object o) {
-		events.add(new GameEvent(t, o, round, tick));
 	}
 
 	public GameEvent getEvent() {

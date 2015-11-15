@@ -7,8 +7,8 @@ import java.util.Queue;
 
 import creeps.DamageType;
 import game.Game;
-import levels.Level;
-import levels.Map;
+import game.GameEventType;
+import levels.LevelManager;
 import levels.Tile;
 import utilities.Circle;
 import utilities.GameConstants;
@@ -21,6 +21,8 @@ public final class TowerManager {
 	private HashMap<Tile, Tower> towerPositions;
 	private HashMap<Tower, ArrayList<Aura>> creates;
 	private HashMap<Aura, ArrayList<Tower>> affects;
+	
+	private LevelManager levelManager = LevelManager.getInstance();
 	
 	private int currentTowerID;
 	private int earthEarth;
@@ -55,47 +57,40 @@ public final class TowerManager {
 	}
 	
 	public Tower getTower(int x, int y) {
-		return towerPositions.get(map.getTile(y, x));
+		return towerPositions.get(levelManager.getTile(y, x));
 	}
 	
 	public Tower constructTower(Tile tile, TowerType type) {
-		Tower t = TowerFactory.generateTower(level, tile, type, currentTowerID++);
+		Tower t = TowerFactory.generateTower(tile, type, currentTowerID++);
 		towers.add(t);
 		towerPositions.put(tile, t);
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).addTower(t);
-			}
-		}
+		levelManager.addTower(t, t.getTopLeftTile(), t.getWidth(), t.getHeight());
 		return t;
 	}
 	
 	private void constructTower(Tower t) {
 		towers.add(t);
-		
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).addTower(t);
-			}
-		}
+		levelManager.addTower(t, t.getTopLeftTile(), t.getWidth(), t.getHeight());
 	}
 	
-	public Tower destroyTower(Tower t) {
+	public void sellTower(Tower t) {
+		//Need to unsiphon the tower and then get the gold value
+		destroyTower(t);
+	}
+	
+	private Tower destroyTower(Tower t) {
 		unsiphonTower(t, false); // Remove any siphons.
 		for (Tower siph: t.siphoningTo) { // Unsiphon from all Towers which this is siphoning to
 			// We need to call the level version so that there is a game event for their changes and we can refund if needed
-			level.unsiphonTower(siph, GameConstants.DEFAULT_UNSIPHON_REFUND_OPTION);
+			unsiphonTower(siph, GameConstants.DEFAULT_UNSIPHON_REFUND_OPTION);
 		}
 		removeTower(t);
+		levelManager.addGold(t.getTotalGoldValue());
 		return t;
 	}
 	
 	private void removeTower(Tower t) {
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).removeTower();
-			}
-		}
+		levelManager.removeTower(t.getTopLeftTile(), t.getWidth(), t.getHeight());
 		towers.remove(t);
 	}
 	
@@ -107,7 +102,7 @@ public final class TowerManager {
 		if (newType == TowerType.EARTH_EARTH) {
 			earthEarth++;
 		}
-		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.getTowerID());
+		Tower newDest = TowerFactory.generateTower(destination.getTopLeftTile(), newType, destination.getTowerID());
 		newDest.siphoningFrom = source; //siphon from the source
 		newDest.siphoningTo = destination.siphoningTo; //maintain what we're siphoning to
 		newDest.setUpgradeTracks(destination.getUpgradeTracks());//set upgrade tracks
@@ -119,8 +114,11 @@ public final class TowerManager {
 		}
 		removeTower(destination); // Remove the old destination tower.
 		constructTower(newDest); //"build" the new one
-		towerPositions.put(newDest.topLeft, newDest);
+		towerPositions.put(newDest.getTopLeftTile(), newDest);
 		newDest.updateTowerChain(); //update the tower chain
+		//TODO: Need to charge some gold here
+		game.newEvent(GameEventType.TOWER_DESTROYED, destination);
+		game.newEvent(GameEventType.TOWER_CREATED, newDest);
 		return newDest;
 	}
 	
@@ -128,11 +126,14 @@ public final class TowerManager {
 		if (destination.siphoningFrom == null) {
 			return destination;
 		}
+		if (refund) {
+			levelManager.addGold(destination.getTrackGoldValue());
+		}
 		if (destination.type == TowerType.EARTH_EARTH) {
 			earthEarth--;
 		}
 		TowerType newType = destination.type.getDowngradeType(); //get the type we downgrade to
-		Tower newDest = TowerFactory.generateTower(level, destination.topLeft, newType, destination.getTowerID()); //generate tower of that type
+		Tower newDest = TowerFactory.generateTower(destination.getTopLeftTile(), newType, destination.getTowerID()); //generate tower of that type
 		
 		// If we're refunding, then we need to set the current upgrade track to false
 		boolean[][][] upgradeTracks = destination.getUpgradeTracks();
@@ -156,9 +157,12 @@ public final class TowerManager {
 		}
 		removeTower(destination); //remove old dest
 		constructTower(newDest); //construct new dest
-		towerPositions.put(newDest.topLeft, newDest);
+		towerPositions.put(newDest.getTopLeftTile(), newDest);
 		newDest.updateTowerChain();
 		siph.updateTowerChain();
+		//TODO: Need to refund some gold
+		game.newEvent(GameEventType.TOWER_DESTROYED, destination);
+		game.newEvent(GameEventType.TOWER_CREATED, newDest);
 		return newDest;
 	}
 	

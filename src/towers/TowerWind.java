@@ -1,13 +1,12 @@
 package towers;
 
 import creeps.Creep;
-import levels.Level;
 import levels.Tile;
 import projectiles.ProjectileBasic;
 
 public class TowerWind extends Tower {
-	public TowerWind(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WIND, towerID);
+	TowerWind(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WIND, towerID);
 		adjustClassSpecificBaseStats();
 	}
 
@@ -17,13 +16,13 @@ public class TowerWind extends Tower {
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

@@ -10,7 +10,6 @@ import projectileeffects.Damage;
 import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerFireFire extends Tower {
@@ -38,8 +37,8 @@ public final class TowerFireFire extends Tower {
 	private float qPatchShredDuration;
 	private float qPatchShredStacks;
 	
-	public TowerFireFire(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.FIRE_FIRE, towerID);
+	TowerFireFire(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.FIRE_FIRE, towerID);
 	}
 
 	@Override
@@ -66,22 +65,22 @@ public final class TowerFireFire extends Tower {
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 			if (progress[0][3]) {
-				baseProjectile.addSpecificCreepEffect(new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.FIRE, baseProjectile));
-				baseProjectile.addSpecificCreepEffect(new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.WATER, baseProjectile));
-				baseProjectile.addSpecificCreepEffect(new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.EARTH, baseProjectile));
-				baseProjectile.addSpecificCreepEffect(new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.WIND, baseProjectile));
+				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.FIRE, baseProjectile));
+				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.WATER, baseProjectile));
+				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.EARTH, baseProjectile));
+				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.WIND, baseProjectile));
 			}
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

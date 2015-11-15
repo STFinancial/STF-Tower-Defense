@@ -5,7 +5,6 @@ import projectileeffects.ArmorShred;
 import projectileeffects.Bleed;
 import projectileeffects.Detonation;
 import projectiles.ProjectileAOE;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerEarthEarth extends Tower {
@@ -27,8 +26,8 @@ public final class TowerEarthEarth extends Tower {
 	private float qBleedDuration;
 	private float qBleedStacks;
 	
-	public TowerEarthEarth(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.EARTH_EARTH, towerID);
+	TowerEarthEarth(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.EARTH_EARTH, towerID);
 	}
 
 	@Override
@@ -36,26 +35,26 @@ public final class TowerEarthEarth extends Tower {
 		baseProjectile = new ProjectileAOE(this);
 		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile.addSpecificCreepEffect(new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Detonation(damageArray[DamageType.PHYSICAL.ordinal()] * detonationModifier, DamageType.PHYSICAL, baseProjectile));
 		}
 		if (progress[1][2]) {
 			Bleed b = new Bleed(bleedDuration, (float) damageArray[DamageType.PHYSICAL.ordinal()] * bleedModifier, bleedTiming, DamageType.PHYSICAL, baseProjectile);
 			b.setMaxStacks(maxBleedStacks);
-			baseProjectile.addSpecificCreepEffect(b);
+			projManager.addProjectileEffect(false, baseProjectile, b);
 		}
 		if (progress[1][3]) {
 			ArmorShred a = new ArmorShred(armorShredDuration, damageArray[DamageType.PHYSICAL.ordinal()] * shredModifier, DamageType.PHYSICAL, baseProjectile, true);
 			a.setMaxStacks(maxShredStacks);
-			baseProjectile.addSpecificCreepEffect(a);
+			projManager.addProjectileEffect(false, baseProjectile, a);
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			if (projManager.isCreepInRange(targetZone, hitsAir)) {
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

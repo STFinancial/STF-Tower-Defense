@@ -7,7 +7,6 @@ import projectiles.ProjectileBasic;
 import projectiles.ProjectilePassThroughTarget;
 import creeps.Creep;
 import creeps.DamageType;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerWindEarth extends Tower {
@@ -26,8 +25,8 @@ public final class TowerWindEarth extends Tower {
 	private float qPassRadius;
 	
 	
-	public TowerWindEarth(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WIND_EARTH, towerID);
+	TowerWindEarth(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WIND_EARTH, towerID);
 	}
 
 	@Override
@@ -39,24 +38,24 @@ public final class TowerWindEarth extends Tower {
 			baseProjectile = new ProjectileBasic(this);
 		}
 		if (progress[0][2]) {
-			baseProjectile.addSpecificCreepEffect(new Knockup(knockupDuration, DamageType.WIND, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Knockup(knockupDuration, DamageType.WIND, baseProjectile));
 		}
 		if (progress[1][2]) {
-			baseProjectile.addSpecificCreepEffect(new Disorient(disorientDuration, DamageType.EARTH, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Disorient(disorientDuration, DamageType.EARTH, baseProjectile));
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new Slow(unslowDuration, unslowModifier, DamageType.EARTH, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Slow(unslowDuration, unslowModifier, DamageType.EARTH, baseProjectile));
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-				level.addProjectile(fireProjectile());
+				projManager.addProjectile(fireProjectile());
 				attackCarryOver += 1 - currentAttackCooldown;
 				currentAttackCooldown = attackCooldown;
 				if (attackCarryOver > 1) {

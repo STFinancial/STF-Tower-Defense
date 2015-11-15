@@ -5,11 +5,11 @@ import creeps.CreepManager;
 import levels.Level;
 import levels.LevelManager;
 import levels.Map;
+import levels.MapGenerator;
 import players.Player;
 import projectiles.ProjectileManager;
 import towers.TowerManager;
 import utilities.CreepWaveGenerator;
-import utilities.MapGenerator;
 
 public class Game {
 	//TODO: Should I have player and map in here or let level take care of that? Maybe just player?

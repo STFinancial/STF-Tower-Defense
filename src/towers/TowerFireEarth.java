@@ -9,7 +9,6 @@ import projectileeffects.MaxHealthDamage;
 import projectileeffects.ToughnessShred;
 import projectiles.ProjectileAOE;
 import projectiles.ProjectileBasic;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerFireEarth extends Tower {
@@ -45,8 +44,8 @@ public final class TowerFireEarth extends Tower {
 	private float qToughDuration;
 	private float qToughStacks;
 
-	public TowerFireEarth(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.FIRE_EARTH, towerID);
+	TowerFireEarth(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.FIRE_EARTH, towerID);
 	}
 
 	@Override
@@ -60,30 +59,30 @@ public final class TowerFireEarth extends Tower {
 		if (progress[0][3]) {
 			Bleed b = new Bleed(poisonDuration, poisonModifier, poisonTiming, DamageType.EARTH, baseProjectile);
 			b.setMaxStacks(maxPoisonStacks);
-			baseProjectile.addSpecificCreepEffect(b);
+			projManager.addProjectileEffect(false, baseProjectile, b);
 		}
 		if (progress[1][0]) {
 			ArmorShred a = new ArmorShred(armorShredDuration, armorShredModifier, DamageType.PHYSICAL, baseProjectile, true);
 			a.setMaxStacks(maxArmorShredStacks);
-			baseProjectile.addSpecificCreepEffect(a);
+			projManager.addProjectileEffect(false, baseProjectile, a);
 		}
 		if (progress[1][1]) {
 			ToughnessShred t = new ToughnessShred(toughnessShredDuration, toughnessShredModifier, DamageType.FIRE, baseProjectile, true);
 			t.setMaxStacks(maxToughnessShredStacks);
-			baseProjectile.addSpecificCreepEffect(t);
+			projManager.addProjectileEffect(false, baseProjectile, t);
 		}
 		if (progress[1][2]) {
 			DamageOnHit d = new DamageOnHit(DOHDuration, DOHModifier * damageArray[DamageType.FIRE.ordinal()], DamageType.FIRE, baseProjectile);
 			d.setMaxStacks(maxDOHStacks);
-			baseProjectile.addSpecificCreepEffect(d);
+			projManager.addProjectileEffect(false, baseProjectile, d);
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new MaxHealthDamage(percentMaxHealthModifier, DamageType.FIRE, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new MaxHealthDamage(percentMaxHealthModifier, DamageType.FIRE, baseProjectile));
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
 			boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
@@ -91,7 +90,7 @@ public final class TowerFireEarth extends Tower {
 				Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
 				if (targetCreep != null) {
 					((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
-					level.addProjectile(fireProjectile());
+					projManager.addProjectile(fireProjectile());
 					attackCarryOver += 1 - currentAttackCooldown;
 					currentAttackCooldown = attackCooldown;
 					if (attackCarryOver > 1) {
@@ -102,7 +101,7 @@ public final class TowerFireEarth extends Tower {
 				}
 			} else {
 				if (projManager.isCreepInRange(targetZone, hitsAir)) {
-					level.addProjectile(fireProjectile());
+					projManager.addProjectile(fireProjectile());
 					attackCarryOver += 1 - currentAttackCooldown;
 					currentAttackCooldown = attackCooldown;
 					if (attackCarryOver > 1) {

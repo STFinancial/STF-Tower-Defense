@@ -6,7 +6,6 @@ import projectileeffects.Bleed;
 import projectileeffects.Consume;
 import projectileeffects.Snare;
 import projectiles.ProjectileAOE;
-import levels.Level;
 import levels.Tile;
 
 public final class TowerWaterWater extends Tower {
@@ -31,8 +30,8 @@ public final class TowerWaterWater extends Tower {
 	float consumeModifier;
 	private float qConsume;
 	
-	public TowerWaterWater(Level level, Tile topLeftTile, int towerID) {
-		super(level, topLeftTile, TowerType.WATER_WATER, towerID);
+	TowerWaterWater(Tile topLeftTile, int towerID) {
+		super(topLeftTile, TowerType.WATER_WATER, towerID);
 	}
 
 	@Override
@@ -40,26 +39,26 @@ public final class TowerWaterWater extends Tower {
 		baseProjectile = new ProjectileAOE(this);
 		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][3]) {
-			baseProjectile.addSpecificCreepEffect(new Snare(snareDuration, DamageType.WATER, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Snare(snareDuration, DamageType.WATER, baseProjectile));
 		}
 		if (progress[1][2]) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.WATER, baseProjectile, false);
 			a.setMaxStacks(maxShredStacks);
-			baseProjectile.addSpecificCreepEffect(a);
+			projManager.addProjectileEffect(false, baseProjectile, a);
 			Bleed b = new Bleed(bleedDuration, damageArray[DamageType.WATER.ordinal()] * bleedModifier, bleedTiming, DamageType.WATER, baseProjectile);
 			b.setMaxStacks(maxBleedStacks);
-			baseProjectile.addSpecificCreepEffect(b);
+			projManager.addProjectileEffect(false, baseProjectile, b);
 		}
 		if (progress[1][3]) {
-			baseProjectile.addSpecificCreepEffect(new Consume(damageArray[DamageType.WATER.ordinal()] * consumeModifier, DamageType.WATER, baseProjectile));
+			projManager.addProjectileEffect(false, baseProjectile, new Consume(damageArray[DamageType.WATER.ordinal()] * consumeModifier, DamageType.WATER, baseProjectile));
 		}
 	}
 
 	@Override
-	public int update() {
+	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			level.addProjectile(fireProjectile());
+			projManager.addProjectile(fireProjectile());
 			attackCarryOver += 1 - currentAttackCooldown;
 			currentAttackCooldown = attackCooldown;
 			if (attackCarryOver > 1) {
