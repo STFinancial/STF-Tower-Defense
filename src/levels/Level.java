@@ -94,24 +94,15 @@ public class Level {
 			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
 			updateGroundCreepAdjacentToEarth();
 		}
-		projManager.update();
-
-		
-
-		towerManager.update();
 		
 		Iterator<EffectPatch> it = effectPatches.iterator();
 		while (it.hasNext()) {
 			EffectPatch e = it.next();
-			if (e.update() == -1) {
+			e.update();
+			if (e.isDone()) {
 				it.remove();
 			}
 		}
-	}
-
-	private void detonateProjectile(Projectile p) {
-		p.detonate();
-		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
 	}
 
 	public void addGold(float amount) { gold += amount; }

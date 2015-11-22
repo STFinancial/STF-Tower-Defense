@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileManager;
 import creeps.Creep;
+import creeps.CreepManager;
 import utilities.Circle;
 
-public class EffectPatch implements Updatable {
+public class EffectPatch {
 	//private int lifetime;
 	private int timing;
 	private int counter;
 	private Circle area;
 	private ArrayList<ProjectileEffect> effects;
+	private CreepManager creepManager = CreepManager.getInstance();
 	//private Level level;
 	
 	public EffectPatch(int lifetime, int timing, float x, float y, float radius, ArrayList<ProjectileEffect> effects) {
@@ -27,21 +29,21 @@ public class EffectPatch implements Updatable {
 		this.effects = effects;
 		this.area = new Circle(x, y, radius);
 	}
+	
+	public boolean isDone() {
+		return counter < 0;
+	}
 
-	@Override
-	public int update() {
+	public void update() {
 		counter--;
 		if (counter < 0) {
-			return -1;
+			return;
 		} else if (timing != 0 && counter % timing == 0) {
 			//apply the effect
-			for (Creep c: ProjectileManager.getInstance().getCreepInRange(area, false)) {
-				c.addAllEffects(effects);
+			for (Creep c: creepManager.getCreepInRange(area, false)) {
+				creepManager.addAllEffects(c, effects);
 			}
-			return 1;
-		} else {
-			//Do nothing
-			return 0;
+			return;
 		}
 	}
 }
