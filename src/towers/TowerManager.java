@@ -50,6 +50,28 @@ public final class TowerManager {
 		earthEarth = 0;
 	}
 	
+	// Public access one line delegations
+	public boolean doesOnHit(Tower t) { return t.doesOnHit(); }
+	public boolean doesSlow(Tower t) { return t.doesSlow(); }
+	public boolean doesSplash(Tower t) { return t.doesSplash(); }
+	public float getCenterX(Tower t) { return t.getCenterX(); }
+	public float getCenterY(Tower t) { return t.getCenterY(); }
+	public float getDamage(Tower t, DamageType type) { return t.getDamage(type); }
+	public float getDamageSplash(Tower t) { return t.getDamageSplash(); }
+	public float getEffectSplash(Tower t) { return t.getEffectSplash(); }
+	public int getHeight(Tower t) { return t.getHeight(); }
+	public float getSlow(Tower t, DamageType type) { return t.getSlow(type); }
+	public int getSlowDuration(Tower t, DamageType type) { return t.getSlowDuration(type); }
+	public float getSplashRadius(Tower t) { return t.getSplashRadius(); }
+	public TargetingModeType getTargetingMode(Tower t) { return t.getTargetingMode(); }
+	public Circle getTargetZone(Tower t) { return t.getTargetZone(); }
+	public Tile getTopLeftTile(Tower t) { return t.getTopLeftTile(); }
+	public TowerType getType(Tower t) { return t.getType(); }
+	public int getWidth(Tower t) { return t.getWidth(); }
+	public boolean hitsAir(Tower t) { return t.hitsAir(); }
+	public boolean splashHitsAir(Tower t) { return t.splashHitsAir(); }
+	
+	
 	public boolean hasEarthEarth() { return earthEarth > 0; }
 	
 	public Tower getTower(Tile tile) {
@@ -182,8 +204,7 @@ public final class TowerManager {
 		Circle c = new Circle(0,0,0);
 		ArrayList<Tower> inRange = new ArrayList<Tower>();
 		for (Tower t: towers) {
-			c.x = t.centerX;
-			c.y = t.centerY;
+			c = new Circle(t.getCenterX(), t.getCenterY(), 0);
 			if (area.intersects(c)) {
 				inRange.add(t);
 			}

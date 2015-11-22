@@ -6,6 +6,7 @@ import java.util.HashSet;
 import creeps.Creep;
 import projectileeffects.ProjectileEffect;
 import towers.Tower;
+import utilities.Circle;
 
 //Hits all targets on the way to its target
 public final class ProjectilePassThroughTarget extends ProjectileBasic {
@@ -54,7 +55,7 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 	@Override
 	public int update() {
 		if (targetCreep != null) {
-			if (targetCreep.isDead()) {
+			if (creepManager.isDead(targetCreep)) {
 				dud = true;
 				return -1;
 			} else {
@@ -66,25 +67,24 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 		}
 		x -= angleCos * currentSpeed;
 		y -= angleSin * currentSpeed;
-		hitBox.x = x;
-		hitBox.y = y;
+		hitBox = new Circle(x, y, hitBox.getRadius());
 		//TODO: Should these if statements be modified?
 		//TODO: Do we need a more sophisticated method of checking whether we "passed through" something? (Depends how slow it is)
 		if (++counter % pulseTiming == 0) { //Choosing not to pulse at first firing
-			for (Creep c: projManager.getCreepInRange(this, passThroughRadius, hitsAir)) {
+			for (Creep c: creepManager.getCreepInRange(new Circle(x, y, passThroughRadius), hitsAir)) {
 				//Have to avoid hitting the target creep twice, so we have to check for that, hopefully it won't add too much time to this call.
 				if (!passedThrough.contains(c) || !c.equals(targetCreep)) {
-					c.addAllEffects(passThroughCreepEffects);
+					creepManager.addAllEffects(c, passThroughCreepEffects);
 					if (doesOnHit) {
-						c.onProjectileCollision();
+						creepManager.onProjectileCollision(c);
 					}
 					passedThrough.add(c);
 					if (doesSplash) {
 						if (!hitsAir || splashHitsAir) {
-							c.addAllEffects(passThroughSplashEffects);
+							creepManager.addAllEffects(c, passThroughSplashEffects);
 						} else {
-							if (!c.isFlying()) {
-								c.addAllEffects(passThroughSplashEffects);
+							if (!creepManager.isFlying(c)) {
+								creepManager.addAllEffects(c, passThroughSplashEffects);
 							}
 						}
 						

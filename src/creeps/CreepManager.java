@@ -1,6 +1,7 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,11 +10,15 @@ import game.Game;
 import game.GameEventType;
 import levels.LevelManager;
 import projectileeffects.ProjectileEffect;
+import towers.TargetingModeType;
+import towers.Tower;
+import towers.TowerManager;
 import utilities.Circle;
 
 public class CreepManager {
 	private final static CreepManager INSTANCE = new CreepManager();
 	private LevelManager levelManager;
+	private TowerManager towerManager;
 	private Game game;
 	private LinkedList<Creep> creeps;
 	private ArrayList<Wave> creepWaves;
@@ -27,6 +32,7 @@ public class CreepManager {
 		this.game = game;
 		this.creeps = new LinkedList<Creep>();
 		this.levelManager = LevelManager.getInstance();
+		this.towerManager = TowerManager.getInstance();
 	}
 	
 	public void startRound(int round) {
@@ -106,5 +112,146 @@ public class CreepManager {
 	public void unslow(Creep creep, DamageType type, float amount) { creep.unslow(type, amount); }
 	public void unsuppressDisruption(Creep creep, DamageType type, float amount, boolean isFlat) { creep.unsuppressDisruption(type, amount, isFlat); }
 
+	//Public getter methods
+	public float getCurrentSize(Creep c) { return c.getCurrentSize(); }
+	public float getCurrentSpeed(Creep c) { return c.getCurrentSpeed(); }
+	public float getCurrentHealthCost(Creep c) { return c.getCurrentHealthCost(); }
+	public float getMaxHealth(Creep c) { return c.getMaxHealth(); }
+	public float getX(Creep c) { return c.getX(); }
+	public float getY(Creep c) { return c.getY(); }
+	public boolean intersects(Creep c, Circle area) { return c.intersects(area); }
+	public boolean isDead(Creep c) { return c.isDead(); }
+	public boolean isFlying(Creep c) { return c.isFlying(); }
 	
+	public void onProjectileCollision(Creep c) { c.onProjectileCollision(); }
+
+	
+	//TODO: Using this method ends up duplicating a ton of work.
+	//TODO: Could try keeping track of a creep that has been in range, and only when that creep is out of range or dead we search for a new one (good idea)
+	public boolean isCreepInRange(Circle area, boolean hitsAir) {
+		for (Creep c : creeps) {
+			if (c.intersects(area)) {
+				if (hitsAir) {
+					return true;
+				} else if (!c.isFlying()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public Creep findTargetCreep(TargetingModeType targetingMode, Circle targetZone, boolean hitsAir) {
+		Creep toTarget = null;
+		ArrayList<Creep> inRange = new ArrayList<Creep>();
+		for (Creep c : creeps) {
+			if (c.intersects(targetZone)) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		switch (targetingMode) {
+		case FIRST:
+			int max = -1;
+			for (Creep c : inRange) {
+				if (c.currentIndex > max) {
+					toTarget = c;
+					max = c.currentIndex;
+				}
+			}
+			break;
+		case HIGHEST_HEALTH:
+			break;
+		case LAST:
+			break;
+		default:
+			break;
+		}
+		return toTarget;
+	}	
+	
+	public HashSet<Creep> getCreepInRange(Circle area, boolean hitsAir) {
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		for (Creep c: creeps) {
+			if (c.intersects(area)) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		return inRange;
+	}
+	
+	public HashSet<Creep> getOtherCreepInSplashRange(Creep creep, float range, boolean hitsAir) {
+		Circle splash = new Circle(creep.xOff + creep.currentVertex.getX(), creep.yOff + creep.currentVertex.getY(), range);
+		HashSet<Creep> inRange = new HashSet<Creep>();
+		for (Creep c: creeps) {
+			if (c.intersects(splash) && !c.equals(creep)) {
+				if (hitsAir) {
+					inRange.add(c);
+				} else if (!c.isFlying()) {
+					inRange.add(c);
+				}
+			}
+		}
+		return inRange;
+	}
+
+	public Creep getSingleCreepInRange(Creep creep, float range, ArrayList<Creep> visited, boolean hitsAir) {
+		Circle box = new Circle(creep.xOff + creep.currentVertex.getX(), creep.yOff + creep.currentVertex.getY(), range);
+		if (visited == null) {
+			for (Creep c: creeps) {
+				if (c.intersects(box)) {
+					if (hitsAir) {
+						return c;
+					} else if (!c.isFlying()) {
+						return c;
+					}
+				}
+			}
+		} else {
+			for (Creep c: creeps) {
+				if (c.intersects(box) && !c.equals(creep) && !visited.contains(c)) {
+					if (hitsAir) {
+						return c;
+					} else if (!c.isFlying()) {
+						return c;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Creep getFirstCreepRadially(float x, float y, float radius, float angle, boolean hitsAir) {
+		//TODO: Is there a faster method for this? Should I check only the path intersection points?
+		float xUnit = (float) Math.cos(angle) * 0.3f;
+		float yUnit = (float) Math.sin(angle) * 0.3f;
+		float currentX = x - xUnit;
+		float currentY = y - yUnit;
+		Creep c = null;
+		while (levelManager.isOutside(currentX, currentY) || (c = intersectingCreep(new Circle(currentX, currentY, radius), hitsAir)) == null) { //TODO: We need to find a better than n^2 method I think, we will see.
+			currentX -= xUnit;
+			currentY -= yUnit;
+		}
+		return c;
+	}
+	
+	private Creep intersectingCreep(Circle missile, boolean hitsAir) {
+		for (Creep c: creeps) {
+			if (c.intersects(missile)) {
+				if (hitsAir) {
+					return c;
+				} else if (!c.isFlying()) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
 }

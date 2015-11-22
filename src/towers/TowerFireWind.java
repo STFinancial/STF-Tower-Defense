@@ -28,7 +28,7 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectilePassThroughArea(this, range, passThroughRadiusModifier * range, passThroughModifier, 1); //TODO: Timing is curently 1, but not sure if that's whta I want
-		((ProjectilePassThroughArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
+		((ProjectilePassThroughArea) baseProjectile).setTargetArea(targetArea.getX(), targetArea.getY());
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 		Circle t = new Circle(x, y, 0);
 		if (t.intersects(targetZone) && !levelManager.isOutside(x, y)) {
 			targetArea = new Circle(x, y, 0);
-			((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
+			((ProjectileArea) baseProjectile).setTargetArea(targetArea.getX(), targetArea.getY());
 			return true;
 		} else {
 			return false;

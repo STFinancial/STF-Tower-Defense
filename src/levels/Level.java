@@ -70,7 +70,9 @@ public class Level {
 		health -= amount;
 	}
 	
-	float getHealth() { return health; }
+	float getHealth() { 
+		return health; 
+	}
 
 	//Can be called from App
 	void startRound() {
@@ -133,11 +135,6 @@ public class Level {
 		return t;
 	}
 	
-	
-
-	public Tower unsiphonTower(Tower destination, boolean refund) {
-		
-	}
 
 	//Can be called from App
 	public void upgradeTower(Tower t, int path) {
@@ -240,11 +237,5 @@ public class Level {
 
 	public Path getPath(boolean isFlying) {
 		return (isFlying ? flyingPath : groundPath);
-	}
-
-	public void createProjectileDetonationEvents(LinkedList<Projectile> detonatedProj) {
-		for (Projectile p: detonatedProj) {
-			newEvent(GameEventType.PROJECTILE_DETONATED, p);
-		}
 	}
 }

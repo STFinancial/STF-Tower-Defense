@@ -25,7 +25,7 @@ class DeathrattleEffect extends GameObject {
 	}
 	
 	void applyEffect(float modifier) { //TODO: Should this take a modifier?
-		for (Creep c: ProjectileManager.getInstance().getCreepInRange(areaOfEffect, effect.hitsAir())) {
+		for (Creep c: CreepManager.getInstance().getCreepInRange(areaOfEffect, effect.hitsAir())) {
 			c.addEffect(effect);
 		}
 	}

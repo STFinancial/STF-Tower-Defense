@@ -7,13 +7,16 @@ import projectileeffects.ProjectileEffect;
 import projectileeffects.Slow;
 
 import towers.Tower;
+import towers.TowerManager;
 import utilities.Circle;
 import utilities.GameConstants;
 import utilities.TrigHelper;
 import creeps.AffixModifier;
 import creeps.Creep;
+import creeps.CreepManager;
 import creeps.DamageType;
 import game.GameObject;
+import levels.LevelManager;
 /*
  * Unit that is fired from a tower, contains information such as position/velocity, target area or target creep
  * as well as tower that fired the projectile. lastly contains the projectile effect which happens when the projectile lands or times out
@@ -39,6 +42,9 @@ public abstract class Projectile extends GameObject {
 	protected boolean doesOnHit;
 	protected boolean splashHitsAir;
 	protected static ProjectileManager projManager = ProjectileManager.getInstance();
+	protected static TowerManager towerManager = TowerManager.getInstance();
+	protected static CreepManager creepManager = CreepManager.getInstance();
+	protected static LevelManager levelManager = LevelManager.getInstance();
 	
 	protected boolean dud; //When creep is killed by something else or escapes before contact;
 	protected double targetAngle; //For animation and to pass to projectiles when fired, Degrees, 0 = right, 90 = up
@@ -69,19 +75,19 @@ public abstract class Projectile extends GameObject {
 	private void addGeneralEffects() {
 		DamageType[] types = DamageType.values();
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
-			if (parent.getDamage(types[i]) != 0) {
-				creepEffects.add(new Damage(parent.getDamage(types[i]), types[i], this));
-				if (doesSplash && parent.getDamageSplash() != 0 && parent.getSplashRadius() != 0) {
-					splashEffects.add(new Damage(parent.getDamage(types[i]) * parent.getDamageSplash(), types[i], this));
+			if (towerManager.getDamage(parent, types[i]) != 0) {
+				creepEffects.add(new Damage(towerManager.getDamage(parent, types[i]), types[i], this));
+				if (doesSplash && towerManager.getDamageSplash(parent) != 0 && towerManager.getSplashRadius(parent) != 0) {
+					splashEffects.add(new Damage(towerManager.getDamage(parent, types[i]) * towerManager.getDamageSplash(parent), types[i], this));
 				}
 			}
 			float slow;
 			if (doesSlow) {
-				if ((slow = parent.getSlow(types[i])) != 0) {
+				if ((slow = towerManager.getSlow(parent, types[i])) != 0) {
 					if (slow >= 1) { slow = 0.99f; }
-					creepEffects.add(new Slow(parent.getSlowDuration(types[i]), slow, types[i], this));
-					if (doesSplash && parent.getEffectSplash() != 0 && parent.getSplashRadius() != 0) {
-						splashEffects.add(new Slow(parent.getSlowDuration(types[i]), slow * parent.getEffectSplash(), types[i], this));
+					creepEffects.add(new Slow(towerManager.getSlowDuration(parent, types[i]), slow, types[i], this));
+					if (doesSplash && towerManager.getEffectSplash(parent) != 0 && towerManager.getSplashRadius(parent) != 0) {
+						splashEffects.add(new Slow(towerManager.getSlowDuration(parent, types[i]), slow * towerManager.getEffectSplash(parent), types[i], this));
 					}
 				}
 			}
@@ -96,14 +102,14 @@ public abstract class Projectile extends GameObject {
 	protected void initializeStats(Tower parent) {
 		this.dud 					= false;
 		this.parent					= parent;
-		this.x 						= parent.getCenterX();
-		this.y 						= parent.getCenterY();
-		this.splashRadius		 	= parent.getSplashRadius();
-		this.hitsAir				= parent.hitsAir();
-		this.doesSplash				= parent.doesSplash();
-		this.doesSlow				= parent.doesSlow();
-		this.doesOnHit				= parent.doesOnHit();
-		this.splashHitsAir			= parent.splashHitsAir();
+		this.x 						= towerManager.getCenterX(parent);
+		this.y 						= towerManager.getCenterY(parent);
+		this.splashRadius		 	= towerManager.getSplashRadius(parent);
+		this.hitsAir				= towerManager.hitsAir(parent);
+		this.doesSplash				= towerManager.doesSplash(parent);
+		this.doesSlow				= towerManager.doesSlow(parent);
+		this.doesOnHit				= towerManager.doesOnHit(parent);
+		this.splashHitsAir			= towerManager.splashHitsAir(parent);
 		this.targetCreep			= null;
 		this.targetArea				= null;
 		this.angleCos				= 0;
@@ -130,8 +136,8 @@ public abstract class Projectile extends GameObject {
 		p.parent = parent;
 		p.creepEffects = creepEffects;
 		p.splashEffects = splashEffects;
-		p.x = parent.getCenterX();
-		p.y = parent.getCenterY();
+		p.x = towerManager.getCenterX(parent);
+		p.y = towerManager.getCenterY(parent);
 		p.splashRadius = splashRadius;
 		p.multiplier = multiplier;
 		p.resistPenFlat = resistPenFlat;
@@ -193,11 +199,11 @@ public abstract class Projectile extends GameObject {
 	
 	protected void updateAngle() {
 		if (targetCreep != null) {
-			targetAngle = TrigHelper.angleBetween(x, y, targetCreep.getX(), targetCreep.getY());
+			targetAngle = TrigHelper.angleBetween(x, y, creepManager.getX(targetCreep), creepManager.getY(targetCreep));
 			angleCos = Math.cos(targetAngle);
 			angleSin = Math.sin(targetAngle);
 		} else if (targetArea != null) {
-			targetAngle = TrigHelper.angleBetween(x, y, targetArea.x, targetArea.y);
+			targetAngle = TrigHelper.angleBetween(x, y, targetArea.getX(), targetArea.getY());
 			angleCos = Math.cos(targetAngle);
 			angleSin = Math.sin(targetAngle);
 		} else {

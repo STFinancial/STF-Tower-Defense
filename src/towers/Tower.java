@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import levels.LevelManager;
 import levels.Tile;
+import creeps.CreepManager;
 import creeps.DamageType;
 import game.GameObject;
 import projectiles.*;
@@ -24,6 +25,7 @@ public abstract class Tower extends GameObject {
 	//Targeting Details
 	protected static ProjectileManager projManager = ProjectileManager.getInstance();
 	protected static TowerManager towerManager = TowerManager.getInstance();
+	protected static CreepManager creepManager = CreepManager.getInstance();
 	protected static LevelManager levelManager = LevelManager.getInstance();
 	protected TargetingModeType targetingMode;
 	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates
@@ -85,10 +87,9 @@ public abstract class Tower extends GameObject {
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
 		this.topLeft = topLeftTile;
-		this.targetZone = levelManager.getCenter(topLeftTile, width, height);
-		this.targetZone.radius = range;
-		this.centerX = targetZone.x;
-		this.centerY = targetZone.y;
+		Circle tz = levelManager.getCenter(topLeftTile, width, height);
+		this.centerX = tz.getX();
+		this.centerY = tz.getY();
 		this.targetZone = new Circle(centerX, centerY, range);
 		this.targetingMode = TargetingModeType.FIRST;
 		this.towerID = towerID;
@@ -228,7 +229,7 @@ public abstract class Tower extends GameObject {
 			openList.addAll(current.siphoningTo);
 			if (current.attackCooldown < 1) { current.attackCooldown = 1; }
 			current.currentAttackCooldown = current.attackCooldown;
-			current.targetZone.radius = current.range;
+			current.targetZone = new Circle(current.getCenterX(), current.getCenterY(), current.range);
 		}
 	}
 	
@@ -412,8 +413,8 @@ public abstract class Tower extends GameObject {
 	public int hashCode() {
 		int result = 17;
 		result = 31 * result + towerID;
-		result = 31 * result + (int) targetZone.x;
-		result = 31 * result + (int) targetZone.y;
+		result = 31 * result + (int) targetZone.getX();
+		result = 31 * result + (int) targetZone.getY();
 		result = 31 * result + type.ordinal();
 		result = 31 * result + (int) damageArray[result % 4];
 		return result;

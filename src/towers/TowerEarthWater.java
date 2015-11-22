@@ -18,7 +18,7 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileArea(this, areaRadius);
-		((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
+		((ProjectileArea) baseProjectile).setTargetArea(targetArea.getX(), targetArea.getY());
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public final class TowerEarthWater extends Tower implements TargetsArea {
 		Circle t = new Circle(x, y, 0);
 		if (t.intersects(targetZone) && !levelManager.isOutside(x, y)) {
 			targetArea = new Circle(x, y, areaRadius);
-			((ProjectileArea) baseProjectile).setTargetArea(targetArea.x, targetArea.y);
+			((ProjectileArea) baseProjectile).setTargetArea(targetArea.getX(), targetArea.getY());
 			return true;
 		} else {
 			return false;

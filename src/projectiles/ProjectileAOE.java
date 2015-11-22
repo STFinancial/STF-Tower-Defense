@@ -11,13 +11,13 @@ public class ProjectileAOE extends Projectile {
 	
 	protected ProjectileAOE(Tower parent, Projectile mold) {
 		super(parent, mold);
-		this.targetZone = parent.getTargetZone();
+		this.targetZone = towerManager.getTargetZone(parent);
 		speed = currentSpeed = 0f;
 	}
 	
 	public ProjectileAOE(Tower parent) {
 		super(parent);
-		this.targetZone = parent.getTargetZone();
+		this.targetZone = towerManager.getTargetZone(parent);
 		speed = currentSpeed = 0f;
 	}
 
@@ -39,21 +39,21 @@ public class ProjectileAOE extends Projectile {
 	@Override
 	public void detonate() {
 		//TODO: What about hitsGround?
-		HashSet<Creep> splashCreep = projManager.getCreepInRange(targetZone, splashHitsAir); //TODO: Do we only want to hit those in range of the tower with splash?
-		HashSet<Creep> nonSplashCreep = projManager.getCreepInRange(targetZone, hitsAir);
+		HashSet<Creep> splashCreep = creepManager.getCreepInRange(targetZone, splashHitsAir); //TODO: Do we only want to hit those in range of the tower with splash?
+		HashSet<Creep> nonSplashCreep = creepManager.getCreepInRange(targetZone, hitsAir);
 		if (doesOnHit) {
 			for (Creep c: nonSplashCreep) {
-				c.addAllEffects(creepEffects);
-				c.onProjectileCollision();
+				creepManager.addAllEffects(c, creepEffects);
+				creepManager.onProjectileCollision(c);
 			}
 		} else {
 			for (Creep c: nonSplashCreep) {
-				c.addAllEffects(creepEffects);
+				creepManager.addAllEffects(c, creepEffects);
 			}
 		}
 		if (doesSplash) {
 			for (Creep c: splashCreep) {
-				c.addAllEffects(splashEffects);
+				creepManager.addAllEffects(c, splashEffects);
 			}
 		}
 	}

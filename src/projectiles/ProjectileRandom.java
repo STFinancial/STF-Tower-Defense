@@ -41,25 +41,25 @@ public final class ProjectileRandom extends ProjectileBasic {
 			return;
 		}
 		if (doesSplash) {
-			HashSet<Creep> creeps = projManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir);
+			HashSet<Creep> creeps = creepManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir);
 			creeps.add(targetCreep);
 			ArrayList<ProjectileEffect> e = getRandomEffects(); //We get a random effect from the list
 			if (doesOnHit) {
 				for (Creep c: creeps) {
-					c.addAllEffects(e);
-					c.onProjectileCollision();		
+					creepManager.addAllEffects(c, e);
+					creepManager.onProjectileCollision(c);		
 				}
 			} else {
 				for (Creep c: creeps) {
-					c.addAllEffects(e);		
+					creepManager.addAllEffects(c, e);		
 				}
 			}
 		} else {
 			if (doesOnHit) {
-				targetCreep.addAllEffects(getRandomEffects());
-				targetCreep.onProjectileCollision();
+				creepManager.addAllEffects(targetCreep, getRandomEffects());
+				creepManager.onProjectileCollision(targetCreep);
 			} else {
-				targetCreep.addAllEffects(getRandomEffects());
+				creepManager.addAllEffects(targetCreep, getRandomEffects());
 			}
 		}
 		

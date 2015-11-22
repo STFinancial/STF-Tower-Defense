@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import creeps.Creep;
+import levels.LevelManager;
 import projectileeffects.ProjectileEffect;
 import towers.Tower;
 import utilities.Circle;
@@ -35,7 +36,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 	public ProjectilePassThroughArea (Tower parent, float distanceLimit, float passThroughRadius, float passThroughModifier, int pulseTiming) {
 		super(parent);
 		this.passedThrough = new HashSet<Creep>();
-		this.targetArea = new Circle(parent.getCenterX(), parent.getCenterY(), 0);
+		this.targetArea = new Circle(towerManager.getCenterX(parent), towerManager.getCenterY(parent), 0);
 		this.distanceTraveled = 0;
 		this.distanceLimit = distanceLimit;
 		this.passThroughRadius = passThroughRadius;
@@ -65,29 +66,29 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		double yOff = angleSin * currentSpeed;
 		x -= xOff;
 		y -= yOff;
-		if (projManager.isOutside(x, y)) {
+		if (LevelManager.getInstance().isOutside(x, y)) {
 			dud = true;
 			return -1;
 		}
-		hitBox.x = x;
-		hitBox.y = y;
+		hitBox = new Circle(x, y, hitBox.getRadius());
 		distanceTraveled += TrigHelper.pythagDistance(xOff, yOff);
 		if (++counter % pulseTiming == 0) { //Choosing not to pulse at first firing
-			for (Creep c: projManager.getCreepInRange(this, passThroughRadius, hitsAir)) {
+			//TODO: Is this the type of circle that we want? Why isn't this just the hitbox?
+			for (Creep c: creepManager.getCreepInRange(new Circle(x, y, passThroughRadius), hitsAir)) {
 				if (passedThrough.contains(c)) {
 					continue;
 				}
-				c.addAllEffects(passThroughCreepEffects);
+				creepManager.addAllEffects(c, passThroughCreepEffects);
 				if (doesOnHit) {
-					c.onProjectileCollision();
+					creepManager.onProjectileCollision(c);
 				}
 				//TODO: Do we want the for loop to be inside this if statement instead?
 				if (doesSplash) { //TODO: Again, is this the range that we want?
 					if (splashHitsAir) {
-						c.addAllEffects(passThroughSplashEffects);
+						creepManager.addAllEffects(c, passThroughSplashEffects);
 					} else {
-						if (!c.isFlying()) {
-							c.addAllEffects(passThroughSplashEffects);
+						if (!creepManager.isFlying(c)) {
+							creepManager.addAllEffects(c, passThroughSplashEffects);
 						}
 					}
 				}
@@ -109,8 +110,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 
 	@Override
 	public boolean setTargetArea(float x, float y) {
-		targetArea.x = x;
-		targetArea.y = y;
+		targetArea = new Circle(x, y, targetArea.getRadius());
 		updateAngle();
 		return true;
 	}

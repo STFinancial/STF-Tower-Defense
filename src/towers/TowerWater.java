@@ -18,7 +18,7 @@ public class TowerWater extends Tower{
 	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			Creep targetCreep = projManager.findTargetCreep(this, hitsAir);
+			Creep targetCreep = creepManager.findTargetCreep(targetingMode, targetZone, hitsAir);
 			if (targetCreep != null) {
 				((ProjectileBasic) baseProjectile).setTargetCreep(targetCreep);
 				projManager.addProjectile(fireProjectile());

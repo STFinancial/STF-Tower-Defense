@@ -73,13 +73,13 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 			return;
 		}
 		int currentChains = 0;
-		targetCreep.addAllEffects(creepEffects);
+		creepManager.addAllEffects(targetCreep, creepEffects);
 		if (doesOnHit) {
-			targetCreep.onProjectileCollision();
+			creepManager.onProjectileCollision(targetCreep);
 		}
 		if (doesSplash) {
-			for (Creep c: projManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
-				c.addAllEffects(splashEffects);
+			for (Creep c: creepManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
+				creepManager.addAllEffects(c, splashEffects);
 			}
 		}
 		chainedCreep.add(targetCreep);
@@ -90,22 +90,22 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 			Creep prevCreep = chainedCreep.get(currentChains - 1);
 			Creep newCreep;
 			if (noDuplicates) {
-				newCreep = projManager.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep, hitsAir);
+				newCreep = creepManager.getSingleCreepInRange(prevCreep, chainRadius, chainedCreep, hitsAir);
 			} else {
-				newCreep = projManager.getSingleCreepInRange(prevCreep, chainRadius, null, hitsAir);
+				newCreep = creepManager.getSingleCreepInRange(prevCreep, chainRadius, null, hitsAir);
 			}
 			if (newCreep == null) {
 				return;
 			}
-			newCreep.addAllEffects(chainedEffects.get(currentChains));
+			creepManager.addAllEffects(newCreep, chainedEffects.get(currentChains));
 			if (doesOnHit) {
-				newCreep.onProjectileCollision();
+				creepManager.onProjectileCollision(newCreep);
 			}
 			chainedCreep.add(newCreep);
 			//TODO at some point we may change the splashRadius to splashRadius * currentPenalty
 			if (doesSplash) {
-				for (Creep splash: projManager.getOtherCreepInSplashRange(newCreep, splashRadius, splashHitsAir)) {
-					splash.addAllEffects(chainedSplashEffects.get(currentChains));
+				for (Creep splash: creepManager.getOtherCreepInSplashRange(newCreep, splashRadius, splashHitsAir)) {
+					creepManager.addAllEffects(splash, chainedSplashEffects.get(currentChains));
 				}
 			}
 			currentChains++;

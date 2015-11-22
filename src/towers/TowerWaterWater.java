@@ -58,14 +58,16 @@ public final class TowerWaterWater extends Tower {
 	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			projManager.addProjectile(fireProjectile());
-			attackCarryOver += 1 - currentAttackCooldown;
-			currentAttackCooldown = attackCooldown;
-			if (attackCarryOver > 1) {
-				attackCarryOver -= 1;
-				currentAttackCooldown--;
+			if (creepManager.isCreepInRange(targetZone, hitsAir)) {
+				projManager.addProjectile(fireProjectile());
+				attackCarryOver += 1 - currentAttackCooldown;
+				currentAttackCooldown = attackCooldown;
+				if (attackCarryOver > 1) {
+					attackCarryOver -= 1;
+					currentAttackCooldown--;
+				}
+				return 1;
 			}
-			return 1;
 		}
 		return 0;
 	}

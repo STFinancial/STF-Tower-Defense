@@ -2,6 +2,7 @@ package projectiles;
 
 import creeps.Creep;
 import towers.Tower;
+import utilities.Circle;
 
 public class ProjectileBasic extends Projectile implements TargetsCreep {
 	protected Creep targetCreep;
@@ -22,7 +23,8 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 	@Override
 	public int update() {
 		if (targetCreep != null) {
-			if (targetCreep.isDead()) {
+			//TODO: Need to change this from isDead to isGone, which returns if it either escaped or is dead
+			if (creepManager.isDead(targetCreep)) {
 				dud = true;
 				return -1;
 			} else {
@@ -34,8 +36,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		}
 		x -= angleCos * currentSpeed;
 		y -= angleSin * currentSpeed;
-		hitBox.x = x;
-		hitBox.y = y;
+		hitBox = new Circle(x, y, hitBox.getRadius()); // TODO: Really not happy about this, see if we can't create a hierarchy of circles, some of which we can update
 		return 0;
 	}
 
@@ -44,7 +45,7 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		if (dud) {
 			return true;
 		}
-		return targetCreep.intersects(hitBox);
+		return creepManager.intersects(targetCreep, hitBox);
 	}
 
 	@Override
@@ -52,10 +53,10 @@ public class ProjectileBasic extends Projectile implements TargetsCreep {
 		if (dud) {
 			return;
 		}
-		targetCreep.addAllEffects(creepEffects);
-		targetCreep.onProjectileCollision();
-		for (Creep c: projManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
-			c.addAllEffects(splashEffects);
+		creepManager.addAllEffects(targetCreep, creepEffects);
+		creepManager.onProjectileCollision(targetCreep);
+		for (Creep c: creepManager.getOtherCreepInSplashRange(targetCreep, splashRadius, splashHitsAir)) {
+			creepManager.addAllEffects(c, splashEffects);
 		}
 	}
 

@@ -45,7 +45,7 @@ public class Creep extends GameObject {
 	protected void setAttributes(CreepAttributes attributes) { 
 		this.attributes = attributes;
 		//At some point in the future we might want to set the attributes: attributes.setParentCreep(this);
-		hitBox.radius = attributes.getCurrentSize();
+		hitBox = new Circle(hitBox.getX(), hitBox.getY(), attributes.getCurrentSize());
 		setLocation(0); 
 	}
 	
@@ -93,8 +93,8 @@ public class Creep extends GameObject {
 	protected float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
 	protected float getCurrentHealthCost() { return attributes.getCurrentHealthCost(); }
 	protected float getMaxHealth() { return attributes.getMaxHealth(); }
-	protected float getX() { return hitBox.x; }
-	protected float getY() { return hitBox.y; }
+	protected float getX() { return hitBox.getX(); }
+	protected float getY() { return hitBox.getY(); }
 	protected boolean intersects(Circle area) { return hitBox.intersects(area); }
 	protected boolean isFlying() { return attributes.isFlying(); }
 	
@@ -219,8 +219,8 @@ public class Creep extends GameObject {
 	}
 	
 	protected void updateHitBox() {
-		hitBox.x = currentVertex.getX() + xOff + 1;
-		hitBox.y = currentVertex.getY() + yOff + 1;
+		//TODO: Why exactly are we adding 1 here?
+		hitBox = new Circle(currentVertex.getX() + xOff + 1, currentVertex.getY() + yOff + 1, hitBox.getRadius());
 	}
 
 	

@@ -1,5 +1,6 @@
 package levels;
 
+import creeps.Creep;
 import game.Game;
 import game.GameEventType;
 import players.Player;
@@ -19,6 +20,10 @@ public class LevelManager {
 	public void initialize(Game game, Player player, Map map) {
 		level = new Level(player, map);
 		this.game = game;
+	}
+	
+	public void addEffectPatch(EffectPatch effectPatch) {
+		level.addEffectPatch(effectPatch);
 	}
 	
 	public void addGold(float amount) {
@@ -73,4 +78,6 @@ public class LevelManager {
 			}
 		}
 	}
+	
+	
 }

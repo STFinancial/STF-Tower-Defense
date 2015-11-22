@@ -17,7 +17,7 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 	
 	public ProjectileBeam(Tower parent, float targetAreaRadius) {
 		super(parent);
-		this.targetArea = new Circle(parent.getCenterX(), parent.getCenterY(), targetAreaRadius);
+		this.targetArea = new Circle(towerManager.getCenterX(parent), towerManager.getCenterY(parent), targetAreaRadius);
 		this.speed = 0;
 		this.currentSpeed = 0;
 		this.targetAngle = 0;
@@ -30,15 +30,14 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 
 	@Override
 	public boolean setTargetArea(float x, float y) {
-		targetArea.x = x;
-		targetArea.y = y;
+		targetArea = new Circle(x, y, targetArea.getRadius());
 		updateAngle();
 		return true;
 	}
 
 	@Override
 	public Projectile clone() {
-		return new ProjectileBeam(parent, this, targetArea.radius);
+		return new ProjectileBeam(parent, this, targetArea.getRadius());
 	}
 
 	@Override
@@ -48,12 +47,12 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 
 	@Override
 	public void detonate() {
-		Creep c = projManager.getFirstCreepRadially(x, y, size, (float) targetAngle, hitsAir);
+		Creep c = creepManager.getFirstCreepRadially(x, y, size, (float) targetAngle, hitsAir);
 		if (c != null) {
-			c.addAllEffects(creepEffects);
+			creepManager.addAllEffects(c, creepEffects);
 			if (doesSplash) {
-				for (Creep splashCreep: projManager.getOtherCreepInSplashRange(c, splashRadius, splashHitsAir)) {
-					splashCreep.addAllEffects(splashEffects);
+				for (Creep splashCreep: creepManager.getOtherCreepInSplashRange(c, splashRadius, splashHitsAir)) {
+					creepManager.addAllEffects(splashCreep, splashEffects);
 				}
 			}
 		}
