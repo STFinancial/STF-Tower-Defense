@@ -90,6 +90,8 @@ public class CreepManager {
 	public void addEffect(Creep creep, ProjectileEffect effect) { creep.addEffect(effect); }
 	public void consumeBleeds(Creep creep, float amount) { creep.consumeBleeds(amount); }
 	public void damage(Creep creep, DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { creep.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
+	public void disorient(Creep creep, int lifetime) { creep.disorient(lifetime); }
+	public void ground(Creep creep) { creep.ground(); }
 	public void increaseDamageOnHit(Creep creep, DamageType type, float amount) { creep.increaseDamageOnHit(type, amount); }
 	public void increaseDamageResist(Creep creep, DamageType type, float amount, boolean isFlat) { creep.increaseDamageResist(type, amount, isFlat); }
 	public void increaseGoldOnHit(Creep creep, float amount) { creep.increaseGoldOnHit(amount); }
@@ -173,6 +175,7 @@ public class CreepManager {
 		return toTarget;
 	}	
 	
+	//TODO: Move away from hash sets here because iteration is too slow
 	public HashSet<Creep> getCreepInRange(Circle area, boolean hitsAir) {
 		HashSet<Creep> inRange = new HashSet<Creep>();
 		for (Creep c: creeps) {

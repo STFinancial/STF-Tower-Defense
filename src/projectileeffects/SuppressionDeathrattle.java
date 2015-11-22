@@ -6,18 +6,18 @@ import projectiles.Projectile;
 public final class SuppressionDeathrattle extends Suppression implements Refreshable{
 
 	//TODO: Modifier may have some meaning at a later date (minions coming out have less health, fewer of them, etc.)
-	public SuppressionDeathrattle(int lifetime, float modifier, DamageType damageType, Projectile parent) {
-		super(lifetime, modifier, damageType, parent);
+	public SuppressionDeathrattle(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean sharesStacks) {
+		super(lifetime, modifier, damageType, parent, sharesStacks);
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new SuppressionDeathrattle(lifetime, modifier, damageType, parent);
+		return new SuppressionDeathrattle(lifetime, modifier, damageType, parent, sharesStacks);
 	}
 
 	@Override
 	protected void applyEffect() {
-		creep.suppressDeathrattle(damageType, modifier, lifetime);
+		creepManager.suppressDeathrattle(creep, damageType, modifier, lifetime);
 	}
 
 	@Override

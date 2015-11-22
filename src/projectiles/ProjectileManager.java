@@ -7,6 +7,7 @@ import creeps.DamageType;
 import game.Game;
 import game.GameEventType;
 import projectileeffects.ProjectileEffect;
+import towers.Tower;
 
 public final class ProjectileManager {
 	private static final ProjectileManager INSTANCE = new ProjectileManager();
@@ -43,21 +44,19 @@ public final class ProjectileManager {
 		p.clearAllBasicEffects();
 	}
 	
-	public void setResistPenPercent(Projectile p, DamageType type, float amount) {
-		p.setResistPenPercent(type, amount);
-	}
+	public void setResistPenPercent(Projectile p, DamageType type, float amount) { p.setResistPenPercent(type, amount); }
+	public void setIgnoresShield(Projectile p, boolean ignoresShield) { p.setIgnoresShield(ignoresShield); }
+	public void setShieldDrainModifier(Projectile p, float amount) { p.setShieldDrainModifier(amount); }
+	public void setToughPenPercent(Projectile p, float amount) { p.setToughPenPercent(amount); }
 	
-	public void setIgnoresShield(Projectile p, boolean ignoresShield) {
-		p.setIgnoresShield(ignoresShield);
-	}
+	public Tower getParent(Projectile p) { return p.getParent(); }
+	public float getResistPen(Projectile p, DamageType type, boolean isFlat) { return p.getResistPen(type, isFlat); }
+	public float getShieldDrainModifier(Projectile p) { return p.getShieldDrainModifier(); }
+	public float getToughPen(Projectile p, boolean isFlat) { return p.getToughPen(isFlat); }
+	public boolean hitsAir(Projectile p) { return p.hitsAir(); }
+	public boolean ignoresShield(Projectile p) { return p.ignoresShield(); }
 	
-	public void setShieldDrainModifier(Projectile p, float amount) {
-		p.setShieldDrainModifier(amount);
-	}
-	
-	public void setToughPenPercent(Projectile p, float amount) {
-		p.setToughPenPercent(amount);
-	}
+
 	
 	
 	public void updateProjectiles() {

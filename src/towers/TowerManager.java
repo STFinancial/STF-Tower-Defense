@@ -82,25 +82,17 @@ public final class TowerManager {
 		return towerPositions.get(levelManager.getTile(y, x));
 	}
 	
-	public Tower constructTower(Tile tile, TowerType type) {
+	//TODO: If these tower methods are too slow then we need to stop updating the path twice on unsiphons
+	public void buyTower(Tile tile, TowerType type) {
 		Tower t = TowerFactory.generateTower(tile, type, currentTowerID++);
+		levelManager.removeGold(type.getCost());
 		towers.add(t);
 		towerPositions.put(tile, t);
 		levelManager.addTower(t, t.getTopLeftTile(), t.getWidth(), t.getHeight());
-		return t;
-	}
-	
-	private void constructTower(Tower t) {
-		towers.add(t);
-		levelManager.addTower(t, t.getTopLeftTile(), t.getWidth(), t.getHeight());
+		game.newEvent(GameEventType.TOWER_CREATED, t);
 	}
 	
 	public void sellTower(Tower t) {
-		//Need to unsiphon the tower and then get the gold value
-		destroyTower(t);
-	}
-	
-	private Tower destroyTower(Tower t) {
 		unsiphonTower(t, false); // Remove any siphons.
 		for (Tower siph: t.siphoningTo) { // Unsiphon from all Towers which this is siphoning to
 			// We need to call the level version so that there is a game event for their changes and we can refund if needed
@@ -108,12 +100,17 @@ public final class TowerManager {
 		}
 		removeTower(t);
 		levelManager.addGold(t.getTotalGoldValue());
-		return t;
+		game.newEvent(GameEventType.TOWER_DESTROYED, t);
+	}
+	
+	private void addTower(Tower t) {
+		towers.add(t);
+		levelManager.addTower(t, t.getTopLeftTile(), t.getWidth(), t.getHeight());
 	}
 	
 	private void removeTower(Tower t) {
-		levelManager.removeTower(t.getTopLeftTile(), t.getWidth(), t.getHeight());
 		towers.remove(t);
+		levelManager.removeTower(t.getTopLeftTile(), t.getWidth(), t.getHeight());
 	}
 	
 	public Tower siphonTower(Tower source, Tower destination) {
@@ -135,7 +132,7 @@ public final class TowerManager {
 			}
 		}
 		removeTower(destination); // Remove the old destination tower.
-		constructTower(newDest); //"build" the new one
+		addTower(newDest); //"build" the new one
 		towerPositions.put(newDest.getTopLeftTile(), newDest);
 		newDest.updateTowerChain(); //update the tower chain
 		//TODO: Need to charge some gold here
@@ -178,7 +175,7 @@ public final class TowerManager {
 			}
 		}
 		removeTower(destination); //remove old dest
-		constructTower(newDest); //construct new dest
+		addTower(newDest); //construct new dest
 		towerPositions.put(newDest.getTopLeftTile(), newDest);
 		newDest.updateTowerChain();
 		siph.updateTowerChain();

@@ -1,5 +1,7 @@
 package game;
 
+import java.util.LinkedList;
+
 import creeps.CreepBuilder;
 import creeps.CreepManager;
 import levels.Level;
@@ -21,6 +23,8 @@ public class Game {
 	private CreepManager creepManager;
 	private CreepBuilder creepBuilder;
 	private CreepWaveGenerator waveGenerator;
+	
+	private LinkedList<GameEvent> gameEvents;
 	
 	private int round;
 	private int gameTick;
@@ -45,6 +49,7 @@ public class Game {
 		this.creepBuilder.initialize(this);
 		this.waveGenerator = CreepWaveGenerator.getInstance();
 		this.waveGenerator.initialize(this);
+		this.gameEvents = new LinkedList<GameEvent>();
 		this.round = 0;
 		this.gameTick = 0;
 		this.roundInProgress = false;
@@ -87,5 +92,12 @@ public class Game {
 	//TODO: Should this be a game object instead of an object?
 	public void newEvent(GameEventType type, Object o) {
 		
+	}
+	
+	public GameEvent getEvent() {
+		if (gameEvents.size() > 0) {
+			return gameEvents.remove(0);
+		}
+		return null;
 	}
 }

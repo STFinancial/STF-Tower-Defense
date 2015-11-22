@@ -5,7 +5,7 @@ import projectiles.Projectile;
 
 public class MaxHealthDamage extends ProjectileEffect {
 	public MaxHealthDamage(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent);
+		super(0, modifier, 0, damageType, parent, false);
 	}
 	
 	public ProjectileEffect clone() {
@@ -14,7 +14,10 @@ public class MaxHealthDamage extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.damage(damageType, creep.getMaxHealth() * modifier, parent.getResistPen(damageType, false), parent.getResistPen(damageType, true), parent.ignoresShield(), parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
+		creepManager.damage(creep, damageType, creepManager.getMaxHealth(creep) * modifier, 
+				projManager.getResistPen(parent, damageType, false), projManager.getResistPen(parent, damageType, true), 
+				projManager.ignoresShield(parent), projManager.getShieldDrainModifier(parent), 
+				projManager.getToughPen(parent, false), projManager.getToughPen(parent, true));
 	}
 
 	@Override

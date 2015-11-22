@@ -1,5 +1,7 @@
 package levels;
 
+import java.util.HashSet;
+
 import creeps.Creep;
 import game.Game;
 import game.GameEventType;
@@ -27,7 +29,11 @@ public class LevelManager {
 	}
 	
 	public void addGold(float amount) {
-		level.addGol);
+		level.addGold(amount);
+	}
+	
+	public void removeGold(float amount) {
+		level.removeGold(amount);
 	}
 	
 	public void addTower(Tower t, Tile topLeft, int width, int height) {
@@ -38,6 +44,18 @@ public class LevelManager {
 				map.getTile(y + j, x + i).addTower(t);
 			}
 		}
+		level.updatePath();
+	}
+	
+	public void removeTower(Tile topLeft, int width, int height) {
+		int x = topLeft.x;
+		int y = topLeft.y;
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				map.getTile(y + j, x + i).removeTower();
+			}
+		}
+		level.updatePath();
 	}
 	
 	public Circle getCenter(Tile topLeft, int width, int height) {
@@ -69,15 +87,7 @@ public class LevelManager {
 		}
 	}
 	
-	public void removeTower(Tile topLeft, int width, int height) {
-		int x = topLeft.x;
-		int y = topLeft.y;
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				map.getTile(y + j, x + i).removeTower();
-			}
-		}
+	public HashSet<Creep> getCreepAdjacentToEarth(boolean isFlying) {
+		return level.getCreepAdjacentToEarth(isFlying);
 	}
-	
-	
 }

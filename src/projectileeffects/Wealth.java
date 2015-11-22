@@ -11,8 +11,8 @@ public class Wealth extends ProjectileEffect implements Stackable {
 	private int maxStacks;
 	private int numStacks;
 	
-	public Wealth(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat, boolean onHit) {
-		super(lifetime, modifier, 0, damageType, parent);
+	public Wealth(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean isFlat, boolean onHit, boolean sharesStacks) {
+		super(lifetime, modifier, 0, damageType, parent, sharesStacks);
 		this.numStacks = 0;
 		this.maxStacks = 1;
 		this.isFlat = isFlat;
@@ -21,15 +21,15 @@ public class Wealth extends ProjectileEffect implements Stackable {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Wealth(lifetime, modifier, damageType, parent, isFlat, onHit);
+		return new Wealth(lifetime, modifier, damageType, parent, isFlat, onHit, sharesStacks);
 	}
 
 	@Override
 	protected void applyEffect() {
 		if (onHit) {
-			creep.increaseGoldOnHit(modifier);
+			creepManager.increaseGoldOnHit(creep, modifier);
 		} else {
-			creep.increaseGoldValue(modifier, isFlat);
+			creepManager.increaseGoldValue(creep, modifier, isFlat);
 		}
 	}
 
@@ -39,9 +39,9 @@ public class Wealth extends ProjectileEffect implements Stackable {
 			return;
 		}
 		if (onHit) {
-			creep.reduceGoldOnHit(modifier);
+			creepManager.reduceGoldOnHit(creep, modifier);
 		} else {
-			creep.reduceGoldValue(modifier, isFlat);
+			creepManager.reduceGoldValue(creep, modifier, isFlat);
 		}
 	}
 

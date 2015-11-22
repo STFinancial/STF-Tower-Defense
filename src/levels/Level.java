@@ -41,14 +41,15 @@ public class Level {
 	//Currently loaded/active units
 	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
 
-	private Path groundPath, flyingPath, proposedGroundPath;
+	private Path groundPath;
+	private Path flyingPath;
+	private Path proposedPath;
 	//This will change when we create and destroy new terrain
 	//TODO: I think having some of these as hash sets is sub-optimal.
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
 	private HashSet<Creep> groundCreepAdjacentToEarth = new HashSet<Creep>();
 	private HashSet<Creep> allCreepAdjacentToEarth = new HashSet<Creep>();
-
-	private ArrayList<GameEvent> events = new ArrayList<GameEvent>();
+	
 	
 	Level(Player player, Map map) {
 		this.player = player;
@@ -125,16 +126,7 @@ public class Level {
 		newEvent(GameEventType.TOWER_CREATED, t);
 		return t;
 	}
-	
 
-	//Can be called from App
-	public void upgradeTower(Tower t, int path) {
-		towerManager.upgrade(t, path);
-	}
-
-//	public boolean canSellTower(Tower t) {
-//		return t.siphoningTo == null;
-//	}
 
 	public void updatePath() {
 		VertexGraph vg = new VertexGraph();
@@ -178,8 +170,8 @@ public class Level {
 		groundCreepAdjacentToEarth.clear();
 		allCreepAdjacentToEarth.clear();
 		for (Circle c: earthTiles) {
-			groundCreepAdjacentToEarth.addAll(ProjectileManager.getInstance().getCreepInRange(c, false));
-			allCreepAdjacentToEarth.addAll(ProjectileManager.getInstance().getCreepInRange(c, true));
+			groundCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, false));
+			allCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, true));
 		}
 	}
 
@@ -205,12 +197,7 @@ public class Level {
 		return proposedGroundPath != null;
 	}
 
-	public GameEvent getEvent() {
-		if (events.size() > 0) {
-			return events.remove(0);
-		}
-		return null;
-	}
+	
 
 	public void addEffectPatch(EffectPatch effectPatch) {
 		effectPatches.add(effectPatch);

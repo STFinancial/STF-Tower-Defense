@@ -65,8 +65,8 @@ final class CreepAttributes extends GameObject {
 	//Simple delegation one liners
 	void addAllEffects(ArrayList<ProjectileEffect> effects) { this.effects.addAllEffects(effects); }
 	void addDeathrattleChild(Creep child) { deathrattle.addDeathrattleChild(child); }
-	void addDeathrattleEffect(ProjectileEffect effect, Circle area) { deathrattle.addDeathrattleEffect(effect, area); }
-	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int defaultDuration) { deathrattle.addDeathrattleEffect(effect, area, defaultDuration); }
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area, boolean hitsAir) { deathrattle.addDeathrattleEffect(effect, area, hitsAir); }
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int defaultDuration, boolean hitsAir) { deathrattle.addDeathrattleEffect(effect, area, defaultDuration, hitsAir); }
 	void addEffect(ProjectileEffect effect) { effects.addEffect(effect); }
 	void clearDeathrattle() { deathrattle = new Deathrattle(this, null, null); }
 	void consumeBleeds(float amount) { effects.consumeBleeds(amount); }

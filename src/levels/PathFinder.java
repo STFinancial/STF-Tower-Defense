@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import towers.Tower;
 import utilities.GameConstants;
 
 /*

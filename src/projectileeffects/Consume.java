@@ -5,7 +5,7 @@ import projectiles.Projectile;
 
 public class Consume extends ProjectileEffect {
 	public Consume(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent);
+		super(0, modifier, 0, damageType, parent, false);
 	}
 
 	@Override
@@ -15,7 +15,7 @@ public class Consume extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.consumeBleeds(modifier);
+		creepManager.consumeBleeds(creep, modifier);
 	}
 
 	@Override

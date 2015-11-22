@@ -5,7 +5,7 @@ import creeps.DamageType;
 
 public class SpeedDamage extends ProjectileEffect {
 	public SpeedDamage(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent);
+		super(0, modifier, 0, damageType, parent, false);
 	}
 
 	@Override
@@ -20,7 +20,10 @@ public class SpeedDamage extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.damage(damageType, creep.getCurrentSpeed() * modifier, parent.getResistPen(damageType, false), parent.getResistPen(damageType, true), parent.ignoresShield(), parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
+		creepManager.damage(creep, damageType, creepManager.getCurrentSpeed(creep) * modifier, 
+				projManager.getResistPen(parent, damageType, false), projManager.getResistPen(parent, damageType, true), 
+				projManager.ignoresShield(parent), projManager.getShieldDrainModifier(parent), 
+				projManager.getToughPen(parent, false), projManager.getToughPen(parent, true));
 	}
 
 	@Override

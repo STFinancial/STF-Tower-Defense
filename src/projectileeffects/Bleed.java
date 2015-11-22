@@ -8,8 +8,8 @@ public class Bleed extends ProjectileEffect implements Stackable {
 	private int numStacks;
 	private int maxStacks;
 
-	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
-		super(lifetime, modifier, timing, damageType, parent);
+	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent, boolean sharesStacks) {
+		super(lifetime, modifier, timing, damageType, parent, sharesStacks);
 		this.numStacks = 0;
 		this.maxStacks = 1;
 		this.tickDamage = modifier;
@@ -17,9 +17,9 @@ public class Bleed extends ProjectileEffect implements Stackable {
 
 	@Override
 	protected void applyEffect() {
-		creep.damage(damageType, tickDamage, parent.getResistPen(damageType, false),
-				parent.getResistPen(damageType, true), parent.ignoresShield(), 
-				parent.getShieldDrainModifier(), parent.getToughPen(false), parent.getToughPen(true));
+		creepManager.damage(creep, damageType, tickDamage, projManager.getResistPen(parent, damageType, false),
+				projManager.getResistPen(parent, damageType, true), projManager.ignoresShield(parent), 
+				projManager.getShieldDrainModifier(parent), projManager.getToughPen(parent, false), projManager.getToughPen(parent, true));
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class Bleed extends ProjectileEffect implements Stackable {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Bleed(lifetime, modifier, timing, damageType, parent);
+		return new Bleed(lifetime, modifier, timing, damageType, parent, sharesStacks);
 	}
 
 	public Damage convertToDamage(float modifier) {

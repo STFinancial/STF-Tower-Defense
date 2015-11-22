@@ -5,6 +5,7 @@ import creeps.CreepManager;
 import creeps.DamageType;
 import game.GameObject;
 import projectiles.Projectile;
+import projectiles.ProjectileManager;
 
 /*
  * An on hit effect that can be applied from a projectile
@@ -12,6 +13,7 @@ import projectiles.Projectile;
  */
 public abstract class ProjectileEffect extends GameObject {
 	protected CreepManager creepManager;
+	protected ProjectileManager projManager;
 	
 	protected boolean sharesStacks; // If a projectile effect is distinct, then two different towers share the same stack
 	
@@ -23,7 +25,7 @@ public abstract class ProjectileEffect extends GameObject {
 	protected Projectile parent;
 	protected Creep creep;
 
-	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
+	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent, boolean sharesStacks) {
 		this.modifier = modifier;
 		this.lifetime = lifetime;
 		this.counter = lifetime;
@@ -31,7 +33,8 @@ public abstract class ProjectileEffect extends GameObject {
 		this.timing = timing;
 		this.parent = parent;
 		this.creepManager = CreepManager.getInstance();
-		this.sharesStacks = false; //TODO: This will be set as such for now
+		this.projManager = ProjectileManager.getInstance();
+		this.sharesStacks = sharesStacks;
 	}
 
 	public abstract ProjectileEffect clone();
@@ -47,8 +50,6 @@ public abstract class ProjectileEffect extends GameObject {
 	 * This function is called as the effect falls off the creep
 	 */
 	public abstract void onExpire();
-	
-	public boolean hitsAir() { return parent.hitsAir(); }
 	
 	public int update() {
 		counter--;
@@ -80,12 +81,8 @@ public abstract class ProjectileEffect extends GameObject {
 				p.damageType == damageType &&
 				p.getClass() == getClass() &&
 				p.lifetime == lifetime &&
-				p.timing == timing && 
-				//TODO: Can set a boolean to decide if similar debuffs stack or not
-				if (!distinct) {
-					
-				}
-				p.parent.getParent().equals(parent.getParent()); //TODO: Should this be part of the equality test, do we want similar debuffs from different towers to stack or not?
+				p.timing == timing &&
+				(sharesStacks || (!sharesStacks && projManager.getParent(p.parent).equals(projManager.getParent(parent))));
 	}
 	
 	@Override
@@ -96,8 +93,10 @@ public abstract class ProjectileEffect extends GameObject {
 		result = 31 * result + (int) lifetime;
 		result = 31 * result + (int) modifier;
 		result = 31 * result + timing;
-		//TODO: Check boolean to decide if similar debuffs stack or not
-		result = 31 * result + parent.getParent().getTowerID();
+		if (!sharesStacks) {
+			result = 31 * result + projManager.getParent(parent).hashCode();
+		}
+		
 		return result;
 	}
 }

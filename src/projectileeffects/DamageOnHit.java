@@ -7,26 +7,26 @@ public class DamageOnHit extends ProjectileEffect implements Stackable {
 	private int maxStacks;
 	private int numStacks;
 	
-	public DamageOnHit(int lifetime, float modifier, DamageType damageType, Projectile parent) {
-		super(lifetime, modifier, 0, damageType, parent);
+	public DamageOnHit(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean sharesStacks) {
+		super(lifetime, modifier, 0, damageType, parent, sharesStacks);
 		this.maxStacks = 1;
 		this.numStacks = 0;
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new DamageOnHit(lifetime, modifier, damageType, parent);
+		return new DamageOnHit(lifetime, modifier, damageType, parent, sharesStacks);
 	}
 
 	@Override
 	protected void applyEffect() {
-		creep.increaseDamageOnHit(damageType, modifier);
+		creepManager.increaseDamageOnHit(creep, damageType, modifier);
 	}
 
 	@Override
 	public void onExpire() {
 		while (numStacks > 0) {
-			creep.reduceDamageOnHit(damageType, modifier);
+			creepManager.reduceDamageOnHit(creep, damageType, modifier);
 			numStacks--;
 		}
 	}

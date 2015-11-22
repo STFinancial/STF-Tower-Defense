@@ -35,12 +35,12 @@ final class Deathrattle extends Attribute {
 		children.add(child);
 	}
 	
-	void addDeathrattleEffect(ProjectileEffect effect, Circle area) {
-		effects.add(new DeathrattleEffect(effect, area, -1));
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area, boolean hitsAir) {
+		effects.add(new DeathrattleEffect(effect, area, -1, hitsAir));
 	}
 	
-	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) {
-		effects.add(new DeathrattleEffect(effect, area, duration));
+	void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration, boolean hitsAir) {
+		effects.add(new DeathrattleEffect(effect, area, duration, hitsAir));
 	}
 	
 	List<Creep> onDeath() {

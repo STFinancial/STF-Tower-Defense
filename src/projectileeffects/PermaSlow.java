@@ -7,7 +7,7 @@ public class PermaSlow extends ProjectileEffect {
 	private boolean isFlat;
 	
 	public PermaSlow(float modifier, DamageType damageType, Projectile parent, boolean isFlat) {
-		super(0, modifier, 0, damageType, parent);
+		super(0, modifier, 0, damageType, parent, false);
 		this.isFlat = isFlat;
 	}
 
@@ -23,7 +23,7 @@ public class PermaSlow extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.reduceMaxSpeed(damageType, modifier, isFlat);
+		creepManager.reduceMaxSpeed(creep, damageType, modifier, isFlat);
 	}
 
 	@Override

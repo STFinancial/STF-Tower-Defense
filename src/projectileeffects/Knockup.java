@@ -6,7 +6,7 @@ import creeps.DamageType;
 public class Knockup extends ProjectileEffect {
 
 	public Knockup(int lifetime, DamageType damageType, Projectile parent) {
-		super(lifetime, 0, 0, damageType, parent);
+		super(lifetime, 0, 0, damageType, parent, false);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class Knockup extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.knockup(lifetime);
+		creepManager.knockup(creep, lifetime);
 	}
 
 	@Override

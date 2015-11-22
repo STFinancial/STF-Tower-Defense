@@ -10,7 +10,7 @@ import projectiles.Projectile;
  */
 public class Disorient extends ProjectileEffect {
 	public Disorient(int lifetime, DamageType damageType, Projectile parent) {
-		super(lifetime, 0, 0, damageType, parent);
+		super(lifetime, 0, 0, damageType, parent, false);
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class Disorient extends ProjectileEffect {
 
 	@Override
 	protected void applyEffect() {
-		creep.disorient(lifetime);
+		creepManager.disorient(creep, lifetime);
 	}
 
 	@Override
