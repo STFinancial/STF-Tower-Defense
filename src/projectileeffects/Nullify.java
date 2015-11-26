@@ -6,13 +6,13 @@ import projectiles.Projectile;
 //TODO: Maybe clarify the name
 public class Nullify extends ProjectileEffect {
 
-	public Nullify(DamageType damageType, Projectile parent, boolean sharesStacks) {
-		super(0, 0, 0, damageType, parent, sharesStacks);
+	public Nullify(DamageType damageType, Projectile parent) {
+		super(0, 0, 0, damageType, parent);
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Nullify(damageType, parent, sharesStacks);
+		return new Nullify(damageType, parent);
 	}
 
 	@Override

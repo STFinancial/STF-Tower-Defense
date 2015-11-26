@@ -6,7 +6,7 @@ import projectiles.Projectile;
 public class Snare extends ProjectileEffect {
 
 	public Snare(int lifetime, DamageType damageType, Projectile parent) {
-		super(lifetime, 0, 0, damageType, parent, false);
+		super(lifetime, 0, 0, damageType, parent);
 	}
 
 	@Override

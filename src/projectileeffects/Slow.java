@@ -9,8 +9,8 @@ public class Slow extends ProjectileEffect implements Refreshable {
 	 */
 	private boolean beenApplied;
 
-	public Slow(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean sharesStacks) {
-		super(lifetime, modifier, 0, damageType, parent, sharesStacks);
+	public Slow(int lifetime, float modifier, DamageType damageType, Projectile parent) {
+		super(lifetime, modifier, 0, damageType, parent); 
 		beenApplied = false;
 	}
 
@@ -26,7 +26,7 @@ public class Slow extends ProjectileEffect implements Refreshable {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Slow(lifetime, modifier, damageType, parent, sharesStacks);
+		return new Slow(lifetime, modifier, damageType, parent);
 	}
 
 	@Override

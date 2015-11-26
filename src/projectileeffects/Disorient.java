@@ -10,7 +10,7 @@ import projectiles.Projectile;
  */
 public class Disorient extends ProjectileEffect {
 	public Disorient(int lifetime, DamageType damageType, Projectile parent) {
-		super(lifetime, 0, 0, damageType, parent, false);
+		super(lifetime, 0, 0, damageType, parent);
 	}
 
 	@Override

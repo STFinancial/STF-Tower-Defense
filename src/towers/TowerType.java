@@ -10,7 +10,8 @@ public enum TowerType {
 	//TODO: Come up with consistent wording and formatting for descriptions of upgrades
 	//TODO: Make an update in Tower that applies global effects (e.g. On one level we want all towers to have the additional projectile effect that they heal enemies on hit)
 	//TODO: Upgrades that modify the damage against certain types of creep?
-	
+	//TODO: Towers that take up air as well
+	//TODO: Want to move physical to first in the array, but that requires changing all of the array initializers
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
 		downgradeType			= null;
@@ -1799,11 +1800,11 @@ public enum TowerType {
 		return baseAttributeList.downgradeType;
 	}
 
-	int getWidth() {
+	public int getWidth() {
 		return baseAttributeList.baseWidth;
 	}
 
-	int getHeight() {
+	public int getHeight() {
 		return baseAttributeList.baseHeight;
 	}
 

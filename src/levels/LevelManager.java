@@ -7,6 +7,7 @@ import game.Game;
 import game.GameEventType;
 import players.Player;
 import towers.Tower;
+import towers.TowerType;
 import utilities.Circle;
 
 public class LevelManager {
@@ -21,7 +22,20 @@ public class LevelManager {
 	
 	public void initialize(Game game, Player player, Map map) {
 		level = new Level(player, map);
+		this.map = map;
 		this.game = game;
+	}
+	
+	public void startRound(int roundNum) {
+		level.startRound(roundNum);
+	}
+	
+	public void updateEffectPatches() {
+		level.updateEffectPatches();
+	}
+	
+	public void updateCreepAdjacentToEarth() {
+		level.updateCreepAdjacentToEarth();
 	}
 	
 	public void addEffectPatch(EffectPatch effectPatch) {
@@ -70,6 +84,14 @@ public class LevelManager {
 		return map.getTile(y, x);
 	}
 	
+	public int getMapWidth() {
+		return map.getWidth();
+	}
+	
+	public int getMapHeight() {
+		return map.getHeight();
+	}
+	
 	//TODO: Not happy about how this works, I really don't like it returning int
 	public int getVertexBelow(Vertex vertex) {
 		return level.getVertexBelow(vertex);
@@ -77,6 +99,10 @@ public class LevelManager {
 	
 	public boolean isOutside(float x, float y) {
 		return map.isOutside(x, y);
+	}
+	
+	public boolean canBuild(TowerType type, int x, int y) {
+		return level.canBuild(type, x, y);
 	}
 	
 	

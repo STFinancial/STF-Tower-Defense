@@ -8,8 +8,8 @@ public class Bleed extends ProjectileEffect implements Stackable {
 	private int numStacks;
 	private int maxStacks;
 
-	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent, boolean sharesStacks) {
-		super(lifetime, modifier, timing, damageType, parent, sharesStacks);
+	public Bleed(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
+		super(lifetime, modifier, timing, damageType, parent);
 		this.numStacks = 0;
 		this.maxStacks = 1;
 		this.tickDamage = modifier;
@@ -29,7 +29,7 @@ public class Bleed extends ProjectileEffect implements Stackable {
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Bleed(lifetime, modifier, timing, damageType, parent, sharesStacks);
+		return new Bleed(lifetime, modifier, timing, damageType, parent);
 	}
 
 	public Damage convertToDamage(float modifier) {

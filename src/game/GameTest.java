@@ -1,29 +1,18 @@
-package levelstest;
+package game;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import game.Game;
-import game.GameEvent;
-import game.GameEventType;
-import levels.Level;
 import levels.LevelManager;
-import levels.Map;
-import levels.Tile;
-import projectiles.ProjectileManager;
-import towers.Tower;
 import towers.TowerManager;
 import towers.TowerType;
 
-public class LevelTest {
-	
-	@Test
-	public void testLevel() {
+public class GameTest {
+	public static void main(String[] args) {
+		GameTest gt = new GameTest();
+		gt.test();
+	}
+
+	private void test() {
 		Game game = new Game();
 		assertNotNull(game);
 		LevelManager lManager = LevelManager.getInstance();
@@ -51,12 +40,26 @@ public class LevelTest {
 		round: {
 			while (true) {
 				game.gameTick();
+				//System.out.println(game.toString());
 				while ((event = game.getEvent()).getType() != GameEventType.NULL) {
 					switch (event.getType()) {
+					case CREEP_ESCAPED:
+						System.out.println("Creep escaped");
+						break;
+					case PROJECTILE_FIRED:
+						//System.out.println("Tower Fired: " + event.getObject().toString());
+						break;
 					case ROUND_FINISHED:
+						System.out.println("Round complete!");
 						break round;
 					case CREEP_KILLED:
 						System.out.println("Killed a creep");
+						break;
+					case TOWER_CREATED:
+						System.out.println(event.getObject().toString());
+						break;
+					case PROJECTILE_DETONATED:
+						//System.out.println("Projectile Detonated");
 						break;
 					default:
 						break;
@@ -65,6 +68,5 @@ public class LevelTest {
 			}
 		}
 		assertNotNull(event);
-		
 	}
 }

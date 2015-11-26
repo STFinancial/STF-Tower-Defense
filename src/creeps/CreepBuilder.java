@@ -25,8 +25,8 @@ public final class CreepBuilder {
 		currentAttributes = new CreepAttributes();
 	}
 	public void addDeathrattleChild(Creep child) { currentAttributes.addDeathrattleChild(child); }
-	public void addDeathrattleEffect(ProjectileEffect effect, Circle area) { currentAttributes.addDeathrattleEffect(effect, area); }
-	public void addDeathrattleEffect(ProjectileEffect effect, Circle area, int defaultDuration) { currentAttributes.addDeathrattleEffect(effect, area, defaultDuration); }
+	public void addDeathrattleEffect(ProjectileEffect effect, Circle area, boolean hitsAir) { currentAttributes.addDeathrattleEffect(effect, area, hitsAir); }
+	public void addDeathrattleEffect(ProjectileEffect effect, Circle area, int defaultDuration, boolean hitsAir) { currentAttributes.addDeathrattleEffect(effect, area, defaultDuration, hitsAir); }
 	public void clearDeathrattle() { currentAttributes.clearDeathrattle(); }
 	public void setHealthValues(float maxHealth, float defaultHealthRegen) { currentAttributes.setHealthValues(maxHealth, defaultHealthRegen); }
 	public void setShieldValues(float maxShield, float defaultShieldRegen) { currentAttributes.setShieldValues(maxShield, defaultShieldRegen); }
@@ -41,7 +41,8 @@ public final class CreepBuilder {
 	public void setHealthCost(float defaultHealthCost) { currentAttributes.setHealthCost(defaultHealthCost); }
 	public void setTravel(boolean defaultIsFlying, boolean groundingImmune) { currentAttributes.setTravel(defaultIsFlying, groundingImmune); currentCreep.setPath(LevelManager.getInstance().getPath(defaultIsFlying)); }
 	public Creep build() {
-		currentCreep.setAttributes(currentAttributes.finishBuild()); //TODO: Change the finish build to throwing an exception?
+		currentAttributes.finishBuild();
+		currentCreep.setAttributes(currentAttributes);  //TODO: Change the finish build to throwing an exception?
 		Creep built = currentCreep;
 		currentCreep = null;
 		return built;

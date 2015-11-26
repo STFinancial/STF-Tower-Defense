@@ -5,7 +5,7 @@ import projectiles.Projectile;
 
 public class MaxHealthDamage extends ProjectileEffect {
 	public MaxHealthDamage(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent, false);
+		super(0, modifier, 0, damageType, parent);
 	}
 	
 	public ProjectileEffect clone() {

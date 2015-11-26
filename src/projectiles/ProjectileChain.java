@@ -8,7 +8,6 @@ import creeps.Creep;
 import towers.Tower;
 
 public final class ProjectileChain extends Projectile implements TargetsCreep {
-	private Creep targetCreep;
 	private ArrayList<Creep> chainedCreep;
 	private ArrayList<ArrayList<ProjectileEffect>> chainedEffects;
 	private ArrayList<ArrayList<ProjectileEffect>> chainedSplashEffects;

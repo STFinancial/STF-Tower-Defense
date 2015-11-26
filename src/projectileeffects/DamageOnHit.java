@@ -7,15 +7,15 @@ public class DamageOnHit extends ProjectileEffect implements Stackable {
 	private int maxStacks;
 	private int numStacks;
 	
-	public DamageOnHit(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean sharesStacks) {
-		super(lifetime, modifier, 0, damageType, parent, sharesStacks);
+	public DamageOnHit(int lifetime, float modifier, DamageType damageType, Projectile parent) {
+		super(lifetime, modifier, 0, damageType, parent);
 		this.maxStacks = 1;
 		this.numStacks = 0;
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new DamageOnHit(lifetime, modifier, damageType, parent, sharesStacks);
+		return new DamageOnHit(lifetime, modifier, damageType, parent);
 	}
 
 	@Override

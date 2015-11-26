@@ -192,6 +192,7 @@ public class PathFinder {
 	}
 
 	private static void assignType(VertexGraph vg, Vertex vert, Tile TL, Tile TR, Tile BL, Tile BR) {
+		
 		if (TL.groundTraversable && TR.groundTraversable && BL.groundTraversable && BR.groundTraversable) {
 			vert.groundTraversable = true;
 		}
@@ -202,10 +203,12 @@ public class PathFinder {
 
 		if (TL.type == TileType.START && TR.type == TileType.START && BL.type == TileType.START && BR.type == TileType.START) {
 			vg.startingVertices.add(vert);
+			vert.isStart = true;
 		}
 
 		if (TL.type == TileType.FINISH && TR.type == TileType.FINISH && BL.type == TileType.FINISH && BR.type == TileType.FINISH) {
 			vg.endingVertices.add(vert);
+			vert.isFinish = true;
 		}
 	}
 }

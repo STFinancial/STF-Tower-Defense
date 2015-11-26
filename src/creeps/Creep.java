@@ -44,6 +44,7 @@ public class Creep extends GameObject {
 	
 	protected void setAttributes(CreepAttributes attributes) { 
 		this.attributes = attributes;
+		attributes.setParent(this);
 		//At some point in the future we might want to set the attributes: attributes.setParentCreep(this);
 		hitBox = new Circle(hitBox.getX(), hitBox.getY(), attributes.getCurrentSize());
 		setLocation(0); 
@@ -61,8 +62,8 @@ public class Creep extends GameObject {
 	
 	//Public interface methods that simply delegate to the attributes layer.
 	protected void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
-	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area) { attributes.addDeathrattleEffect(effect, area); }
-	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration) { attributes.addDeathrattleEffect(effect, area, duration); }
+	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area, boolean hitsAir) { attributes.addDeathrattleEffect(effect, area, hitsAir); }
+	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration, boolean hitsAir) { attributes.addDeathrattleEffect(effect, area, duration, hitsAir); }
 	protected void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
 	protected void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
 	protected void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
@@ -163,6 +164,9 @@ public class Creep extends GameObject {
 			previousIndex = newLocation - 1;
 			nextIndex = newLocation + 1;
 		}
+		if (path == null) {
+			return;
+		}
 		currentVertex = path.getVertex(currentIndex);
 		updateDirection();
 		updateHitBox();
@@ -254,7 +258,7 @@ public class Creep extends GameObject {
 	}
 
 	public String toString() {
-		String string = "HP = " + attributes.getCurrentHealth() + ", Toughness = " + attributes.getCurrentToughness() + " , Speed = " + attributes.getCurrentSpeed();
+//		String string = "HP = " + attributes.getCurrentHealth() + ", Toughness = " + attributes.getCurrentToughness() + " , Speed = " + attributes.getCurrentSpeed();
 //		string += "\nelement = " + elementType + ", Modifiers: ";
 //		for (CreepType type : creepTypes) {
 //			string += " " + type;
@@ -262,7 +266,8 @@ public class Creep extends GameObject {
 //				string += "\n  " + children.size() + " Children: " + children.get(0).toString();
 //			}
 //		}
-		return string;
+		String s = new String(currentVertex.toString() + "\t " + direction.toString());
+		return s;
 	}
 	
 	@Override

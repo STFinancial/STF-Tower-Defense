@@ -7,15 +7,15 @@ public class Hasting extends ProjectileEffect implements Stackable {
 	private int maxStacks;
 	private int numStacks;
 	
-	public Hasting(int lifetime, float modifier, DamageType damageType, Projectile parent, boolean sharesStacks) {
-		super(lifetime, modifier, 0, damageType, parent, sharesStacks);
+	public Hasting(int lifetime, float modifier, DamageType damageType, Projectile parent) {
+		super(lifetime, modifier, 0, damageType, parent);
 		this.numStacks = 0;
 		this.maxStacks = 1;
 	}
 
 	@Override
 	public ProjectileEffect clone() {
-		return new Hasting(lifetime, modifier, damageType, parent, sharesStacks);
+		return new Hasting(lifetime, modifier, damageType, parent);
 	}
 
 	@Override

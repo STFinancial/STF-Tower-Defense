@@ -11,7 +11,7 @@ public class ProjectileAOE extends Projectile {
 	
 	protected ProjectileAOE(Tower parent, Projectile mold) {
 		super(parent, mold);
-		this.targetZone = towerManager.getTargetZone(parent);
+		this.targetZone = ((ProjectileAOE) mold).targetZone;
 		speed = currentSpeed = 0f;
 	}
 	

@@ -12,7 +12,7 @@ public final class Explosion extends ProjectileEffect {
 	private ArrayList<ProjectileEffect> explosionEffects;
 	
 	public Explosion(DamageType damageType, Projectile parent, float explosionRadius, ArrayList<ProjectileEffect> explosionEffects) {
-		super(0, 0, 0, damageType, parent, false);
+		super(0, 0, 0, damageType, parent);
 		this.explosionRadius = explosionRadius;
 		this.explosionEffects = explosionEffects;
 	}

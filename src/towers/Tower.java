@@ -230,6 +230,8 @@ public abstract class Tower extends GameObject {
 			if (current.attackCooldown < 1) { current.attackCooldown = 1; }
 			current.currentAttackCooldown = current.attackCooldown;
 			current.targetZone = new Circle(current.getCenterX(), current.getCenterY(), current.range);
+			current.adjustProjectileStats();
+			current.targetingMode = TargetingModeType.getDefaultTargetingMode(current.baseProjectile);
 		}
 	}
 	
@@ -383,7 +385,7 @@ public abstract class Tower extends GameObject {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		s = s.append("Tower of Type " + type + " at position " + topLeft.toString() + "\n");
-		s = s.append("TowerID: " + towerID);
+		s = s.append("TowerID: " + towerID + "\n");
 		s = s.append("Damage: \n");
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			s.append("\t " + DamageType.values()[i] + " - " + damageArray[i] + "\n");
@@ -393,8 +395,8 @@ public abstract class Tower extends GameObject {
 			s.append("\t " + DamageType.values()[i] + " - " + slowArray[i] * 100 + "% for " + slowDurationArray[i] + "\n");
 		}
 		s.append("Tower Range: " + range); 
-		s.append("Attack Cooldown: " + attackCooldown);
-		s.append("Damage Splash Effectiveness: " + damageSplash * 100 + "%  Effect Splash Effectiveness: " + effectSplash * 100 + "%  Splash Radius: " + splashRadius);
+		s.append(" Attack Cooldown: " + attackCooldown);
+		s.append(" Damage Splash Effectiveness: " + damageSplash * 100 + "%  Effect Splash Effectiveness: " + effectSplash * 100 + "%  Splash Radius: " + splashRadius);
 		return s.toString();
 	}
 	

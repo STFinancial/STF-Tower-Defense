@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import levels.Path;
+
 /*
  * Collection of Creep and their absolute spawn times
  * Methods to grab next creep(s), and get time for creep after
@@ -37,7 +39,7 @@ public final class Wave {
 		}
 		return toReturn;
 	}
-
+	
 	public boolean stillSpawning() {
 		return (spawnCounter < size);
 	}

@@ -5,7 +5,7 @@ import projectiles.Projectile;
 
 public class Consume extends ProjectileEffect {
 	public Consume(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent, false);
+		super(0, modifier, 0, damageType, parent);
 	}
 
 	@Override

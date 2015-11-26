@@ -1,6 +1,7 @@
 package creeps;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,10 +38,19 @@ public class CreepManager {
 	
 	public void startRound(int round) {
 		currentWave = creepWaves.get(round);
+		creeps.clear();
+	}
+	
+	public void setCreepWaves(ArrayList<Wave> creepWaves) {
+		if (creepWaves == null) {
+			this.creepWaves = new ArrayList<Wave>();
+			return;
+		}
+		this.creepWaves = creepWaves;
 	}
 	
 	public boolean isRoundFinished() {
-		return creeps.size() == 0 && currentWave.stillSpawning();
+		return creeps.size() == 0 && !currentWave.stillSpawning();
 	}
 	
 	public void updateCreepSpawn(int gameTick) {
@@ -69,6 +79,7 @@ public class CreepManager {
 	public void updateDeadCreep() {
 		Iterator<Creep> it = creeps.iterator();
 		Creep c;
+		LinkedList<Creep> toAdd = new LinkedList<Creep>();
 		while (it.hasNext()) {
 			c = it.next();
 			if (c.isDead()) {
@@ -76,17 +87,24 @@ public class CreepManager {
 				List<Creep> deathrattleChildren = c.onDeath();
 				for (Creep drc: deathrattleChildren) {
 					drc.setPath(c.path, c.currentIndex);
-					creeps.add(drc);
-					game.newEvent(GameEventType.CREEP_SPAWNED, drc);
+					toAdd.add(drc);
 				}
+				it.remove();
 			}
+		}
+		for (Creep drc: toAdd) {
+			creeps.add(drc);
+			game.newEvent(GameEventType.CREEP_SPAWNED, drc);
+		}
+		if (isRoundFinished()) {
+			game.newEvent(GameEventType.ROUND_FINISHED, game);
 		}
 	}
 	
 	//General methods that are one line delegaters.
 	public void addAllEffects(Creep creep, ArrayList<ProjectileEffect> effects) { creep.addAllEffects(effects); }
-	public void addDeathrattleEffect(Creep creep, ProjectileEffect effect, Circle area) { creep.addDeathrattleEffect(effect, area); }
-	public void addDeathrattleEffect(Creep creep, ProjectileEffect effect, Circle area, int duration) { creep.addDeathrattleEffect(effect, area, duration); }
+	public void addDeathrattleEffect(Creep creep, ProjectileEffect effect, Circle area, boolean hitsAir) { creep.addDeathrattleEffect(effect, area, hitsAir); }
+	public void addDeathrattleEffect(Creep creep, ProjectileEffect effect, Circle area, int duration, boolean hitsAir) { creep.addDeathrattleEffect(effect, area, duration, hitsAir); }
 	public void addEffect(Creep creep, ProjectileEffect effect) { creep.addEffect(effect); }
 	public void consumeBleeds(Creep creep, float amount) { creep.consumeBleeds(amount); }
 	public void damage(Creep creep, DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { creep.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
@@ -256,5 +274,14 @@ public class CreepManager {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		String s = new String(creeps.size() + " Creeps remaining.\n");
+		for (Creep c: creeps) {
+			s = s.concat(c.toString() + "\n");
+		}
+		return s;
 	}
 }

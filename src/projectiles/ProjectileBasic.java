@@ -5,7 +5,6 @@ import towers.Tower;
 import utilities.Circle;
 
 public class ProjectileBasic extends Projectile implements TargetsCreep {
-	protected Creep targetCreep;
 	
 	protected ProjectileBasic(Tower parent, Projectile mold) {
 		super(parent, mold);

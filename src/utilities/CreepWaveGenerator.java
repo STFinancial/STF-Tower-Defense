@@ -76,6 +76,7 @@ public class CreepWaveGenerator {
 		cb.setGoldValue(25);
 		cb.setHealthCost(1);
 		cb.setHealthValues(300, 0);
+		cb.setSpeedValues(0.05f, false, false, false, 10);
 		cb.setSize(0.3f);
 		Creep c = cb.build();
 		Wave w = new Wave();

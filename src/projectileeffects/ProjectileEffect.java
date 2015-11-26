@@ -7,6 +7,7 @@ import game.GameObject;
 import projectiles.Projectile;
 import projectiles.ProjectileManager;
 
+//TODO: Decide what to do about "shares stacks"
 /*
  * An on hit effect that can be applied from a projectile
  * information such as chance to hit, duration and effect are included
@@ -14,8 +15,6 @@ import projectiles.ProjectileManager;
 public abstract class ProjectileEffect extends GameObject {
 	protected CreepManager creepManager;
 	protected ProjectileManager projManager;
-	
-	protected boolean sharesStacks; // If a projectile effect is distinct, then two different towers share the same stack
 	
 	protected float modifier;
 	protected int lifetime;
@@ -25,7 +24,7 @@ public abstract class ProjectileEffect extends GameObject {
 	protected Projectile parent;
 	protected Creep creep;
 
-	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent, boolean sharesStacks) {
+	public ProjectileEffect(int lifetime, float modifier, int timing, DamageType damageType, Projectile parent) {
 		this.modifier = modifier;
 		this.lifetime = lifetime;
 		this.counter = lifetime;
@@ -34,7 +33,6 @@ public abstract class ProjectileEffect extends GameObject {
 		this.parent = parent;
 		this.creepManager = CreepManager.getInstance();
 		this.projManager = ProjectileManager.getInstance();
-		this.sharesStacks = sharesStacks;
 	}
 
 	public abstract ProjectileEffect clone();
@@ -82,7 +80,7 @@ public abstract class ProjectileEffect extends GameObject {
 				p.getClass() == getClass() &&
 				p.lifetime == lifetime &&
 				p.timing == timing &&
-				(sharesStacks || (!sharesStacks && projManager.getParent(p.parent).equals(projManager.getParent(parent))));
+				projManager.getParent(p.parent).hashCode() == projManager.getParent(parent).hashCode();
 	}
 	
 	@Override
@@ -93,10 +91,7 @@ public abstract class ProjectileEffect extends GameObject {
 		result = 31 * result + (int) lifetime;
 		result = 31 * result + (int) modifier;
 		result = 31 * result + timing;
-		if (!sharesStacks) {
-			result = 31 * result + projManager.getParent(parent).hashCode();
-		}
-		
+		result = 31 * result + projManager.getParent(parent).hashCode();
 		return result;
 	}
 }

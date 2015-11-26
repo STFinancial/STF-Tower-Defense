@@ -63,4 +63,14 @@ public final class Path {
 	Vertex getFirst() {
 		return path.getFirst();
 	}
+	
+	@Override
+	public String toString() {
+		String s = new String();
+		for (int i = 0; i < size; i++) {
+			s = s.concat(path.get(i).toString() + "\t");
+			s = s.concat(directions.get(i).toString() + "\n");
+		}
+		return s;
+	}
 }

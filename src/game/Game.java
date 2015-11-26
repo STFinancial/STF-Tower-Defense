@@ -49,6 +49,7 @@ public class Game {
 		this.creepBuilder.initialize(this);
 		this.waveGenerator = CreepWaveGenerator.getInstance();
 		this.waveGenerator.initialize(this);
+		this.creepManager.setCreepWaves(waveGenerator.generateCreepWaves());
 		this.gameEvents = new LinkedList<GameEvent>();
 		this.round = 0;
 		this.gameTick = 0;
@@ -89,15 +90,29 @@ public class Game {
 		gameTick++;
 	}
 	
-	//TODO: Should this be a game object instead of an object?
-	public void newEvent(GameEventType type, Object o) {
-		
+	public boolean isRoundInProgress() {
+		return roundInProgress;
 	}
 	
+	//TODO: Should this be a game object instead of an object?
+	public void newEvent(GameEventType type, Object o) {
+		gameEvents.add(new GameEvent(type, o, round, gameTick));
+	}
+	
+	//TODO: Who or what is processing these events and making the necessary changes?
 	public GameEvent getEvent() {
 		if (gameEvents.size() > 0) {
 			return gameEvents.remove(0);
 		}
-		return null;
+		return new GameEvent(GameEventType.NULL, null, round, gameTick);
+	}
+	
+	@Override
+	public String toString() {
+		String s = new String();
+		s = s.concat("Round: " + round + "\n");
+		s = s.concat("Game Tick: " + gameTick + "\n");
+		//s = s.concat(creepManager.toString());
+		return s;
 	}
 }

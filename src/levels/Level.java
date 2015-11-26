@@ -3,24 +3,13 @@ package levels;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 import creeps.Creep;
 import creeps.CreepManager;
-import creeps.CreepType;
-import creeps.Wave;
-import game.Game;
-import game.GameEvent;
-import game.GameEventType;
-import creeps.DamageType;
 import players.Player;
-import projectiles.Projectile;
 import projectiles.ProjectileManager;
 import towers.*;
 import utilities.Circle;
-import utilities.CreepWaveGenerator;
 
 /*
  * Executes main game logic loop
@@ -30,7 +19,7 @@ public class Level {
 	private Player player;
 
 	//TODO: This shit drives me nuts, fix it.
-	private float gold = 10000;
+	private float gold = 1000000;
 	private int health = 100;
 
 	//Managers
@@ -43,7 +32,7 @@ public class Level {
 
 	private Path groundPath;
 	private Path flyingPath;
-	private Path proposedPath;
+	private Path proposedGroundPath;
 	//This will change when we create and destroy new terrain
 	//TODO: I think having some of these as hash sets is sub-optimal.
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
@@ -67,64 +56,52 @@ public class Level {
 		updatePath();
 	}
 	
-	void reduceHealth(float amount) {
-		health -= amount;
+	
+	
+	
+
+	void startRound(int roundNum) {
+		effectPatches.clear();
+		groundCreepAdjacentToEarth.clear();
+		allCreepAdjacentToEarth.clear();
 	}
 	
-	float getHealth() { 
-		return health; 
-	}
-
-	//Can be called from App
-	void startRound() {
-		if (!roundInProgress) {
-			roundInProgress = true;
-			creepLeft = true;
-			currentWave = creepWaves.get(round);
-			round++;
-			System.out.println("Starting round " + round);
-			tick = 0;
-			nextSpawnTick = currentWave.getDelayForNextCreep();
-		}
-	}
-
-	public void gameTick() {
-
-		
-		if (towerManager.hasEarthEarth()) {
-			//TODO: Since we loop through all the creeps here we could assign everything in one loop if we do it well enough.
-			updateGroundCreepAdjacentToEarth();
-		}
-		
-		Iterator<EffectPatch> it = effectPatches.iterator();
-		while (it.hasNext()) {
-			EffectPatch e = it.next();
-			e.update();
-			if (e.isDone()) {
-				it.remove();
-			}
-		}
-	}
+	
 
 	public void addGold(float amount) { gold += amount; }
 	public float getGold() { return gold; }
+	float getHealth() { return health; }
+	void reduceHealth(float amount) { health -= amount; }
 	public void removeGold(float amount) { gold -= amount; }
 	
 	
+	public boolean canBuild(TowerType type, int x, int y) {
+		if (!type.isBaseType() || type.getCost() > gold) {
+			return false;
+		}
+		int width = type.getWidth();
+		int height = type.getHeight();
+		if (map.isOutside(x, y) || x + width >= map.getWidth() || y + height >= map.getHeight()) {
+			proposedGroundPath = null;
+			return false;
+		}
+		for (int i = x; i < x + width; i++) {
+			for (int j = y; j < y + height; j++) {
+				if (!map.getTile(j, i).buildable) {
+					proposedGroundPath = null;
+					return false;
+				}
+			}
+		}
+		proposePath(x, y, width, height);
+		return proposedGroundPath != null;
+	}
 	
+	
+	//TODO: Need to return the "can build tower" method in here
+
 	public boolean canBuyTower(TowerType type) {
 		return gold >= type.getCost();
-	}
-
-	//GUI should call this method to build towers
-	public Tower buyTower(TowerType type, int y, int x) {
-		Tile tile = map.getTile(y, x);
-		gold -= type.getCost(); //TODO: In this method in tower should be affected by global talents
-		Tower t = towerManager.constructTower(tile, type);
-		updatePath();
-		towerManager.updateTowerChain(t);
-		newEvent(GameEventType.TOWER_CREATED, t);
-		return t;
 	}
 
 
@@ -166,38 +143,6 @@ public class Level {
 		}
 	}
 	
-	private void updateGroundCreepAdjacentToEarth() {
-		groundCreepAdjacentToEarth.clear();
-		allCreepAdjacentToEarth.clear();
-		for (Circle c: earthTiles) {
-			groundCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, false));
-			allCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, true));
-		}
-	}
-
-	public boolean canBuild(TowerType type, int y, int x) {
-		if (!type.isBaseType() || type.getCost() > gold) {
-			return false;
-		}
-		int width = type.getWidth();
-		int height = type.getHeight();
-		if (x < 0 || y < 0 || x + width >= map.getWidth() || y + height >= map.getHeight()) {
-			proposedGroundPath = null;
-			return false;
-		}
-		for (int i = x; i < x + width; i++) {
-			for (int j = y; j < y + height; j++) {
-				if (!map.getTile(j, i).buildable) {
-					proposedGroundPath = null;
-					return false;
-				}
-			}
-		}
-		proposePath(x, y, width, height);
-		return proposedGroundPath != null;
-	}
-
-	
 
 	public void addEffectPatch(EffectPatch effectPatch) {
 		effectPatches.add(effectPatch);
@@ -215,5 +160,27 @@ public class Level {
 
 	public Path getPath(boolean isFlying) {
 		return (isFlying ? flyingPath : groundPath);
+	}
+	
+	void updateEffectPatches() {
+		Iterator<EffectPatch> it = effectPatches.iterator();
+		while (it.hasNext()) {
+			EffectPatch e = it.next();
+			e.update();
+			if (e.isDone()) {
+				it.remove();
+			}
+		}
+	}
+	
+	void updateCreepAdjacentToEarth() {
+		if (towerManager.hasEarthEarth()) {
+			groundCreepAdjacentToEarth.clear();
+			allCreepAdjacentToEarth.clear();
+			for (Circle c: earthTiles) {
+				groundCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, false));
+				allCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, true));
+			}
+		}
 	}
 }

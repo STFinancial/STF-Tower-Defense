@@ -8,7 +8,7 @@ public final class SiphonLife extends ProjectileEffect {
 	private float goldModifier;
 	
 	public SiphonLife(float modifier, DamageType damageType, Projectile parent, float goldModifier) {
-		super(0, modifier, 0, damageType, parent, false);
+		super(0, modifier, 0, damageType, parent);
 		this.goldModifier = goldModifier;
 	}
 

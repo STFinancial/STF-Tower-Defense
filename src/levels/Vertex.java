@@ -55,4 +55,14 @@ public final class Vertex implements Comparable<Vertex> {
 	public boolean equals(Vertex v) {
 		return v.x == x && v.y == y;
 	}
+	
+	@Override
+	public String toString() {
+		if (isFinish) {
+			return new String("X: " + x + "\t Y: " + y + "\t IS finish");
+		} else {
+			return new String("X: " + x + "\t Y: " + y + "\t Not finish");
+		}
+		
+	}
 }

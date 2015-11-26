@@ -6,8 +6,8 @@ public class Map {
 	MapType type;
 	
 	Tile[][] map;
-	private int width;
-	private int height;
+	private final int width;
+	private final int height;
 	
 	public Map(int width, int height){
 		map = new Tile[height][width];

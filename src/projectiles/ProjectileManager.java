@@ -27,6 +27,10 @@ public final class ProjectileManager {
 		this.game = game;
 	}
 	
+	public void startRound(int roundNum) {
+		projectiles.clear();
+	}
+	
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);
 		game.newEvent(GameEventType.PROJECTILE_FIRED, p);

@@ -19,8 +19,10 @@ final class Effects extends Attribute {
 		if (effects.contains(effect)) {
 			getEquivalent(effect).onApply();
 		} else {
-			effect.onApply();
-			effects.add(effect.clone()); //TODO: Why don't I just clone when I create the projectile?
+			ProjectileEffect clonedEffect = effect.clone();
+			clonedEffect.setCreep(parent.getParent());
+			clonedEffect.onApply();
+			effects.add(clonedEffect); //TODO: Why don't I just clone when I create the projectile?
 		}
 	}
 

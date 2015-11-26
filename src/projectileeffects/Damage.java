@@ -5,7 +5,7 @@ import projectiles.Projectile;
 
 public class Damage extends ProjectileEffect {
 	public Damage(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent, false);
+		super(0, modifier, 0, damageType, parent);
 	}
 
 	@Override

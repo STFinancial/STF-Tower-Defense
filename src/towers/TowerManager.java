@@ -50,6 +50,10 @@ public final class TowerManager {
 		earthEarth = 0;
 	}
 	
+	public void startRound(int roundNum) {
+		return;
+	}
+	
 	// Public access one line delegations
 	public boolean doesOnHit(Tower t) { return t.doesOnHit(); }
 	public boolean doesSlow(Tower t) { return t.doesSlow(); }

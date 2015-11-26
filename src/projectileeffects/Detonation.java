@@ -10,7 +10,7 @@ import projectiles.ProjectileManager;
 
 public class Detonation extends ProjectileEffect {
 	public Detonation(float modifier, DamageType damageType, Projectile parent) {
-		super(0, modifier, 0, damageType, parent, false); //TODO: Do we want to set a range here so that we can affect it with quality?
+		super(0, modifier, 0, damageType, parent); //TODO: Do we want to set a range here so that we can affect it with quality?
 	}
 
 	@Override

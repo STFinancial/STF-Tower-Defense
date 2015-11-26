@@ -11,6 +11,8 @@ import utilities.GameConstants;
 
 //TODO: Need to go through and make sure no default attribute values are modified to ensure that clone works properly
 final class CreepAttributes extends GameObject {
+	private Creep parent;
+	
 	private Effects effects;
 	
 	private GoldValue goldValue;
@@ -41,6 +43,7 @@ final class CreepAttributes extends GameObject {
 	void setSize(float defaultSize) { size = new Size(this, defaultSize); }
 	void setHealthCost(float defaultHealthCost) { healthCost = new HealthCost(this, defaultHealthCost); }
 	void setTravel(boolean defaultIsFlying, boolean groundingImmune) { travel = new Travel(this, defaultIsFlying, groundingImmune); }
+	void setParent(Creep parent) { this.parent = parent; }
 	
 	//Sets all fields that the builder forgot to
 	CreepAttributes finishBuild() {
@@ -110,6 +113,7 @@ final class CreepAttributes extends GameObject {
 	float getCurrentToughness() { return toughness.getCurrentToughness(); }
 	float getDisruption() { return disruption.getDisruptionAmount(); }
 	float getMaxHealth() { return health.getMaxHealth(); }
+	Creep getParent() { return parent; }
 	float getSlowResist(DamageType type) { return slowResistances.getResistPercent(type); }
 	boolean isDead() { return health.isDead(); }
 	boolean isDisoriented() { return speed.isDisoriented(); }
