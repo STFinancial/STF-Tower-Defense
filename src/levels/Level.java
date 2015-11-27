@@ -106,7 +106,20 @@ public class Level {
 		}
 		
 		proposePath(x, y, width, height);
-		return proposedGroundPath != null && proposedFlyingPath != null;
+		if (onGround) {
+			if (inAir) {
+				return proposedGroundPath != null && proposedFlyingPath != null;
+			} else {
+				return proposedGroundPath != null;
+			}
+		} else {
+			if (inAir) {
+				return proposedFlyingPath != null;
+			} else {
+				return true;
+			}
+		}
+		
 	}
 	
 	
