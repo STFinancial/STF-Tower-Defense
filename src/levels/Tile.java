@@ -1,6 +1,7 @@
 package levels;
 
 import towers.Tower;
+import towers.TowerManager;
 
 /*
  * Basic component of what makes up a map
@@ -11,7 +12,11 @@ public class Tile {
 	int x, y;
 	TileType type;
 	Tower tower;
-	boolean groundTraversable, airTraversable, buildable;
+	
+	boolean groundTraversable;
+	boolean airTraversable;
+	private boolean groundBuildable;
+	private boolean airBuildable;
 
 	Tile(int y, int x, TileType type) {
 		this.y = y;
@@ -20,18 +25,32 @@ public class Tile {
 		tower = null;
 		groundTraversable = type.groundTraversable;
 		airTraversable = type.airTraversable;
-		buildable = type.buildable;
+		groundBuildable = type.groundBuildable;
+		airBuildable = type.airBuildable;
 	}
 	
 	void addTower(Tower t) {
 		tower = t;
-		buildable = false;
-		groundTraversable = false;
+		groundTraversable = TowerManager.getInstance().isOnGround(t);
+		airTraversable = TowerManager.getInstance().isInAir(t);
+		/* We won't allow multiple towers on the same tile */
+		groundBuildable = false;
+		airBuildable = false;
 	}
 	
 	void removeTower() {
-		buildable = true;
-		groundTraversable = true;
+		groundTraversable = type.groundTraversable;
+		airTraversable = type.airTraversable;
+		groundBuildable = type.groundBuildable;
+		airBuildable = type.airBuildable;
+	}
+	
+	boolean isBuildable(boolean ground) {
+		if (ground) {
+			return groundBuildable;
+		} else {
+			return airBuildable;
+		}
 	}
 	
 }

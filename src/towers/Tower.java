@@ -54,6 +54,8 @@ public abstract class Tower extends GameObject {
 	protected float effectSplash;
 	protected float splashRadius;
 	protected float range;
+	protected boolean isInAir;
+	protected boolean isOnGround;
 	protected boolean hitsAir;
 	protected boolean hitsGround;
 	protected boolean doesSlow;
@@ -120,6 +122,8 @@ public abstract class Tower extends GameObject {
 	protected Tile getTopLeftTile() { return topLeft; }
 	protected TowerType getType() { return type; }
 	protected int getWidth() { return width; }
+	protected boolean isInAir() { return isInAir; }
+	protected boolean isOnGround() { return isOnGround; }
 	protected boolean hitsAir() { return hitsAir; }
 	protected boolean splashHitsAir() { return splashHitsAir; }
 	
@@ -256,6 +260,8 @@ public abstract class Tower extends GameObject {
 		splashRadius			= baseAttributeList.baseSplashRadius;
 		range 					= baseAttributeList.baseRange;
 		hitsAir					= baseAttributeList.hitsAir;
+		isInAir					= baseAttributeList.isInAir;
+		isOnGround				= baseAttributeList.isOnGround;
 		hitsGround				= baseAttributeList.hitsGround;
 		doesSplash				= baseAttributeList.doesSplash;
 		doesSlow				= baseAttributeList.doesSlow;

@@ -43,6 +43,8 @@ class BaseAttributeList {
 			b.baseSlowArray[i] = baseSlowArray[i];
 			b.baseDamageArray[i] = baseDamageArray[i];
 		}
+		b.isOnGround = isOnGround;
+		b.isInAir = isInAir;
 		b.hitsAir = hitsAir;
 		b.hitsGround = hitsGround;
 		b.doesSplash = doesSplash;
@@ -74,6 +76,8 @@ class BaseAttributeList {
 	public float[] baseSlowArray;
 	public float damageSiphon;
 	public float[] baseDamageArray;
+	public boolean isOnGround;
+	public boolean isInAir;
 	public boolean hitsAir;
 	public boolean hitsGround;
 	public boolean doesSplash;

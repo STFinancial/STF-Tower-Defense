@@ -33,6 +33,7 @@ public class Level {
 	private Path groundPath;
 	private Path flyingPath;
 	private Path proposedGroundPath;
+	private Path proposedFlyingPath;
 	//This will change when we create and destroy new terrain
 	//TODO: I think having some of these as hash sets is sub-optimal.
 	private HashSet<Circle> earthTiles = new HashSet<Circle>();
@@ -76,30 +77,39 @@ public class Level {
 	
 	
 	public boolean canBuild(TowerType type, int x, int y) {
-		if (!type.isBaseType() || type.getCost() > gold) {
+		/* If it isn't a base type, we don't have enough gold, 
+		 * or the desired position isn't in the map, return false */
+		if (!type.isBaseType() || type.getCost() > gold || 
+				map.isOutside(x, y) || x + type.getWidth() >= map.getWidth() ||
+				y + type.getHeight() >= map.getHeight())  {
+			proposedGroundPath = null;
+			proposedFlyingPath = null;
 			return false;
 		}
+		
 		int width = type.getWidth();
 		int height = type.getHeight();
-		if (map.isOutside(x, y) || x + width >= map.getWidth() || y + height >= map.getHeight()) {
-			proposedGroundPath = null;
-			return false;
-		}
+		boolean onGround = type.isOnGround();
+		boolean inAir = type.isInAir();
+		
+		Tile currentTile;
 		for (int i = x; i < x + width; i++) {
 			for (int j = y; j < y + height; j++) {
-				if (!map.getTile(j, i).buildable) {
+				currentTile = map.getTile(j, i);
+				if ((onGround && !currentTile.isBuildable(true)) ||
+						(inAir && !currentTile.isBuildable(false))) {
 					proposedGroundPath = null;
+					proposedFlyingPath = null;
 					return false;
 				}
 			}
 		}
+		
 		proposePath(x, y, width, height);
-		return proposedGroundPath != null;
+		return proposedGroundPath != null && proposedFlyingPath != null;
 	}
 	
 	
-	//TODO: Need to return the "can build tower" method in here
-
 	public boolean canBuyTower(TowerType type) {
 		return gold >= type.getCost();
 	}
@@ -113,22 +123,30 @@ public class Level {
 	}
 
 	public void proposePath(int x, int y, int width, int height) {
-		boolean old[][] = new boolean[height][width];
+		boolean oldGround[][] = new boolean[height][width];
+		boolean oldFlying[][] = new boolean[height][width];
 
+		Tile currentTile;	
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				old[j][i] = map.getTile(y + j, x + i).groundTraversable;
-				map.getTile(y + j, x + i).groundTraversable = false;
+				currentTile = map.getTile(y + j, x + i);
+				oldGround[j][i] = currentTile.groundTraversable;
+				oldFlying[j][i] = currentTile.airTraversable;
+				currentTile.groundTraversable = false;
+				currentTile.airTraversable = false;
 			}
 		}
 
 		VertexGraph vg = new VertexGraph();
 		vg = PathFinder.mapToVertexGraph(vg, map);
 		proposedGroundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
-
+		proposedFlyingPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
+		
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				map.getTile(y + j, x + i).groundTraversable = old[j][i];
+				currentTile = map.getTile(y + j, x + i);
+				currentTile.groundTraversable = oldGround[j][i];
+				currentTile.airTraversable = oldFlying[j][i];
 			}
 		}
 	}

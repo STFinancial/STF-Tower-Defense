@@ -54,7 +54,7 @@ public class MapGenerator {
 	private void trim(Maze m) {
 		for (int x = 0; x < m.width; x++) {
 			for (int y = 0; y < m.height; y++) {
-				if (r.nextDouble() < trimFactor && m.maze[y][x] == TileType.VOID) {
+				if (r.nextDouble() < trimFactor && m.maze[y][x] == TileType.GROUND_HOLE) {
 					int oldX = x;
 					int oldY = y;
 
@@ -87,7 +87,7 @@ public class MapGenerator {
 	private void bulk(Maze m) {
 		for (int x = 0; x < m.width; x++) {
 			for (int y = 0; y < m.height; y++) {
-				if (r.nextDouble() < bulkFactor && m.maze[y][x] == TileType.VOID) {
+				if (r.nextDouble() < bulkFactor && m.maze[y][x] == TileType.GROUND_HOLE) {
 					int oldX = x;
 					int oldY = y;
 
@@ -108,7 +108,7 @@ public class MapGenerator {
 							y = m.height - 1;
 						}
 
-						m.maze[y][x] = TileType.VOID;
+						m.maze[y][x] = TileType.GROUND_HOLE;
 					}
 
 					x = oldX;
@@ -304,17 +304,17 @@ public class MapGenerator {
 			for (int i = 0; i < cellMapHeight; i++) {
 				for (int j = 0; j < cellMapWidth; j++) {
 					Cell c = cellMap[i][j];
-					maze[c.mapY + 2][c.mapX + 2] = TileType.VOID;
+					maze[c.mapY + 2][c.mapX + 2] = TileType.GROUND_HOLE;
 					if (!c.right) {
-						maze[c.mapY + 1][c.mapX + 2] = TileType.VOID;
-						maze[c.mapY + 0][c.mapX + 2] = TileType.VOID;
+						maze[c.mapY + 1][c.mapX + 2] = TileType.GROUND_HOLE;
+						maze[c.mapY + 0][c.mapX + 2] = TileType.GROUND_HOLE;
 					} else {
 						maze[c.mapY + 1][c.mapX + 2] = TileType.LAND;
 						maze[c.mapY + 0][c.mapX + 2] = TileType.LAND;
 					}
 					if (!c.down) {
-						maze[c.mapY + 2][c.mapX + 0] = TileType.VOID;
-						maze[c.mapY + 2][c.mapX + 1] = TileType.VOID;
+						maze[c.mapY + 2][c.mapX + 0] = TileType.GROUND_HOLE;
+						maze[c.mapY + 2][c.mapX + 1] = TileType.GROUND_HOLE;
 					} else {
 						maze[c.mapY + 2][c.mapX + 0] = TileType.LAND;
 						maze[c.mapY + 2][c.mapX + 1] = TileType.LAND;

@@ -15,8 +15,8 @@ public class Map {
 		this.height = height;
 	}
 	
-	public boolean canBuild(int y, int x) {
-		return map[y][x].type.buildable;
+	public boolean canBuild(int y, int x, boolean ground) {
+		return map[y][x].isBuildable(ground);
 	}
 	
 	public int getHeight() {

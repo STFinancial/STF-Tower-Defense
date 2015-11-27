@@ -72,6 +72,8 @@ public final class TowerManager {
 	public Tile getTopLeftTile(Tower t) { return t.getTopLeftTile(); }
 	public TowerType getType(Tower t) { return t.getType(); }
 	public int getWidth(Tower t) { return t.getWidth(); }
+	public boolean isInAir(Tower t) { return t.isInAir(); }
+	public boolean isOnGround(Tower t) { return t.isOnGround(); }
 	public boolean hitsAir(Tower t) { return t.hitsAir(); }
 	public boolean splashHitsAir(Tower t) { return t.splashHitsAir(); }
 	

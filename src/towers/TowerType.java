@@ -10,7 +10,6 @@ public enum TowerType {
 	//TODO: Come up with consistent wording and formatting for descriptions of upgrades
 	//TODO: Make an update in Tower that applies global effects (e.g. On one level we want all towers to have the additional projectile effect that they heal enemies on hit)
 	//TODO: Upgrades that modify the damage against certain types of creep?
-	//TODO: Towers that take up air as well
 	//TODO: Want to move physical to first in the array, but that requires changing all of the array initializers
 	EARTH (new BaseAttributeList(){{
 		name                  	= "Earth";
@@ -26,6 +25,8 @@ public enum TowerType {
 		baseEffectSplash		= 0f;
 		baseSplashRadius		= 2f;
 		baseRange				= 6.5f;
+		isOnGround				= true;
+		isInAir					= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -48,6 +49,8 @@ public enum TowerType {
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 1.5f;
 		baseRange				= 7.5f;
+		isOnGround				= true;
+		isInAir					= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -70,6 +73,8 @@ public enum TowerType {
 		baseEffectSplash		= 0.25f;
 		baseSplashRadius		= 1f;
 		baseRange				= 7.5f;
+		isOnGround				= true;
+		isInAir					= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -92,6 +97,8 @@ public enum TowerType {
 		baseEffectSplash		= 0.10f;
 		baseSplashRadius		= 2.3f;
 		baseRange				= 8.6f;
+		isOnGround				= true;
+		isInAir					= false;
 		hitsAir					= true;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -144,6 +151,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.32f;
 		radiusSplashSiphon		= 0.51f;
 		rangeSiphon				= 0.07f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= false;
@@ -243,6 +252,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.27f;
 		radiusSplashSiphon		= 0.59f;
 		rangeSiphon				= 0.06f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -342,6 +353,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.27f;
 		radiusSplashSiphon		= 0.59f;
 		rangeSiphon				= 0.06f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -443,6 +456,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.37f;
 		radiusSplashSiphon		= 0.39f;
 		rangeSiphon				= 0.07f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -541,6 +556,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.33f;
 		radiusSplashSiphon		= 0.33f;
 		rangeSiphon				= 0.08f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -640,6 +657,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.38f;
 		radiusSplashSiphon		= 0.37f;
 		rangeSiphon				= 0.09f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -739,6 +758,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.38f;
 		radiusSplashSiphon		= 0.37f;
 		rangeSiphon				= 0.11f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -839,6 +860,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.60f;
 		radiusSplashSiphon		= 0.60f;
 		rangeSiphon				= 0.12f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= false;
@@ -938,6 +961,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.50f;
 		radiusSplashSiphon		= 0.50f;
 		rangeSiphon				= 0.09f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= false;
@@ -1037,6 +1062,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.37f;
 		radiusSplashSiphon		= 0.33f;
 		rangeSiphon				= 0.10f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -1136,6 +1163,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.65f;
 		radiusSplashSiphon		= 0.62f;
 		rangeSiphon				= 0.11f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir    				= false;
 		hitsGround   			= true;
 		doesSplash				= false;
@@ -1235,6 +1264,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.22f;
 		radiusSplashSiphon		= 0.41f;
 		rangeSiphon				= 0.09f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= true;
 		hitsGround				= true;
 		doesSplash				= false;
@@ -1334,6 +1365,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.22f;
 		radiusSplashSiphon		= 0.25f;
 		rangeSiphon				= 0.09f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= false;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -1434,6 +1467,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.39f;
 		radiusSplashSiphon		= 0.33f;
 		rangeSiphon				= 0.12f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= true;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -1535,6 +1570,8 @@ public enum TowerType {
 		effectSplashSiphon		= 1f;
 		radiusSplashSiphon		= 1f;
 		rangeSiphon				= 0.16f;
+		isOnGround				= true;
+		isInAir				= false;
 		hitsAir					= true;
 		hitsGround				= true;
 		doesSplash				= false;
@@ -1634,6 +1671,8 @@ public enum TowerType {
 		effectSplashSiphon		= 0.22f;
 		radiusSplashSiphon		= 0.44f;
 		rangeSiphon				= 0.10f;
+		isOnGround				= true;
+		isInAir					= false;
 		hitsAir					= true;
 		hitsGround				= true;
 		doesSplash				= true;
@@ -1806,6 +1845,14 @@ public enum TowerType {
 
 	public int getHeight() {
 		return baseAttributeList.baseHeight;
+	}
+	
+	public boolean isOnGround() {
+		return baseAttributeList.isOnGround;
+	}
+	
+	public boolean isInAir() {
+		return baseAttributeList.isInAir;
 	}
 
 	float getRange() {

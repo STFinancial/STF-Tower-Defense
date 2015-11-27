@@ -27,9 +27,9 @@ public class GameTest {
 			towerSearch: {
 				for (int x = 0; x < lManager.getMapWidth(); x++) {
 					for (int y = 0; y < lManager.getMapHeight(); y++) {
-						if (lManager.canBuild(TowerType.EARTH, x, y)) {
+						if (lManager.canBuild(TowerType.FIRE, x, y)) {
 							towerSpace = true;
-							towerManager.buyTower(lManager.getTile(x, y), TowerType.EARTH);
+							towerManager.buyTower(lManager.getTile(x, y), TowerType.FIRE);
 							break towerSearch;
 						}
 					}
