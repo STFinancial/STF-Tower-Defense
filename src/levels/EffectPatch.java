@@ -3,7 +3,6 @@ package levels;
 import java.util.ArrayList;
 
 import projectileeffects.ProjectileEffect;
-import projectiles.ProjectileManager;
 import creeps.Creep;
 import creeps.CreepManager;
 import utilities.Circle;

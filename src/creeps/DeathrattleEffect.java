@@ -2,7 +2,6 @@ package creeps;
 
 import game.GameObject;
 import projectileeffects.ProjectileEffect;
-import projectiles.ProjectileManager;
 import utilities.Circle;
 
 class DeathrattleEffect extends GameObject {

@@ -10,8 +10,6 @@ public enum CreepType {
 	DISRUPTOR, //Creep that slows towers when hit
 	GIANT, //Slower, Higher health creep
 	QUICK, //Faster, Smaller creep, usually swarmed
-	SHIELDED, //Contains a shield which caps damage taken per shot, requiring multiple hits
-	REGENERATING, //Regenerates life quickly
 	JUGGERNAUT; //Massive CC Reduction
 
 	public static CreepType fromString(String string) {
