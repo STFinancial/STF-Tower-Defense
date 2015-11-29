@@ -2,10 +2,9 @@ package projectileeffects;
 
 import creeps.DamageType;
 import projectiles.Projectile;
-//TODO: Stackable?
+
 public class Wealth extends ProjectileEffect implements Stackable {
-	//TODO: Add isFlat and onHit to constructor so we can do flat amounts on hit
-	
+
 	private boolean isFlat;
 	private boolean onHit;
 	private int maxStacks;

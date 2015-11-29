@@ -45,6 +45,9 @@ public final class TowerWaterWind extends Tower {
 	private float qDamageModifier;
 	private float qDamageStacks;
 	
+	private int baseDamageWeight;
+	private int baseSlowWeight;
+	
 	TowerWaterWind(Tile topLeftTile, int towerID) {
 		super(topLeftTile, TowerType.WATER_WIND, towerID);
 	}
@@ -54,9 +57,8 @@ public final class TowerWaterWind extends Tower {
 		baseProjectile = new ProjectileRandom(this);
 		ArrayList<ProjectileEffect> damages = new ArrayList<ProjectileEffect>(GameConstants.NUM_DAMAGE_TYPES);
 		ArrayList<ProjectileEffect> slows = new ArrayList<ProjectileEffect>(GameConstants.NUM_DAMAGE_TYPES);
-		//TODO: Look at this 7.
-		((ProjectileRandom) baseProjectile).addEffect(damages, 7);
-		((ProjectileRandom) baseProjectile).addEffect(slows, 7);
+		((ProjectileRandom) baseProjectile).addEffect(damages, baseDamageWeight);
+		((ProjectileRandom) baseProjectile).addEffect(slows, baseSlowWeight);
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			damages.add(new Damage(damageArray[i], DamageType.values()[i], baseProjectile));
 			slows.add(new Slow(slowDurationArray[i], slowArray[i], DamageType.values()[i], baseProjectile));
@@ -117,6 +119,9 @@ public final class TowerWaterWind extends Tower {
 
 	@Override
 	protected void adjustClassSpecificBaseStats() {
+		this.baseDamageWeight = 7;
+		this.baseSlowWeight = 7;
+		
 		this.toughShredDuration = 0;
 		this.toughShredModifier = 0;
 		this.maxToughShredStacks = 0;

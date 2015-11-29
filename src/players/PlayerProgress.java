@@ -7,16 +7,15 @@ import utilities.GameConstants;
  * Class containing current world map progress and relevant statistics
  * Methods to add newly completed levels/games
  */
-
 public class PlayerProgress {
-	private SingleMapProgress[][] progress; //world by level by stars
+	private AdventureProgress[][] progress; //world by level by stars
 	
 	public PlayerProgress() {
-		progress = new SingleMapProgress[GameConstants.NUM_WORLDS][GameConstants.LARGEST_WORLD];
+		progress = new AdventureProgress[GameConstants.NUM_WORLDS][GameConstants.LARGEST_WORLD];
 		
 		for (int world = 0; world < GameConstants.NUM_WORLDS; world++) {
 			for (int level = 0; level < GameConstants.LARGEST_WORLD; level++) {
-				progress[world][level] = new SingleMapProgress();
+				progress[world][level] = new AdventureProgress();
 			}
 		}
 	}

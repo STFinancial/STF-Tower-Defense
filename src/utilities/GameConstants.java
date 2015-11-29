@@ -3,8 +3,8 @@ package utilities;
 public final class GameConstants {
 	// World Constants
 	public static final int NUM_WORLDS = 4;
-	public static final int[] LEVELS_IN_WORLD = { 10, 10, 10, 10 };
-	public static final int LARGEST_WORLD = 10; //this seems kind of clunky
+	public static final int[] LEVELS_IN_WORLD = { 7, 7, 7, 7 };
+	public static final int LARGEST_WORLD = 7; //this seems kind of clunky
 	
 	public static final int NUM_BASIC_TYPES = 4;
 	public static final int NUM_DAMAGE_TYPES = 7;
@@ -41,4 +41,6 @@ public final class GameConstants {
 	public static final float BASE_SPEED_PROJECTILE_PASS_THROUGH_TARGET = 0.20f;
 	public static final float BASE_SPEED_PROJECTILE_RANDOM = 0.20f;
 	
+	
+	public static final String PLAYER_DATA_FILE_PATH = "./data/";
 }
