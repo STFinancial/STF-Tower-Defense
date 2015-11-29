@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameConstants;
 import creeps.Creep;
 
 public class ProjectileAOE extends Projectile {
@@ -12,13 +13,13 @@ public class ProjectileAOE extends Projectile {
 	protected ProjectileAOE(Tower parent, Projectile mold) {
 		super(parent, mold);
 		this.targetZone = ((ProjectileAOE) mold).targetZone;
-		speed = currentSpeed = 0f;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_AOE;
 	}
 	
 	public ProjectileAOE(Tower parent) {
 		super(parent);
 		this.targetZone = towerManager.getTargetZone(parent);
-		speed = currentSpeed = 0f;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_AOE;
 	}
 
 	@Override

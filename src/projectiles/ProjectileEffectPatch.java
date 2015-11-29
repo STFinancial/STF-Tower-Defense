@@ -6,6 +6,7 @@ import projectileeffects.ProjectileEffect;
 
 import creeps.Creep;
 import towers.Tower;
+import utilities.GameConstants;
 import levels.EffectPatch;
 
 public final class ProjectileEffectPatch extends ProjectileBasic {
@@ -20,6 +21,7 @@ public final class ProjectileEffectPatch extends ProjectileBasic {
 		this.timing = timing;
 		this.patchRadius = patchRadius;
 		this.effects = effects;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_EFFECT_PATCH;
 	}
 	
 	public ProjectileEffectPatch(Tower parent, int lifetime, int timing, float patchRadius, ArrayList<ProjectileEffect> effects) {
@@ -28,6 +30,7 @@ public final class ProjectileEffectPatch extends ProjectileBasic {
 		this.timing = timing;
 		this.patchRadius = patchRadius;
 		this.effects = effects;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_EFFECT_PATCH;
 	}
 	
 	@Override

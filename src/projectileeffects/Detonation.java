@@ -6,7 +6,6 @@ import creeps.Creep;
 import creeps.DamageType;
 import levels.LevelManager;
 import projectiles.Projectile;
-import projectiles.ProjectileManager;
 
 public class Detonation extends ProjectileEffect {
 	public Detonation(float modifier, DamageType damageType, Projectile parent) {

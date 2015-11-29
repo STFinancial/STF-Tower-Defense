@@ -3,15 +3,17 @@ package projectiles;
 import creeps.Creep;
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameConstants;
 
-//Stops at the first target it hits on the way to its destination
+//Stops at the first target between tower and destination
 public final class ProjectileBeam extends Projectile implements TargetsArea {
 	//TODO will have to add stuff so this animates better later
+	//TODO: Want to have one that fires like a projectile basic but stops at the first thing?
 	
 	private ProjectileBeam(Tower parent, Projectile mold, float targetAreaRadius) {
 		super(parent, mold);
 		this.speed = 0;
-		this.currentSpeed = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_BEAM;
 		this.targetAngle = 0;
 	}
 	
@@ -19,7 +21,7 @@ public final class ProjectileBeam extends Projectile implements TargetsArea {
 		super(parent);
 		this.targetArea = new Circle(towerManager.getCenterX(parent), towerManager.getCenterY(parent), targetAreaRadius);
 		this.speed = 0;
-		this.currentSpeed = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_BEAM;
 		this.targetAngle = 0;
 	}
 	

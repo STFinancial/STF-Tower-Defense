@@ -8,6 +8,7 @@ import levels.LevelManager;
 import projectileeffects.ProjectileEffect;
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameConstants;
 import utilities.TrigHelper;
 
 //TODO: Should there be a penalty modifier for passed through?
@@ -31,6 +32,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		this.passThroughModifier = passThroughModifier;
 		this.pulseTiming = pulseTiming;
 		this.counter = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_PASS_THROUGH_AREA;
 	}
 	
 	public ProjectilePassThroughArea (Tower parent, float distanceLimit, float passThroughRadius, float passThroughModifier, int pulseTiming) {
@@ -50,6 +52,7 @@ public final class ProjectilePassThroughArea extends Projectile implements Targe
 		for (ProjectileEffect e: splashEffects) {
 			passThroughSplashEffects.add(e.clone().applyPenalty(passThroughModifier));
 		}
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_PASS_THROUGH_AREA;
 	}
 	
 	@Override

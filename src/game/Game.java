@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import creeps.CreepBuilder;
 import creeps.CreepManager;
-import levels.Level;
 import levels.LevelManager;
 import levels.Map;
 import levels.MapGenerator;

@@ -2,8 +2,7 @@ package towers;
 
 import levels.Tile;
 
-//TODO: Does this need to be public
-public class TowerFactory {
+final class TowerFactory {
 	public static Tower generateTower(Tile topLeft, TowerType type, int towerID) {
 		Tower t = null;
 		switch (type) {

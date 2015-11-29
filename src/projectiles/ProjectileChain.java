@@ -6,6 +6,7 @@ import projectileeffects.ProjectileEffect;
 
 import creeps.Creep;
 import towers.Tower;
+import utilities.GameConstants;
 
 public final class ProjectileChain extends Projectile implements TargetsCreep {
 	private ArrayList<Creep> chainedCreep;
@@ -26,6 +27,7 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 		this.chainPenalty = chainPenalty;
 		this.noDuplicates = noDuplicates;
 		this.chainedCreep = new ArrayList<Creep>(maxChains);
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_CHAIN;
 	}
 	
 	//TODO I think the speed of this projectile should be increased or is instantaneous
@@ -55,6 +57,7 @@ public final class ProjectileChain extends Projectile implements TargetsCreep {
 		this.maxChains = maxChains;
 		this.chainRadius = chainRadius;
 		this.chainPenalty = chainPenalty;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_CHAIN;
 	}
 	
 	@Override

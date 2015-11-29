@@ -3,15 +3,18 @@ package projectiles;
 import creeps.Creep;
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameConstants;
 
 public class ProjectileBasic extends Projectile implements TargetsCreep {
 	
 	protected ProjectileBasic(Tower parent, Projectile mold) {
 		super(parent, mold);
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_BASIC;
 	}
 	
 	public ProjectileBasic(Tower parent) {
 		super(parent);
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_BASIC;
 	}
 
 	@Override

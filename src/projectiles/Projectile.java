@@ -91,10 +91,8 @@ public abstract class Projectile extends GameObject {
 					}
 				}
 			}
-			
 		}
-		//TODO this might change in baseattributelist... also we might change the size somewhere
-		currentSpeed = speed = .20f;
+		//TODO: Where is the best place to keep speed and size
 	}
 	
 	//TODO: Could do a method here to take care of checking for onhit, hitsAir, etc. rather than having each individual method do it

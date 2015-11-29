@@ -117,16 +117,7 @@ public class Creep extends GameObject {
 	}
 	
 	protected void addAffix(CreepType type) {
-		//TODO: Implement these
-		creepTypes.add(type);
-		if (type == CreepType.GIANT) {
-			//size = .7f;
-			//hitBox.radius = size;
-		}
-		if (type == CreepType.QUICK) {
-			//size = .2f;
-			//hitBox.radius = size;
-		}
+		//TODO:
 	}
 
 	

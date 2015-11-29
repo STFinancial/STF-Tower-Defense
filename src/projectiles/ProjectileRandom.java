@@ -8,6 +8,7 @@ import java.util.Random;
 import creeps.Creep;
 import projectileeffects.ProjectileEffect;
 import towers.Tower;
+import utilities.GameConstants;
 
 public final class ProjectileRandom extends ProjectileBasic {
 	private Random rand;
@@ -18,12 +19,14 @@ public final class ProjectileRandom extends ProjectileBasic {
 		super(parent, mold);
 		effects = new ArrayList<Effect>();
 		sum = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_RANDOM;
 	}
 	
 	public ProjectileRandom(Tower parent) {
 		super(parent);
 		effects = new ArrayList<Effect>();
 		sum = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_RANDOM;
 	}
 	
 	@Override

@@ -29,4 +29,16 @@ public final class GameConstants {
 	public static final float SQRT_2 = 1.414f;
 	public static final int NEGATIVE_INF = Integer.MIN_VALUE;
 	public static final int POSITIVE_INF = Integer.MAX_VALUE;
+	
+	
+	public static final float BASE_SPEED_PROJECTILE_BASIC = 0.20f;
+	public static final float BASE_SPEED_PROJECTILE_AOE = 0;
+	public static final float BASE_SPEED_PROJECTILE_AREA = 0;
+	public static final float BASE_SPEED_PROJECTILE_BEAM = 0;
+	public static final float BASE_SPEED_PROJECTILE_CHAIN = 0;
+	public static final float BASE_SPEED_PROJECTILE_EFFECT_PATCH = 0.20f;
+	public static final float BASE_SPEED_PROJECTILE_PASS_THROUGH_AREA = 0.20f;
+	public static final float BASE_SPEED_PROJECTILE_PASS_THROUGH_TARGET = 0.20f;
+	public static final float BASE_SPEED_PROJECTILE_RANDOM = 0.20f;
+	
 }

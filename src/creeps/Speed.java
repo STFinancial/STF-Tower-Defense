@@ -19,7 +19,6 @@ final class Speed extends Attribute {
 	private boolean isKnockup;
 	private boolean knockupImmune;
 	
-	//TODO: Consolidate all into a single grace period
 	Speed(CreepAttributes parent, float defaultSpeed, boolean snareImmune, boolean disorientImmune, boolean knockupImmune, int gracePeriod) {
 		this.parent				= parent;
 		

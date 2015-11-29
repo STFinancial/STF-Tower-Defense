@@ -7,6 +7,7 @@ import creeps.Creep;
 import projectileeffects.ProjectileEffect;
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameConstants;
 
 //Hits all targets on the way to its target
 public final class ProjectilePassThroughTarget extends ProjectileBasic {
@@ -25,6 +26,7 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 		this.pulseTiming = pulseTiming;
 		this.counter = 0;
 		this.passThroughModifier = passThroughModifier;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_PASS_THROUGH_TARGET;
 	}
 	
 	public ProjectilePassThroughTarget(Tower parent, float passThroughRadius, float passThroughModifier, int pulseTiming) {
@@ -42,6 +44,7 @@ public final class ProjectilePassThroughTarget extends ProjectileBasic {
 		for (ProjectileEffect e: splashEffects) {
 			passThroughSplashEffects.add(e.clone().applyPenalty(passThroughModifier));
 		}
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_PASS_THROUGH_TARGET;
 	}
 	
 	@Override

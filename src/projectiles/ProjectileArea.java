@@ -5,17 +5,20 @@ import java.util.HashSet;
 import creeps.Creep;
 import towers.Tower;
 import utilities.Circle;
+import utilities.GameConstants;
 
 public class ProjectileArea extends Projectile implements TargetsArea {
 	protected ProjectileArea(Tower parent, Projectile mold, float targetAreaRadius) {
 		super(parent, mold);
 		this.targetAngle = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_AREA;
 	}
 	
 	public ProjectileArea(Tower parent, float targetAreaRadius) {
 		super(parent);
 		this.targetArea = new Circle(towerManager.getCenterX(parent), towerManager.getCenterY(parent), targetAreaRadius);
 		this.targetAngle = 0;
+		speed = currentSpeed = GameConstants.BASE_SPEED_PROJECTILE_AREA;
 	}
 
 	@Override

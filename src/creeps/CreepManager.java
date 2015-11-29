@@ -1,7 +1,6 @@
 package creeps;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,14 +11,11 @@ import game.GameEventType;
 import levels.LevelManager;
 import projectileeffects.ProjectileEffect;
 import towers.TargetingModeType;
-import towers.Tower;
-import towers.TowerManager;
 import utilities.Circle;
 
 public class CreepManager {
 	private final static CreepManager INSTANCE = new CreepManager();
 	private LevelManager levelManager;
-	private TowerManager towerManager;
 	private Game game;
 	private LinkedList<Creep> creeps;
 	private ArrayList<Wave> creepWaves;
@@ -33,7 +29,6 @@ public class CreepManager {
 		this.game = game;
 		this.creeps = new LinkedList<Creep>();
 		this.levelManager = LevelManager.getInstance();
-		this.towerManager = TowerManager.getInstance();
 	}
 	
 	public void startRound(int round) {
