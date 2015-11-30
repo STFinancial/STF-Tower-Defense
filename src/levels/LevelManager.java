@@ -115,6 +115,10 @@ public class LevelManager {
 		
 	}
 	
+	public boolean canSiphon(Tower from, Tower to) {
+		
+	}
+	
 	
 	public void reduceHealth(float amount) {
 		level.reduceHealth(amount); //TODO: Creep manager accesses directly, why not here?
