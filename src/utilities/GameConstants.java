@@ -42,5 +42,8 @@ public final class GameConstants {
 	public static final float BASE_SPEED_PROJECTILE_RANDOM = 0.20f;
 	
 	
-	public static final String PLAYER_DATA_FILE_PATH = "./data/";
+	public static final String BASE_FILE_PATH = "./data/";
+	public static final String PLAYER_DATA_FILE_EXT = "player.dat";
+	public static final String MACRO_TALENT_DATA_FILE_EXT = "macro_talent.dat";
+	public static final String ADVENTURE_PROGRESS_FILE_EXT = "adventure_progress.dat";
 }
