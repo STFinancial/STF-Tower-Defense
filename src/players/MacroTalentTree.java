@@ -4,9 +4,6 @@ package players;
  * Additional methods to grab relevant game information easily
  */
 final class MacroTalentTree {
-
-	
-	
 	
 	
 }

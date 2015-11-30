@@ -34,7 +34,7 @@ public class Player {
 	}
 	
 	
-	void setUserName(String newUserName) {
+	public void setUserName(String newUserName) {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(GameConstants.BASE_FILE_PATH + GameConstants.PLAYER_DATA_FILE_EXT);
@@ -51,7 +51,7 @@ public class Player {
 		}
 	}
 	
-	void setProfileCommentBox(String newProfileCommentBox) {
+	public void setProfileCommentBox(String newProfileCommentBox) {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(GameConstants.BASE_FILE_PATH + GameConstants.PLAYER_DATA_FILE_EXT);
@@ -68,7 +68,7 @@ public class Player {
 		}
 	}
 	
-	void setInGameName(String newInGameName) {
+	public void setInGameName(String newInGameName) {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(GameConstants.BASE_FILE_PATH + GameConstants.PLAYER_DATA_FILE_EXT);

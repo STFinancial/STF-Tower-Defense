@@ -105,6 +105,16 @@ public class LevelManager {
 		return level.canBuild(type, x, y);
 	}
 	
+	/**
+	 * Returns
+	 * @param t
+	 * @param upgradeTrack
+	 * @return
+	 */
+	public boolean canUpgrade(Tower t, int upgradeTrack) {
+		
+	}
+	
 	
 	public void reduceHealth(float amount) {
 		level.reduceHealth(amount); //TODO: Creep manager accesses directly, why not here?

@@ -30,7 +30,7 @@ public class Game {
 	private boolean roundInProgress;
 	
 	public Game() {
-		this(new Player(), (new MapGenerator()).generateMap());
+		this(Player.getInstance(), (new MapGenerator()).generateMap());
 	}
 	
 	public Game(Player player, Map map) {
