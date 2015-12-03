@@ -85,6 +85,13 @@ public class Player {
 		}
 	}
 	
+	float getInterestRate() {
+		float interestRate = GameConstants.BASE_INTEREST_RATE;
+		interestRate += macroTalentTree.getInterestRateBonus();
+		
+		return interestRate;
+	}
+	
 	void resetPlayerData() {
 		PrintWriter pw;
 		try {
