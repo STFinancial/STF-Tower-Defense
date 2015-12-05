@@ -31,6 +31,8 @@ public final class GameConstants {
 	public static final int POSITIVE_INF = Integer.MAX_VALUE;
 	
 	
+	public static final int TOWER_TALENT_TREE_SIZE = 3;
+	
 	public static final float BASE_SPEED_PROJECTILE_BASIC = 0.20f;
 	public static final float BASE_SPEED_PROJECTILE_AOE = 0;
 	public static final float BASE_SPEED_PROJECTILE_AREA = 0;

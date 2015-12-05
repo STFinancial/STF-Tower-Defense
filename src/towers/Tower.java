@@ -39,6 +39,7 @@ public abstract class Tower extends GameObject {
 	
 	//Upgrading Information
 	private boolean[][][] upgradeTracks;
+	private float costReduction;
 	
 	//Base Attributes
 	protected BaseAttributeList baseAttributeList;
@@ -82,6 +83,10 @@ public abstract class Tower extends GameObject {
 	protected float qRadiusSplash;
 	protected float qRange;
 	
+	//Talent Progress
+	//TODO: Should this be abstracted a bit further?
+	protected int[] talentProgress;
+	
 	protected Tower (Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList().clone();
 		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
@@ -97,12 +102,30 @@ public abstract class Tower extends GameObject {
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
 		this.qLevel = 0;
+		this.talentProgress = new int[GameConstants.NUM_TOWER_TALENTS];
+		this.costReduction = 0;
 		updateTowerChain();
 	}
 	
 	protected void increaseQuality() {
 		++qLevel;
 		updateTowerChain();
+	}
+	
+	protected void increaseDamage(DamageType damageType, float amount, boolean isFlat) {
+		if (isFlat) {
+			damageArray[damageType.ordinal()] += amount;
+		} else {
+			damageArray[damageType.ordinal()] *= amount;
+		}
+	}
+	
+	protected void increaseSlow(DamageType damageType, float amount, boolean isFlat) {
+		if (isFlat) {
+			slowArray[damageType.ordinal()] += amount;
+		} else {
+			slowArray[damageType.ordinal()] *= amount;
+		}
 	}
 	
 	protected boolean doesOnHit() { return doesOnHit; }
@@ -114,18 +137,22 @@ public abstract class Tower extends GameObject {
 	protected float getDamageSplash() { return damageSplash; }
 	protected float getEffectSplash() { return effectSplash; }
 	protected int getHeight() { return height; }
+	protected int getNumTalentPoints(int nodeID) { return talentProgress[nodeID]; }
 	protected float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
 	protected int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
 	protected float getSplashRadius() { return splashRadius; }
 	protected TargetingModeType getTargetingMode() { return targetingMode; }
 	protected Circle getTargetZone() { return targetZone; }
 	protected Tile getTopLeftTile() { return topLeft; }
+	protected int getTowerID() { return towerID; }
 	protected TowerType getType() { return type; }
+	protected boolean[][][] getUpgradeTracks() { return upgradeTracks; }
 	protected int getWidth() { return width; }
 	protected boolean isInAir() { return isInAir; }
 	protected boolean isOnGround() { return isOnGround; }
 	protected boolean hitsAir() { return hitsAir; }
 	protected boolean splashHitsAir() { return splashHitsAir; }
+	protected void reduceUpgradeCost(float amount) { costReduction += amount; }
 	
 	protected float getTrackGoldValue() {
 		float goldValue = 0;
@@ -161,9 +188,8 @@ public abstract class Tower extends GameObject {
 		return goldValue;
 	}
 	
-	protected int getTowerID() { return towerID; }
-	protected boolean[][][] getUpgradeTracks() { return upgradeTracks; }
 	
+	/* Called after siphoning a tower or desiphoning a tower */
 	protected void setUpgradeTracks(boolean[][][] upgradeTracks) {
 		this.upgradeTracks = upgradeTracks;
 		if (type.isBaseType()) {
@@ -184,7 +210,7 @@ public abstract class Tower extends GameObject {
 		if (type.isBaseType()) {
 			return;
 		} else {
-			
+			//TODO: Need to somehow undo changes made to baseAttributeList. Can reclone it perhaps.
 		}
 	}
 	
@@ -222,7 +248,8 @@ public abstract class Tower extends GameObject {
 			current.adjustCommonQuality();
 			current.adjustMidSiphonUpgrades();
 			current.adjustClassSpecificQuality(); //I think in every case none of these would increase siphon, but siphon can increase these. This needs to be second because upgrades sets these (if there is a conflict we need to move away from the upgrades modifyong the tower values and having that happen in the "baseTowerValues" department. We would just have if statements like we did originally
-			//TODO: current.adjustTalentStats();
+			current.adjustLocalTalentStats();
+			//TODO current.adjustGlobalTalentStats();
 			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
 			current.adjustPostSiphonUpgrades();
 		}
@@ -324,9 +351,9 @@ public abstract class Tower extends GameObject {
 		range *= (1 + (qRange * qLevel));
 	}
 	
-//	private void adjustTalentStats() {
-//		//TODO:
-//	}
+	private void adjustLocalTalentStats() {
+		TowerTalentTree.applyTalents(this);
+	}
 	
 	
 	protected abstract void adjustProjectileStats();
@@ -370,7 +397,7 @@ public abstract class Tower extends GameObject {
 				}
 			}
 			return false;
-		}
+		} //TODO: This method is shit, we should remove this or at least modify it. No way this should look at player gold.
 	}
 	
 	//TODO: Should this be in the manager?
