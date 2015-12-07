@@ -280,10 +280,10 @@ public enum TowerType {
 	 * Towers of this type deal high amounts of damage and penetrate armor.
 	 * <p>
 	 * <ol>
-	 * Track 1: Focuses on increasing the AoE capacity of the tower.
+	 * Track 1: Focuses on high range and fast shooting, allowing many different targets to be hit.
 	 * <ol>
-	 * <li> Increases base RANGE
 	 * <li> Reduces base ATTACK COOLDOWN
+	 * <li> Increases base and non-base RANGE
 	 * <li> Converts each point of PHYSICAL DAMAGE to 1.8 points of EARTH DAMAGE
 	 * <li> All EARTH tiles deal EARTH DAMAGE in a circle around them
 	 * </ol>
@@ -338,7 +338,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Aerodynamics";
-						 text 		= "Increases the range";
+						 text 		= "Increases base and non-base RANGE";
 						 baseCost   = 500;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 1.1; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -346,7 +346,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Gather the Scraps";
-						 text 		= "Tower applies a wealth debuff to minions";
+						 text 		= "Attacks apply a Wealth debuff to minions";
 						 baseCost   = 4000;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerEarthFire) t).wealthDuration = 30; ((TowerEarthFire) t).wealthModifier = 1.15f; }

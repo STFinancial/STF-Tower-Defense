@@ -41,6 +41,7 @@ class BaseAttributeList {
 		abstract void postSiphonUpgrade(Tower t);
 	}
 	
+
 	@Override
 	public BaseAttributeList clone() {
 		/* Copy all attributes into a new instance and return it */
@@ -83,6 +84,7 @@ class BaseAttributeList {
 		b.upgrades = upgrades;
 		return b;
 	}
+	
 	/** Contains the {@link Upgrade Upgrades} possible for this {@link TowerType type}. Contains {@link GameConstants#NUM_UPGRADE_PATHS} different Upgrade "paths,"
 	  * each of which contains {@link GameConstants#UPGRADE_PATH_LENGTH} Upgrades. These Upgrades modify attributes of the {@link Tower}.
 	  */
