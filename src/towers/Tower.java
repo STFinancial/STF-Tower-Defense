@@ -51,8 +51,8 @@ public abstract class Tower extends GameObject {
 	protected float attackCooldown;
 	protected float currentAttackCooldown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
 	protected float attackCarryOver;
-	protected float damageSplash;
-	protected float effectSplash;
+	protected float splashDamage;
+	protected float splashEffect;
 	protected float splashRadius;
 	protected float range;
 	protected boolean isInAir;
@@ -134,8 +134,8 @@ public abstract class Tower extends GameObject {
 	protected float getCenterX() { return centerX; }
 	protected float getCenterY() { return centerY; }
 	protected float getDamage(DamageType type) { return damageArray[type.ordinal()]; }
-	protected float getDamageSplash() { return damageSplash; }
-	protected float getEffectSplash() { return effectSplash; }
+	protected float getDamageSplash() { return splashDamage; }
+	protected float getEffectSplash() { return splashEffect; }
 	protected int getHeight() { return height; }
 	protected int getNumTalentPoints(int nodeID) { return talentProgress[nodeID]; }
 	protected float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
@@ -267,43 +267,44 @@ public abstract class Tower extends GameObject {
 	}
 	
 	protected void siphon(Tower from) {
+		//TODO: There is a ton of inconsistency in this method. Why?
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
-			this.damageArray[i] += (int) (from.damageArray[i] * this.baseAttributeList.damageSiphon);
-			this.slowArray[i] += from.slowArray[i] * this.baseAttributeList.slowSiphon;
-			this.slowDurationArray[i] += (int) (from.slowDurationArray[i] * this.baseAttributeList.slowDurationSiphon);
+			this.damageArray[i] += (int) (from.damageArray[i] * this.baseAttributeList.baseDamageSiphon);
+			this.slowArray[i] += from.slowArray[i] * this.baseAttributeList.baseSlowSiphon;
+			this.slowDurationArray[i] += (int) (from.slowDurationArray[i] * this.baseAttributeList.baseSlowDurationSiphon);
 		}
 		this.range += from.range * this.rangeSiphon; 
-		this.attackCooldown -= (int) (this.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.attackCooldownSiphon));
+		this.attackCooldown -= (int) (this.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.baseAttackCooldownSiphon)); //TODO: Why am I accessing the base?
 		if (this.attackCooldown < 1) { this.attackCooldown = 1; }
-		this.damageSplash += from.damageSplash * this.damageSplashSiphon;
-		this.effectSplash += from.effectSplash * this.effectSplashSiphon;
+		this.splashDamage += from.splashDamage * this.damageSplashSiphon;
+		this.splashEffect += from.splashEffect * this.effectSplashSiphon;
 		this.splashRadius += from.splashRadius * this.radiusSplashSiphon;
 	}
 	
 	protected void adjustBaseStats() {
 		attackCooldown 			= baseAttributeList.baseAttackCooldown;
-		damageSplash 			= baseAttributeList.baseDamageSplash;
-		effectSplash			= baseAttributeList.baseEffectSplash;
+		splashDamage 			= baseAttributeList.baseSplashDamage;
+		splashEffect			= baseAttributeList.baseSplashEffect;
 		splashRadius			= baseAttributeList.baseSplashRadius;
 		range 					= baseAttributeList.baseRange;
-		hitsAir					= baseAttributeList.hitsAir;
-		isInAir					= baseAttributeList.isInAir;
-		isOnGround				= baseAttributeList.isOnGround;
-		hitsGround				= baseAttributeList.hitsGround;
-		doesSplash				= baseAttributeList.doesSplash;
-		doesSlow				= baseAttributeList.doesSlow;
-		doesOnHit				= baseAttributeList.doesOnHit;
-		splashHitsAir			= baseAttributeList.splashHitsAir;
+		hitsAir					= baseAttributeList.baseHitsAir;
+		isInAir					= baseAttributeList.baseIsInAir;
+		isOnGround				= baseAttributeList.baseIsOnGround;
+		hitsGround				= baseAttributeList.baseHitsGround;
+		doesSplash				= baseAttributeList.baseDoesSplash;
+		doesSlow				= baseAttributeList.baseDoesSlow;
+		doesOnHit				= baseAttributeList.baseDoesOnHit;
+		splashHitsAir			= baseAttributeList.baseSplashHitsAir;
 		attackCarryOver			= 0f;
 		currentAttackCooldown	= 0f;
-		damageSiphon			= baseAttributeList.damageSiphon;
-		slowDurationSiphon		= baseAttributeList.slowDurationSiphon;
-		slowSiphon				= baseAttributeList.slowSiphon;
-		attackCooldownSiphon	= baseAttributeList.attackCooldownSiphon;
-		damageSplashSiphon		= baseAttributeList.damageSplashSiphon;
-		effectSplashSiphon		= baseAttributeList.effectSplashSiphon;
-		radiusSplashSiphon		= baseAttributeList.radiusSplashSiphon;
-		rangeSiphon				= baseAttributeList.rangeSiphon;
+		damageSiphon			= baseAttributeList.baseDamageSiphon;
+		slowDurationSiphon		= baseAttributeList.baseSlowDurationSiphon;
+		slowSiphon				= baseAttributeList.baseSlowSiphon;
+		attackCooldownSiphon	= baseAttributeList.baseAttackCooldownSiphon;
+		damageSplashSiphon		= baseAttributeList.baseSplashDamageSiphon;
+		effectSplashSiphon		= baseAttributeList.baseSplashEffectSiphon;
+		radiusSplashSiphon		= baseAttributeList.baseSplashRadiusSiphon;
+		rangeSiphon				= baseAttributeList.baseRangeSiphon;
 		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 			slowArray[i] = baseAttributeList.baseSlowArray[i];
 			damageArray[i] = baseAttributeList.baseDamageArray[i];
@@ -345,8 +346,8 @@ public abstract class Tower extends GameObject {
 		}
 		attackCooldown -= qCooldown * qLevel;
 		if (attackCooldown < 1) { attackCooldown = 1; }
-		damageSplash += qDamageSplash * qLevel;
-		effectSplash += qEffectSplash * qLevel;
+		splashDamage += qDamageSplash * qLevel;
+		splashEffect += qEffectSplash * qLevel;
 		splashRadius += (1 + (qRadiusSplash * qLevel));
 		range *= (1 + (qRange * qLevel));
 	}
@@ -429,7 +430,7 @@ public abstract class Tower extends GameObject {
 		}
 		s.append("Tower Range: " + range); 
 		s.append(" Attack Cooldown: " + attackCooldown);
-		s.append(" Damage Splash Effectiveness: " + damageSplash * 100 + "%  Effect Splash Effectiveness: " + effectSplash * 100 + "%  Splash Radius: " + splashRadius);
+		s.append(" Damage Splash Effectiveness: " + splashDamage * 100 + "%  Effect Splash Effectiveness: " + splashEffect * 100 + "%  Splash Radius: " + splashRadius);
 		return s.toString();
 	}
 	

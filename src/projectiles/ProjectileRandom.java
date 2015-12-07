@@ -76,7 +76,7 @@ public final class ProjectileRandom extends ProjectileBasic {
 		sum += weight;
 	}
 	
-	public void removeEffect(HashSet<ProjectileEffect> projectileEffect) { //TODO: Not sure if we need this method
+	public void removeEffect(HashSet<ProjectileEffect> projectileEffect) {
 		Iterator<Effect> iter = effects.iterator();
 		while (iter.hasNext()) {
 			Effect e = iter.next();
