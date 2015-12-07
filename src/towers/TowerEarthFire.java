@@ -30,7 +30,7 @@ public final class TowerEarthFire extends Tower {
 		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		if (progress[0][2]) {
 			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.EARTH, baseProjectile, false, false);
-			w.setMaxStacks(1);
+			w.setMaxStacks(1); //TODO: Set this in TowerType?
 			projManager.addProjectileEffect(false, baseProjectile, w);
 		}
 		if (progress[1][2]) {
