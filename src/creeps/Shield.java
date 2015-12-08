@@ -88,7 +88,6 @@ final class Shield extends Attribute {
 	}
 	
 	void nullify() {
-		//TODO: Should it be done this way?
 		maxShieldRegen = 0;
 		updateShieldRegen();
 	}

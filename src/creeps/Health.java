@@ -122,7 +122,6 @@ final class Health extends Attribute {
 	}
 	
 	void nullify() {
-		//TODO: Should it be done this way?
 		maxHealthRegen = 0;
 		updateHealthRegen();
 	}
