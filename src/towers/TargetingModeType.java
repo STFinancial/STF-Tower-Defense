@@ -6,6 +6,7 @@ import java.util.List;
 import projectiles.*;
 
 public enum TargetingModeType {
+	//TODO: For NEW, when a tower switches to NEW we can begin maintaining queue of creep in range, or perhaps a map, of when we last hit that creep
 	FIRST, LAST, HIGHEST_HEALTH, NEW, RANDOM, BLIND, ALWAYS;
 	
 	public static TargetingModeType getDefaultTargetingMode(Projectile p) {

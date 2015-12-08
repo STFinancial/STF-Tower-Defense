@@ -3,7 +3,7 @@ package towers;
 import utilities.GameConstants;
 import creeps.DamageType;
 
-//TODO: Change wording from "track" to "path"
+//TODO: Change wording from "track" to "path" in comments
 //TODO: If slows take too many resources, then we can do something where slows under a certain value do not do anything.
 //TODO: Working on this, need to go back through and modify slow coefficients then
 //TODO: Have to consider the possibility that toughness is too strong. It mitigates each type of damage.
@@ -1619,39 +1619,39 @@ public enum TowerType {
 		};
 	}}), 
 	/**
-	 * 
+	 * This {@link Tower} focuses on disrupting the movement of {@link Creep Creeps} by whipping up sands.
 	 * <p>
 	 * <ol>
-	 * <b>Track 1:</b> 
+	 * <b>Track 1:</b> Focuses on the WIND aspect of this Tower, increasing attack rate and knocking up enemies in a whirlwind.
 	 * <ol>
-	 * <li> 
-	 * <li> 
-	 * <li> 
-	 * <li> 
+	 * <li> Reduces base ATTACK COOLDOWN
+	 * <li> Increases base RANGE and reduces base ATTACK COOLDOWN
+	 * <li> Attacks now {@link Knockup} affected targets
+	 * <li> Tower now fires in a path and hits all enemies along the way
 	 * </ol>
-	 * <b>Track 2:</b> 
+	 * <b>Track 2:</b> Focuses on creating a sandstorm and disorienting enemies that are affected.
 	 * <ol>
-	 * <li> 
-	 * <li> 
-	 * <li> 
-	 * <li> 
+	 * <li> Increases base RANGE
+	 * <li> Increases base EARTH DAMAGE
+	 * <li> Attacks now {@link Disorient} targets
+	 * <li> Multiplies EARTH and WIND DAMAGE and Creeps move faster during Disorient
 	 * </ol>
 	 * </ol>
 	 */
 	WIND_EARTH (new BaseAttributeList(){{
 		//this tower disorients enemies and makes them walk randomly
-		name 					= "Sandstorm";
-		downgradeType 			= WIND;
-		baseWidth				= 2;
-		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/30};
-		baseSlowDurationArray 	= new int[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/3};
-		baseSlowArray			= new float[]{/*E*/0.10f, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 12.3f;
-		baseSplashDamage		= 0.07f;
-		baseSplashEffect		= 0.07f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8.2f;
+		name 						= "Sandstorm";
+		downgradeType 				= WIND;
+		baseWidth					= 2;
+		baseHeight					= 2;
+		baseDamageArray				= new float[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/30};
+		baseSlowDurationArray	 	= new int[]{/*E*/10, /*F*/0, /*WA*/0, /*WI*/10, /*L*/0, /*D*/0, /*P*/3};
+		baseSlowArray				= new float[]{/*E*/0.10f, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown			= 12.3f;
+		baseSplashDamage			= 0.07f;
+		baseSplashEffect			= 0.07f;
+		baseSplashRadius			= 0f;
+		baseRange					= 8.2f;
 		baseDamageSiphon			= 0.44f;
 		baseSlowDurationSiphon		= 0.44f;
 		baseSlowSiphon				= 0.44f;
@@ -1661,14 +1661,14 @@ public enum TowerType {
 		baseSplashRadiusSiphon		= 0.25f;
 		baseRangeSiphon				= 0.09f;
 		baseIsOnGround				= true;
-		baseIsInAir				= false;
+		baseIsInAir					= false;
 		baseHitsAir					= false;
 		baseHitsGround				= true;
 		baseDoesSplash				= true;
 		baseDoesSlow				= false;
 		baseDoesOnHit				= true;
 		baseSplashHitsAir			= false;
-		upgrades				= new Upgrade[][]{
+		upgrades					= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "";
@@ -1680,7 +1680,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Desertification";
-						 text 		= "Increases base RANGE and ATTACK COOLDOWN";
+						 text 		= "Increases base RANGE and reduces base ATTACK COOLDOWN";
 						 baseCost   = 800;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseAttackCooldown -= 0.9f; t.baseAttributeList.baseRange += 2.3f; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1688,7 +1688,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Whipping Sands";
-						 text 		= "Attacks now knockup affected targets";
+						 text 		= "Attacks now Knockup affected targets";
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindEarth) t).knockupDuration = 14; } //TODO: This seems super long for what is essentially a snare
@@ -1714,7 +1714,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Erosion";
-						 text 		= "Increases base EARTH damage";
+						 text 		= "Increases base EARTH DAMAGE";
 						 baseCost   = 1450;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.EARTH.ordinal()]+=56f; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1722,7 +1722,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Sand Blindness";
-						 text 		= "Attacks now disorient targets";
+						 text 		= "Attacks now Disorient targets";
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindEarth) t).disorientDuration = 24; }
@@ -1730,7 +1730,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Blasting Force";
-						 text 		= "Multiplies EARTH and WIND damage and creeps move faster during disorient";
+						 text 		= "Multiplies EARTH and WIND DAMAGE and Creeps move faster during Disorient";
 						 baseCost   = 6200;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { t.damageArray[DamageType.WIND.ordinal()]*=1.5f; t.damageArray[DamageType.EARTH.ordinal()]*=1.35f; ((TowerWindEarth) t).unslowDuration = 24; ((TowerWindEarth) t).unslowModifier = -1f; }
@@ -1738,22 +1738,43 @@ public enum TowerType {
 					}, //TODO: Not enough towers have upgrades that modify instead of adding base damage
 				}
 		};
-	}}), 
+	}}),
+	/**
+	 * This {@link Tower} fires a projectile that chains to multiple targets around the target {@link Creep}
+	 * shocking away shields and stunning.
+	 * <p>
+	 * <ol>
+	 * <b>Track 1:</b> Focuses on increasing the damage and effectiveness of chaining
+	 * <ol>
+	 * <li> Increases maximum chaining by 3
+	 * <li> Increase all ELEMENTAL DAMAGE done by this tower
+	 * <li> The tower may chain to a target it has already hit and increases WIND damage
+	 * <li> Damage and Effects now increase per chain
+	 * </ol>
+	 * <b>Track 2:</b> Focuses on increasing damage, and draining shields and snaring through electricity
+	 * <ol>
+	 * <li> Increases base RANGE
+	 * <li> Increases base FIRE and WIND DAMAGE
+	 * <li> Drains a Creep's SHIELD at twice the rate
+	 * <li> {@link Snare Shocks} targets for a short duration
+	 * </ol>
+	 * </ol>
+	 */
 	WIND_FIRE (new BaseAttributeList(){{
 		//this tower chains damage and removes shield (?)
-		name 					= "Lightning";
-		downgradeType 			= WIND;
-		baseWidth				= 2;
-		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/6, /*WA*/0, /*WI*/13, /*L*/0, /*D*/0, /*P*/5};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0.06f, /*WA*/0, /*WI*/0.11f, /*L*/0, /*D*/0, /*P*/0};
-		baseCost				= 200;
-		baseAttackCooldown		= 10.0f;
-		baseSplashDamage		= 0.10f;
-		baseSplashEffect		= 0.10f;
-		baseSplashRadius		= 2f;
-		baseRange				= 8.6f;
+		name 						= "Lightning";
+		downgradeType 				= WIND;
+		baseWidth					= 2;
+		baseHeight					= 2;
+		baseDamageArray				= new float[]{/*E*/0, /*F*/10, /*WA*/0, /*WI*/25, /*L*/0, /*D*/0, /*P*/15};
+		baseSlowDurationArray 		= new int[]{/*E*/0, /*F*/6, /*WA*/0, /*WI*/13, /*L*/0, /*D*/0, /*P*/5};
+		baseSlowArray				= new float[]{/*E*/0, /*F*/0.06f, /*WA*/0, /*WI*/0.11f, /*L*/0, /*D*/0, /*P*/0};
+		baseCost					= 200;
+		baseAttackCooldown			= 10.0f;
+		baseSplashDamage			= 0.10f;
+		baseSplashEffect			= 0.10f;
+		baseSplashRadius			= 2f;
+		baseRange					= 8.6f;
 		baseDamageSiphon			= 0.58f;
 		baseSlowDurationSiphon		= 0.41f;
 		baseSlowSiphon				= 0.48f;
@@ -1763,18 +1784,18 @@ public enum TowerType {
 		baseSplashRadiusSiphon		= 0.33f;
 		baseRangeSiphon				= 0.12f;
 		baseIsOnGround				= true;
-		baseIsInAir				= false;
+		baseIsInAir					= false;
 		baseHitsAir					= true;
 		baseHitsGround				= true;
 		baseDoesSplash				= true;
 		baseDoesSlow				= true;
 		baseDoesOnHit				= true;
 		baseSplashHitsAir			= true;
-		upgrades				= new Upgrade[][]{
+		upgrades					= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Forking";
-						 text 		= "Increase the maximum chaining by 3";
+						 text 		= "Increases maximum chaining by 3";
 						 baseCost   = 900;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindFire) t).maxChains += 3; }
@@ -1808,7 +1829,7 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{name		= "Cloud Cover";
-						 text 		= "Increases the base RANGE";
+						 text 		= "Increases base RANGE";
 						 baseCost 	= 600;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseRange += 2; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1816,7 +1837,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Brewing Storm";
-						 text 		= "Increase the base FIRE and WIND damage";
+						 text 		= "Increases base FIRE and WIND DAMAGE";
 						 baseCost   = 1650;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.FIRE.ordinal()] += 30; t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()] += 30; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1824,7 +1845,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Short Circuiting";
-						 text 		= "Drains a creep's SHIELD at twice the rate";
+						 text 		= "Drains a Creep's SHIELD at twice the rate";
 						 baseCost   = 2500;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindFire) t).shieldDrainModifier = 2; }
@@ -1841,22 +1862,43 @@ public enum TowerType {
 				}
 		};
 	}}),  
+	/**
+	 * This {@link Tower} deals a small amount of {@link MaxHealthDamage max health damage} and serves primarily
+	 * to improve Towers around it, generate gold, and be a siphon "conduit" or amplifier.
+	 * <p>
+	 * <ol>
+	 * <b>Track 1:</b> Life: Focuses on being a stat conduit and improving the Towers around it.
+	 * <ol>
+	 * <li> Increases all siphon coefficients
+	 * <li> Increases all siphon coefficients
+	 * <li> Increases base stats of all towers in range
+	 * <li> Passive gold generation, siphoning from this Tower costs no gold, and reduces upgrade costs by 5%
+	 * </ol>
+	 * <b>Track 2:</b> Death: Focuses on edaling damage and plaguing Creep to provide benefits
+	 * <ol>
+	 * <li> Increases max health damage
+	 * <li> Increases max health damage
+	 * <li> Creeps deal damage to those around on death
+	 * <li> 
+	 * </ol>
+	 * </ol>
+	 */
 	WIND_WATER (new BaseAttributeList(){{
 		//TODO: Something about interest rate maybe?
 		//Life tower, though it doesn't really make sense with the elements involved (or does it)
 		//Passively generates gold and siphons max health
-		name					= "Life";
-		downgradeType 			= WIND;
-		baseWidth				= 2;
-		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 15f;
-		baseSplashDamage		= 0f;
-		baseSplashEffect		= 0f;
-		baseSplashRadius		= 0f;
-		baseRange				= 8f;
+		name						= "Life";
+		downgradeType 				= WIND;
+		baseWidth					= 2;
+		baseHeight					= 2;
+		baseDamageArray				= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowDurationArray 		= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray				= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown			= 15f;
+		baseSplashDamage			= 0f;
+		baseSplashEffect			= 0f;
+		baseSplashRadius			= 0f;
+		baseRange					= 8f;
 		baseDamageSiphon			= 1f;
 		baseSlowDurationSiphon		= 1f;
 		baseSlowSiphon				= 1f;
@@ -1866,14 +1908,14 @@ public enum TowerType {
 		baseSplashRadiusSiphon		= 1f;
 		baseRangeSiphon				= 0.16f;
 		baseIsOnGround				= true;
-		baseIsInAir				= false;
+		baseIsInAir					= false;
 		baseHitsAir					= true;
 		baseHitsGround				= true;
 		baseDoesSplash				= false;
 		baseDoesSlow				= false;
 		baseDoesOnHit				= true;
 		baseSplashHitsAir			= false;
-		upgrades				= new Upgrade[][]{
+		upgrades					= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Flourishing I";
@@ -1893,7 +1935,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Lifebending";
-						 text 		= "Increases base stats of all towers in range"; //TODO: Implement this
+						 text 		= "Increases base stats of all Towers in range"; //TODO: Implement this
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1944,20 +1986,41 @@ public enum TowerType {
 				}
 		};
 	}}), 
+	/**
+	 * This {@link Tower} harnesses the power of WIND to attack extremely quickly and grant increased wealth from {@link Creep}.
+	 * The winds of this Tower are so powerful that, upon upgrading, they can Ground flying creep.
+	 * <p>
+	 * <ol>
+	 * <b>Track 1:</b> Focuses
+	 * <ol>
+	 * <li> Increases base PHYSICAL DAMAGE
+	 * <li> Sets the ATTACK COOLDOWN of this tower to 1 and removes all splash and slow effects but increases siphon coefficients
+	 * <li> Enemies hit by this tower apply a debuff that, when hit, grants towers reduced ATTACK COOLDOWN
+	 * <li> Applies a stacking debuff, when hit, grants gold
+	 * </ol>
+	 * <b>Track 2:</b> Focuses
+	 * <ol>
+	 * <li> Increases base WIND DAMAGE
+	 * <li> Increases base WIND DAMAGE
+	 * <li> Attacks now {@link Ground} flying Creep. Creep that are grounded take extra PHYSICAL DAMAGE
+	 * <li> Deals additional PHYSICAL and WIND DAMAGE based on speed of creep and increases damage and range siphon coefficients
+	 * </ol>
+	 * </ol>
+	 */
 	WIND_WIND (new BaseAttributeList(){{
 		//this tower does a pushback (is this too hard?)
-		name 					= "Gale";
-		downgradeType 			= WIND;
-		baseWidth				= 2;
-		baseHeight				= 2;
-		baseDamageArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/50};
-		baseSlowDurationArray 	= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseSlowArray			= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
-		baseAttackCooldown		= 9.1f;
-		baseSplashDamage		= 0f;
-		baseSplashEffect		= 0f;
-		baseSplashRadius		= 2.2f;
-		baseRange				= 11f;
+		name 						= "Gale";
+		downgradeType 				= WIND;
+		baseWidth					= 2;
+		baseHeight					= 2;
+		baseDamageArray				= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/5, /*L*/0, /*D*/0, /*P*/50};
+		baseSlowDurationArray 		= new int[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseSlowArray				= new float[]{/*E*/0, /*F*/0, /*WA*/0, /*WI*/0, /*L*/0, /*D*/0, /*P*/0};
+		baseAttackCooldown			= 9.1f;
+		baseSplashDamage			= 0f;
+		baseSplashEffect			= 0f;
+		baseSplashRadius			= 2.2f;
+		baseRange					= 11f;
 		baseDamageSiphon			= 0.5f;
 		baseSlowDurationSiphon		= 0.43f;
 		baseSlowSiphon				= 0.48f;
@@ -1974,11 +2037,11 @@ public enum TowerType {
 		baseDoesSlow				= false;
 		baseDoesOnHit				= true;
 		baseSplashHitsAir			= true;
-		upgrades				= new Upgrade[][]{
+		upgrades					= new Upgrade[][]{
 				{
 					new Upgrade() {
 						{name		= "Pushback";
-						 text 		= "Increases base PHYSICAL damage";
+						 text 		= "Increases base PHYSICAL DAMAGE";
 						 baseCost   = 1400;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.PHYSICAL.ordinal()] += 45; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1986,7 +2049,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Focused Attacks";
-						 text 		= "Sets the attack cooldown of this tower to 1 and removes all splash and slow effects but increases siphon coefficients";
+						 text 		= "Sets the ATTACK COOLDOWN of this tower to 1 and removes all splash and slow effects but increases siphon coefficients";
 						 baseCost   = 4500;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseSplashEffectSiphon += 0.06f; t.baseAttributeList.baseSplashDamageSiphon += 0.06f; t.baseAttributeList.baseSlowSiphon += 0.06f; t.baseAttributeList.baseSlowDurationSiphon += 0.06f; t.baseAttributeList.baseDamageSiphon += 0.06f; t.baseAttributeList.baseSplashRadiusSiphon += 0.06f; t.baseAttributeList.baseRangeSiphon += 0.03f; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -1994,7 +2057,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Trade Winds";
-						 text 		= "Enemies hit by this tower apply a debuff that, when hit, grants towers reduced attack cooldown";
+						 text 		= "Enemies hit by this tower apply a debuff that, when hit, grants towers reduced ATTACK COOLDOWN";
 						 baseCost   = 5500;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).hastingModifier = 0.5f; ((TowerWindWind) t).hastingDuration = 20; ((TowerWindWind) t).maxHastingStacks = 1; }
@@ -2012,7 +2075,7 @@ public enum TowerType {
 				{
 					new Upgrade() {
 						{name		= "Gale Force I";
-						 text 		= "Increases base WIND damage";
+						 text 		= "Increases base WIND DAMAGE";
 						 baseCost 	= 600;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+=28; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -2020,7 +2083,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Gale Force II";
-						 text 		= "Increases base WIND damage";
+						 text 		= "Increases base WIND DAMAGE";
 						 baseCost   = 900;}
 						 public void baseUpgrade(Tower t) { t.baseAttributeList.baseDamageArray[DamageType.WIND.ordinal()]+=38; }
 						 public void midSiphonUpgrade(Tower t) { }
@@ -2028,7 +2091,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Turbulence";
-						 text 		= "Attacks now ground flying creep. Creep that are grounded take extra PHYSICAL damage";
+						 text 		= "Attacks now Ground flying Creep. Creep that are grounded take extra PHYSICAL DAMAGE";
 						 baseCost   = 3500;}
 						 public void baseUpgrade(Tower t) {  }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).groundingModifier = 1.7f; }
@@ -2036,7 +2099,7 @@ public enum TowerType {
 					},
 					new Upgrade() {
 						{name		= "Wind Resistance";
-						 text 		= "Deals additional PHYSICAL and WIND damage based on speed of creep and increases damage and range siphon coefficients";
+						 text 		= "Deals additional PHYSICAL and WIND DAMAGE based on speed of creep and increases damage and range siphon coefficients";
 						 baseCost   = 4000;}
 						 public void baseUpgrade(Tower t) {  t.baseAttributeList.baseDamageSiphon += 0.10f; t.baseAttributeList.baseRangeSiphon += 0.05f; }
 						 public void midSiphonUpgrade(Tower t) { ((TowerWindWind) t).speedDamageModifier = 13f; }

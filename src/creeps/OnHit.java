@@ -18,6 +18,7 @@ final class OnHit extends Attribute {
 		for (int i = 0; i < damageOnHit.length; i++) {
 			//TODO: Should this ignore stuff?
 			parent.damage(DamageType.values()[i], damageOnHit[i], 0, 0, false, 1, 0, 0);
+			//TODO: Cooldown on hit, remember not to reduce cooldown below 1?
 		}
 		return goldOnHit;
 	}

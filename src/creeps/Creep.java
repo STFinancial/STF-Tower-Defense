@@ -13,6 +13,9 @@ import levels.Vertex;
 import towers.Tower;
 import utilities.Circle;
 
+
+//TODO: Maintain a sorted list of creeps with their distance away, and then when we want to find creeps within a certain range we can simply take a slice of the list
+//TODO: Can do this in "Creep radar"
 public class Creep extends GameObject {
 	private int creepID;
 	protected DamageType elementType; //FIRE AIR etc creep type //TODO: Move this to attributes?
