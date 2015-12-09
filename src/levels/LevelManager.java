@@ -7,6 +7,7 @@ import game.Game;
 import game.GameEventType;
 import players.Player;
 import towers.Tower;
+import towers.TowerManager;
 import towers.TowerType;
 import utilities.Circle;
 
@@ -108,10 +109,16 @@ public class LevelManager {
 	/**
 	 * Returns
 	 * @param t
-	 * @param upgradeTrack
+	 * @param upgradePath
 	 * @return
 	 */
-	public boolean canUpgrade(Tower t, int upgradeTrack) {
+	public boolean canUpgrade(Tower t, int upgradePath) {
+		float totalGold = level.getGold();
+		if (!TowerManager.getInstance().getType(t).isBaseType()) {
+			if (totalGold < TowerManager.getInstance().getUpgradeCost(t, upgradePath)) {
+				
+			}
+		}
 		
 	}
 	

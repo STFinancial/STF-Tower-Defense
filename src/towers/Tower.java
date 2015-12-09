@@ -12,6 +12,7 @@ import game.GameObject;
 import projectiles.*;
 import utilities.Circle;
 import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 
 public abstract class Tower extends GameObject {
 	//Positional Details
@@ -38,7 +39,8 @@ public abstract class Tower extends GameObject {
 	protected Projectile baseProjectile;
 	
 	//Upgrading Information
-	private boolean[][][] upgradeTracks;
+	TowerUpgradeHandler upgradeHandler;
+//	private boolean[][][] upgradeTracks; //TODO: This is a messy way of doing this, try abstracting it more
 	private float costReduction;
 	
 	//Base Attributes
@@ -89,7 +91,7 @@ public abstract class Tower extends GameObject {
 	
 	protected Tower (Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList().clone();
-		this.upgradeTracks = new boolean[GameConstants.NUM_DAMAGE_TYPES][GameConstants.NUM_UPGRADE_PATHS][GameConstants.UPGRADE_PATH_LENGTH];
+		this.upgradeHandler = new TowerUpgradeHandler(this);
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
@@ -186,6 +188,10 @@ public abstract class Tower extends GameObject {
 			}
 		}
 		return goldValue;
+	}
+	
+	public float getUpgradeCost(UpgradePathType path) {
+		
 	}
 	
 	
@@ -313,29 +319,31 @@ public abstract class Tower extends GameObject {
 	}
 	
 	private void adjustMidSiphonUpgrades() {
-		if (siphoningFrom != null) {
-			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
-				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
-					if (progress[path][level]) {
-						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
-					}
-				}
-			}
-		}
+		upgradeHandler.applyMidSiphonUpgrades();
+//		if (siphoningFrom != null) {
+//			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+//			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+//				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+//					if (progress[path][level]) {
+//						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	private void adjustPostSiphonUpgrades() {
-		if (siphoningFrom != null) {
-			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
-				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
-					if (progress[path][level]) {
-						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
-					}
-				}
-			}
-		}
+		upgradeHandler.applyPostSiphonUpgrades();
+//		if (siphoningFrom != null) {
+//			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+//			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+//				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+//					if (progress[path][level]) {
+//						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	private void adjustCommonQuality() {
@@ -367,7 +375,8 @@ public abstract class Tower extends GameObject {
 	 * 
 	 * @param path - 1 or 0 depending on the upgrade path
 	 */
-	protected void upgrade(int path) {
+	protected void upgrade(UpgradePathType path) {
+		
 		for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
 			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level]) {
 				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level] = true;

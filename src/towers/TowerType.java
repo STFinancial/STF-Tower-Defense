@@ -1,7 +1,9 @@
 package towers;
 
 import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 import creeps.DamageType;
+import towers.BaseAttributeList.Upgrade;
 
 //TODO: Change wording from "track" to "path" in comments
 //TODO: If slows take too many resources, then we can do something where slows under a certain value do not do anything.
@@ -2215,6 +2217,10 @@ public enum TowerType {
 
 	float getRange() {
 		return baseAttributeList.baseRange;
+	}
+	
+	Upgrade getUpgrade(UpgradePathType path, int upgradeNum) {
+		return baseAttributeList.upgrades[path.ordinal()][upgradeNum];
 	}
 	
 	public boolean isBaseType() {

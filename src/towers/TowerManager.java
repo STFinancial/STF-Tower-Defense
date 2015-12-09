@@ -71,6 +71,7 @@ public final class TowerManager {
 	public Circle getTargetZone(Tower t) { return t.getTargetZone(); }
 	public Tile getTopLeftTile(Tower t) { return t.getTopLeftTile(); }
 	public TowerType getType(Tower t) { return t.getType(); }
+	public float getUpgradeCost(Tower t, int upgradePath) { return t.getUpgradeCost(upgradePath); }
 	public int getWidth(Tower t) { return t.getWidth(); }
 	public boolean isInAir(Tower t) { return t.isInAir(); }
 	public boolean isOnGround(Tower t) { return t.isOnGround(); }

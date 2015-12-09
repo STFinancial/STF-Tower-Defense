@@ -19,6 +19,8 @@ public final class GameConstants {
 	public static final float BASE_TRACK_UPGRADE_REFUND_RATE = 0.65f;
 	public static final boolean DEFAULT_UNSIPHON_REFUND_OPTION = false;
 	
+	
+	public enum UpgradePathType { UPPER_PATH, LOWER_PATH; }
 	public static final int NUM_UPGRADE_PATHS = 2;
 	public static final int UPGRADE_PATH_LENGTH = 4;
 	public static final int NUM_TOWER_TALENTS = 3;
