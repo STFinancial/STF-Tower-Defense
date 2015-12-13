@@ -2179,8 +2179,8 @@ public enum TowerType {
 		}
 	}
 	
-	public static float getUpgradeCost(TowerType type, int path, int level) {
-		return type.baseAttributeList.upgrades[path][level].baseCost;
+	public static float getUpgradeCost(TowerType type, UpgradePathType path, int level) {
+		return type.baseAttributeList.upgrades[path.ordinal()][level].baseCost;
 	}
 
 	BaseAttributeList getAttributeList() {

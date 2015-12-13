@@ -2,17 +2,17 @@ package towers;
 
 import utilities.GameConstants;
 import utilities.GameConstants.UpgradePathType;
+import utilities.GameConstants.UpgradeTrackType;
 import towers.BaseAttributeList.Upgrade;
 
-class TowerUpgradeHandler {
+final class TowerUpgradeHandler {
 	private Tower parent;
 	private boolean[][][] upgradeProgress; //Don't think this is actually needed
 	private int[][] nextUpgrade;
-	private TowerType defaultTrackType;
-	private int defaultTrack;
+	private UpgradeTrackType defaultTrack;
 	private boolean isBase;
 	
-	private final int NUM_TRACKS = GameConstants.NUM_DAMAGE_TYPES;
+	private final int NUM_TRACKS = GameConstants.NUM_UPGRADE_TRACKS;
 	private final int NUM_PATHS = GameConstants.NUM_UPGRADE_PATHS;
 	private final int NUM_UPGRADES = GameConstants.UPGRADE_PATH_LENGTH;
 	
@@ -20,9 +20,8 @@ class TowerUpgradeHandler {
 		upgradeProgress = new boolean[NUM_TRACKS][NUM_PATHS][NUM_UPGRADES];
 		nextUpgrade = new int[NUM_TRACKS][NUM_PATHS];
 		this.parent = parent;
-		defaultTrackType = parent.getType();
-		defaultTrack = towerTypeToIndex(defaultTrackType);
-		isBase = defaultTrackType.isBaseType();
+		defaultTrack = towerTypeToTrackType(parent.getType());
+		isBase = parent.getType().isBaseType();
 	}
 	
 	/**
@@ -53,6 +52,86 @@ class TowerUpgradeHandler {
 	}
 	
 	/**
+	 * Returns the gold value of all {@link Upgrade Upgrades} purchased for this {@link Tower},
+	 * excluding those purchased for other siphon-buffed versions of this Tower.
+	 * @return The gold value of Upgrades for this Tower track.
+	 */
+	float getCurrentTrackValue() {
+		float goldValue = 0;
+		if (isBase) { 
+			return 0;
+		} else {
+			for (UpgradePathType path: UpgradePathType.values()) {
+				for (int upgrade = 0; upgrade < nextUpgrade[defaultTrack.ordinal()][path.ordinal()]; upgrade++) {
+					goldValue += TowerType.getUpgradeCost(defaultTrack.getTowerType(), path, upgrade) * GameConstants.BASE_TRACK_UPGRADE_REFUND_RATE;
+				}
+			}
+		}
+		return goldValue;
+	}
+	
+	/**
+	 * Returns the gold value of all {@link Upgrade Upgrades} purchased for this {@link Tower}.
+	 * This includes those purchased for other siphon-buffed versions of this Tower.
+	 * @return The gold value of Upgrades purchased by this Tower.
+	 */
+	float getAllTrackValue() {
+		float goldValue = 0;
+		for (UpgradeTrackType track: UpgradeTrackType.values()) {
+			for (UpgradePathType path: UpgradePathType.values()) {
+				for (int upgrade = 0; upgrade < NUM_UPGRADES; upgrade++) {
+					goldValue += TowerType.getUpgradeCost(track.getTowerType(), path, upgrade);
+				}
+			}
+		}
+		return goldValue;
+	}
+	
+	/**
+	 * Removes the {@link Upgrade Upgrades} for this current {@link Tower} track.
+	 * It does not undo any of the stats or refund gold, but simply sets the Upgrades as unpurchased.
+	 */
+	void removeTrackUpgrades() {
+		if (!isBase) {
+			for (UpgradePathType path: UpgradePathType.values()) {
+				for (int upgrade = 0; upgrade < nextUpgrade[defaultTrack.ordinal()][path.ordinal()]; upgrade++) {
+					upgradeProgress[defaultTrack.ordinal()][path.ordinal()][upgrade] = false;
+				}
+				nextUpgrade[defaultTrack.ordinal()][path.ordinal()] = 0;
+			}
+		}
+ 		
+	}
+	
+	/**
+	 * Returns the gold value of the next available {@link Upgrade} for this {@link UpgradePathType path}
+	 * of the {@link Tower}.
+	 * @param path - The path for which we will return the gold value of the next available Upgrade.
+	 * @return The gold value of the next available Upgrade for this path, or -1 if all upgrades for this path have been purchased.
+	 */
+	float getUpgradeCost(UpgradePathType path) {
+		if (isBase) {
+			return -1;
+		}
+		if (nextUpgrade[defaultTrack.ordinal()][path.ordinal()] < NUM_UPGRADES) {
+			return TowerType.getUpgradeCost(defaultTrack.getTowerType(), path, nextUpgrade[defaultTrack.ordinal()][path.ordinal()]);
+		} else {
+			return -1;
+		}
+	}
+	
+	/**
+	 * This method checks if we've purchased a specified {@link Upgrade}.
+	 * @param path - The {@link UpgradePathType Path} in which the Upgrade is.
+	 * @param upgradeNum - The number of the Upgrade in the specified path. Numbering begins at 0.
+	 * @return True if we have purchased the Upgrade for the current track and parameters.
+	 */
+	boolean hasPurchasedUpgrade(UpgradePathType path, int upgradeNum) {
+		/* If the next upgrade is 1, we've purchased 0 */
+		return nextUpgrade[defaultTrack.ordinal()][path.ordinal()] > upgradeNum;
+	}
+	
+	/**
 	 * Returns true if the path has any more unpurchased {@link Upgrade Upgrades}.
 	 * This method is agnostic about cost, gold amount, and changes in map state,
 	 * and thus checking for such things should be used in addition to this method.
@@ -65,7 +144,7 @@ class TowerUpgradeHandler {
 			return false;
 		}
 		/* If we've reached the end of this path, then we can't upgrade it */
-		if (nextUpgrade[defaultTrack][path.ordinal()] == NUM_UPGRADES) {
+		if (nextUpgrade[defaultTrack.ordinal()][path.ordinal()] == NUM_UPGRADES) {
 			return false;
 		}
 		/* This is currently all the criteria for being able to upgrade */
@@ -80,9 +159,12 @@ class TowerUpgradeHandler {
 	 * @see {@link Upgrade#baseUpgrade(Tower)}
 	 */
 	void upgrade(UpgradePathType path) {
+		if (isBase) {
+			return;
+		}
 		/* Find the next upgrade from the array and increment the value for later */
-		int nextUpgradeNum = nextUpgrade[defaultTrack][path.ordinal()]++;
-		defaultTrackType.getUpgrade(path, nextUpgradeNum).baseUpgrade(parent);
+		int nextUpgradeNum = nextUpgrade[defaultTrack.ordinal()][path.ordinal()]++;
+		defaultTrack.getTowerType().getUpgrade(path, nextUpgradeNum).baseUpgrade(parent);
 	}
 	
 	/**
@@ -93,8 +175,8 @@ class TowerUpgradeHandler {
 	void applyMidSiphonUpgrades() {
 		if (!isBase) {
 			for (UpgradePathType path: UpgradePathType.values()) {
-				for (int upgrade = 0; upgrade < nextUpgrade[defaultTrack][path.ordinal()]; upgrade++) {
-					defaultTrackType.getUpgrade(path, upgrade).midSiphonUpgrade(parent);
+				for (int upgrade = 0; upgrade < nextUpgrade[defaultTrack.ordinal()][path.ordinal()]; upgrade++) {
+					defaultTrack.getTowerType().getUpgrade(path, upgrade).midSiphonUpgrade(parent);
 				}
 			}
 		}
@@ -107,26 +189,26 @@ class TowerUpgradeHandler {
 	void applyPostSiphonUpgrades() {
 		if (!isBase) {
 			for (UpgradePathType path: UpgradePathType.values()) {
-				for (int upgrade = 0; upgrade < nextUpgrade[defaultTrack][path.ordinal()]; upgrade++) {
-					defaultTrackType.getUpgrade(path, upgrade).postSiphonUpgrade(parent);
+				for (int upgrade = 0; upgrade < nextUpgrade[defaultTrack.ordinal()][path.ordinal()]; upgrade++) {
+					defaultTrack.getTowerType().getUpgrade(path, upgrade).postSiphonUpgrade(parent);
 				}
 			}
 		}
 	}
 	
-	private int towerTypeToIndex(TowerType type) {
+	private UpgradeTrackType towerTypeToTrackType(TowerType type) {
 		TowerType baseType = type.getDowngradeType();
 		switch(baseType) {
 		case EARTH:
-			return 0;
+			return UpgradeTrackType.EARTH;
 		case FIRE:
-			return 1;
+			return UpgradeTrackType.FIRE;
 		case WATER:
-			return 2;
+			return UpgradeTrackType.WATER;
 		case WIND:
-			return 3;
+			return UpgradeTrackType.WIND;
 		default:
-			return -1;
+			return null;
 		}
 	}
 	
@@ -137,8 +219,8 @@ class TowerUpgradeHandler {
 	private void initAfterClone() {
 		if (!isBase) {
 			for (UpgradePathType path: UpgradePathType.values()) {
-				for (int upgradeNum = 0; upgradeNum < nextUpgrade[defaultTrack][path.ordinal()]; upgradeNum++) {
-					defaultTrackType.getUpgrade(path, upgradeNum).baseUpgrade(parent);
+				for (int upgradeNum = 0; upgradeNum < nextUpgrade[defaultTrack.ordinal()][path.ordinal()]; upgradeNum++) {
+					defaultTrack.getTowerType().getUpgrade(path, upgradeNum).baseUpgrade(parent);
 				}
 			}
 		}

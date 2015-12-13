@@ -12,6 +12,7 @@ import levels.LevelManager;
 import levels.Tile;
 import utilities.Circle;
 import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 
 public final class TowerManager {
 	private static final TowerManager INSTANCE = new TowerManager();
@@ -71,7 +72,7 @@ public final class TowerManager {
 	public Circle getTargetZone(Tower t) { return t.getTargetZone(); }
 	public Tile getTopLeftTile(Tower t) { return t.getTopLeftTile(); }
 	public TowerType getType(Tower t) { return t.getType(); }
-	public float getUpgradeCost(Tower t, int upgradePath) { return t.getUpgradeCost(upgradePath); }
+	public float getUpgradeCost(Tower t, UpgradePathType upgradePath) { return t.getUpgradeCost(upgradePath); }
 	public int getWidth(Tower t) { return t.getWidth(); }
 	public boolean isInAir(Tower t) { return t.isInAir(); }
 	public boolean isOnGround(Tower t) { return t.isOnGround(); }
@@ -131,7 +132,7 @@ public final class TowerManager {
 		Tower newDest = TowerFactory.generateTower(destination.getTopLeftTile(), newType, destination.getTowerID());
 		newDest.siphoningFrom = source; //siphon from the source
 		newDest.siphoningTo = destination.siphoningTo; //maintain what we're siphoning to
-		newDest.setUpgradeTracks(destination.getUpgradeTracks());//set upgrade tracks
+		newDest.setUpgradeHandler(destination.getUpgradeHandler().clone(newDest));//set upgrade tracks
 		source.siphoningTo.add(newDest); //the source is now siphoning to our new destination
 		for (Tower t: towers) {
 			if (t.siphoningFrom != null && t.siphoningFrom.equals(destination)) { 
@@ -161,17 +162,12 @@ public final class TowerManager {
 		TowerType newType = destination.type.getDowngradeType(); //get the type we downgrade to
 		Tower newDest = TowerFactory.generateTower(destination.getTopLeftTile(), newType, destination.getTowerID()); //generate tower of that type
 		
-		// If we're refunding, then we need to set the current upgrade track to false
-		boolean[][][] upgradeTracks = destination.getUpgradeTracks();
+		/* If we're refunding, then we need to set the current upgrade track to false */
 		if (refund && !destination.getType().isBaseType()) {
-			DamageType trackType = DamageType.getDamageTypeFromTower(destination.siphoningFrom.getType().getDowngradeType());
-			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
-				for (int uNum = 0; uNum < GameConstants.UPGRADE_PATH_LENGTH; uNum++) {
-					upgradeTracks[trackType.ordinal()][path][uNum] = false;
-				}
-			}
+			levelManager.addGold(destination.getTrackGoldValue());
+			destination.removeTrackUpgrades();
 		}
-		newDest.setUpgradeTracks(destination.getUpgradeTracks());
+		newDest.setUpgradeHandler(destination.getUpgradeHandler().clone(newDest));
 		
 		Tower siph = destination.siphoningFrom;
 		siph.siphoningTo.remove(destination); //what we were siphoningfrom is no longer siphoning to us

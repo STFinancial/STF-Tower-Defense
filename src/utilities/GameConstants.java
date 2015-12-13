@@ -1,5 +1,8 @@
 package utilities;
 
+import creeps.DamageType;
+import towers.TowerType;
+
 public final class GameConstants {
 	// World Constants
 	public static final int NUM_WORLDS = 4;
@@ -22,6 +25,27 @@ public final class GameConstants {
 	
 	public enum UpgradePathType { UPPER_PATH, LOWER_PATH; }
 	public static final int NUM_UPGRADE_PATHS = 2;
+	public enum UpgradeTrackType { 
+		EARTH (TowerType.EARTH, DamageType.EARTH), 
+		FIRE (TowerType.FIRE, DamageType.FIRE), 
+		WATER (TowerType.WATER, DamageType.WATER),
+		WIND (TowerType.WIND, DamageType.WIND);
+		private TowerType towType;
+		private DamageType damType;
+		private UpgradeTrackType(TowerType towType, DamageType damType) {
+			this.towType = towType;
+			this.damType = damType;
+		}
+		
+		public TowerType getTowerType() {
+			return towType;
+		}
+		
+		public DamageType getDamageType() {
+			return damType;
+		}
+	}
+	public static final int NUM_UPGRADE_TRACKS = 4;
 	public static final int UPGRADE_PATH_LENGTH = 4;
 	public static final int NUM_TOWER_TALENTS = 3;
 	

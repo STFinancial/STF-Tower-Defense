@@ -40,7 +40,6 @@ public abstract class Tower extends GameObject {
 	
 	//Upgrading Information
 	TowerUpgradeHandler upgradeHandler;
-//	private boolean[][][] upgradeTracks; //TODO: This is a messy way of doing this, try abstracting it more
 	private float costReduction;
 	
 	//Base Attributes
@@ -148,7 +147,7 @@ public abstract class Tower extends GameObject {
 	protected Tile getTopLeftTile() { return topLeft; }
 	protected int getTowerID() { return towerID; }
 	protected TowerType getType() { return type; }
-	protected boolean[][][] getUpgradeTracks() { return upgradeTracks; }
+	protected TowerUpgradeHandler getUpgradeHandler() { return upgradeHandler; }
 	protected int getWidth() { return width; }
 	protected boolean isInAir() { return isInAir; }
 	protected boolean isOnGround() { return isOnGround; }
@@ -157,66 +156,37 @@ public abstract class Tower extends GameObject {
 	protected void reduceUpgradeCost(float amount) { costReduction += amount; }
 	
 	protected float getTrackGoldValue() {
-		float goldValue = 0;
-		if (type.isBaseType()) { 
-			return 0;
-		} else {
-			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
-				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
-					goldValue += TowerType.getUpgradeCost(type, path, level) * GameConstants.BASE_TRACK_UPGRADE_REFUND_RATE;
-				}
-			}
-		}
-		return goldValue;
+		return upgradeHandler.getCurrentTrackValue();
 	}
 	
 	protected float getTotalGoldValue() {
 		float goldValue = type.getDowngradeType().getCost() * GameConstants.BASE_TOWER_REFUND_RATE; //TODO: There should be costs for all tower types
-		DamageType d;
-		TowerType upgradeType;
-		for (int dtype = 0; dtype < GameConstants.NUM_DAMAGE_TYPES; dtype++) {
-			d = DamageType.values()[dtype];
-			if (d.isBaseElemental()) { //if its a base elemental type
-				for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
-					for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
-						upgradeType = TowerType.getUpgrade(TowerType.getTowerTypeFromDamage(d), type.getDowngradeType());
-						if (upgradeTracks[dtype][path][level]) { //if we've bought this upgrade at some time
-							goldValue += TowerType.getUpgradeCost(upgradeType, path, level) * GameConstants.BASE_TOTAL_UPGRADE_REFUND_RATE;
-						}
-					}
-				}
-			}
-		}
+		goldValue += upgradeHandler.getAllTrackValue();
 		return goldValue;
 	}
 	
-	public float getUpgradeCost(UpgradePathType path) {
-		
+	protected float getUpgradeCost(UpgradePathType path) {
+		//TODO: Include reductions
+		return upgradeHandler.getUpgradeCost(path);
 	}
 	
 	
-	/* Called after siphoning a tower or desiphoning a tower */
-	protected void setUpgradeTracks(boolean[][][] upgradeTracks) {
-		this.upgradeTracks = upgradeTracks;
-		if (type.isBaseType()) {
-			return;
-		} else {
-			DamageType trackType = DamageType.getDamageTypeFromTower(siphoningFrom.getType().getDowngradeType());
-			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
-				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
-					if (upgradeTracks[trackType.ordinal()][path][level]) {
-						baseAttributeList.upgrades[path][level].baseUpgrade(this);
-					}
-				}
-			}
-		}
+	/**
+	 * This should be called when a {@link Tower} is siphoned to or unsiphoned to and after that handler is cloned.
+	 * This ensures that all of the {@link Upgrade Upgrades} that have been
+	 * purchased in other tracks are transferred to this one.
+	 * @param newHandler - The {@link TowerUpgradeHandler Upgrade Handler} of the old Tower.
+	 */
+	protected void setUpgradeHandler(TowerUpgradeHandler newHandler) {
+		this.upgradeHandler = newHandler;
 	}
 	
 	protected void removeTrackUpgrades() {
 		if (type.isBaseType()) {
 			return;
 		} else {
-			//TODO: Need to somehow undo changes made to baseAttributeList. Can reclone it perhaps.
+			upgradeHandler.removeTrackUpgrades();
+			baseAttributeList = baseAttributeList.clone();
 		}
 	}
 	
@@ -372,19 +342,12 @@ public abstract class Tower extends GameObject {
 	@Override protected abstract int update();
 	
 	/**
-	 * 
-	 * @param path - 1 or 0 depending on the upgrade path
+	 * {@link Upgrade Upgrades} the {@link Tower} with the next Upgrade for the
+	 * provided {@link UpgradePathType Path}.
+	 * @param path - The path along which we should apply the next upgrade.
 	 */
 	protected void upgrade(UpgradePathType path) {
-		
-		for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
-			if (!upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level]) {
-				upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()][path][level] = true;
-				baseAttributeList.upgrades[path][level].baseUpgrade(this);
-				updateTowerChain();
-				return;
-			}
-		}
+		upgradeHandler.upgrade(path);
 	}
 	
 	/**
@@ -393,21 +356,20 @@ public abstract class Tower extends GameObject {
 	 * @param playerGold - This is the amount of gold that the player has. This is passed in to be more clear about what the boolean returned from this function will mean
 	 * @return A boolean value specifying whether the given path can be upgraded both in terms of whether the upgrade is available, and if the player has enough gold
 	 */
-	protected boolean canUpgrade(int path, int playerGold) { //TODO: Should we really pass player gold?
+	
+	/**
+	 * Returns true if the {@link Tower} available along the specified {@link UpgradePathType upgrade path}.
+	 * This does not check if the {@link Player} has enough gold to complete the upgrade, and thus
+	 * that should be checked for elsewhere.
+	 * @param path - The path with which we want to verify that we can upgrade along.
+	 * @return True if an upgrade is available along the specified path, false otherwise.
+	 */
+	protected boolean canUpgrade(UpgradePathType path) {
 		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
 			return false;
 		} else {
-			int sfType = siphoningFrom.baseAttributeList.downgradeType.ordinal();
-			for (int i = 0; i < GameConstants.UPGRADE_PATH_LENGTH; i++) {
-				if (!upgradeTracks[sfType][path][i]) {
-					if (baseAttributeList.upgrades[path][i].baseCost <= playerGold) {
-						return true;
-					}
-					return false;
-				}
-			}
-			return false;
-		} //TODO: This method is shit, we should remove this or at least modify it. No way this should look at player gold.
+			return upgradeHandler.canUpgrade(path);
+		}
 	}
 	
 	//TODO: Should this be in the manager?
