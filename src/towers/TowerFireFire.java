@@ -10,6 +10,7 @@ import projectileeffects.Damage;
 import projectileeffects.ProjectileEffect;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerFireFire extends Tower {
@@ -43,11 +44,10 @@ public final class TowerFireFire extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
 			effects.add(new Damage(damageArray[DamageType.FIRE.ordinal()] * 0.2f, DamageType.FIRE, baseProjectile));
-			if (progress[1][3]) {
+			if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 				ArmorShred a = new ArmorShred(effectPatchShredDuration, effectPatchShredModifier * damageArray[DamageType.FIRE.ordinal()], DamageType.FIRE, baseProjectile, false);
 				a.setMaxStacks(maxShredStacks);
 				effects.add(a);
@@ -64,7 +64,7 @@ public final class TowerFireFire extends Tower {
 			baseProjectile = new ProjectileEffectPatch(this, effectPatchDuration, effectPatchTiming, splashRadius, effects);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
-			if (progress[0][3]) {
+			if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.FIRE, baseProjectile));
 				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.WATER, baseProjectile));
 				projManager.addProjectileEffect(false, baseProjectile, new Bleed(bleedDuration, damageArray[DamageType.FIRE.ordinal()] * bleedModifier, bleedTiming, DamageType.EARTH, baseProjectile));

@@ -12,6 +12,7 @@ import projectiles.ProjectileBasic;
 import projectiles.ProjectileEffectPatch;
 import projectiles.ProjectilePassThroughTarget;
 import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerFireWater extends Tower {
@@ -32,21 +33,20 @@ public final class TowerFireWater extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * splashRadius, passThroughModifier, 1);
-		} else if (progress[1][2]) {
+		} else if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			ArrayList<ProjectileEffect> effects = new ArrayList<ProjectileEffect>();
 			effects.add(new MaxHealthDamage(patchMaxHealthModifier * damageArray[DamageType.WATER.ordinal()], DamageType.WATER, baseProjectile));
 			effects.add(new MaxHealthDamage(patchMaxHealthModifier * damageArray[DamageType.FIRE.ordinal()], DamageType.FIRE, baseProjectile));
-			if (progress[1][3]) {
+			if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 				effects.add(new Nullify(DamageType.WATER, baseProjectile));
 			}
 			baseProjectile = new ProjectileEffectPatch(this, patchLifetime, patchTiming, splashRadius, effects);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
-		if (progress[0][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 0)) {
 			projManager.setIgnoresShield(baseProjectile, true);
 			for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 				projManager.setResistPenPercent(baseProjectile, DamageType.values()[i], 1);

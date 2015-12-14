@@ -6,6 +6,7 @@ import projectileeffects.Hasting;
 import projectileeffects.SpeedDamage;
 import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerWindWind extends Tower {
@@ -36,21 +37,20 @@ public final class TowerWindWind extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileBasic(this);
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 2)) {
 			Hasting h = new Hasting(hastingDuration, hastingModifier, DamageType.WIND, baseProjectile);
 			h.setMaxStacks(maxHastingStacks);
 			projManager.addProjectileEffect(false, baseProjectile, h);
 		}
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.WIND, baseProjectile, true, true);
 			w.setMaxStacks(maxWealthStacks);
 			projManager.addProjectileEffect(false, baseProjectile, w);
 		}
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Grounding(groundingModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile));
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new SpeedDamage(speedDamageModifier * damageArray[DamageType.WIND.ordinal()], DamageType.WIND, baseProjectile));
 			projManager.addProjectileEffect(false, baseProjectile, new SpeedDamage(speedDamageModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile));
 		}

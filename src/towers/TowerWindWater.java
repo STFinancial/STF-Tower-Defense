@@ -10,6 +10,7 @@ import projectileeffects.ProjectileEffect;
 import projectileeffects.SiphonLife;
 import projectiles.ProjectileAOE;
 import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 
 public final class TowerWindWater extends Tower {
 	//TODO: Finish implementing this tower
@@ -32,15 +33,15 @@ public final class TowerWindWater extends Tower {
 		baseProjectile = new ProjectileAOE(this);
 		projManager.clearAllBasicEffects(baseProjectile);
 		projManager.addProjectileEffect(false, baseProjectile, new SiphonLife(maxHealthModifier, DamageType.WATER, baseProjectile, goldModifier));
-	
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][2]) {
+
+		
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 2)) {
 			
 		}
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			
 		}
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			ArrayList<ProjectileEffect> dod = new ArrayList<ProjectileEffect>(GameConstants.NUM_DAMAGE_TYPES);
 			for (DamageType type: DamageType.values()) {
 				Damage d = new Damage(damageOnDeathModifier * damageArray[type.ordinal()], type, baseProjectile);
@@ -48,7 +49,7 @@ public final class TowerWindWater extends Tower {
 			}
 			projManager.addProjectileEffect(false, baseProjectile, new Explosion(DamageType.PHYSICAL, baseProjectile, explosionRadiusModifier * range, dod));
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			
 		}
 	}

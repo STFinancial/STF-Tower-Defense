@@ -6,6 +6,7 @@ import projectileeffects.Bleed;
 import projectileeffects.Consume;
 import projectileeffects.Snare;
 import projectiles.ProjectileAOE;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerWaterWater extends Tower {
@@ -37,11 +38,10 @@ public final class TowerWaterWater extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileAOE(this);
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Snare(snareDuration, DamageType.WATER, baseProjectile));
 		}
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.WATER, baseProjectile, false);
 			a.setMaxStacks(maxShredStacks);
 			projManager.addProjectileEffect(false, baseProjectile, a);
@@ -49,7 +49,7 @@ public final class TowerWaterWater extends Tower {
 			b.setMaxStacks(maxBleedStacks);
 			projManager.addProjectileEffect(false, baseProjectile, b);
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Consume(damageArray[DamageType.WATER.ordinal()] * consumeModifier, DamageType.WATER, baseProjectile));
 		}
 	}

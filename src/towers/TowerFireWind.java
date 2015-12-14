@@ -8,6 +8,7 @@ import projectiles.TargetsArea;
 import towers.TowerManager.TowerEffect;
 import utilities.Circle;
 import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 
 public final class TowerFireWind extends Tower implements TargetsArea {
 	private Circle targetArea;
@@ -95,8 +96,7 @@ public final class TowerFireWind extends Tower implements TargetsArea {
 	
 	@Override
 	protected void createAuras() {
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			float sum = 0;
 			for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
 				sum += damageArray[i];

@@ -39,7 +39,7 @@ public abstract class Tower extends GameObject {
 	protected Projectile baseProjectile;
 	
 	//Upgrading Information
-	TowerUpgradeHandler upgradeHandler;
+	protected TowerUpgradeHandler upgradeHandler;
 	private float costReduction;
 	
 	//Base Attributes

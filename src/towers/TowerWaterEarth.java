@@ -4,6 +4,7 @@ import creeps.DamageType;
 import projectileeffects.ArmorShred;
 import projectileeffects.PermaSlow;
 import projectiles.ProjectileAOE;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerWaterEarth extends Tower {
@@ -24,13 +25,12 @@ public final class TowerWaterEarth extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileAOE(this);
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 2)) {
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier, DamageType.PHYSICAL, baseProjectile, false);
 			a.setMaxStacks(maxShredStacks);
 			projManager.addProjectileEffect(false, baseProjectile, a);
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new PermaSlow(permaSlowModifier, DamageType.EARTH, baseProjectile, true));
 		}
 	}

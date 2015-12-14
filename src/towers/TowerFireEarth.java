@@ -9,6 +9,7 @@ import projectileeffects.MaxHealthDamage;
 import projectileeffects.ToughnessShred;
 import projectiles.ProjectileAOE;
 import projectiles.ProjectileBasic;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerFireEarth extends Tower {
@@ -50,33 +51,32 @@ public final class TowerFireEarth extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][1]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 1)) {
 			baseProjectile = new ProjectileAOE(this);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			Bleed b = new Bleed(poisonDuration, poisonModifier, poisonTiming, DamageType.EARTH, baseProjectile);
 			b.setMaxStacks(maxPoisonStacks);
 			projManager.addProjectileEffect(false, baseProjectile, b);
 		}
-		if (progress[1][0]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 0)) {
 			ArmorShred a = new ArmorShred(armorShredDuration, armorShredModifier, DamageType.PHYSICAL, baseProjectile, true);
 			a.setMaxStacks(maxArmorShredStacks);
 			projManager.addProjectileEffect(false, baseProjectile, a);
 		}
-		if (progress[1][1]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 1)) {
 			ToughnessShred t = new ToughnessShred(toughnessShredDuration, toughnessShredModifier, DamageType.FIRE, baseProjectile, true);
 			t.setMaxStacks(maxToughnessShredStacks);
 			projManager.addProjectileEffect(false, baseProjectile, t);
 		}
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			DamageOnHit d = new DamageOnHit(DOHDuration, DOHModifier * damageArray[DamageType.FIRE.ordinal()], DamageType.FIRE, baseProjectile);
 			d.setMaxStacks(maxDOHStacks);
 			projManager.addProjectileEffect(false, baseProjectile, d);
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new MaxHealthDamage(percentMaxHealthModifier, DamageType.FIRE, baseProjectile));
 		}
 	}
@@ -85,8 +85,7 @@ public final class TowerFireEarth extends Tower {
 	protected int update() {
 		currentAttackCooldown--;
 		if (currentAttackCooldown < 1) {
-			boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-			if (progress[0][1]) {
+			if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 1)) {
 				if (creepManager.isCreepInRange(targetZone, hitsAir)) {
 					projManager.addProjectile(fireProjectile());
 					attackCarryOver += 1 - currentAttackCooldown;

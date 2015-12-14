@@ -10,6 +10,7 @@ import towers.Tower;
 import towers.TowerManager;
 import towers.TowerType;
 import utilities.Circle;
+import utilities.GameConstants.UpgradePathType;
 
 public class LevelManager {
 	private static final LevelManager INSTANCE = new LevelManager();
@@ -112,18 +113,21 @@ public class LevelManager {
 	 * @param upgradePath
 	 * @return
 	 */
-	public boolean canUpgrade(Tower t, int upgradePath) {
+	public boolean canUpgrade(Tower t, UpgradePathType upgradePath) {
 		float totalGold = level.getGold();
 		if (!TowerManager.getInstance().getType(t).isBaseType()) {
+			/* Need to check size of Tower post Upgrade to see if it can fit (not sure we want this to change) */
 			if (totalGold < TowerManager.getInstance().getUpgradeCost(t, upgradePath)) {
-				
+				return false;
+			} else {
+				return true;
 			}
 		}
-		
+		return false;
 	}
 	
 	public boolean canSiphon(Tower from, Tower to) {
-		
+		return level.canSiphon(from, to);
 	}
 	
 	

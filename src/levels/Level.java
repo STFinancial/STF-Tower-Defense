@@ -69,14 +69,18 @@ public class Level {
 	
 	
 
-	public void addGold(float amount) { gold += amount; }
-	public float getGold() { return gold; }
+	void addGold(float amount) { gold += amount; }
+	float getGold() { return gold; }
 	float getHealth() { return health; }
 	void reduceHealth(float amount) { health -= amount; }
-	public void removeGold(float amount) { gold -= amount; }
+	void removeGold(float amount) { gold -= amount; }
 	
 	
-	public boolean canBuild(TowerType type, int x, int y) {
+	boolean canSiphon(Tower from, Tower to) {
+		//TODO:
+	}
+	
+	boolean canBuild(TowerType type, int x, int y) {
 		/* If it isn't a base type, we don't have enough gold, 
 		 * or the desired position isn't in the map, return false */
 		if (!type.isBaseType() || type.getCost() > gold || 

@@ -5,6 +5,7 @@ import projectileeffects.Knockup;
 import projectileeffects.Slow;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectilePassThroughTarget;
+import utilities.GameConstants.UpgradePathType;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Tile;
@@ -31,19 +32,18 @@ public final class TowerWindEarth extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			baseProjectile = new ProjectilePassThroughTarget(this, passThroughRadiusModifier * range, passThroughModifier, 1);
 		} else {
 			baseProjectile = new ProjectileBasic(this);
 		}
-		if (progress[0][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 2)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Knockup(knockupDuration, DamageType.WIND, baseProjectile));
 		}
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Disorient(disorientDuration, DamageType.EARTH, baseProjectile));
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Slow(unslowDuration, unslowModifier, DamageType.EARTH, baseProjectile));
 		}
 	}

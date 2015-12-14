@@ -3,6 +3,7 @@ package towers;
 import creeps.Creep;
 import projectiles.ProjectileBasic;
 import projectiles.ProjectilePassThroughTarget;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerEarthWind extends Tower {
@@ -18,8 +19,7 @@ public final class TowerEarthWind extends Tower {
 
 	@Override
 	protected void adjustProjectileStats() {
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			baseProjectile = new ProjectilePassThroughTarget(this, splashRadius * passThroughRadiusModifier, passThroughModifier, 1);
 		} else {
 			baseProjectile = new ProjectileBasic(this);

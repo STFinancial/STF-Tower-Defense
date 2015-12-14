@@ -2,6 +2,7 @@ package towers;
 
 import projectileeffects.Snare;
 import projectiles.ProjectileChain;
+import utilities.GameConstants.UpgradePathType;
 import creeps.Creep;
 import creeps.DamageType;
 import levels.Tile;
@@ -27,9 +28,8 @@ public final class TowerWindFire extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileChain(this, maxChains, (float) Math.sqrt(range), chainPenalty, noDuplicates);
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
 		projManager.setShieldDrainModifier(baseProjectile, shieldDrainModifier);
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new Snare(snareDuration, DamageType.WIND, baseProjectile));
 		}
 	}

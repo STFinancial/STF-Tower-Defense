@@ -5,6 +5,7 @@ import creeps.DamageType;
 import projectileeffects.SuppressionDeathrattle;
 import projectileeffects.SuppressionDisruptor;
 import projectiles.ProjectileBasic;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerWaterFire extends Tower {
@@ -43,15 +44,14 @@ public final class TowerWaterFire extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileBasic(this);
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 3)) {
 			projManager.addProjectileEffect(false, baseProjectile, new SuppressionDeathrattle(deathrattleSuppressionDuration, 1, DamageType.WATER, baseProjectile));
 		}
-		if (progress[0][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 2)) {
 			projManager.addProjectileEffect(false, baseProjectile, new SuppressionDisruptor(disruptorSuppressionDuration, disruptorSuppressionPercent, DamageType.WATER, baseProjectile, false));
 		}
 		
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			projManager.setResistPenPercent(baseProjectile, DamageType.WATER, 1);
 			projManager.setResistPenPercent(baseProjectile, DamageType.FIRE, 1);
 		}

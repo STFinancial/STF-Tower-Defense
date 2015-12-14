@@ -5,6 +5,7 @@ import creeps.DamageType;
 import projectileeffects.ArmorShred;
 import projectileeffects.Wealth;
 import projectiles.ProjectileBasic;
+import utilities.GameConstants.UpgradePathType;
 import levels.Tile;
 
 public final class TowerEarthFire extends Tower {
@@ -27,17 +28,16 @@ public final class TowerEarthFire extends Tower {
 	@Override
 	protected void adjustProjectileStats() {
 		baseProjectile = new ProjectileBasic(this);
-		boolean[][] progress = getUpgradeTracks()[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
-		if (progress[0][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.UPPER_PATH, 2)) {
 			Wealth w = new Wealth(wealthDuration, wealthModifier, DamageType.EARTH, baseProjectile, false, false);
 			w.setMaxStacks(1); //TODO: Set this in TowerType?
 			projManager.addProjectileEffect(false, baseProjectile, w);
 		}
-		if (progress[1][2]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 2)) {
 			//TODO: I don't exactly like it being called this way.
 			projManager.setResistPenPercent(baseProjectile, DamageType.PHYSICAL, 1);
 		}
-		if (progress[1][3]) {
+		if (upgradeHandler.hasPurchasedUpgrade(UpgradePathType.LOWER_PATH, 3)) {
 			//TODO: We really should have a better way of getting the damage of a certain type
 			ArmorShred a = new ArmorShred(shredDuration, shredModifier * damageArray[DamageType.PHYSICAL.ordinal()], DamageType.PHYSICAL, baseProjectile, true);
 			a.setMaxStacks(maxShredStacks);
