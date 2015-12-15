@@ -10,6 +10,7 @@ import players.Player;
 import projectiles.ProjectileManager;
 import towers.*;
 import utilities.Circle;
+import utilities.GameConstants.UpgradePathType;
 
 /*
  * Executes main game logic loop
@@ -78,8 +79,25 @@ public class Level {
 	
 	boolean canSiphon(Tower from, Tower to) {
 		//TODO:
+		if (towerManager)
 	}
 	
+	/**
+	 * This function checks whether we are capable of building a {@link Tower} of the specified
+	 * {@link TowerType type} at the provided location, which would be the top-left {@link Tile} of
+	 * where the Tower would be.
+	 * @param type - This is the TowerType of the Tower we want to build. 
+	 * In general, Towers are all the same size, so this does not affect whether a path is possible,
+	 * but it does change the gold value, and so we check to see if we have enough gold to build this type.
+	 * Furthermore, types that are not base will return false when passed to this function, as those are not
+	 * technically "built".
+	 * @param x - The x value of the Tile that will be the upper left tile of this Tower.
+	 * @param y - The y value of the Tile that will be the upper left tile of this Tower.
+	 * @return True if building a Tower of this type with the upper left tile being in the specified location will not
+	 * result in no possible air path or no possible ground path from the start to the finish, the type is a base type, and
+	 * we have enough gold to build the Tower. Will return false if no such path exists, if the type is not a base type (as these
+	 * cannot be built directly), or if we don't have enough gold to purchase the Tower.
+	 */
 	boolean canBuild(TowerType type, int x, int y) {
 		/* If it isn't a base type, we don't have enough gold, 
 		 * or the desired position isn't in the map, return false */
@@ -126,9 +144,27 @@ public class Level {
 		
 	}
 	
-	
-	public boolean canBuyTower(TowerType type) {
-		return gold >= type.getCost();
+	/**
+	 * This function checks whether we can {@link Upgrade} the specified {@link Tower}
+	 * along the specified {@link UpgradePathType upgradePath}.
+	 * @param t - The Tower we are attempting to Upgrade.
+	 * @param upgradePath - The Upgrade path along which we want to Upgrade. This is currently
+	 * UPPER_PATH and LOWER_PATH.
+	 * @return True if the Tower can be upgraded and we have enough gold, false if not. Future Upgrades
+	 * may change the size of the Tower or whether it takes up air or ground space. This function will need
+	 * to change accordingly.
+	 */
+	boolean canUpgrade(Tower t, UpgradePathType upgradePath) {
+		//TODO: Need a way to "mock" apply upgrades to check if they break something.
+		if (!towerManager.getType(t).isBaseType()) {
+			/* Need to check size of Tower post Upgrade to see if it can fit (not sure we want this to change) */
+			if (gold < towerManager.getUpgradeCost(t, upgradePath)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
