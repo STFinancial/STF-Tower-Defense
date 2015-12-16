@@ -11,6 +11,8 @@ import utilities.GameConstants;
  * Tool to grab the path for a certain level, will need to be run anytime a tower is built
  */
 public class PathFinder {
+	//TODO: A "fast fix algorithm for seeing if a path exists when I build a tower in a currently standing path, though this path may not be optimal, the algorithm will be fast
+	//TODO: Cache the result of "mapToVertexGraph" so that I don't need to recalculate it every time
 	public static Path AStar(Vertex start, Vertex finish, VertexGraph vg, boolean groundType) {
 		Vertex[] graph = vg.graph;
 		for (int i = 0; i < graph.length; i++) {
@@ -211,4 +213,6 @@ public class PathFinder {
 			vert.isFinish = true;
 		}
 	}
+	
+	
 }

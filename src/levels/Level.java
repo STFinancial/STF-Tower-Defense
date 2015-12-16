@@ -78,8 +78,12 @@ public class Level {
 	
 	
 	boolean canSiphon(Tower from, Tower to) {
+		/* The barriers to siphoning is that we have enough gold, and that we don't create a block in the path */
 		//TODO:
-		if (towerManager)
+		if (gold < towerManager.getSiphonCost(from, to) || towerManager.getType(to).isBaseType()) {
+			return false;
+		}
+		//TODO compare the current stats with the proposed type to see if it changes air or ground then use intersects.
 	}
 	
 	/**
@@ -101,6 +105,7 @@ public class Level {
 	boolean canBuild(TowerType type, int x, int y) {
 		/* If it isn't a base type, we don't have enough gold, 
 		 * or the desired position isn't in the map, return false */
+		//TODO: Don't need to do all this if it's not intersecting any of the paths to begin with.
 		if (!type.isBaseType() || type.getCost() > gold || 
 				map.isOutside(x, y) || x + type.getWidth() >= map.getWidth() ||
 				y + type.getHeight() >= map.getHeight())  {
@@ -141,7 +146,6 @@ public class Level {
 				return true;
 			}
 		}
-		
 	}
 	
 	/**
@@ -253,5 +257,58 @@ public class Level {
 				allCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, true));
 			}
 		}
+	}
+	
+	/**
+	 * This function checks to see if an object of the size and position provided
+	 * will intersect with any of the paths that the creep must take.
+	 * @param x - The x position of the top left tile of the proposed object.
+	 * @param y - The y position of the top left tile of the proposed object.
+	 * @param width - The width of the proposed object, in number of tiles.
+	 * @param height - The height of the proposed object, in number of tiles.
+	 * @param isFlying - A variable that specifies if we are checking against the air path or the flying path.
+	 * @return True if the specified path intersects (shares a tile) with the proposed build site of the object, false otherwise.
+	 */
+	private boolean intersectsPath(int x, int y, int width, int height, boolean isFlying) {
+		//TODO: Improve the speed of this by caching vertex graph and checking against that.
+		//This allows for a quick grab of the vertices that this space contains and then we can see if its in the path
+		
+		/* Obtain all of the tiles contained that this proposed object will cover */
+		int length = width * height;
+		Tile[] tiles = new Tile[length];
+		for (int j = 0; j < y; j++) {
+			for (int i = 0; i < x; i++) {
+				tiles[j * height + i] = map.getTile(y + j, x + i);
+			}
+		}
+		
+		Iterator<Vertex> pathIterator;
+		Vertex currentPathVertex;
+		if (isFlying) {
+			/* If we're checking against the flying path, we need to iterate through that */
+			pathIterator = flyingPath.getIterator();
+			while (pathIterator.hasNext()) {
+				currentPathVertex = pathIterator.next();
+				/* Check if the vertex contains the tiles in the list of tiles where the proposed object is */
+				for (Tile proposedObjectTile: tiles) {
+					if (currentPathVertex.contains(proposedObjectTile)) {
+						return true;
+					}
+				}
+			}
+		} else {
+			/* If we're checking against the ground path, we need to iterate through that */
+			pathIterator = groundPath.getIterator();
+			while (pathIterator.hasNext()) {
+				currentPathVertex = pathIterator.next();
+				/* Check if the vertex contains the tiles in the list of tiles where the proposed object is */
+				for (Tile proposedObjectTile: tiles) {
+					if (currentPathVertex.contains(proposedObjectTile)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

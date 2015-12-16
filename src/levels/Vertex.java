@@ -56,6 +56,10 @@ public final class Vertex implements Comparable<Vertex> {
 		return v.x == x && v.y == y;
 	}
 	
+	boolean contains(Tile tile) {
+		return TL.equals(tile) || TR.equals(tile) || BL.equals(tile) || BR.equals(tile);
+	}
+	
 	@Override
 	public String toString() {
 		if (isFinish) {

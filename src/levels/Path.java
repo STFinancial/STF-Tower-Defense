@@ -1,5 +1,6 @@
 package levels;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -15,6 +16,8 @@ public final class Path {
 	 */
 	private LinkedList<DirectionType> directions;
 	private int size;
+	
+	//TODO: Better javadoc on the public methods.
 	
 	Path(LinkedList<Vertex> path, LinkedList<DirectionType> directions) {
 		this.path = path;
@@ -62,6 +65,11 @@ public final class Path {
 	
 	Vertex getFirst() {
 		return path.getFirst();
+	}
+	
+	Iterator<Vertex> getIterator() {
+		//TODO: We don't want to remove from this iterator. What are the options?
+		return path.listIterator();
 	}
 	
 	@Override
