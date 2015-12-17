@@ -79,11 +79,27 @@ public class Level {
 	
 	boolean canSiphon(Tower from, Tower to) {
 		/* The barriers to siphoning is that we have enough gold, and that we don't create a block in the path */
-		//TODO:
 		if (gold < towerManager.getSiphonCost(from, to) || towerManager.getType(to).isBaseType()) {
 			return false;
 		}
-		//TODO compare the current stats with the proposed type to see if it changes air or ground then use intersects.
+		
+		/* Since it's guaranteed a base type to a non-upgraded type, we don't need to worry about upgrades at all */
+		TowerType newType = TowerType.getUpgrade(towerManager.getType(from), towerManager.getType(to));
+		Tile topLeft = towerManager.getTopLeftTile(to);
+		
+		/* If it intersects the currentPath, we need to propose a new path */
+		if (intersectsPath(topLeft.x, topLeft.y, newType.getWidth(), newType.getHeight(), false) || intersectsPath(topLeft.x, topLeft.y, newType.getWidth(), newType.getHeight(), true)) {
+			proposePath(topLeft.x, topLeft.y, newType.getWidth(), newType.getHeight());
+			/* If we're on the ground and the ground path is null, or if we're in the air and the air path is null, we can't siphon */
+			if (newType.isOnGround() && proposedGroundPath == null || newType.isInAir() && proposedFlyingPath == null) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			/* If it doesn't intersect the existing path then we can siphon */
+			return true;
+		}
 	}
 	
 	/**
@@ -179,7 +195,7 @@ public class Level {
 		flyingPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
 	}
 
-	public void proposePath(int x, int y, int width, int height) {
+	private void proposePath(int x, int y, int width, int height) {
 		boolean oldGround[][] = new boolean[height][width];
 		boolean oldFlying[][] = new boolean[height][width];
 
