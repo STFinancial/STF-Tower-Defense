@@ -121,6 +121,11 @@ public final class TowerManager {
 		levelManager.removeTower(t.getTopLeftTile(), t.getWidth(), t.getHeight());
 	}
 	
+	
+	public int getNewSiphonChainLength(Tower source, Tower destination) {
+		return source.getSiphonDepth() + destination.getSiphonDepth() + 1;
+	}
+	
 	public Tower siphonTower(Tower source, Tower destination) {
 		if (destination.siphoningFrom != null) {
 			return destination;
@@ -139,9 +144,11 @@ public final class TowerManager {
 				t.siphoningFrom = newDest; //update all towers that were siphoning from the destination to siphon from the new destination
 			}
 		}
+		
 		removeTower(destination); // Remove the old destination tower.
 		addTower(newDest); //"build" the new one
 		towerPositions.put(newDest.getTopLeftTile(), newDest);
+		levelManager.removeGold(GameConstants.SIPHON_BASE_COST * (float) Math.pow(GameConstants.SIPHON_CHAIN_COST_MULTIPLIER, getNewSiphonChainLength(source, destination)));
 		newDest.updateTowerChain(); //update the tower chain
 		//TODO: Need to charge some gold here
 		game.newEvent(GameEventType.TOWER_DESTROYED, destination);
@@ -182,7 +189,8 @@ public final class TowerManager {
 		towerPositions.put(newDest.getTopLeftTile(), newDest);
 		newDest.updateTowerChain();
 		siph.updateTowerChain();
-		//TODO: Need to refund some gold
+		levelManager.addGold(GameConstants.SIPHON_BASE_COST * (float) Math.pow(GameConstants.SIPHON_CHAIN_COST_MULTIPLIER, getNewSiphonChainLength(siph, newDest)));
+		//TODO: Deal with refunds
 		game.newEvent(GameEventType.TOWER_DESTROYED, destination);
 		game.newEvent(GameEventType.TOWER_CREATED, newDest);
 		return newDest;

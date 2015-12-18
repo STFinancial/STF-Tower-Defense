@@ -12,7 +12,7 @@ public final class GameConstants {
 	public static final int NUM_BASIC_TYPES = 4;
 	public static final int NUM_DAMAGE_TYPES = 7;
 	public static final int SIPHON_BASE_COST = 300; //the gold cost of siphoning
-	public static final float SIPHON_CHAIN_COST_MULTIPLIER = 1.5f; //chaining is exponential, this ensures the cost is too
+	public static final float SIPHON_CHAIN_COST_MULTIPLIER = 1.5f; //chaining is exponential, this ensures the cost is too?
 	
 	public static final float DAMAGE_RESIST_DENOMINATOR_VALUE = 100f;
 	public static final float SLOW_RESIST_DENOMINATOR_VALUE = 100f;

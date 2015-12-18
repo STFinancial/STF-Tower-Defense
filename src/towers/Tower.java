@@ -37,6 +37,7 @@ public abstract class Tower extends GameObject {
 	protected Tower siphoningFrom;
 	protected ArrayList<Tower> siphoningTo;
 	protected Projectile baseProjectile;
+	private int siphonDepth;
 	
 	//Upgrading Information
 	protected TowerUpgradeHandler upgradeHandler;
@@ -102,6 +103,8 @@ public abstract class Tower extends GameObject {
 		this.targetingMode = TargetingModeType.FIRST;
 		this.towerID = towerID;
 		this.siphoningTo = new ArrayList<Tower>();
+		this.siphoningFrom = null;
+		this.siphonDepth = 0;
 		this.qLevel = 0;
 		this.talentProgress = new int[GameConstants.NUM_TOWER_TALENTS];
 		this.costReduction = 0;
@@ -139,6 +142,7 @@ public abstract class Tower extends GameObject {
 	protected float getEffectSplash() { return splashEffect; }
 	protected int getHeight() { return height; }
 	protected int getNumTalentPoints(int nodeID) { return talentProgress[nodeID]; }
+	protected int getSiphonDepth() { return siphonDepth; }
 	protected float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
 	protected int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
 	protected float getSplashRadius() { return splashRadius; }
@@ -206,9 +210,13 @@ public abstract class Tower extends GameObject {
 		Queue<Tower> openList = new LinkedList<Tower>();
 		openList.add(root);
 		Tower current;
+		root.siphonDepth = 0;
 		while (!openList.isEmpty()) {
 			current = openList.poll();
-			openList.addAll(current.siphoningTo);
+			for (Tower t: current.siphoningTo)  {
+				openList.add(t);
+				t.siphonDepth = current.siphonDepth + 1;
+			}
 			towerManager.clearAuras(current);
 		}
 		current = root;

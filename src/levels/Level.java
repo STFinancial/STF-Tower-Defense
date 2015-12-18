@@ -10,6 +10,7 @@ import players.Player;
 import projectiles.ProjectileManager;
 import towers.*;
 import utilities.Circle;
+import utilities.GameConstants;
 import utilities.GameConstants.UpgradePathType;
 
 /*
@@ -79,9 +80,14 @@ public class Level {
 	
 	boolean canSiphon(Tower from, Tower to) {
 		/* The barriers to siphoning is that we have enough gold, and that we don't create a block in the path */
-		if (gold < towerManager.getSiphonCost(from, to) || towerManager.getType(to).isBaseType()) {
+		if (!towerManager.getType(to).isBaseType()) {
 			return false;
 		}
+		//TODO: What about discounts?
+		if (gold < GameConstants.SIPHON_BASE_COST * (float) Math.pow(GameConstants.SIPHON_CHAIN_COST_MULTIPLIER, towerManager.getNewSiphonChainLength(from, to))) {
+			return false;
+		}
+		
 		
 		/* Since it's guaranteed a base type to a non-upgraded type, we don't need to worry about upgrades at all */
 		TowerType newType = TowerType.getUpgrade(towerManager.getType(from), towerManager.getType(to));
