@@ -2,183 +2,188 @@ package creeps;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
+import game.GameObject;
+import projectileeffects.ProjectileEffect;
+import levels.DirectionType;
+import levels.LevelManager;
 import levels.Path;
-import maps.DirectionType;
-import maps.Vertex;
-import projectiles.DamageEffect;
-import projectiles.ProjectileEffect;
+import levels.Vertex;
+import towers.Tower;
 import utilities.Circle;
 
-public class Creep {
-	//Primary Stats
-	public int health;
-	public int toughness; //flat reduction for all types
-	public float speed; //In Tiles per Tick (Imagining .030 - .050 being a normal speed)
-	public int healthCost; //Damage Player takes on escape
-	public int goldValue; //Money player takes on kill
-	public DamageType elementType; //FIRE AIR etc creep type 
+
+//TODO: Maintain a sorted list of creeps with their distance away, and then when we want to find creeps within a certain range we can simply take a slice of the list
+//TODO: Can do this in "Creep radar"
+public class Creep extends GameObject {
+	private int creepID;
+	protected DamageType elementType; //FIRE AIR etc creep type //TODO: Move this to attributes?
 
 	//Current Stats
-	public int currentToughness;
-	public float currentHealth;
-	public float currentSpeed;
-	public ArrayList<CreepEffect> effects = new ArrayList<CreepEffect>();
+	protected CreepAttributes attributes;
 
 	//Secondary Stats
-	public float[] resist; //percentage of damage taken from each element
-	public float slowResist;
-	public boolean snareImmune;
-	public HashSet<CreepType> creepTypes = new HashSet<CreepType>();
+	protected HashSet<CreepType> creepTypes = new HashSet<CreepType>();
 
 	//Movement
-	public Vertex currentVertex;
-	public Vertex nextVertex;
-	public DirectionType direction;
-	public float xOff, yOff;
-	public Path path;
-	public int pathIndex;
-	public float size = .4f; //Radius
-	public Circle hitBox;
+	protected LevelManager levelManager;
+	protected Vertex currentVertex;
+	protected DirectionType direction;
+	protected int previousIndex;
+	protected int currentIndex;
+	protected int nextIndex;
+	protected float xOff, yOff;
+	protected Path path;
+	protected Circle hitBox;
 
-	//Fancy Effects
-	public ArrayList<Creep> children;
-	float baseShield;
-	float currentShield;
-	float shieldCap;
-	public int disruptorAmount;
-
-	public Creep(int health, float speed, int toughness, int healthCost, int goldValue, DamageType elementType) {
-		this.health = health;
-		this.speed = speed;
-		this.healthCost = healthCost;
-		this.goldValue = goldValue;
-		this.elementType = elementType;
-		this.toughness = toughness;
-		currentHealth = health;
-		currentSpeed = speed;
-
-		resist = elementType.baseResist();
-		hitBox = new Circle(1, 1, size);
+	protected Creep(int id) {
+		this.levelManager = LevelManager.getInstance();
+		this.xOff = 0;
+		this.yOff = 0;
+		this.creepID = id;
+		this.hitBox = new Circle(0,0,0);
 	}
-	//TODO possibly remove this and go back to just recreating each projectile effect
-	public class CreepEffect {
-		CreepEffect(ProjectileEffect p, int d) {
-			projectileEffect = p;
-			duration = d;
-			counter = 0;
+	
+	protected void setAttributes(CreepAttributes attributes) { 
+		this.attributes = attributes;
+		attributes.setParent(this);
+		//At some point in the future we might want to set the attributes: attributes.setParentCreep(this);
+		hitBox = new Circle(hitBox.getX(), hitBox.getY(), attributes.getCurrentSize());
+		setLocation(0); 
+	}
+	
+	protected float onProjectileCollision() {
+		attributes.onProjectileCollision();
+		return attributes.getDisruption();
+	}
+	
+	protected List<Creep> onDeath() {
+		levelManager.addGold(attributes.getCurrentGoldValue());
+		return attributes.deathrattle();
+	}
+	
+	//Public interface methods that simply delegate to the attributes layer.
+	protected void addAllEffects(ArrayList<ProjectileEffect> effects) { attributes.addAllEffects(effects); }
+	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area, boolean hitsAir) { attributes.addDeathrattleEffect(effect, area, hitsAir); }
+	protected void addDeathrattleEffect(ProjectileEffect effect, Circle area, int duration, boolean hitsAir) { attributes.addDeathrattleEffect(effect, area, duration, hitsAir); }
+	protected void addEffect(ProjectileEffect effect) { attributes.addEffect(effect); }
+	protected void consumeBleeds(float amount) { attributes.consumeBleeds(amount); }
+	protected void damage(DamageType type, float amount, float penPercent, float penFlat, boolean ignoresShield, float shieldDrainModifier, float toughPenPercent, float toughPenFlat) { attributes.damage(type, amount, penPercent, penFlat, ignoresShield, shieldDrainModifier, toughPenPercent, toughPenFlat); }
+	protected void increaseDamageOnHit(DamageType type, float amount) { attributes.increaseDamageOnHit(type, amount); }
+	protected void increaseDamageResist(DamageType type, float amount, boolean isFlat) { attributes.increaseDamageResist(type, amount, isFlat); }
+	protected void increaseGoldOnHit(float amount) { attributes.increaseGoldOnHit(amount); }
+	protected void increaseGoldValue(float amount, boolean isFlat) { attributes.increaseGoldValue(amount, isFlat); }
+	protected void increaseHasting(DamageType type, float amount) { attributes.increaseCDOnHit(type, amount); }
+	protected void increaseToughness(float amount, boolean isFlat) { attributes.increaseToughness(amount, isFlat);	}
+	protected void knockup(int duration) { attributes.knockup(duration); }
+	protected void nullify() { attributes.nullify(); } //TODO: Maybe want modifier in the future, or lifetime
+	protected void reduceDamageOnHit(DamageType type, float amount) { attributes.reduceDamageOnHit(type, amount); }
+	protected void reduceDamageResist(DamageType type, float amount, boolean isFlat) { attributes.reduceDamageResist(type, amount, isFlat); }
+	protected void reduceGoldOnHit(float amount) { attributes.reduceGoldOnHit(amount); }
+	protected void reduceGoldValue(float amount, boolean isFlat) { attributes.reduceGoldValue(amount, isFlat); }
+	protected void reduceHasting(DamageType type, float amount) { attributes.reduceCDOnHit(type, amount); }
+	protected void reduceMaxSpeed(DamageType type, float amount, boolean isFlat) { attributes.reduceMaxSpeed(type, amount, isFlat); }
+	protected void reduceToughness(float amount, boolean isFlat) { attributes.reduceToughness(amount, isFlat);	}
+	protected void slow(DamageType type, float amount) { attributes.slow(type, amount); }
+	protected void snare(int duration) { attributes.snare(duration); } //TODO: May want to attach type if some creeps are immune to this
+	protected void suppressDeathrattle(DamageType type, float modifier, int lifetime) { attributes.suppressDeathrattle(modifier, lifetime); }
+	protected void suppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.suppressDisruption(amount, isFlat); }
+	protected void unslow(DamageType type, float amount) { attributes.unslow(type, amount); }
+	protected void unsuppressDisruption(DamageType type, float amount, boolean isFlat) { attributes.unsuppressDisruption(amount, isFlat); }
+
+	//Public getter methods
+	protected float getCurrentSize() { return attributes.getCurrentSize(); }
+	protected float getCurrentSpeed() { return attributes.getCurrentSpeed(); }
+	protected float getCurrentHealthCost() { return attributes.getCurrentHealthCost(); }
+	protected float getMaxHealth() { return attributes.getMaxHealth(); }
+	protected float getX() { return hitBox.getX(); }
+	protected float getY() { return hitBox.getY(); }
+	protected boolean intersects(Circle area) { return hitBox.intersects(area); }
+	protected boolean isFlying() { return attributes.isFlying(); }
+	
+	protected void disorient(int lifetime) { 
+		if (attributes.disorient(lifetime)) {
+			int temp = previousIndex;
+			previousIndex = nextIndex;
+			nextIndex = temp;
+			updateDirection();
 		}
-
-		public ProjectileEffect projectileEffect;
-		int duration;
-		public int counter;
 	}
-
-	public void addEffect(ProjectileEffect effect) {
-		effects.add(new CreepEffect(effect, effect.lifetime));
-	}
-
-	public void addAllEffects(ArrayList<ProjectileEffect> effects) {
-		for (ProjectileEffect p : effects) {
-			this.effects.add(new CreepEffect(p, p.lifetime));
+	
+	protected void ground() {
+		if (attributes.ground()) {
+			Path newPath = levelManager.getPath(false);
+			setLocation(levelManager.getVertexBelow(currentVertex));
+			this.path = newPath;
 		}
 	}
-
-	public void addAffix(CreepType type) {
-		creepTypes.add(type);
-		if (type == CreepType.GIANT) {
-			size = .7f;
-			hitBox.radius = size;
-		}
-		if (type == CreepType.QUICK) {
-			size = .2f;
-			hitBox.radius = size;
-		}
+	
+	protected void addAffix(CreepType type) {
+		//TODO:
 	}
 
-	public void damage(DamageEffect damager) {
+	
 
-		float baseDamage = damager.modifier;
-		float damageToDo = baseDamage;
-		if (damager.damageType == DamageType.PHYSICAL) {
-			if (!damager.ignoresArmor()) {
-				damageToDo *= (1 - resist[6]);
-			}
-		} else {
-			damageToDo = baseDamage * (1 - resist[damager.damageType.ordinal()]);
-		}
-		damageToDo -= toughness;
-
-		if (damageToDo < 0) {
-			damageToDo = 0;
-		}
-		/*
-		if (currentShield < damageToDo) {
-			float damageLeft = currentShield - damageToDo;
-			currentShield = 0;
-			currentHealth -= damageLeft;
-		} else {
-			currentShield -= damageToDo;
-		}
-		*/
-		currentHealth -= damageToDo;
+	protected boolean isDead() {
+		return attributes.isDead();
 	}
 
-	public ArrayList<Creep> death() {
-		//TODO
-		return children;
-	}
-
-	public boolean isDead() {
-		return currentHealth < 1;
-	}
-
-	public boolean is(CreepType type) {
+	protected boolean is(CreepType type) {
 		return creepTypes.contains(type);
 	}
 
-	public void setDestination(int index) {
-		nextVertex = path.getVertex(index);
-		direction = path.getDirection(index);
-	}
-
-	public void setLocation(int index) {
-		currentVertex = path.getVertex(0);
-		xOff = 0;
-		yOff = 0;
-	}
-
-	public void setPath(Path path) {
+	/**
+	 * Sets the creep's location at the beginning of the path. This assumes that the path cannot be updated mid-round.
+	 * @param path - The path that the creep will follow.
+	 */
+	protected void setPath(Path path) {
 		this.path = path;
 		setLocation(0);
-		setDestination(1);
-		pathIndex = 1;
+	}
+	
+	protected void setPath(Path path, int currentIndex) {
+		this.path = path;
+		setLocation(currentIndex);
+	}
+	
+	private void setLocation(int newLocation) {
+		xOff = 0;
+		yOff = 0;
+		currentIndex = newLocation;
+		if (attributes.isDisoriented()) {
+			previousIndex = newLocation + 1;
+			nextIndex = newLocation - 1;
+		} else {
+			previousIndex = newLocation - 1;
+			nextIndex = newLocation + 1;
+		}
+		if (path == null) {
+			return;
+		}
+		currentVertex = path.getVertex(currentIndex);
+		updateDirection();
+		updateHitBox();
+	}
+	
+	private void updateDirection() {
+		direction = path.getDirection(currentIndex, nextIndex);
 	}
 
-	public void update() {
+	protected int update() {
 		updateMovement();
 		updateHitBox();
 		updateEffects();
+		return 0;
 	}
 
 	private void updateEffects() {
-		currentSpeed = speed;
-		for (int i = 0; i < effects.size(); i++) {
-			CreepEffect e = effects.get(i);
-			e.counter++; //TODO should we do this before or after?
-			if (e.duration == 0) {
-				e.projectileEffect.onExpire(this);
-				effects.remove(i);
-			} else {
-				e.projectileEffect.applyEffect(this, e);
-				e.duration--;
-			}
-		}
+		attributes.update();
 	}
 
 	private void updateMovement() {
-		xOff += direction.x * currentSpeed;
-		yOff += direction.y * currentSpeed;
+		xOff += direction.x * attributes.getCurrentSpeed();
+		yOff += direction.y * attributes.getCurrentSpeed();
 		if (xOff >= 1 || yOff >= 1 || xOff <= -1 || yOff <= -1) {
 			//Back step, figure out how much speed was spent for movement
 			float speedRemaining;
@@ -196,73 +201,75 @@ public class Creep {
 			}
 
 			//Move to the new vertex, then adjust our offset with the remaining speed
-			currentVertex = nextVertex;
-			pathIndex++;
-			setDestination(pathIndex);
-
+			previousIndex = currentIndex;
+			currentIndex = nextIndex;
+			currentVertex = path.getVertex(currentIndex);
+			if (attributes.isDisoriented()) {
+				nextIndex--; //If disoriented, we move backward along the path
+			} else {
+				nextIndex++; //If not, we just move forward
+			}
+			updateDirection();
+			
 			xOff = direction.x * speedRemaining;
 			yOff = direction.y * speedRemaining;
 		}
 	}
-
-	public void updateHitBox() {
-		hitBox.x = currentVertex.x + xOff + 1;
-		hitBox.y = currentVertex.y + yOff + 1;
+	
+	protected void updateHitBox() {
+		//TODO: Why exactly are we adding 1 here?
+		hitBox = new Circle(currentVertex.getX() + xOff + 1, currentVertex.getY() + yOff + 1, hitBox.getRadius());
 	}
 
-	public void setLocation(Creep c) {
-		//Update freshly spawned deathrattle creep with parent's path
-		this.currentVertex = c.currentVertex;
-		this.nextVertex = c.nextVertex;
-		this.direction = c.direction;
-		this.xOff = c.xOff;
-		this.yOff = c.yOff;
-		this.path = c.path;
-		this.pathIndex = c.pathIndex;
-	}
+	
+	
+	
+//	protected void setLocation(Creep c) {
+//		//Update freshly spawned deathrattle creep with parent's path
+//		this.currentVertex = c.currentVertex;
+//		this.nextIndex = c.nextIndex;
+//		//Creep can't be disoriented when they come out so we need to work around that
+//		if (c.attributes.isDisoriented()) {
+//			this.nextIndex = c.previousIndex;
+//			this.previousIndex = c.nextIndex;
+//			this.direction = c.direction.getOpposite();
+//		} else {
+//			this.nextIndex = c.nextIndex;
+//			this.previousIndex = c.previousIndex;
+//			this.direction = c.direction;
+//		}
+//		this.xOff = c.xOff;
+//		this.yOff = c.yOff;
+//		this.path = c.path;
+//	}
 
-	/*
-	 * NOT A FULL CLONE, ONLY WORKS FOR CREEPS NOT YET SPAWNED
-	 */
+	//Clones the attributes back to their default states. Does not clone effects on the creep.
 	public Creep clone() {
-		Creep clone = new Creep(health, speed, toughness, healthCost, goldValue, elementType);
-
-		//Secondary Stats
-		clone.resist = this.resist.clone(); //percentage of damage taken from each element
-		clone.slowResist = this.slowResist;
-		clone.snareImmune = this.snareImmune;
-		clone.creepTypes = new HashSet<CreepType>();
-		for (CreepType type : this.creepTypes) {
-			clone.creepTypes.add(type);
-		}
-
-		clone.size = this.size; //Radius
-		clone.hitBox.radius = this.hitBox.radius;
-
-		//Fancy Effects
-		clone.children = new ArrayList<Creep>();
-		if (this.children != null) {
-			for (Creep child : this.children) {
-				clone.children.add(child.clone());
-			}
-		}
-		clone.baseShield = this.baseShield;
-		clone.currentShield = this.currentShield;
-		clone.shieldCap = this.shieldCap;
-		clone.disruptorAmount = this.disruptorAmount;
-
-		return clone;
+		CreepBuilder.getInstance().begin();
+		Creep c = CreepBuilder.getInstance().build();
+		c.setAttributes(attributes.clone());
+		return c;
 	}
 
 	public String toString() {
-		String string = "hp = " + health + ", toughness = " + toughness + " , speed = " + speed;
-		string += "\nelement = " + elementType + ", Modifiers: ";
-		for (CreepType type : creepTypes) {
-			string += " " + type;
-			if (type == CreepType.DEATH_RATTLE) {
-				string += "\n  " + children.size() + " Children: " + children.get(0).toString();
-			}
+//		String string = "HP = " + attributes.getCurrentHealth() + ", Toughness = " + attributes.getCurrentToughness() + " , Speed = " + attributes.getCurrentSpeed();
+//		string += "\nelement = " + elementType + ", Modifiers: ";
+//		for (CreepType type : creepTypes) {
+//			string += " " + type;
+//			if (type == CreepType.DEATH_RATTLE) {
+//				string += "\n  " + children.size() + " Children: " + children.get(0).toString();
+//			}
+//		}
+		String s = new String(currentVertex.toString() + "\t " + direction.toString());
+		return s;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Tower)) {
+			return false;
 		}
-		return string;
+        Creep c = (Creep) o;
+        return c.creepID == creepID;
 	}
 }

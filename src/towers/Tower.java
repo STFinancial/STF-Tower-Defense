@@ -1,303 +1,437 @@
 package towers;
 
-import levels.Level;
-import maps.Tile;
-import creeps.Creep;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import levels.LevelManager;
+import levels.Tile;
+import creeps.CreepManager;
 import creeps.DamageType;
+import game.GameObject;
 import projectiles.*;
 import utilities.Circle;
-import utilities.Constants;
-import utilities.TrigHelper;
+import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 
-public abstract class Tower {
+public abstract class Tower extends GameObject {
 	//Positional Details
-	protected Level level;
-	public int x, y; //Top Left corner in Tile Coordinates
-	public float centerX, centerY;
-	public Circle targetArea;
-	public int width;
-	public int height;
-	public int cost;
-	public TowerType type;
+	private int width;
+	private int height;
+	//int cost;
+	protected float centerX, centerY;
+	private Tile topLeft;
+	protected Circle targetZone;
 
 	//Targeting Details
-	public TargetingType targetingType;
-	public boolean targetsCreep; //False for targeting a ground spot;
-	public float targetX, targetY; //For ground spot target towers, in Tile coordinates
-	public Creep targetCreep;
-	public float targetAngle; //For animation and to pass to projectiles when fired, Radians, 0 = right, pi / 2 = up
+	protected static ProjectileManager projManager = ProjectileManager.getInstance();
+	protected static TowerManager towerManager = TowerManager.getInstance();
+	protected static CreepManager creepManager = CreepManager.getInstance();
+	protected static LevelManager levelManager = LevelManager.getInstance();
+	protected TargetingModeType targetingMode;
+	protected float targetX, targetY; //For ground spot target towers, in Tile coordinates
 
 	//Misc.
-	public Tower siphoningFrom;
-	public Tower siphoningTo;
-	public Projectile baseProjectile;
-	public boolean checked;
+	protected TowerType type;
+	private int towerID;
+	protected Tower siphoningFrom;
+	protected ArrayList<Tower> siphoningTo;
+	protected Projectile baseProjectile;
+	private int siphonDepth;
 	
 	//Upgrading Information
-	//TODO boolean/1-0 array tracking upgrade path
+	protected TowerUpgradeHandler upgradeHandler;
+	private float costReduction;
 	
 	//Base Attributes
-	public BaseAttributeList baseAttributeList;
+	protected BaseAttributeList baseAttributeList;
 	
 	//Current Attributes
-	public int[] damageArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public float[] slowArray = new float[Constants.NUM_DAMAGE_TYPES];
-	public int[] slowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public int fireRate; //Still deciding if this will actually be the same as attack cooldown
-	public int attackCoolDown;
-	public int currentAttackCoolDown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
-	public int snareDuration = 0;
-	public float damageSplash;
-	public float effectSplash;
-	public float splashRadius;
-	public float range;
-	public boolean hitsAir;
-	public boolean hitsGround;
+	protected float[] damageArray = new float[GameConstants.NUM_DAMAGE_TYPES];
+	protected float[] slowArray = new float[GameConstants.NUM_DAMAGE_TYPES];
+	protected int[] slowDurationArray = new int[GameConstants.NUM_DAMAGE_TYPES];
+	protected float attackCooldown;
+	protected float currentAttackCooldown; //Number of game ticks between tower shots, 0 for passive towers (beacons)
+	protected float attackCarryOver;
+	protected float splashDamage;
+	protected float splashEffect;
+	protected float splashRadius;
+	protected float range;
+	protected boolean isInAir;
+	protected boolean isOnGround;
+	protected boolean hitsAir;
+	protected boolean hitsGround;
+	protected boolean doesSlow;
+	protected boolean doesSplash;
+	protected boolean doesOnHit;
+	protected boolean splashHitsAir;
+	protected float damageSiphon;
+	protected float slowDurationSiphon;
+	protected float slowSiphon;
+	protected float attackCooldownSiphon;
+	protected float damageSplashSiphon;
+	protected float effectSplashSiphon;
+	protected float radiusSplashSiphon;
+	protected float rangeSiphon;
 	
-	//Siphoned Attributes
-	public int[] siphDamageArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public float[] siphSlowArray = new float[Constants.NUM_DAMAGE_TYPES];
-	public int[] siphSlowDurationArray = new int[Constants.NUM_DAMAGE_TYPES];
-	public int siphFireRate; //Still deciding if this will actually be the same as attack cooldown
-	public int siphAttackCoolDown;
-	public float siphDamageSplash;
-	public float siphEffectSplash;
-	public float siphSplashRadius;
-	public float siphRange;
-
-	//TODO targetsCreep should move to the baseAttributeList
-	public Tower(Level level, Tile topLeftTile, boolean targetsCreep, BaseAttributeList baseAttributeList) {
-		this.baseAttributeList = baseAttributeList;
-		this.level = level;
+	//Quality Coefficients
+	protected int qLevel;
+	protected float qDamage;
+	protected float qSlow;
+	protected float qSlowDuration;
+	protected float qCooldown;
+	protected float qDamageSplash;
+	protected float qEffectSplash;
+	protected float qRadiusSplash;
+	protected float qRange;
+	
+	//Talent Progress
+	//TODO: Should this be abstracted a bit further?
+	protected int[] talentProgress;
+	
+	protected Tower (Tile topLeftTile, TowerType type, int towerID) {
+		this.baseAttributeList = type.getAttributeList().clone();
+		this.upgradeHandler = new TowerUpgradeHandler(this);
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
 		this.type = baseAttributeList.type;
-		this.cost = baseAttributeList.baseCost;
-		this.type = baseAttributeList.type;
-		this.x = topLeftTile.x;
-		this.y = topLeftTile.y;
-		this.centerX = x + width / 2f;
-		this.centerY = y + height / 2f;
-		this.targetArea = new Circle(centerX, centerY, range);
-		this.targetsCreep = targetsCreep;
-		this.targetingType = TargetingType.FIRST;
-		adjustTowerValues();
-		System.out.println("Tower built at " + x + " , " + y + " (TOP LEFT TILE)");
+		this.topLeft = topLeftTile;
+		Circle tz = levelManager.getCenter(topLeftTile, width, height);
+		this.centerX = tz.getX();
+		this.centerY = tz.getY();
+		this.targetZone = new Circle(centerX, centerY, range);
+		this.targetingMode = TargetingModeType.FIRST;
+		this.towerID = towerID;
+		this.siphoningTo = new ArrayList<Tower>();
+		this.siphoningFrom = null;
+		this.siphonDepth = 0;
+		this.qLevel = 0;
+		this.talentProgress = new int[GameConstants.NUM_TOWER_TALENTS];
+		this.costReduction = 0;
+		updateTowerChain();
 	}
 	
-	public Projectile fireProjectile() {
+	protected void increaseQuality() {
+		++qLevel;
+		updateTowerChain();
+	}
+	
+	protected void increaseDamage(DamageType damageType, float amount, boolean isFlat) {
+		if (isFlat) {
+			damageArray[damageType.ordinal()] += amount;
+		} else {
+			damageArray[damageType.ordinal()] *= amount;
+		}
+	}
+	
+	protected void increaseSlow(DamageType damageType, float amount, boolean isFlat) {
+		if (isFlat) {
+			slowArray[damageType.ordinal()] += amount;
+		} else {
+			slowArray[damageType.ordinal()] *= amount;
+		}
+	}
+	
+	protected boolean doesOnHit() { return doesOnHit; }
+	protected boolean doesSlow() { return doesSlow; }
+	protected boolean doesSplash() { return doesSplash; }
+	protected float getCenterX() { return centerX; }
+	protected float getCenterY() { return centerY; }
+	protected float getDamage(DamageType type) { return damageArray[type.ordinal()]; }
+	protected float getDamageSplash() { return splashDamage; }
+	protected float getEffectSplash() { return splashEffect; }
+	protected int getHeight() { return height; }
+	protected int getNumTalentPoints(int nodeID) { return talentProgress[nodeID]; }
+	protected int getSiphonDepth() { return siphonDepth; }
+	protected float getSlow(DamageType type) { return slowArray[type.ordinal()]; }
+	protected int getSlowDuration(DamageType type) { return slowDurationArray[type.ordinal()]; }
+	protected float getSplashRadius() { return splashRadius; }
+	protected TargetingModeType getTargetingMode() { return targetingMode; }
+	protected Circle getTargetZone() { return targetZone; }
+	protected Tile getTopLeftTile() { return topLeft; }
+	protected int getTowerID() { return towerID; }
+	protected TowerType getType() { return type; }
+	protected TowerUpgradeHandler getUpgradeHandler() { return upgradeHandler; }
+	protected int getWidth() { return width; }
+	protected boolean isInAir() { return isInAir; }
+	protected boolean isOnGround() { return isOnGround; }
+	protected boolean hitsAir() { return hitsAir; }
+	protected boolean splashHitsAir() { return splashHitsAir; }
+	protected void reduceUpgradeCost(float amount) { costReduction += amount; }
+	
+	protected float getTrackGoldValue() {
+		return upgradeHandler.getCurrentTrackValue();
+	}
+	
+	protected float getTotalGoldValue() {
+		float goldValue = type.getDowngradeType().getCost() * GameConstants.BASE_TOWER_REFUND_RATE; //TODO: There should be costs for all tower types
+		goldValue += upgradeHandler.getAllTrackValue();
+		return goldValue;
+	}
+	
+	protected float getUpgradeCost(UpgradePathType path) {
+		//TODO: Include reductions
+		return upgradeHandler.getUpgradeCost(path);
+	}
+	
+	
+	/**
+	 * This should be called when a {@link Tower} is siphoned to or unsiphoned to and after that handler is cloned.
+	 * This ensures that all of the {@link Upgrade Upgrades} that have been
+	 * purchased in other tracks are transferred to this one.
+	 * @param newHandler - The {@link TowerUpgradeHandler Upgrade Handler} of the old Tower.
+	 */
+	protected void setUpgradeHandler(TowerUpgradeHandler newHandler) {
+		this.upgradeHandler = newHandler;
+	}
+	
+	protected void removeTrackUpgrades() {
+		if (type.isBaseType()) {
+			return;
+		} else {
+			upgradeHandler.removeTrackUpgrades();
+			baseAttributeList = baseAttributeList.clone();
+		}
+	}
+	
+	protected Projectile fireProjectile() {
 		return duplicateProjectile(baseProjectile);
 	}
 
-	public void update() {
-		currentAttackCoolDown--;
-		if (targetsCreep) {
-			targetCreep = level.findTargetCreep(this);
-		}
-		if (targetCreep != null) {
-			updateAngle(targetCreep);
-			if (currentAttackCoolDown < 1) {
-				level.addProjectile(fireProjectile());
-				currentAttackCoolDown = (attackCoolDown * siphAttackCoolDown) / (attackCoolDown * siphAttackCoolDown);
-			}
-		}
-	}
-
-	public void adjustTowerValues() {
-		adjustBaseStats();
+	protected void updateTowerChain() {
 		adjustSiphonChain(this);
-		adjustProjectile();
 	}
 	
 	protected static void adjustSiphonChain(Tower t) {
-		if (t.siphoningTo == null) {
-			recursiveSiphon(t, 0);
-		} else {
-			Tower currentTower = t;
-			int counter = 1;
-			t.checked = true;
-			while (currentTower.siphoningTo != null) {
-				//while we are not at the head
-				currentTower = currentTower.siphoningTo;
-				//move back 1
-				counter++;
-				//we've seen one more
-				if (currentTower.checked) {
-					//if we've checked it before, we hit a cycle
-					recursiveSiphon(t, counter);
-				}
-				//mark that we checked it and keep going
-				currentTower.checked = true;
+		BFSAdjust(towerManager.getRoot(t));
+	}
+	
+	protected static void BFSAdjust(Tower root) {
+		Queue<Tower> openList = new LinkedList<Tower>();
+		openList.add(root);
+		Tower current;
+		root.siphonDepth = 0;
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			for (Tower t: current.siphoningTo)  {
+				openList.add(t);
+				t.siphonDepth = current.siphonDepth + 1;
 			}
-			recursiveSiphon(currentTower, 0);
+			towerManager.clearAuras(current);
+		}
+		current = root;
+		root.adjustBaseStats();
+		openList.addAll(root.siphoningTo);
+		root.adjustMidSiphonUpgrades();
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			current.adjustBaseStats();
+			current.adjustClassSpecificBaseStats();
+			openList.addAll(current.siphoningTo);
+			current.siphon(current.siphoningFrom);
+			current.adjustCommonQuality();
+			current.adjustMidSiphonUpgrades();
+			current.adjustClassSpecificQuality(); //I think in every case none of these would increase siphon, but siphon can increase these. This needs to be second because upgrades sets these (if there is a conflict we need to move away from the upgrades modifyong the tower values and having that happen in the "baseTowerValues" department. We would just have if statements like we did originally
+			current.adjustLocalTalentStats();
+			//TODO current.adjustGlobalTalentStats();
+			//order here matters, because some talents convert one damage to another, and so other multipliers might not work
+			current.adjustPostSiphonUpgrades();
+		}
+		towerManager.createAuraChain(root);
+		openList.add(root);
+		while (!openList.isEmpty()) {
+			current = openList.poll();
+			openList.addAll(current.siphoningTo);
+			if (current.attackCooldown < 1) { current.attackCooldown = 1; }
+			current.currentAttackCooldown = current.attackCooldown;
+			current.targetZone = new Circle(current.getCenterX(), current.getCenterY(), current.range);
+			current.adjustProjectileStats();
+			current.targetingMode = TargetingModeType.getDefaultTargetingMode(current.baseProjectile);
 		}
 	}
 	
-	private static void recursiveSiphon(Tower t, int cycleLength) {
-		t.checked = false;
-		//set the siphoned stats to 0
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			t.siphDamageArray[i] = 0;
-			t.siphSlowArray[i] = 0;
-			t.siphSlowDurationArray[i] = 0;
+	protected void siphon(Tower from) {
+		//TODO: There is a ton of inconsistency in this method. Why?
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			this.damageArray[i] += (int) (from.damageArray[i] * this.baseAttributeList.baseDamageSiphon);
+			this.slowArray[i] += from.slowArray[i] * this.baseAttributeList.baseSlowSiphon;
+			this.slowDurationArray[i] += (int) (from.slowDurationArray[i] * this.baseAttributeList.baseSlowDurationSiphon);
 		}
-		t.siphRange = 0;
-		t.siphFireRate = 0;
-		t.siphAttackCoolDown = 0;
-		t.siphDamageSplash = 0;
-		t.siphEffectSplash = 0;
-		t.siphSplashRadius = 0;
-		
-		if (cycleLength != 0) {
-			//It's a cycle
-			Tower currentTower = t;
-			int counter = cycleLength;
-			//Aggregate the stats we are giving out
-			while (counter != 0) {
-				currentTower.checked = false;
-				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-					t.siphDamageArray[i] += currentTower.damageArray[i];
-					t.siphSlowArray[i] += currentTower.slowArray[i];
-					t.siphSlowDurationArray[i] += currentTower.slowDurationArray[i];
-				}
-				t.siphRange += currentTower.range;
-				t.siphFireRate += currentTower.fireRate;
-				t.siphAttackCoolDown += currentTower.attackCoolDown;
-				t.siphDamageSplash += currentTower.damageSplash;
-				t.siphEffectSplash += currentTower.effectSplash;
-				t.siphSplashRadius += currentTower.splashRadius;
-				currentTower = currentTower.siphoningFrom;
-				counter--;
-			}
-			//stats per tower (could also cycle through and subtract for each tower
-			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-				t.siphDamageArray[i] /= cycleLength;
-				t.siphSlowArray[i] /= cycleLength;
-				t.siphSlowDurationArray[i] /= cycleLength;
-			}
-			t.siphRange /= cycleLength;
-			t.targetArea.radius = t.range + t.siphRange;
-			t.siphFireRate /= cycleLength;
-			t.siphAttackCoolDown /= cycleLength;
-			t.siphDamageSplash /= cycleLength;
-			t.siphEffectSplash /= cycleLength;
-			t.siphSplashRadius /= cycleLength;
-			
-			counter = cycleLength - 1;
-			currentTower = t.siphoningFrom;
-			while (counter != 0) {
-				for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-					currentTower.siphDamageArray[i] = t.siphDamageArray[i];
-					currentTower.siphSlowArray[i] = t.siphSlowArray[i];
-					currentTower.siphSlowDurationArray[i] = t.siphSlowDurationArray[i];
-				}
-				currentTower.siphRange = t.siphRange;
-				currentTower.targetArea.radius = currentTower.range + currentTower.siphRange;
-				currentTower.siphFireRate = t.siphFireRate;
-				currentTower.siphAttackCoolDown = t.siphAttackCoolDown;
-				currentTower.siphDamageSplash = t.siphDamageSplash;
-				currentTower.siphEffectSplash = t.siphEffectSplash;
-				currentTower.siphSplashRadius = t.siphSplashRadius;
-				currentTower = currentTower.siphoningFrom;
-				counter--;
-			}
-		} else {
-			Tower sf = t.siphoningFrom;
-			//we are not in a cycle and we can just recurse normally
-			if (sf == null) {
-				return;
-			}
-			recursiveSiphon(sf, 0);
-			for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-				t.siphDamageArray[i] = (int) ((sf.damageArray[i] + sf.siphDamageArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
-				t.siphSlowArray[i] = (sf.slowArray[i] + sf.siphSlowArray[i]) * Constants.SIPHON_BONUS_MODIFIER;
-				t.siphSlowDurationArray[i] = (int) ((sf.slowDurationArray[i] + sf.siphSlowDurationArray[i]) * Constants.SIPHON_BONUS_MODIFIER);
-			}
-			t.siphRange = (sf.range + sf.siphRange) * Constants.SIPHON_BONUS_MODIFIER;
-			t.targetArea.radius = t.range + t.siphRange;
-			t.siphFireRate = (int) ((sf.fireRate + sf.siphFireRate) * Constants.SIPHON_BONUS_MODIFIER);
-			t.siphAttackCoolDown = (int) ((sf.attackCoolDown + sf.siphAttackCoolDown) * Constants.SIPHON_BONUS_MODIFIER);
-			t.siphDamageSplash = (sf.damageSplash + sf.siphDamageSplash) * Constants.SIPHON_BONUS_MODIFIER;
-			t.siphEffectSplash = (sf.effectSplash + sf.siphEffectSplash) * Constants.SIPHON_BONUS_MODIFIER;
-			t.siphSplashRadius = (sf.splashRadius + sf.siphSplashRadius) * Constants.SIPHON_BONUS_MODIFIER;
-		}
+		this.range += from.range * this.rangeSiphon; 
+		this.attackCooldown -= (int) (this.attackCooldownSiphon - Math.sqrt(from.attackCooldown + this.baseAttributeList.baseAttackCooldownSiphon)); //TODO: Why am I accessing the base?
+		if (this.attackCooldown < 1) { this.attackCooldown = 1; }
+		this.splashDamage += from.splashDamage * this.damageSplashSiphon;
+		this.splashEffect += from.splashEffect * this.effectSplashSiphon;
+		this.splashRadius += from.splashRadius * this.radiusSplashSiphon;
 	}
-	
 	
 	protected void adjustBaseStats() {
-		//TODO deal with tower upgrades somehow
-		slowArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlow;
-		damageArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseElementalDamage;
-		damageArray[Constants.NUM_DAMAGE_TYPES - 1] = baseAttributeList.basePhysicalDamage;
-		slowDurationArray[baseAttributeList.mainDamageType.ordinal()] = baseAttributeList.baseSlowDuration;
-		fireRate = baseAttributeList.baseFireRate;
-		attackCoolDown = baseAttributeList.baseAttackCoolDown;
-		damageSplash = baseAttributeList.baseDamageSplash;
-		effectSplash = baseAttributeList.baseEffectSplash;
-		splashRadius = baseAttributeList.baseSplashRadius;
-		range = baseAttributeList.baseRange;
-		//TODO handle talents and upgrades
-		
+		attackCooldown 			= baseAttributeList.baseAttackCooldown;
+		splashDamage 			= baseAttributeList.baseSplashDamage;
+		splashEffect			= baseAttributeList.baseSplashEffect;
+		splashRadius			= baseAttributeList.baseSplashRadius;
+		range 					= baseAttributeList.baseRange;
+		hitsAir					= baseAttributeList.baseHitsAir;
+		isInAir					= baseAttributeList.baseIsInAir;
+		isOnGround				= baseAttributeList.baseIsOnGround;
+		hitsGround				= baseAttributeList.baseHitsGround;
+		doesSplash				= baseAttributeList.baseDoesSplash;
+		doesSlow				= baseAttributeList.baseDoesSlow;
+		doesOnHit				= baseAttributeList.baseDoesOnHit;
+		splashHitsAir			= baseAttributeList.baseSplashHitsAir;
+		attackCarryOver			= 0f;
+		currentAttackCooldown	= 0f;
+		damageSiphon			= baseAttributeList.baseDamageSiphon;
+		slowDurationSiphon		= baseAttributeList.baseSlowDurationSiphon;
+		slowSiphon				= baseAttributeList.baseSlowSiphon;
+		attackCooldownSiphon	= baseAttributeList.baseAttackCooldownSiphon;
+		damageSplashSiphon		= baseAttributeList.baseSplashDamageSiphon;
+		effectSplashSiphon		= baseAttributeList.baseSplashEffectSiphon;
+		radiusSplashSiphon		= baseAttributeList.baseSplashRadiusSiphon;
+		rangeSiphon				= baseAttributeList.baseRangeSiphon;
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			slowArray[i] = baseAttributeList.baseSlowArray[i];
+			damageArray[i] = baseAttributeList.baseDamageArray[i];
+			slowDurationArray[i] = baseAttributeList.baseSlowDurationArray[i];
+		}
 	}
 	
-	//this should be called on any time we make changes to the tower
-	protected void adjustProjectile() {
-		baseProjectile = new Projectile(this);
-		DamageType damageType = baseAttributeList.mainDamageType;
-		ProjectileEffect effect;
-		baseProjectile.splashRadius = splashRadius;
-		for (int i = 0; i < Constants.NUM_DAMAGE_TYPES; i++) {
-			if (damageArray[i] + siphDamageArray[i] != 0) {
-				effect = new Damage(damageArray[i] + siphDamageArray[i], DamageType.values()[i]);
-				baseProjectile.addEffect(effect);
-				if (damageSplash + siphDamageSplash != 0) {
-					effect = new Damage((damageArray[i] + siphDamageArray[i]) * (damageSplash + siphDamageSplash), DamageType.values()[i]);
-					baseProjectile.addSplashEffect(effect);
-				}
-			}
-			if (slowArray[i] + siphSlowArray[i] != 0) {
-				effect = new Slow(slowDurationArray[i] + siphSlowDurationArray[i], slowArray[i] + siphSlowArray[i], DamageType.values()[i]);
-				baseProjectile.addEffect(effect);
-				if (effectSplash + siphEffectSplash != 0) {
-					effect = new Slow((slowDurationArray[i] + siphSlowDurationArray[i])/ 2, (slowArray[i] + siphSlowArray[i]) * (effectSplash + siphEffectSplash), DamageType.values()[i]);
-					baseProjectile.addSplashEffect(effect);
-				}
-			}
-		}
-		//TODO this line will probably disappear when unique effects are added
-		if (snareDuration != 0) {
-			effect = new Snare(snareDuration, 0, damageType);
-			baseProjectile.addEffect(effect);
-		}
-		//Set the speed
-		baseProjectile.currentSpeed = baseProjectile.speed = .20f;
+	private void adjustMidSiphonUpgrades() {
+		upgradeHandler.applyMidSiphonUpgrades();
+//		if (siphoningFrom != null) {
+//			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+//			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+//				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+//					if (progress[path][level]) {
+//						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
+//					}
+//				}
+//			}
+//		}
 	}
 	
-
-	//TODO Upgrades
-	public void upgrade() {
-		if (baseAttributeList.upgrades == null) {
-			return;
+	private void adjustPostSiphonUpgrades() {
+		upgradeHandler.applyPostSiphonUpgrades();
+//		if (siphoningFrom != null) {
+//			boolean[][] progress = upgradeTracks[siphoningFrom.baseAttributeList.downgradeType.ordinal()];
+//			for (int path = 0; path < GameConstants.NUM_UPGRADE_PATHS; path++) {
+//				for (int level = 0; level < GameConstants.UPGRADE_PATH_LENGTH; level++) {
+//					if (progress[path][level]) {
+//						baseAttributeList.upgrades[path][level].postSiphonUpgrade(this);
+//					}
+//				}
+//			}
+//		}
+	}
+	
+	private void adjustCommonQuality() {
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			damageArray[i] *= (1 + (qDamage * qLevel));
+			slowArray[i] += qSlow * qLevel;
+			slowDurationArray[i] *= (1 + (qSlowDuration * qLevel));
+		}
+		attackCooldown -= qCooldown * qLevel;
+		if (attackCooldown < 1) { attackCooldown = 1; }
+		splashDamage += qDamageSplash * qLevel;
+		splashEffect += qEffectSplash * qLevel;
+		splashRadius += (1 + (qRadiusSplash * qLevel));
+		range *= (1 + (qRange * qLevel));
+	}
+	
+	private void adjustLocalTalentStats() {
+		TowerTalentTree.applyTalents(this);
+	}
+	
+	
+	protected abstract void adjustProjectileStats();
+	protected abstract void adjustClassSpecificBaseStats();
+	protected abstract void adjustClassSpecificQuality();
+	protected void createAuras() { } //Can be overridden for a tower that actually has auras
+	@Override protected abstract int update();
+	
+	/**
+	 * {@link Upgrade Upgrades} the {@link Tower} with the next Upgrade for the
+	 * provided {@link UpgradePathType Path}.
+	 * @param path - The path along which we should apply the next upgrade.
+	 */
+	protected void upgrade(UpgradePathType path) {
+		upgradeHandler.upgrade(path);
+	}
+	
+	/**
+	 * 
+	 * @param path - Each tower has two upgrade paths, and this specifies whether it is the upper (0), or lower (1) path that we want to upgrade
+	 * @param playerGold - This is the amount of gold that the player has. This is passed in to be more clear about what the boolean returned from this function will mean
+	 * @return A boolean value specifying whether the given path can be upgraded both in terms of whether the upgrade is available, and if the player has enough gold
+	 */
+	
+	/**
+	 * Returns true if the {@link Tower} available along the specified {@link UpgradePathType upgrade path}.
+	 * This does not check if the {@link Player} has enough gold to complete the upgrade, and thus
+	 * that should be checked for elsewhere.
+	 * @param path - The path with which we want to verify that we can upgrade along.
+	 * @return True if an upgrade is available along the specified path, false otherwise.
+	 */
+	protected boolean canUpgrade(UpgradePathType path) {
+		if (siphoningFrom == null || baseAttributeList.upgrades == null) {
+			return false;
 		} else {
-			
+			return upgradeHandler.canUpgrade(path);
 		}
 	}
-
-	protected void updateAngle(Creep targetCreep) {
-		targetAngle = TrigHelper.angleBetween(centerX, centerY, targetCreep.hitBox.x, targetCreep.hitBox.y);
+	
+	//TODO: Should this be in the manager?
+	protected void increaseSiphons(float modifier) {
+		damageSiphon += modifier;
+		damageSplashSiphon += modifier;
+		effectSplashSiphon += modifier;
+		radiusSplashSiphon += modifier / 2;
+		rangeSiphon += modifier / 4;
+		slowSiphon += modifier;
+		slowDurationSiphon += modifier;
 	}
 
 	protected Projectile duplicateProjectile(Projectile p) {
-		Projectile newProj = new Projectile(this);
-		newProj.effects.addAll(p.effects);
-		newProj.splashEffects.addAll(p.splashEffects);
-		newProj.currentSpeed = newProj.speed = p.speed; //TODO this logic might need to change if we have projectiles that speed up
-		newProj.splashRadius = p.splashRadius;
-		newProj.parent = this;
-		return newProj;
+		return p.clone();
 	}
 
 	public String toString() {
-		return "Type: " + type + " at " + x + " , " + y;
+		StringBuilder s = new StringBuilder();
+		s = s.append("Tower of Type " + type + " at position " + topLeft.toString() + "\n");
+		s = s.append("TowerID: " + towerID + "\n");
+		s = s.append("Damage: \n");
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			s.append("\t " + DamageType.values()[i] + " - " + damageArray[i] + "\n");
+		}
+		s.append("Slow: \n");
+		for (int i = 0; i < GameConstants.NUM_DAMAGE_TYPES; i++) {
+			s.append("\t " + DamageType.values()[i] + " - " + slowArray[i] * 100 + "% for " + slowDurationArray[i] + "\n");
+		}
+		s.append("Tower Range: " + range); 
+		s.append(" Attack Cooldown: " + attackCooldown);
+		s.append(" Damage Splash Effectiveness: " + splashDamage * 100 + "%  Effect Splash Effectiveness: " + splashEffect * 100 + "%  Splash Radius: " + splashRadius);
+		return s.toString();
+	}
+	
+	
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Tower)) {
+			return false;
+		}
+        Tower t = (Tower) o;
+        return t.towerID == towerID;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = 31 * result + towerID;
+		result = 31 * result + (int) targetZone.getX();
+		result = 31 * result + (int) targetZone.getY();
+		result = 31 * result + type.ordinal();
+		result = 31 * result + (int) damageArray[result % 4];
+		return result;
 	}
 }

@@ -1,71 +1,70 @@
 package towers;
 
-import levels.Level;
-import maps.Tile;
+import levels.Tile;
 
-public class TowerFactory {
-	public static Tower generateTower(Level level, TowerType type, Tile topLeft) {
+final class TowerFactory {
+	public static Tower generateTower(Tile topLeft, TowerType type, int towerID) {
 		Tower t = null;
 		switch (type) {
 		case WIND:
-			t = new BasicWindTower(level, topLeft);
+			t = new TowerWind(topLeft, towerID);
 			break;
 		case EARTH:
-			t = new BasicEarthTower(level, topLeft);
+			t = new TowerEarth(topLeft, towerID);
 			break;
 		case FIRE:
-			t = new BasicFireTower(level, topLeft);
+			t = new TowerFire(topLeft, towerID);
 			break;
 		case WATER:
-			t = new BasicWaterTower(level, topLeft);
+			t = new TowerWater(topLeft, towerID);
 			break;
 		case WIND_WIND:
-			t = new WindWindTower(level, topLeft);
+			t = new TowerWindWind(topLeft, towerID);
 			break;
 		case WIND_EARTH:
-			t = new WindEarthTower(level, topLeft);
+			t = new TowerWindEarth(topLeft, towerID);
 			break;
 		case WIND_FIRE:
-			t = new WindFireTower(level, topLeft);
+			t = new TowerWindFire(topLeft, towerID);
 			break;
 		case WIND_WATER:
-			t = new WindWaterTower(level, topLeft);
+			t = new TowerWindWater(topLeft, towerID);
 			break;
 		case EARTH_WIND:
-			t = new EarthWindTower(level, topLeft);
+			t = new TowerEarthWind(topLeft, towerID);
 			break;
 		case EARTH_EARTH:
-			t = new EarthEarthTower(level, topLeft);
+			t = new TowerEarthEarth(topLeft, towerID);
 			break;
 		case EARTH_FIRE:
-			t = new EarthFireTower(level, topLeft);
+			t = new TowerEarthFire(topLeft, towerID);
 			break;
 		case EARTH_WATER:
-			t = new EarthWaterTower(level, topLeft);
+			t = new TowerEarthWater(topLeft, towerID);
 			break;
 		case FIRE_WIND:
-			t = new FireWindTower(level, topLeft);
+			t = new TowerFireWind(topLeft, towerID);
 			break;
 		case FIRE_EARTH:
-			t = new FireEarthTower(level, topLeft);
+			t = new TowerFireEarth(topLeft, towerID);
 			break;
 		case FIRE_FIRE:
-			t = new FireFireTower(level, topLeft);
+			t = new TowerFireFire(topLeft, towerID);
 			break;
 		case FIRE_WATER:
-			t = new FireWaterTower(level, topLeft);
+			t = new TowerFireWater(topLeft, towerID);
 			break;
 		case WATER_WIND:
-			t = new WaterWindTower(level, topLeft);
+			t = new TowerWaterWind(topLeft, towerID);
 			break;
 		case WATER_EARTH:
-			t = new WaterEarthTower(level, topLeft);
+			t = new TowerWaterEarth(topLeft, towerID);
 			break;
 		case WATER_FIRE:
-			t = new WaterFireTower(level, topLeft);
+			t = new TowerWaterFire(topLeft, towerID);
 			break;
 		case WATER_WATER:
-			t = new WaterWaterTower(level, topLeft);
+			t = new TowerWaterWater(topLeft, towerID);
 			break;
 		default:
 			break;

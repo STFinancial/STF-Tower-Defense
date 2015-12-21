@@ -2,374 +2,335 @@ package levels;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.Iterator;
 
-import maps.Map;
-import maps.Vertex;
-import maps.VertexGraph;
 import creeps.Creep;
-import creeps.CreepType;
-import creeps.Wave;
-import creeps.DamageType;
-import maps.Tile;
+import creeps.CreepManager;
 import players.Player;
-import projectiles.Projectile;
+import projectiles.ProjectileManager;
 import towers.*;
 import utilities.Circle;
-import utilities.CreepWaveGenerator;
-import utilities.MapGenerator;
-import utilities.PathFinder;
+import utilities.GameConstants;
+import utilities.GameConstants.UpgradePathType;
 
 /*
  * Executes main game logic loop
  */
 public class Level {
+	private Map map;
+	private Player player;
 
-	public final Map map;
-	private final Player player;
-	private final ArrayList<Wave> creepWaves;
+	//TODO: This shit drives me nuts, fix it.
+	private float gold = 1000000;
+	private int health = 100;
 
-	public int round = 0; //Each round represents a specific creepwave (Or waves for multiple entrance)
-	public int tick = 0; //Specific game logic step, smallest possible difference in game states time wise
-
-	public int gold = 500;
-	public int health = 100;
-	int nextSpawnTick = -1;
-	public Wave currentWave;
-	public boolean roundInProgress = false;
-
+	//Managers
+	private ProjectileManager projManager;
+	private TowerManager towerManager;
+	private CreepManager creepManager;
+	
 	//Currently loaded/active units
-	public ArrayList<Tower> towers = new ArrayList<Tower>();
-	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-	public ArrayList<Creep> creeps = new ArrayList<Creep>();
+	private ArrayList<EffectPatch> effectPatches = new ArrayList<EffectPatch>();
 
-	public Path groundPath, airPath, proposedGroundPath;
-
-	public ArrayList<GameEvent> events = new ArrayList<GameEvent>();
-	//Temp Variables for readability
-	Creep c;
-	int i;
-	private boolean creepLeft;
-
-	public Level() {
-		this(new Player(), (new MapGenerator()).generateMap(), (new CreepWaveGenerator()).generateCreepWaves());
-	}
-
-	public Level(Player player, Map map, ArrayList<Wave> creepWaves) {
+	private Path groundPath;
+	private Path flyingPath;
+	private Path proposedGroundPath;
+	private Path proposedFlyingPath;
+	//This will change when we create and destroy new terrain
+	//TODO: I think having some of these as hash sets is sub-optimal.
+	private HashSet<Circle> earthTiles = new HashSet<Circle>();
+	private HashSet<Creep> groundCreepAdjacentToEarth = new HashSet<Creep>();
+	private HashSet<Creep> allCreepAdjacentToEarth = new HashSet<Creep>();
+	
+	
+	Level(Player player, Map map) {
 		this.player = player;
 		this.map = map;
-		this.creepWaves = creepWaves;
+		this.projManager = ProjectileManager.getInstance();
+		this.towerManager = TowerManager.getInstance();
+		this.creepManager = CreepManager.getInstance();
+		for (int y = 0; y < map.getHeight(); y++) {
+			for (int x = 0; x < map.getWidth(); x++) {
+				if (map.getTileType(y, x) == TileType.EARTH) { 
+					earthTiles.add(new Circle(x + 0.5f, y + 0.5f, 1.5f));
+				}
+			}
+		}
 		updatePath();
 	}
+	
+	
+	
+	
 
-	//Can be called from App
-	public void startRound() {
-		if (!roundInProgress) {
-			roundInProgress = true;
-			creepLeft = true;
-			currentWave = creepWaves.get(round);
-			round++;
-			System.out.println("Starting round " + round);
-			tick = 0;
-			nextSpawnTick = currentWave.getDelayForNextCreep();
-		}
+	void startRound(int roundNum) {
+		effectPatches.clear();
+		groundCreepAdjacentToEarth.clear();
+		allCreepAdjacentToEarth.clear();
 	}
+	
+	
 
-	public void gameTick() {
-		//Check for new spawns from creep wave;
-		if (tick == nextSpawnTick) {
-			spawnCreeps(currentWave.getNextCreeps());
-			nextSpawnTick = tick + currentWave.getDelayForNextCreep();
-			if (nextSpawnTick < tick) {
-				creepLeft = false;
-			}
+	void addGold(float amount) { gold += amount; }
+	float getGold() { return gold; }
+	float getHealth() { return health; }
+	void reduceHealth(float amount) { health -= amount; }
+	void removeGold(float amount) { gold -= amount; }
+	
+	
+	boolean canSiphon(Tower from, Tower to) {
+		/* The barriers to siphoning is that we have enough gold, and that we don't create a block in the path */
+		if (!towerManager.getType(to).isBaseType()) {
+			return false;
 		}
-
-		for (i = 0; i < creeps.size(); i++) {
-			c = creeps.get(i);
-			c.update();
-			if (c.currentVertex.equals(groundPath.getFinish())) {
-				escapeCreep(c);
-				creeps.remove(i);
-				i--;
-				if (creeps.size() == 0 && creepLeft == false) {
-					roundInProgress = false;
-				}
-			}
+		//TODO: What about discounts?
+		if (gold < GameConstants.SIPHON_BASE_COST * (float) Math.pow(GameConstants.SIPHON_CHAIN_COST_MULTIPLIER, towerManager.getNewSiphonChainLength(from, to))) {
+			return false;
 		}
-
-		for (i = 0; i < projectiles.size(); i++) {
-			Projectile p = projectiles.get(i);
-			p.update();
-			if (p.isDone()) {
-				detonateProjectile(p);
-				projectiles.remove(i);
-				i--;
-			}
-		}
-
-		for (i = 0; i < creeps.size(); i++) {
-			c = creeps.get(i);
-			if (c.isDead()) {
-				killCreep(c);
-				creeps.remove(c);
-				i--;
-				if (creeps.size() == 0 && creepLeft == false) {
-					roundInProgress = false;
-				}
-			}
-		}
-
-		for (Tower t : towers) {
-			t.update();
-		}
-
-		tick++;
-	}
-
-	private void detonateProjectile(Projectile p) {
-		//Check for aoe and complicated shit
-		if (p.targetsCreep) {
-			//Targeted a specific minion
-			p.applyEffect(p.targetCreep);
-			p.applySplashEffects(getCreepInRange(p, p.splashRadius));
-			p.parent.attackCoolDown += p.targetCreep.disruptorAmount;
-		} else {
-			//Targeted an area
-
-		}
-		newEvent(GameEventType.PROJECTILE_EXPIRED, p);
-	}
-
-	private void spawnCreeps(HashSet<Creep> creepsToSpawn) {
-		for (Creep c : creepsToSpawn) {
-
-			if (c.is(CreepType.FLYING)) {
-				c.setPath(airPath);
+		
+		
+		/* Since it's guaranteed a base type to a non-upgraded type, we don't need to worry about upgrades at all */
+		TowerType newType = TowerType.getUpgrade(towerManager.getType(from), towerManager.getType(to));
+		Tile topLeft = towerManager.getTopLeftTile(to);
+		
+		/* If it intersects the currentPath, we need to propose a new path */
+		if (intersectsPath(topLeft.x, topLeft.y, newType.getWidth(), newType.getHeight(), false) || intersectsPath(topLeft.x, topLeft.y, newType.getWidth(), newType.getHeight(), true)) {
+			proposePath(topLeft.x, topLeft.y, newType.getWidth(), newType.getHeight());
+			/* If we're on the ground and the ground path is null, or if we're in the air and the air path is null, we can't siphon */
+			if (newType.isOnGround() && proposedGroundPath == null || newType.isInAir() && proposedFlyingPath == null) {
+				return false;
 			} else {
-				c.setPath(groundPath);
+				return true;
 			}
-			creeps.add(c);
-			newEvent(GameEventType.CREEP_SPAWNED, c);
-		}
-	}
-
-	private void escapeCreep(Creep c) {
-		//TODO
-		newEvent(GameEventType.CREEP_ESCAPED, c);
-		health -= c.healthCost;
-		//Check if we lose?
-
-	}
-
-	private void killCreep(Creep c) {
-		// TODO Auto-generated method stub
-		ArrayList<Creep> deathRattleChildren;
-		deathRattleChildren = c.death();
-		if (deathRattleChildren != null) {
-			for (Creep drc : deathRattleChildren) {
-				drc.setLocation(c);
-				creeps.add(drc);
-			}
-		}
-
-		newEvent(GameEventType.CREEP_KILLED, c);
-
-		gold += c.goldValue;
-
-	}
-
-	//GUI should call this method to build towers
-	public Tower buyTower(TowerType type, int y, int x) {
-		Tower t = buildTower(type, y, x);
-		gold -= t.cost;
-		return t;
-	}
-
-	private Tower buildTower(TowerType type, int y, int x) {
-		Tower t;
-		Tile tile = map.getTile(y, x);
-		t = TowerFactory.generateTower(this, type, tile);
-		towers.add(t);
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).addTower(t);
-			}
-		}
-		updatePath();
-		t.adjustTowerValues();
-		newEvent(GameEventType.TOWER_CREATED, t);
-		return t; //TODO too lazy to implement event system so i can grab this relevant information, so returning for now
-	}
-
-	//TODO need an event so that the GUI knows it can change the tower graphic
-	//But I think it can just take the type before and after and change it.
-	public Tower unsiphonTower(Tower t) {
-		Tower sf = t.siphoningFrom;
-		
-		sf.siphoningFrom.siphoningTo = null;
-		
-		sf.siphoningFrom = null;
-		sf.adjustTowerValues();
-		t.type = t.baseAttributeList.downgradeType;
-		//TODO preserve upgrade levels and do damage calculations
-		razeTower(t);
-		t = buildTower(t.type, t.y, t.x);
-		t.adjustTowerValues();
-		return t;
-	}
-
-	public void siphonTower(Tower siphonTo, Tower siphonFrom) {
-		TowerType newType = null;
-		if (siphonFrom.type.isBaseType()) {
-			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type);
 		} else {
-			newType = TowerType.getUpgrade(siphonTo.type, siphonFrom.type.getAttributeList().downgradeType);
+			/* If it doesn't intersect the existing path then we can siphon */
+			return true;
 		}
-		//TODO preserve upgrade levels and do damage calculations
-		razeTower(siphonTo);
-		Tower t = buildTower(newType, siphonTo.y, siphonTo.x);
-		t.siphoningFrom = siphonFrom;
-		t.siphoningTo = null;
-		siphonFrom.siphoningTo = t;
-		t.adjustTowerValues();
 	}
-
-	//Can be called from App
-	public void upgradeTower(Tower t, int index) {
-
-	}
-
-	//GUI should call this method
-	public void sellTower(Tower t) {
-		if (t.siphoningFrom == null) {
-			gold += t.cost * .75f;
-		} else {
-			gold += t.cost * .5f;
+	
+	/**
+	 * This function checks whether we are capable of building a {@link Tower} of the specified
+	 * {@link TowerType type} at the provided location, which would be the top-left {@link Tile} of
+	 * where the Tower would be.
+	 * @param type - This is the TowerType of the Tower we want to build. 
+	 * In general, Towers are all the same size, so this does not affect whether a path is possible,
+	 * but it does change the gold value, and so we check to see if we have enough gold to build this type.
+	 * Furthermore, types that are not base will return false when passed to this function, as those are not
+	 * technically "built".
+	 * @param x - The x value of the Tile that will be the upper left tile of this Tower.
+	 * @param y - The y value of the Tile that will be the upper left tile of this Tower.
+	 * @return True if building a Tower of this type with the upper left tile being in the specified location will not
+	 * result in no possible air path or no possible ground path from the start to the finish, the type is a base type, and
+	 * we have enough gold to build the Tower. Will return false if no such path exists, if the type is not a base type (as these
+	 * cannot be built directly), or if we don't have enough gold to purchase the Tower.
+	 */
+	boolean canBuild(TowerType type, int x, int y) {
+		/* If it isn't a base type, we don't have enough gold, 
+		 * or the desired position isn't in the map, return false */
+		//TODO: Don't need to do all this if it's not intersecting any of the paths to begin with.
+		if (!type.isBaseType() || type.getCost() > gold || 
+				map.isOutside(x, y) || x + type.getWidth() >= map.getWidth() ||
+				y + type.getHeight() >= map.getHeight())  {
+			proposedGroundPath = null;
+			proposedFlyingPath = null;
+			return false;
 		}
-		razeTower(t);
-	}
-
-	private void razeTower(Tower t) {
-		towers.remove(t);
-		for (int i = 0; i < t.width; i++) {
-			for (int j = 0; j < t.height; j++) {
-				map.getTile(t.y + j, t.x + i).removeTower();
+		
+		int width = type.getWidth();
+		int height = type.getHeight();
+		boolean onGround = type.isOnGround();
+		boolean inAir = type.isInAir();
+		
+		Tile currentTile;
+		for (int i = x; i < x + width; i++) {
+			for (int j = y; j < y + height; j++) {
+				currentTile = map.getTile(j, i);
+				if ((onGround && !currentTile.isBuildable(true)) ||
+						(inAir && !currentTile.isBuildable(false))) {
+					proposedGroundPath = null;
+					proposedFlyingPath = null;
+					return false;
+				}
 			}
 		}
-		updatePath();
-
-		newEvent(GameEventType.TOWER_DESTROYED, t);
+		
+		proposePath(x, y, width, height);
+		if (onGround) {
+			if (inAir) {
+				return proposedGroundPath != null && proposedFlyingPath != null;
+			} else {
+				return proposedGroundPath != null;
+			}
+		} else {
+			if (inAir) {
+				return proposedFlyingPath != null;
+			} else {
+				return true;
+			}
+		}
 	}
+	
+	/**
+	 * This function checks whether we can {@link Upgrade} the specified {@link Tower}
+	 * along the specified {@link UpgradePathType upgradePath}.
+	 * @param t - The Tower we are attempting to Upgrade.
+	 * @param upgradePath - The Upgrade path along which we want to Upgrade. This is currently
+	 * UPPER_PATH and LOWER_PATH.
+	 * @return True if the Tower can be upgraded and we have enough gold, false if not. Future Upgrades
+	 * may change the size of the Tower or whether it takes up air or ground space. This function will need
+	 * to change accordingly.
+	 */
+	boolean canUpgrade(Tower t, UpgradePathType upgradePath) {
+		//TODO: Need a way to "mock" apply upgrades to check if they break something.
+		if (!towerManager.getType(t).isBaseType()) {
+			/* Need to check size of Tower post Upgrade to see if it can fit (not sure we want this to change) */
+			if (gold < towerManager.getUpgradeCost(t, upgradePath)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	public void updatePath() {
 		VertexGraph vg = new VertexGraph();
 		vg = PathFinder.mapToVertexGraph(vg, map);
 		groundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
-		airPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
+		flyingPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
 	}
 
-	public void proposePath(int x, int y, int width, int height) {
-		boolean old[][] = new boolean[height][width];
+	private void proposePath(int x, int y, int width, int height) {
+		boolean oldGround[][] = new boolean[height][width];
+		boolean oldFlying[][] = new boolean[height][width];
 
+		Tile currentTile;	
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				old[j][i] = map.getTile(y + j, x + i).groundTraversable;
-				map.getTile(y + j, x + i).groundTraversable = false;
+				currentTile = map.getTile(y + j, x + i);
+				oldGround[j][i] = currentTile.groundTraversable;
+				oldFlying[j][i] = currentTile.airTraversable;
+				currentTile.groundTraversable = false;
+				currentTile.airTraversable = false;
 			}
 		}
 
 		VertexGraph vg = new VertexGraph();
 		vg = PathFinder.mapToVertexGraph(vg, map);
 		proposedGroundPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, true);
-
+		proposedFlyingPath = PathFinder.AStar(vg.startingVertices.get(0), vg.endingVertices.get(0), vg, false);
+		
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				map.getTile(y + j, x + i).groundTraversable = old[j][i];
+				currentTile = map.getTile(y + j, x + i);
+				currentTile.groundTraversable = oldGround[j][i];
+				currentTile.airTraversable = oldFlying[j][i];
 			}
 		}
 	}
 
-	public Creep findTargetCreep(Tower tower) {
-		Creep toTarget = null;
-		ArrayList<Creep> inRange = new ArrayList<Creep>();
-		for (Creep c : creeps) {
-			if (c.hitBox.intersects(tower.targetArea)) {
-				inRange.add(c);
+	public Map getMap() { return map; } //TODO: Not sure if I want to offer access to this... I would rather have delegation methods
+	
+	public HashSet<Creep> getCreepAdjacentToEarth(boolean isFlying) {
+		if (isFlying) {
+			return allCreepAdjacentToEarth;
+		} else {
+			return groundCreepAdjacentToEarth;
+		}
+	}
+	
+
+	public void addEffectPatch(EffectPatch effectPatch) {
+		effectPatches.add(effectPatch);
+	}
+
+	public int getVertexBelow(Vertex currentVertex) {
+		int y = currentVertex.y;
+		for (int i = 0; i < groundPath.getLength(); i++) {
+			if (groundPath.getVertex(i).y == y) {
+				return i;
 			}
 		}
-		//System.out.println("Saw : " + inRange.size());
-		switch (tower.targetingType) {
-		case AREA:
-			break;
-		case FIRST:
-			int max = -1;
-			for (Creep c : inRange) {
-				if (c.pathIndex > max) {
-					toTarget = c;
-					max = c.pathIndex;
+		return 0;
+	}
+
+	public Path getPath(boolean isFlying) {
+		return (isFlying ? flyingPath : groundPath);
+	}
+	
+	void updateEffectPatches() {
+		Iterator<EffectPatch> it = effectPatches.iterator();
+		while (it.hasNext()) {
+			EffectPatch e = it.next();
+			e.update();
+			if (e.isDone()) {
+				it.remove();
+			}
+		}
+	}
+	
+	void updateCreepAdjacentToEarth() {
+		if (towerManager.hasEarthEarth()) {
+			groundCreepAdjacentToEarth.clear();
+			allCreepAdjacentToEarth.clear();
+			for (Circle c: earthTiles) {
+				groundCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, false));
+				allCreepAdjacentToEarth.addAll(creepManager.getCreepInRange(c, true));
+			}
+		}
+	}
+	
+	/**
+	 * This function checks to see if an object of the size and position provided
+	 * will intersect with any of the paths that the creep must take.
+	 * @param x - The x position of the top left tile of the proposed object.
+	 * @param y - The y position of the top left tile of the proposed object.
+	 * @param width - The width of the proposed object, in number of tiles.
+	 * @param height - The height of the proposed object, in number of tiles.
+	 * @param isFlying - A variable that specifies if we are checking against the air path or the flying path.
+	 * @return True if the specified path intersects (shares a tile) with the proposed build site of the object, false otherwise.
+	 */
+	private boolean intersectsPath(int x, int y, int width, int height, boolean isFlying) {
+		//TODO: Improve the speed of this by caching vertex graph and checking against that.
+		//This allows for a quick grab of the vertices that this space contains and then we can see if its in the path
+		
+		/* Obtain all of the tiles contained that this proposed object will cover */
+		int length = width * height;
+		Tile[] tiles = new Tile[length];
+		for (int j = 0; j < y; j++) {
+			for (int i = 0; i < x; i++) {
+				tiles[j * height + i] = map.getTile(y + j, x + i);
+			}
+		}
+		
+		Iterator<Vertex> pathIterator;
+		Vertex currentPathVertex;
+		if (isFlying) {
+			/* If we're checking against the flying path, we need to iterate through that */
+			pathIterator = flyingPath.getIterator();
+			while (pathIterator.hasNext()) {
+				currentPathVertex = pathIterator.next();
+				/* Check if the vertex contains the tiles in the list of tiles where the proposed object is */
+				for (Tile proposedObjectTile: tiles) {
+					if (currentPathVertex.contains(proposedObjectTile)) {
+						return true;
+					}
 				}
 			}
-			break;
-		case HIGHEST_HEALTH:
-			break;
-		case LAST:
-			break;
-		default:
-			break;
-
-		}
-		return toTarget;
-	}
-
-	public HashSet<Creep> getCreepInRange(Projectile p, float range) {
-		HashSet<Creep> inRange = new HashSet<Creep>();
-		Circle splash = new Circle(p.x, p.y, range);
-		for (Creep c : creeps) {
-			if (c.hitBox.intersects(splash)) {
-				inRange.add(c);
-			}
-		}
-		return inRange;
-	}
-
-	public void addProjectile(Projectile p) {
-		projectiles.add(p);
-		newEvent(GameEventType.PROJECTILE_FIRED, p);
-	}
-
-	public boolean canBuild(TowerType type, int y, int x) {
-		if (type.getCost() > gold) {
-			return false;
-		}
-		int width = type.getWidth();
-		int height = type.getHeight();
-		if (x < 0 || y < 0 || x + width >= map.width || y + height >= map.height) {
-			proposedGroundPath = null;
-			return false;
-		}
-		for (int i = x; i < x + width; i++) {
-			for (int j = y; j < y + height; j++) {
-				if (!map.getTile(j, i).buildable) {
-					proposedGroundPath = null;
-					return false;
+		} else {
+			/* If we're checking against the ground path, we need to iterate through that */
+			pathIterator = groundPath.getIterator();
+			while (pathIterator.hasNext()) {
+				currentPathVertex = pathIterator.next();
+				/* Check if the vertex contains the tiles in the list of tiles where the proposed object is */
+				for (Tile proposedObjectTile: tiles) {
+					if (currentPathVertex.contains(proposedObjectTile)) {
+						return true;
+					}
 				}
 			}
 		}
-		proposePath(x, y, width, height);
-		return proposedGroundPath != null;
+		return false;
 	}
-
-	private void newEvent(GameEventType t, Object o) {
-		events.add(new GameEvent(t, o, round, tick));
-	}
-
-	public GameEvent getEvent() {
-		if (events.size() > 0) {
-			return events.remove(0);
-		}
-		return null;
-	}
-
 }
