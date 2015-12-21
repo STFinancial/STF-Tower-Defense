@@ -31,8 +31,8 @@ public class Tile {
 	
 	void addTower(Tower t) {
 		tower = t;
-		groundTraversable = TowerManager.getInstance().isOnGround(t);
-		airTraversable = TowerManager.getInstance().isInAir(t);
+		groundTraversable &= !TowerManager.getInstance().isOnGround(t); 
+		airTraversable &= !TowerManager.getInstance().isInAir(t);
 		/* We won't allow multiple towers on the same tile */
 		groundBuildable = false;
 		airBuildable = false;
@@ -52,5 +52,9 @@ public class Tile {
 			return airBuildable;
 		}
 	}
+	
+	public int getX(){ return x;}
+	public int getY(){ return y;}
+	public TileType getType() { return type; }
 	
 }

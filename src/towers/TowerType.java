@@ -2215,7 +2215,7 @@ public enum TowerType {
 		return baseAttributeList.baseIsInAir;
 	}
 
-	float getRange() {
+	public float getRange() {	//TODO made public for GUI laziness, technically wouldn't check talents and shit
 		return baseAttributeList.baseRange;
 	}
 	

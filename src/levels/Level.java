@@ -258,6 +258,9 @@ public class Level {
 	public Path getPath(boolean isFlying) {
 		return (isFlying ? flyingPath : groundPath);
 	}
+	public Path getProposedPath(boolean isFlying) {
+		return (isFlying ? proposedFlyingPath : proposedGroundPath);
+	}
 	
 	void updateEffectPatches() {
 		Iterator<EffectPatch> it = effectPatches.iterator();
@@ -333,4 +336,5 @@ public class Level {
 		}
 		return false;
 	}
+
 }

@@ -77,4 +77,12 @@ public final class ProjectileManager {
 			}
 		}
 	}
+
+	public float getX(Projectile projectile) {
+		return projectile.x;
+	}
+
+	public float getY(Projectile projectile) {
+		return projectile.y;
+	}
 }

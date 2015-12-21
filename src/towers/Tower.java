@@ -91,10 +91,10 @@ public abstract class Tower extends GameObject {
 	
 	protected Tower (Tile topLeftTile, TowerType type, int towerID) {
 		this.baseAttributeList = type.getAttributeList().clone();
+		this.type = baseAttributeList.type;
 		this.upgradeHandler = new TowerUpgradeHandler(this);
 		this.width = baseAttributeList.baseWidth;
 		this.height = baseAttributeList.baseHeight;
-		this.type = baseAttributeList.type;
 		this.topLeft = topLeftTile;
 		Circle tz = levelManager.getCenter(topLeftTile, width, height);
 		this.centerX = tz.getX();

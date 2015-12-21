@@ -51,7 +51,7 @@ public class LevelManager {
 	public void removeGold(float amount) {
 		level.removeGold(amount);
 	}
-	
+	//TODO combine for "Buy Tower" or is that somewhere else?
 	public void addTower(Tower t, Tile topLeft, int width, int height) {
 		int x = topLeft.x;
 		int y = topLeft.y;
@@ -77,9 +77,13 @@ public class LevelManager {
 	public Circle getCenter(Tile topLeft, int width, int height) {
 		return new Circle((topLeft.x + width) / 2f, (topLeft.y + height) / 2f, 0);
 	}
-	
+
 	public Path getPath(boolean isFlying) {
 		return level.getPath(isFlying);
+	}
+	
+	public Path getProposedPath(boolean isFlying) {
+		return level.getProposedPath(isFlying);
 	}
 	
 	public Tile getTile(int x, int y) {
@@ -92,6 +96,14 @@ public class LevelManager {
 	
 	public int getMapHeight() {
 		return map.getHeight();
+	}
+	
+	public float getHealth() {
+		return level.getHealth();
+	}
+	
+	public float getGold() {
+		return level.getGold();
 	}
 	
 	//TODO: Not happy about how this works, I really don't like it returning int
@@ -152,4 +164,5 @@ public class LevelManager {
 	public HashSet<Creep> getCreepAdjacentToEarth(boolean isFlying) {
 		return level.getCreepAdjacentToEarth(isFlying);
 	}
+	
 }

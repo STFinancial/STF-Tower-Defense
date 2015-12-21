@@ -26,7 +26,7 @@ public final class Path {
 		//TODO: Write an exception for if this size is less than 0?
 	}
 	
-	int getLength() { return size; }
+	public int getLength() { return size; }
 	
 	public Vertex getVertex(int pathIndex) {
 		if (pathIndex >= size) {
@@ -67,7 +67,7 @@ public final class Path {
 		return path.getFirst();
 	}
 	
-	Iterator<Vertex> getIterator() {
+	public Iterator<Vertex> getIterator() {
 		//TODO: We don't want to remove from this iterator. What are the options?
 		return path.listIterator();
 	}
