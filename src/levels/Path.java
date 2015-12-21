@@ -67,7 +67,7 @@ public final class Path {
 		return path.getFirst();
 	}
 	
-	public Iterator<Vertex> getIterator() {
+	Iterator<Vertex> getIterator() {
 		//TODO: We don't want to remove from this iterator. What are the options?
 		return path.listIterator();
 	}

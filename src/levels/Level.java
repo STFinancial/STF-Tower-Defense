@@ -59,9 +59,6 @@ public class Level {
 		updatePath();
 	}
 	
-	
-	
-	
 
 	void startRound(int roundNum) {
 		effectPatches.clear();
@@ -258,6 +255,7 @@ public class Level {
 	public Path getPath(boolean isFlying) {
 		return (isFlying ? flyingPath : groundPath);
 	}
+	
 	public Path getProposedPath(boolean isFlying) {
 		return (isFlying ? proposedFlyingPath : proposedGroundPath);
 	}
@@ -336,5 +334,4 @@ public class Level {
 		}
 		return false;
 	}
-
 }
